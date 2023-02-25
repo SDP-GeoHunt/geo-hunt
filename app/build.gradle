@@ -46,6 +46,9 @@ dependencies {
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
+    // Firebase auth
+    implementation "com.google.android.gms:play-services-auth:20.4.1"
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
 }
 
 tasks.withType(Test) {
