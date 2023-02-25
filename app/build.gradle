@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'jacoco'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -42,6 +43,9 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:31.2.2')
 }
 
 tasks.withType(Test) {

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "15816182548",
+    "project_id": "geohunt-1",
+    "storage_bucket": "geohunt-1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15816182548:android:6d4f06473677d2912fd001",
+        "android_client_info": {
+          "package_name": "com.github.geohunt.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15816182548-sogdj6aklp6agdfmldqs2asd2inh1hj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6b8dIRERs2I-ksyo4tqHU3fm4qn2kPPk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15816182548-sogdj6aklp6agdfmldqs2asd2inh1hj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
