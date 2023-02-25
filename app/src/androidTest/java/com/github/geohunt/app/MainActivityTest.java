@@ -58,4 +58,17 @@ public class MainActivityTest {
                 IntentMatchers.hasExtra("name", USERNAME)
         ));
     }
+
+    @Test
+    public void mainActivityStartDatabaseUponClick() {
+        // click on the database button
+        onView(withId(R.id.mainDatabaseButton))
+                .perform(closeSoftKeyboard())
+                .perform(click());
+
+        // ensure that a new intent as been emitted
+        intended(allOf(
+                IntentMatchers.hasComponent(DatabaseActivity.class.getName())
+        ));
+    }
 }

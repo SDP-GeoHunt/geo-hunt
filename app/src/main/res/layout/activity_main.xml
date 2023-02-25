@@ -25,11 +25,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="150dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="76dp"
         android:layout_marginEnd="150dp"
-        android:onClick="onValidate"
+        android:onClick="onValidateClicked"
         android:text="Validate"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainName" />
+
+    <Button
+        android:id="@+id/mainDatabaseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:onClick="onDatabaseClicked"
+        android:text="Database"
+        app:layout_constraintEnd_toEndOf="@+id/mainGoButton"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="@+id/mainGoButton"
+        app:layout_constraintTop_toBottomOf="@+id/mainGoButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

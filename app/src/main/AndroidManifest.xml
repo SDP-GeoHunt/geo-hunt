@@ -12,6 +12,9 @@
         android:theme="@style/Theme.GeoHunt"
         tools:targetApi="31">
         <activity
+            android:name=".DatabaseActivity"
+            android:exported="false" />
+        <activity
             android:name=".GreetingActivity"
             android:exported="false" />
         <activity

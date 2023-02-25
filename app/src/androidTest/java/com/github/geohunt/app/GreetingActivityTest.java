@@ -23,12 +23,10 @@ public class GreetingActivityTest {
     private static String USERNAME = "Here's Johny";
 
     @Test
-    public void testGreetingActivityFromIntent()
-    {
+    public void testGreetingActivityFromIntent() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), GreetingActivity.class);
         intent.putExtra("name", USERNAME);
-        try (ActivityScenario<?> activity = ActivityScenario.launch(intent))
-        {
+        try (ActivityScenario<?> activity = ActivityScenario.launch(intent)) {
             ViewInteraction text = onView(withId(R.id.greetingMessage));
             text.check(matches(withText(String.format("Hello %s!", USERNAME))));
         }

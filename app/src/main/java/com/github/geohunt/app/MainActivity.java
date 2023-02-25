@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void onValidate(View view) {
+    public void onValidateClicked(View view) {
         // Retrieve the name entered by the user
         EditText mainName = findViewById(R.id.mainName);
 
@@ -23,5 +23,11 @@ public class MainActivity extends AppCompatActivity {
         Intent launchGreeting = new Intent(this, GreetingActivity.class);
         launchGreeting.putExtra("name", mainName.getText().toString());
         startActivity(launchGreeting);
+    }
+
+    public void onDatabaseClicked(View view) {
+        // Launch the database activity intent
+        Intent intent = new Intent(this, DatabaseActivity.class);
+        startActivity(intent);
     }
 }
