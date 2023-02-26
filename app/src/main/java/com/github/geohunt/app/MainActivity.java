@@ -7,12 +7,18 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.geohunt.app.authentication.FirebaseAuthenticator;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseAuthenticator.getInstance().authenticate(this).thenAccept(d -> {
+            System.out.println("Connected as " + d.get().getDisplayName());
+        });
     }
 
     public void onValidate(View view) {
