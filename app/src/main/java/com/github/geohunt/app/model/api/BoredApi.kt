@@ -1,4 +1,4 @@
-package com.github.geohunt.app.api
+package com.github.geohunt.app.model.api
 
 import retrofit2.Call
 import retrofit2.http.GET
@@ -8,5 +8,5 @@ import retrofit2.http.GET
  */
 interface BoredApi {
     @GET("activity")
-    fun getActivity(): Call<BoredActivityData>
+    fun getActivity(): Call<BoredActivity>
 }

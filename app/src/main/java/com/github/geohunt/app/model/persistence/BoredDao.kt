@@ -1,8 +1,9 @@
-package com.github.geohunt.app.api
+package com.github.geohunt.app.model.persistence
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.github.geohunt.app.model.api.BoredActivity
 
 /**
  * Bored API Data Access Object (DAO). This object is the interface with the Room database, and
@@ -10,9 +11,9 @@ import androidx.room.Query
  */
 @Dao
 interface BoredDao {
-    @Query("SELECT * FROM BoredActivityData ORDER BY RAND() LIMIT 1")
-    fun getRandomActivity(): BoredActivityData
+    @Query("SELECT * FROM BoredActivity ORDER BY RAND() LIMIT 1")
+    fun getRandomActivity(): BoredActivity
 
     @Insert
-    fun addActivity(activity: BoredActivityData)
+    fun addActivity(activity: BoredActivity)
 }

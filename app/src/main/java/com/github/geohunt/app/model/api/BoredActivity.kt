@@ -1,4 +1,4 @@
-package com.github.geohunt.app.api
+package com.github.geohunt.app.model.api
 
 import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 /**
  * Represents the JSON response from the Bored API.
  */
-data class BoredActivityData(
+data class BoredActivity(
     @ColumnInfo(name = "activity") val activity: String,
     val type: String,
     val participants: Int,

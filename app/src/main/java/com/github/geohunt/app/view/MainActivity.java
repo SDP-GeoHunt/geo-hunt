@@ -1,4 +1,4 @@
-package com.github.geohunt.app;
+package com.github.geohunt.app.view;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.github.geohunt.app.R;
 
 import com.github.geohunt.app.api.BoredActivityData;
 import com.github.geohunt.app.api.BoredApi;

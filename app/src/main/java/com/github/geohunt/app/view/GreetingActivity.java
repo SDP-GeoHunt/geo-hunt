@@ -1,10 +1,12 @@
-package com.github.geohunt.app;
+package com.github.geohunt.app.view;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.github.geohunt.app.R;
 
 public class GreetingActivity extends AppCompatActivity {
 
