@@ -1,11 +1,14 @@
 package com.github.geohunt.app.database;
 
+import com.github.geohunt.app.utility.Assertions;
+import com.google.android.gms.common.internal.Asserts;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class Databases {
     private Databases() {}
 
-    private static Database database = null;
+    private static volatile Database instance = null;
+    private static final Object mutex = new Object();
 
     /**
      * Retrieve the instance of the database used throughout the program
@@ -13,10 +16,16 @@ public class Databases {
      * @return The database to be used by the application
      */
     public static Database getInstance() {
-        if (database == null) {
-            database = new FirebaseDatabaseWrapper(FirebaseDatabase.getInstance());
+        Database result = instance;
+        if (result == null) {
+            synchronized (mutex) {
+                result = instance;
+                if (result == null) {
+                    instance = result = new FirebaseDatabaseAdapter(FirebaseDatabase.getInstance());
+                }
+            }
         }
-        return database;
+        return result;
     }
 
     /**
@@ -25,6 +34,9 @@ public class Databases {
      * @param db the database to be used
      */
     public static void setInstance(Database db) {
-        database = db;
+        Assertions.assertNonNull(db);
+        synchronized (mutex) {
+            instance = db;
+        }
     }
 }

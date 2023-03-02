@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 public class GreetingActivityTest {
-    private static String USERNAME = "Here's Johny";
+    private static final String USERNAME = "Here's Johny";
 
     @Test
     public void testGreetingActivityFromIntent() {

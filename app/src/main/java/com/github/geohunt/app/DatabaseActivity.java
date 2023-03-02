@@ -1,14 +1,12 @@
 package com.github.geohunt.app;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.github.geohunt.app.database.Databases;
+import androidx.appcompat.app.AppCompatActivity;
 
-import org.w3c.dom.Text;
+import com.github.geohunt.app.database.Databases;
 
 public class DatabaseActivity extends AppCompatActivity {
 
