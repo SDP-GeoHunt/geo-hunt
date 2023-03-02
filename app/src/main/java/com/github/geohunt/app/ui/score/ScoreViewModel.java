@@ -1,16 +1,16 @@
-package com.github.geohunt.app.ui.slideshow;
+package com.github.geohunt.app.ui.score;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class SlideshowViewModel extends ViewModel {
-
+public class ScoreViewModel extends ViewModel {
+    // TODO: Implement the ViewModel
     private final MutableLiveData<String> mText;
 
-    public SlideshowViewModel() {
+    public ScoreViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is slideshow fragment");
+        mText.setValue("This is score display fragment, where we will display the score and other relevant data of the user.");
     }
 
     public LiveData<String> getText() {

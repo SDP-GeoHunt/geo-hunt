@@ -3,23 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_main_menu">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="com.github.geohunt.app.ui.home.HomeFragment"
-        android:label="@string/menu_home"
+        android:id="@+id/nav_main_menu"
+        android:name="com.github.geohunt.app.ui.mainmenu.MainMenuFragment"
+        android:label="Main menu"
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.github.geohunt.app.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_map"
+        android:name="com.github.geohunt.app.ui.map.MapFragment"
+        android:label="Map"
+        tools:layout="@layout/fragment_map" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.github.geohunt.app.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
+        android:id="@+id/nav_photosubmission"
+        android:name="com.github.geohunt.app.ui.photosubmission.PhotoSubmissionFragment"
+        android:label="Take a photo"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_score"
+        android:name="com.github.geohunt.app.ui.score.ScoreFragment"
+        android:label="Score"
+        tools:layout="@layout/fragment_score" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.github.geohunt.app.ui.settings.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

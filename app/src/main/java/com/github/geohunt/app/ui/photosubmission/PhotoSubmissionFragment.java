@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.slideshow;
+package com.github.geohunt.app.ui.photosubmission;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,14 +12,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.github.geohunt.app.databinding.FragmentSlideshowBinding;
 
-public class SlideshowFragment extends Fragment {
+public class PhotoSubmissionFragment extends Fragment {
 
     private FragmentSlideshowBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SlideshowViewModel slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
+        PhotoSubmissionViewModel slideshowViewModel =
+                new ViewModelProvider(this).get(PhotoSubmissionViewModel.class);
 
         binding = FragmentSlideshowBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

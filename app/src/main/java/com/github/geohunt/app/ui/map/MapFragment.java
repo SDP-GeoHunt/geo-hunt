@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.gallery;
+package com.github.geohunt.app.ui.map;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,21 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.github.geohunt.app.databinding.FragmentGalleryBinding;
+import com.github.geohunt.app.databinding.FragmentMapBinding;
 
-public class GalleryFragment extends Fragment {
+public class MapFragment extends Fragment {
 
-    private FragmentGalleryBinding binding;
+    private FragmentMapBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        GalleryViewModel galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
+        MapViewModel galleryViewModel =
+                new ViewModelProvider(this).get(MapViewModel.class);
 
-        binding = FragmentGalleryBinding.inflate(inflater, container, false);
+        binding = FragmentMapBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textGallery;
+        final TextView textView = binding.textMap;
         galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.home;
+package com.github.geohunt.app.ui.mainmenu;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,14 +12,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.github.geohunt.app.databinding.FragmentHomeBinding;
 
-public class HomeFragment extends Fragment {
+public class MainMenuFragment extends Fragment {
 
     private FragmentHomeBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        MainMenuViewModel homeViewModel =
+                new ViewModelProvider(this).get(MainMenuViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();

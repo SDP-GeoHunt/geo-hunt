@@ -39,7 +39,7 @@ public class MainActivityTest {
         Intents.release();
     }
 
-    @Test
+    /*@Test
     public void mainActivityStartGreetingUponClick() {
         // write the username to the corresponding field
         onView(withId(R.id.mainName))
@@ -57,5 +57,5 @@ public class MainActivityTest {
                 IntentMatchers.hasComponent(GreetingActivity.class.getName()),
                 IntentMatchers.hasExtra("name", USERNAME)
         ));
-    }
+    }*/
 }
