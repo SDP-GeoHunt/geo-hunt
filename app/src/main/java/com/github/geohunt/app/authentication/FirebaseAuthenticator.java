@@ -39,14 +39,14 @@ public class FirebaseAuthenticator implements Authenticator<FirebaseUser> {
      * 2. complete successfully with the user if the user has been successfully signed in
      */
     @Override
-    public CompletableFuture<Optional<FirebaseUser>> authenticate(ComponentActivity activity) {
-        final CompletableFuture<Optional<FirebaseUser>> user = new CompletableFuture<>();
+    public CompletableFuture<FirebaseUser> authenticate(ComponentActivity activity) {
+        final CompletableFuture<FirebaseUser> user = new CompletableFuture<>();
 
         // Checks if already signed-in
         final FirebaseUser alreadyLoggedInUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (alreadyLoggedInUser != null) {
-            user.complete(Optional.of(alreadyLoggedInUser));
+            user.complete(alreadyLoggedInUser);
             return user;
         }
 
@@ -54,7 +54,7 @@ public class FirebaseAuthenticator implements Authenticator<FirebaseUser> {
             new FirebaseAuthUIActivityResultContract(),
             result -> {
                 if (result.getResultCode() == RESULT_OK) {
-                    user.complete(Optional.of(FirebaseAuth.getInstance().getCurrentUser()));
+                    user.complete(FirebaseAuth.getInstance().getCurrentUser());
                 } else {
                     assert(result.getIdpResponse() != null);
 

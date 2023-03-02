@@ -15,10 +15,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        FirebaseAuthenticator.getInstance().authenticate(this).thenAccept(d -> {
-            System.out.println("Connected as " + d.get().getDisplayName());
-        });
     }
 
     public void onValidate(View view) {
