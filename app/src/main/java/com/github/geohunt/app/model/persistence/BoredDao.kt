@@ -11,9 +11,9 @@ import com.github.geohunt.app.model.api.BoredActivity
  */
 @Dao
 interface BoredDao {
-    @Query("SELECT * FROM BoredActivity ORDER BY RAND() LIMIT 1")
-    fun getRandomActivity(): BoredActivity
+    @Query("SELECT * FROM BoredActivity ORDER BY RANDOM() LIMIT 1")
+    suspend fun getRandomActivity(): BoredActivity
 
     @Insert
-    fun addActivity(activity: BoredActivity)
+    suspend fun addActivity(activity: BoredActivity)
 }
