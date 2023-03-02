@@ -7,31 +7,34 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.github.geohunt.app.R;
 
-import com.github.geohunt.app.api.BoredActivityData;
-import com.github.geohunt.app.api.BoredApi;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import com.github.geohunt.app.presentation.BoredViewModel;
 
 public class MainActivity extends AppCompatActivity {
-    final Retrofit retrofit = new Retrofit.Builder()
-        .baseUrl("https://www.boredapi.com/api/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build();
+    BoredViewModel boredViewModel;
 
-    final BoredApi boredApi = retrofit.create(BoredApi.class);
-
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        boredViewModel = new BoredViewModel(getApplicationContext());
+
+        // Update the activity text on each data update
+        TextView activityText = findViewById(R.id.boredResponse);
+        boredViewModel.getCurrentActivity().observe(this, boredActivity -> {
+            if (boredActivity != null) {
+                activityText.setText(String.format("You could try this%s activity: %s",
+                        boredViewModel.isCached() ? " (cached)" : "",
+                        boredActivity.getActivity())
+                );
+            } else {
+                activityText.setText("I could not retrieve an activity for you :(");
+            }
+        });
     }
 
     public void onValidate(View view) {
@@ -44,20 +47,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(launchGreeting);
     }
 
+    /**
+     * Gets a new, fresh activity when the button is clicked.
+     * @param view The current view object.
+     */
     public void onBoredClick(View view) {
-        TextView textView = findViewById(R.id.boredResponse);
-        boredApi.getActivity().enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<BoredActivityData> call, @NonNull Response<BoredActivityData> response) {
-                assert response.body() != null;
-                textView.setText(String.format("You could try this activity: %s", response.body().getActivity()));
-            }
-
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onFailure(@NonNull Call<BoredActivityData> call, @NonNull Throwable t) {
-                textView.setText("Error: could not retrieve activity.");
-            }
-        });
+        boredViewModel.getActivity();
     }
 }
