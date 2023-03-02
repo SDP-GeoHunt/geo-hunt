@@ -39,10 +39,14 @@ public class FirebaseDatabaseAdapter implements Database {
                                 T t = dataSnapshot.getValue(classType);
                                 return CompletableFuture.completedFuture(t);
                             } catch (DatabaseException e) {
-                                return CompletableFuture.failedFuture(e);
+                                CompletableFuture<T> future = new CompletableFuture<>();
+                                future.completeExceptionally(e);
+                                return future;
                             }
                         } else {
-                            return CompletableFuture.failedFuture(new NoSuchElementException());
+                            CompletableFuture<T> future = new CompletableFuture<>();
+                            future.completeExceptionally(new NoSuchElementException());
+                            return future;
                         }
                     });
         }

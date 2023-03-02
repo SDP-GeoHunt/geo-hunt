@@ -1,8 +1,8 @@
 package com.github.geohunt.app.database;
 
-import com.github.geohunt.app.utility.Assertions;
-import com.google.android.gms.common.internal.Asserts;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 public class Databases {
     private Databases() {}
@@ -34,7 +34,7 @@ public class Databases {
      * @param db the database to be used
      */
     public static void setInstance(Database db) {
-        Assertions.assertNonNull(db);
+        Objects.requireNonNull(db);
         synchronized (mutex) {
             instance = db;
         }
