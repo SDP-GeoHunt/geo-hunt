@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO solve problem related probably to NavController
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_content_main);
+        assert navHostFragment != null;
         NavController navController = navHostFragment.getNavController();
 
         //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
