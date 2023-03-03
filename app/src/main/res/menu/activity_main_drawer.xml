@@ -7,22 +7,22 @@
         <item
             android:id="@+id/nav_main_menu"
             android:icon="@drawable/menu_home_icon"
-            android:title="Main menu" />
+            android:title="@string/main_menu" />
         <item
             android:id="@+id/nav_map"
             android:icon="@drawable/menu_map_icon"
-            android:title="Map" />
+            android:title="@string/map" />
         <item
             android:id="@+id/nav_photosubmission"
             android:icon="@drawable/menu_photo_icon"
-            android:title="Take a photo" />
+            android:title="@string/take_a_photo" />
         <item
             android:id="@+id/nav_score"
             android:icon="@drawable/menu_score_icon"
-            android:title="Score" />
+            android:title="@string/score" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/menu_settings_icon"
-            android:title="Settings" />
+            android:title="@string/settings" />
     </group>
 </menu>

@@ -14,4 +14,12 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="textview">TextView</string>
+    <string name="main_menu">Main menu</string>
+    <string name="map">Map</string>
+    <string name="take_a_photo">Take a photo</string>
+    <string name="score">Score</string>
+    <string name="settings">Settings</string>
+    <string name="hello">Hello</string>
+    <string name="geohunt">GeoHunt</string>
+    <string name="enjoy_our_phenomenal_application">Enjoy our phenomenal application</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.github.geohunt.app;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -14,7 +13,7 @@ public class GreetingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_greeting);
 
         // Personalize the greeting message
-        Intent thisIntent = getIntent();
+        getIntent();
         TextView textView = findViewById(R.id.greetingMessage);
         String name = getIntent().getStringExtra("name");
         textView.setText(String.format("Hello %s!", name));
