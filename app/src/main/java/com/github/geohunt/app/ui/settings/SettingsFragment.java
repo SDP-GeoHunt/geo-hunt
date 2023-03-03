@@ -10,29 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.github.geohunt.app.databinding.FragmentSlideshowBinding;
-import com.github.geohunt.app.ui.photosubmission.PhotoSubmissionViewModel;
+import com.github.geohunt.app.databinding.FragmentSettingsBinding;
 
 public class SettingsFragment extends Fragment {
 
-    private SettingsViewModel mViewModel;
-
-    private FragmentSlideshowBinding binding;
-
-    public static SettingsFragment newInstance() {
-        return new SettingsFragment();
-    }
+    private FragmentSettingsBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        PhotoSubmissionViewModel slideshowViewModel =
-                new ViewModelProvider(this).get(PhotoSubmissionViewModel.class);
+        SettingsViewModel slideshowViewModel =
+                new ViewModelProvider(this).get(SettingsViewModel.class);
 
-        binding = FragmentSlideshowBinding.inflate(inflater, container, false);
+        binding = FragmentSettingsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textSlideshow;
+        final TextView textView = binding.textSettings;
         slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

@@ -10,16 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.github.geohunt.app.databinding.FragmentSlideshowBinding;
+import com.github.geohunt.app.databinding.FragmentScoreBinding;
 
 public class ScoreFragment extends Fragment {
 
-    private ScoreViewModel mViewModel;
-    private FragmentSlideshowBinding binding;
-
-    public static ScoreFragment newInstance() {
-        return new ScoreFragment();
-    }
+    private FragmentScoreBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -27,10 +22,10 @@ public class ScoreFragment extends Fragment {
         ScoreViewModel slideshowViewModel =
                 new ViewModelProvider(this).get(ScoreViewModel.class);
 
-        binding = FragmentSlideshowBinding.inflate(inflater, container, false);
+        binding = FragmentScoreBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textSlideshow;
+        final TextView textView = binding.textScore;
         slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
