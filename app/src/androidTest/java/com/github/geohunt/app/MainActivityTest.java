@@ -29,4 +29,9 @@ public class MainActivityTest {
         Intents.release();
     }
 
+    @Test
+    public void testMainActivity() {
+        assertEquals(4, 2 + 2);
+    }
+
 }
