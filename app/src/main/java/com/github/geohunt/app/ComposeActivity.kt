@@ -10,16 +10,27 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.github.geohunt.app.database.Database
+import com.github.geohunt.app.ui.CreateChallengeView
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import com.google.firebase.FirebaseApp
 
 class ComposeActivity : ComponentActivity() {
+
+    private lateinit var database : Database
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+//        FirebaseApp.initializeApp(this)
+        database = Database()
+
         setContent {
             GeoHuntTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+//                    Greeting("Android")
+                    CreateChallengeView(database)
                 }
             }
         }
