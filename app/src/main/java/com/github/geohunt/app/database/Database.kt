@@ -1,35 +1,37 @@
 package com.github.geohunt.app.database
 
+import android.app.Activity
+import android.content.Context
+import android.graphics.Bitmap
+import com.github.geohunt.app.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.database.models.Challenge
+import com.github.geohunt.app.database.models.ChallengeVisibility
 import com.github.geohunt.app.database.models.Location
-import com.github.geohunt.app.database.models.Picture
-import com.github.geohunt.app.utility.map
-import com.github.geohunt.app.utility.serverNow
-import com.google.android.gms.tasks.Task
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import java.util.concurrent.CompletableFuture
 
-class Database {
-    private val database = Firebase.database.reference
-    private val currentUser : String = "8b8b0392-ba8b-11ed-afa1-0242ac120002"
 
-    fun createChallenge(picture: Picture, isPublic: Boolean, location: Location) : Task<Challenge> {
-        val coarseHash = Location.getCoarseHash(location)
-        val newChallenge = database.child("challenges").child(coarseHash).push()
-        val challengeId = newChallenge.key!!
+interface Database {
+    fun createChallenge(bitmap: Bitmap, visibility: ChallengeVisibility, location: Location) : CompletableFuture<Challenge>
 
-        val challenge = Challenge(
-                challengeId = challengeId,
-                userId = currentUser,
-                picture = picture,
-                published = serverNow(),
-                isPublic = isPublic,
-                location = location
-        )
+    fun getChallengeById(cid: String) : CompletableFuture<Challenge>
 
-        return challenge.writeToDatabase(newChallenge)
-                .map {
-                    challenge
-                }
+    fun getNearbyChallenge(location: Location) : CompletableFuture<List<Challenge>>
+
+    // fun getProfileById(uid: String) : CompletableFuture<Profile>
+
+}
+
+/**
+ * Utility class to create a new database handle (this is used for testing purpose
+ * to replace the database instance with a mock one using mockito)
+ */
+object DatabaseFactory  {
+
+    /**
+     * Create a new instance of a database
+     */
+    fun createDatabaseHandle(activity: Activity) : Database {
+        return FirebaseDatabase(activity)
     }
 }
+

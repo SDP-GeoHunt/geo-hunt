@@ -57,7 +57,7 @@ fun Subtitle(text: String,
     Text(
             text = text,
             modifier = modifier,
-            color = color.takeOrElse { WeakColor },
+            color = color.takeOrElse { MaterialTheme.colors.primaryVariant },
             textDecoration = textDecoration,
             textAlign = textAlign,
             lineHeight = lineHeight,
@@ -65,7 +65,7 @@ fun Subtitle(text: String,
             softWrap = softWrap,
             maxLines = maxLines,
             onTextLayout = onTextLayout,
-            style = Typography.h3
+            style = MaterialTheme.typography.h3
     )
 }
 
@@ -84,7 +84,7 @@ fun Title(text: String,
     Text(
             text = text,
             modifier = modifier,
-            color = color.takeOrElse { PrimaryColor },
+            color = color.takeOrElse { MaterialTheme.colors.primary },
             textDecoration = textDecoration,
             textAlign = textAlign,
             lineHeight = lineHeight,
@@ -92,7 +92,7 @@ fun Title(text: String,
             softWrap = softWrap,
             maxLines = maxLines,
             onTextLayout = onTextLayout,
-            style = Typography.h1
+            style = MaterialTheme.typography.h1
     )
 }
 

@@ -9,11 +9,14 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.geohunt.app.database.Database
+import com.github.geohunt.app.database.DatabaseFactory
+import com.github.geohunt.app.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.CreateChallengeView
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
-import com.google.firebase.FirebaseApp
+
 
 class ComposeActivity : ComponentActivity() {
 
@@ -22,8 +25,7 @@ class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        FirebaseApp.initializeApp(this)
-        database = Database()
+        database = DatabaseFactory.createDatabaseHandle(this)
 
         setContent {
             GeoHuntTheme {
