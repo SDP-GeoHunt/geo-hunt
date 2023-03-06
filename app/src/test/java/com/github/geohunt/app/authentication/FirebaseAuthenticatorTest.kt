@@ -1,14 +1,12 @@
 package com.github.geohunt.app.authentication
 
+import androidx.activity.ComponentActivity
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import org.junit.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 
 class FirebaseAuthenticatorTest {
     @Test
@@ -56,9 +54,10 @@ class FirebaseAuthenticatorTest {
             on { signOut(any()) } doReturn(mockedTask)
         }
         val auth = FirebaseAuthenticator(mockedFirebaseAuth, mockedFirebaseAuthUi)
+        val context = mock<ComponentActivity>()
 
-        auth.signOut(mock())
-        verify(mockedFirebaseAuthUi).signOut(any())
+        auth.signOut(context)
+        verify(mockedFirebaseAuthUi).signOut(eq(context))
     }
 
 }
