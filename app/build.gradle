@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'jacoco'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -70,6 +71,10 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation 'androidx.compose.material:material:1.3.1'
     implementation 'com.google.android.gms:play-services-location:19.0.1'
+
+    //Google Maps dependencies
+    implementation 'com.google.maps.android:maps-compose:2.11.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:31.2.3')
