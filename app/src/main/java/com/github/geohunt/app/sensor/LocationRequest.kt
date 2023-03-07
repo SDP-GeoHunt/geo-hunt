@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
-import com.github.geohunt.app.database.models.Location
+import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.ui.findActivity
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
