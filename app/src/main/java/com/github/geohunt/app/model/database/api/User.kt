@@ -1,16 +1,21 @@
 package com.github.geohunt.app.model.database.api
 
-import com.github.geohunt.app.model.database.api.PictureImage
+import android.graphics.Bitmap
+import com.github.geohunt.app.model.LazyRef
 
+/**
+ * Define the profile information of a user as stored in the database
+ */
 interface User {
-    var displayName: String?
-
     val uid: String
 
-    val profilePicture: PictureImage?
+    var displayName: String?
 
-    val challenges: List<String>
-    val hunts: List<String>
+    val profilePicture: LazyRef<Bitmap>
+
+    val challenges: List<LazyRef<Challenge>>
+
+    val hunts: List<LazyRef<Challenge>>
 
     var score: Number
 }

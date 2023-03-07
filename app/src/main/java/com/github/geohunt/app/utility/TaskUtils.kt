@@ -6,6 +6,8 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
+import java.util.concurrent.Future
 import kotlin.coroutines.cancellation.CancellationException
 
 fun <TResult> attackTaskCompletionSourceToTask(taskCompletionSource: TaskCompletionSource<TResult>,
@@ -48,3 +50,4 @@ fun <TResult> Task<TResult>.toCompletableFuture(activity: Activity) : Completabl
         }
     return completableFuture
 }
+

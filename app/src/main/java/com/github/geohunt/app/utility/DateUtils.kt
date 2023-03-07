@@ -34,10 +34,23 @@ fun utcIso6801FromLocal(localDateTime: LocalDateTime) : String {
     return toIso8601(localToServerDate(localDateTime))
 }
 
+fun utcIso6801FromLocalNullable(localDateTime: LocalDateTime?) : String {
+    return when (localDateTime) {
+        null -> "null"
+        else -> utcIso6801FromLocal(localDateTime)
+    }
+}
+
 fun localFromUtcIso6801(value: String) : LocalDateTime {
     return serverToLocalDate(fromIso6801(value))
 }
 
+fun localNullableFromUtcIso6801(value: String) : LocalDateTime? {
+    return when (value) {
+        "null" -> null
+        else -> localFromUtcIso6801(value)
+    }
+}
 
 fun formatDateTime(date: LocalDateTime) : String {
     return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))

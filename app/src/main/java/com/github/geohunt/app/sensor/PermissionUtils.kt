@@ -7,9 +7,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
@@ -21,31 +19,59 @@ import com.google.android.gms.tasks.TaskCompletionSource
 import java.util.concurrent.CompletableFuture
 
 /**
- * Define the two possible status for any permission, can be
- * either Granted or Denied
+ * Defines the two possible status for any permission,
+ * can be either [Granted] or [Denied]
  */
 sealed interface PermissionStatus {
+    /**
+     * Defines any permission that has been accepted by the users
+     */
     object Granted : PermissionStatus
+
+    /**
+     * Defines any permission that has yet to be accepted or been refused by the users
+     */
     data class Denied(override val shouldShowRationale : Boolean) : PermissionStatus
 
+    /**
+     * Whether we should show a descriptive rationale to explain why the application
+     * needs this specific permission
+     */
     val shouldShowRationale : Boolean
         get() = false
+
+    /**
+     * Check whether the current permission is granted
+     */
 
     val isGranted : Boolean
         get() = this is Granted
 
+    /**
+     * Check whether the current permission is denied
+     */
     val isDenied : Boolean
         get() = this is Denied
 }
 
 /**
- * Define a permission name along with its status
+ * Define a permission as a 2-Tuple composed of a name and a status
  */
 sealed interface Permission {
+    /**
+     * The name of the permission, see [android.Manifest.permission] for possible values
+     */
     val name : String
+
+    /**
+     * The status of the linked permission
+     */
     val status : PermissionStatus
 }
 
+/**
+ * Defines a state representing the state of the permissions that was asked to track
+ */
 interface MultiplePermissionState
 {
     /**
@@ -70,7 +96,7 @@ interface MultiplePermissionState
 }
 
 /**
- * Specialized exception for permission denied handling (used in CompletableFuture)
+ * Specialized exception for permission denied handling (using [CompletableFuture])
  */
 class PermissionDeniedException(permissions: List<String>) : RuntimeException("The following permission was denied $permissions")
 
@@ -101,6 +127,8 @@ fun rememberPermissionsState(vararg permissions : String) : MultiplePermissionSt
             }
         }
 
+        Log.w("GeoHunt", "watf ${mutableMultiplePermissionState.mutablePermission}")
+
         // Secondly make the future either succeed or failed
         val deniedPermissions = mutableMultiplePermissionState.permissions
             .filter { it.status.isDenied }
@@ -115,8 +143,6 @@ fun rememberPermissionsState(vararg permissions : String) : MultiplePermissionSt
         }
     }
 
-
-
     return mutableMultiplePermissionState
 }
 
@@ -125,6 +151,10 @@ private class MutablePermission(
     override var name: String,
     override var status: PermissionStatus = PermissionStatus.Denied(false)
 ) : Permission {
+    override fun toString(): String {
+        return "$name is $status"
+    }
+
     fun updateStatus(context : Context) : MutablePermission {
         status = when {
             ContextCompat.checkSelfPermission(context, name) == PackageManager.PERMISSION_GRANTED

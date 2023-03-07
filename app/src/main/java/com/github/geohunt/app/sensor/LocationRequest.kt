@@ -4,8 +4,12 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
+import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.ui.findActivity
 import com.google.android.gms.location.LocationRequest
@@ -17,12 +21,12 @@ import kotlin.coroutines.cancellation.CancellationException
 /**
  * State of a location request
  */
-interface LocationManagerState {
+interface LocationRequestState {
     /**
      * The location result of the request or null if the requests
      * did not finished or was not completed successfully
      */
-    val lastLocation : Location?
+    val lastLocation : MutableState<Location?>
 
     /**
      * Launch the request for the location
@@ -37,22 +41,27 @@ interface LocationManagerState {
 
 
 /**
- * Create a static state that holds the state of the location request
+ * Create a static state that holds an instance of [LocationRequestState]
  */
 @Composable
-fun rememberLocationRequestState() : LocationManagerState {
-    val locationManager = LocationManagerAndroidImplementation(LocalContext.current)
+fun rememberLocationRequestState() : LocationRequestState {
+    val locationManager = LocationRequestAndroidImplementation(LocalContext.current)
+    locationManager.lastLocation = remember { mutableStateOf(null) }
     locationManager.multiplePermissionState = rememberPermissionsState(
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
+
     return locationManager
 }
 
-private class LocationManagerAndroidImplementation(private val context : Context,
-                                           @Volatile override var lastLocation: Location? = null
-) : LocationManagerState
+/**
+ * Default implementation for the [LocationRequestState]
+ */
+private class LocationRequestAndroidImplementation(private val context : Context) : LocationRequestState
 {
+    override lateinit var lastLocation : MutableState<Location?>
+
     private val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.findActivity())
     private val cancellationTokenSource = CancellationTokenSource()
     private var currentFuture : CompletableFuture<Location>? = null
@@ -77,8 +86,12 @@ private class LocationManagerAndroidImplementation(private val context : Context
             {
                 fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token)
                     .addOnSuccessListener(activity) {
-                        val location = Location(it.latitude, it.longitude)
-                        lastLocation = location
+                        var location = Location(it.latitude, it.longitude)
+                        // The server is currently public and therefore we should maybe protect our location :)
+                        if (BuildConfig.DEBUG) {
+                            location = location.getCoarseLocation()
+                        }
+                        lastLocation.value = location
                         future.complete(location)
                     }
                     .addOnFailureListener(activity) {

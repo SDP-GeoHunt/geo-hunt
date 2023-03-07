@@ -38,6 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.github.geohunt.app.ui.*
+import com.github.geohunt.app.ui.components.LinkText
+import com.github.geohunt.app.ui.components.LinkTextData
+import com.github.geohunt.app.ui.components.Title
 import java.io.File
 import java.io.IOException
 import java.util.*

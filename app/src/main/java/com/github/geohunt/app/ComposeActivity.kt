@@ -9,12 +9,10 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.DatabaseFactory
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
-import com.github.geohunt.app.ui.CreateChallengeView
+import com.github.geohunt.app.ui.ChallengeComponent
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 
 
@@ -32,7 +30,7 @@ class ComposeActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 //                    Greeting("Android")
-                    CreateChallengeView(database)
+                    ChallengeComponent(database)
                 }
             }
         }

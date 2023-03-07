@@ -1,9 +1,36 @@
 package com.github.geohunt.app.ui
 
+import android.Manifest
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.core.net.toFile
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.sensor.PhotoRequest
+import com.github.geohunt.app.sensor.rememberLocationRequestState
+import com.github.geohunt.app.sensor.rememberPermissionsState
+import com.github.geohunt.app.ui.components.Title
+import com.github.geohunt.app.utility.BitmapUtils
+import com.github.geohunt.app.utility.onException
+import com.github.geohunt.app.utility.toCompletableFuture
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.tasks.asTask
 
 
 //@Composable
@@ -193,15 +220,89 @@ import com.github.geohunt.app.sensor.PhotoRequest
 //    }
 //}
 
+@Composable
+private fun ChallengeComponentValidate(
+    bitmap: Bitmap,
+    database: Database,
+    onChallengeCreated: (Challenge) -> Unit,
+    onFailure: (Throwable) -> Unit
+) {
+    val bitmapPainter = remember { BitmapPainter(bitmap.asImageBitmap()) }
+    val locationRequest = rememberLocationRequestState()
+    val locationPermission = rememberPermissionsState(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    )
+
+    LaunchedEffect(true) {
+        locationPermission.launchPermissionRequest()
+            .thenCompose {
+                locationRequest.launchLocationRequest()
+            }
+            .onException(onFailure)
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            Title("Create new Challenge")
+
+            Spacer(Modifier.height(25.dp))
+
+            Image(painter = bitmapPainter, contentDescription = "Photo just taken of the challenge")
+
+            Spacer(Modifier.height(25.dp))
+
+            Button(
+                onClick = {
+                          database.createChallenge(
+                              thumbnail = bitmap,
+                              location = locationRequest.lastLocation.value!!,
+                              expirationDate = null
+                          ).thenApply(onChallengeCreated).exceptionally(onFailure)
+                },
+                enabled = (locationRequest.lastLocation.value != null)
+            ) {
+                Text("Create challenge")
+            }
+        }
+    }
+}
 
 @Composable
-fun CreateChallengeView(database: Database,
-                        onChallengeCreated: (Challenge) -> Unit = {},
-                        onFailure: (Throwable) -> Unit = {})
-{
-    val photoRequest = PhotoRequest()
-    
-    photoRequest.CameraView(onImageCaptured = {}, onError = {})
+fun ChallengeComponent(
+    database: Database,
+    onChallengeCreated: (Challenge) -> Unit = {},
+    onFailure: (Throwable) -> Unit = {}
+) {
+    val context = LocalContext.current
+    val photo = remember(null) {
+        mutableStateOf<Bitmap?>(null)
+    }
+
+    if (photo.value != null) {
+        ChallengeComponentValidate(photo.value!!, database, onChallengeCreated, onFailure)
+    } else {
+        val photoRequest = PhotoRequest()
+
+        photoRequest.CameraView(onImageCaptured = {
+            GlobalScope.async {
+                BitmapUtils.loadFromFile(it.toFile())
+            }
+                .asTask()
+                .toCompletableFuture(context.findActivity())
+                .thenApply {
+                    photo.value = it
+                }
+                .exceptionally(onFailure)
+        }, onError = onFailure)
+    }
 }
 
 //@Composable
