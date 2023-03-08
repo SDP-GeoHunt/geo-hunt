@@ -3,6 +3,7 @@ package com.github.geohunt.app.sensor
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.icu.text.SimpleDateFormat
 import android.net.Uri
 import android.os.Environment
@@ -40,7 +41,8 @@ import androidx.core.content.ContextCompat
 import com.github.geohunt.app.ui.*
 import com.github.geohunt.app.ui.components.LinkText
 import com.github.geohunt.app.ui.components.LinkTextData
-import com.github.geohunt.app.ui.components.Title
+import com.github.geohunt.app.utility.BitmapUtils
+import com.github.geohunt.app.utility.toCompletableFuture
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -65,7 +67,7 @@ class PhotoRequest {
         context: Context,
         imageCapture: ImageCapture,
         executor: Executor,
-        onImageCaptured: (Uri) -> Unit,
+        onImageCaptured: (Bitmap) -> Unit,
         onError: (Throwable) -> Unit
     ) {
         // Retrieve the file where the photo will be located after the operation
@@ -84,8 +86,13 @@ class PhotoRequest {
             executor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val uri = Uri.fromFile(photoFile)
-                    onImageCaptured(uri)
+                    BitmapUtils.loadFromFile(photoFile).toCompletableFuture(context.findActivity())
+                        .thenApply {
+                            onImageCaptured(it)
+                        }
+                        .exceptionally {
+                            onError(it)
+                        }
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -105,13 +112,14 @@ class PhotoRequest {
         }
 
     @Composable
-    fun CameraView(onImageCaptured: (Uri) -> Unit, onError: (Throwable) -> Unit) {
+    fun CameraView(onImageCaptured: (Bitmap) -> Unit, onError: (Throwable) -> Unit) {
         // First and foremost define some utility variable
         val lensFacing = CameraSelector.LENS_FACING_BACK
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val executor: Executor = context.findActivity().mainExecutor
         val cameraPermissionState = rememberPermissionsState(Manifest.permission.CAMERA)
+//        val cameraX = cameraPermissionState.
         val privatePolicyUrl = stringResource(com.github.geohunt.app.R.string.privacy_policy_url)
         val openPrivacyPolicyIntent = remember {
             Intent(Intent.ACTION_VIEW, Uri.parse(privatePolicyUrl))
@@ -173,7 +181,7 @@ class PhotoRequest {
         }
         else {
             LaunchedEffect(null) {
-                cameraPermissionState.launchPermissionRequest()
+                cameraPermissionState.requestPermissions()
             }
 
             Box(
@@ -189,13 +197,16 @@ class PhotoRequest {
                     Icon(
                         Icons.Sharp.Warning,
                         contentDescription = "Error Icon",
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
                             .size(85.dp),
                         tint = MaterialTheme.colors.error)
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Title("Requires permission to function")
+                    Text(text = "Requires permission to function",
+                        color = MaterialTheme.colors.primary,
+                        style = MaterialTheme.typography.h1)
 
                     Spacer(modifier = Modifier.height(5.dp))
 

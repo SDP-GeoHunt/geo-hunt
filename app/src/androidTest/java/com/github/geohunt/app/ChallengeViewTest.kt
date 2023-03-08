@@ -14,7 +14,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
-import com.github.geohunt.app.ui.ChallengeComponent
+import com.github.geohunt.app.ui.components.CreateNewChallenge
 import org.hamcrest.core.AllOf.allOf
 import org.junit.After
 import org.junit.Before
@@ -44,7 +44,7 @@ class ChallengeViewTest {
 
         // Start the application
         composeTestRule.setContent {
-            ChallengeComponent()
+            CreateNewChallenge()
         }
 
         // Test that the button Continue is disabled

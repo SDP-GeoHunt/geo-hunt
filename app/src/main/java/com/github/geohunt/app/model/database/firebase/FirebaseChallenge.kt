@@ -1,6 +1,7 @@
 package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
+import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
@@ -28,13 +29,11 @@ data class FirebaseChallenge(
 class FirebaseChallengeRef(
     override val id: String,
     private val database: FirebaseDatabase
-) : LazyRef<Challenge> {
-    override var value: Challenge? = null
+) : BaseLazyRef<Challenge>() {
 
-    override fun load(): CompletableFuture<Challenge> {
+    override fun fetchValue(): CompletableFuture<Challenge> {
         val coarseHash = id.substring(0, Location.COARSE_HASH_SIZE)
         val elementId = id.substring(Location.COARSE_HASH_SIZE)
-
         return database.dbChallengeRef
             .child(coarseHash).child(elementId).get()
             .toCompletableFuture(database.activity)

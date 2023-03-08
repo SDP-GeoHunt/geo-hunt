@@ -127,7 +127,7 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
     }
 
     override fun getNearbyChallenge(location: Location): CompletableFuture<List<Challenge>> {
-        throw NotImplementedError()
+        TODO()
     }
 }
 

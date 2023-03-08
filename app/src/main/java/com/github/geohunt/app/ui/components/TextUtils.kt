@@ -2,99 +2,12 @@ package com.github.geohunt.app.ui.components
 
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.text.*
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
-import com.github.geohunt.app.ui.theme.*
-
-@Composable
-fun SmallText(text: String,
-             modifier: Modifier = Modifier,
-             color: Color = Color.Unspecified,
-             textDecoration: TextDecoration? = null,
-             textAlign: TextAlign? = TextAlign.Left,
-             lineHeight: TextUnit = TextUnit.Unspecified,
-             overflow: TextOverflow = TextOverflow.Clip,
-             softWrap: Boolean = true,
-             maxLines: Int = Int.MAX_VALUE,
-             onTextLayout: (TextLayoutResult) -> Unit = {},
-) {
-    Text(
-            text = text,
-            modifier = modifier,
-            color = color.takeOrElse { WeakColor },
-            textDecoration = textDecoration,
-            textAlign = textAlign,
-            lineHeight = lineHeight,
-            overflow = overflow,
-            softWrap = softWrap,
-            maxLines = maxLines,
-            onTextLayout = onTextLayout,
-            style = Typography.h5
-    )
-}
-
-
-@Composable
-fun Subtitle(text: String,
-          modifier: Modifier = Modifier,
-          color: Color = Color.Unspecified,
-          textDecoration: TextDecoration? = null,
-          textAlign: TextAlign? = TextAlign.Left,
-          lineHeight: TextUnit = TextUnit.Unspecified,
-          overflow: TextOverflow = TextOverflow.Clip,
-          softWrap: Boolean = true,
-          maxLines: Int = Int.MAX_VALUE,
-          onTextLayout: (TextLayoutResult) -> Unit = {},
-) {
-    Text(
-            text = text,
-            modifier = modifier,
-            color = color.takeOrElse { MaterialTheme.colors.primaryVariant },
-            textDecoration = textDecoration,
-            textAlign = textAlign,
-            lineHeight = lineHeight,
-            overflow = overflow,
-            softWrap = softWrap,
-            maxLines = maxLines,
-            onTextLayout = onTextLayout,
-            style = MaterialTheme.typography.h3
-    )
-}
-
-@Composable
-fun Title(text: String,
-          modifier: Modifier = Modifier,
-          color: Color = Color.Unspecified,
-          textDecoration: TextDecoration? = null,
-          textAlign: TextAlign? = TextAlign.Left,
-          lineHeight: TextUnit = TextUnit.Unspecified,
-          overflow: TextOverflow = TextOverflow.Clip,
-          softWrap: Boolean = true,
-          maxLines: Int = Int.MAX_VALUE,
-          onTextLayout: (TextLayoutResult) -> Unit = {},
-) {
-    Text(
-            text = text,
-            modifier = modifier,
-            color = color.takeOrElse { MaterialTheme.colors.primary },
-            textDecoration = textDecoration,
-            textAlign = textAlign,
-            lineHeight = lineHeight,
-            overflow = overflow,
-            softWrap = softWrap,
-            maxLines = maxLines,
-            onTextLayout = onTextLayout,
-            style = MaterialTheme.typography.h1
-    )
-}
+import com.github.geohunt.app.ui.theme.Typography
 
 data class LinkTextData(
         val text: String,

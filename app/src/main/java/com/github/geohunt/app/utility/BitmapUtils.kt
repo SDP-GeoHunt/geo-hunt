@@ -3,7 +3,11 @@ package com.github.geohunt.app.utility
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
+import com.google.android.gms.tasks.Task
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.tasks.asTask
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
@@ -17,26 +21,30 @@ object BitmapUtils {
      * @param format the format to use in order to save the bitmap
      * @param quality the quality to format the bitmap
      */
-    suspend fun saveToFile(bitmap: Bitmap, file: File, format: CompressFormat, quality: Int) {
-        withContext(Dispatchers.IO) {
-            FileOutputStream(file).use {
-                bitmap.compress(format, quality, it)
-                it.flush()
+    fun saveToFile(bitmap: Bitmap, file: File, format: CompressFormat, quality: Int) : Task<Unit> {
+        return CoroutineScope(Dispatchers.IO).async {
+            withContext(Dispatchers.IO) {
+                FileOutputStream(file).use {
+                    bitmap.compress(format, quality, it)
+                    it.flush()
+                }
             }
-        }
+        }.asTask()
     }
 
     /**
-     * Try loading a bitmap from the given file
+     * Start a task to load a specific file as a bitmap
      *
-     * @param file the file where we should download the bitmap from
+     * @param file the file to be loaded in memory
      */
-    suspend fun loadFromFile(file: File) : Bitmap {
-        return withContext(Dispatchers.IO) {
-            FileInputStream(file).use {
-                BitmapFactory.decodeStream(it)
+    fun loadFromFile(file: File) : Task<Bitmap> {
+        return CoroutineScope(Dispatchers.IO).async {
+            withContext(Dispatchers.IO) {
+                FileInputStream(file).use {
+                    BitmapFactory.decodeStream(it)
+                }
             }
-        }
+        }.asTask()
     }
 
 

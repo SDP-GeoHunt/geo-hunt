@@ -1,6 +1,7 @@
 package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
+import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
@@ -17,11 +18,8 @@ class FirebaseUser(
 
 }
 
-class FirebaseUserRef(override val id: String) : LazyRef<User> {
-    override val value: User
-        get() = TODO("Not yet implemented")
-
-    override fun load(): CompletableFuture<User> {
+class FirebaseUserRef(override val id: String) : BaseLazyRef<User>() {
+    override fun fetchValue(): CompletableFuture<User> {
         TODO("Not yet implemented")
     }
 }

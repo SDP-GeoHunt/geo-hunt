@@ -76,7 +76,7 @@ private class LocationRequestAndroidImplementation(private val context : Context
         val future = CompletableFuture<Location>()
         currentFuture = future
 
-        multiplePermissionState!!.launchPermissionRequest().thenRun {
+        multiplePermissionState!!.requestPermissions().thenRun {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             {
