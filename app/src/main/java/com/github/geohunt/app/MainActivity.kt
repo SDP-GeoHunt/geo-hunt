@@ -13,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.Dp
 import androidx.navigation.compose.rememberNavController
 import com.github.geohunt.app.ui.components.NavigationBar
 import com.github.geohunt.app.ui.components.NavigationController
@@ -40,7 +42,11 @@ class MainActivity : ComponentActivity() {
 fun MainComposable() {
     val navController = rememberNavController()
     Scaffold(
-        bottomBar = { NavigationBar(navController = navController) }
+        bottomBar = {
+            Surface(modifier = Modifier.shadow(Dp(9f))) {
+                NavigationBar(navController = navController)
+            }
+        }
     ) { padding ->
         NavigationController(navController = navController, Modifier.padding(padding))
     }

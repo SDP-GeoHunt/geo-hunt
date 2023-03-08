@@ -2,6 +2,7 @@ package com.github.geohunt.app.ui.components
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
@@ -11,7 +12,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun NavigationBar(navController: NavController) {
-    BottomNavigation {
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colors.surface
+    ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination
 

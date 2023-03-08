@@ -3,6 +3,7 @@ package com.github.geohunt.app.ui.components
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Home
 import androidx.compose.material.icons.sharp.Person
 import androidx.compose.material.icons.sharp.Search
@@ -19,8 +20,10 @@ enum class Route(val titleStringId: Int, val route: String, val icon: Composable
 
     Home(R.string.navigation_home, "home", { Icon(Icons.Sharp.Home, null) }),
     Explore(R.string.navigation_explore, "explore", { Icon(Icons.Sharp.Search, null) }),
-    Create(R.string.navigation_create, "create", { Icon(Icons.Sharp.Home, null) }),
-    ActiveHunts(R.string.navigation_active_hunts, "active-hunts", { Icon(Icons.Sharp.Home, null) }),
+    Create(R.string.navigation_create, "create", { Icon(Icons.Sharp.Add, null) }),
+    ActiveHunts(R.string.navigation_active_hunts, "active-hunts", { Icon(androidx.compose.ui.res.painterResource(
+        id = R.drawable.target_arrow
+    ), null) }),
     Profile(R.string.navigation_profile, "profile", { Icon(Icons.Sharp.Person, null) })
 
 }
