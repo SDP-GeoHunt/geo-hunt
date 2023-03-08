@@ -1,6 +1,7 @@
 package com.github.geohunt.app.authentication
 
 import androidx.activity.ComponentActivity
+import com.github.geohunt.app.model.database.api.User
 import java.util.concurrent.CompletableFuture
 
 interface Authenticator {

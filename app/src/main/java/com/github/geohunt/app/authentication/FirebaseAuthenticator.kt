@@ -6,6 +6,7 @@ import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import java.util.concurrent.CompletableFuture
+import com.github.geohunt.app.model.database.api.User
 
 /**
  * Implements the Authenticator for Firebase.

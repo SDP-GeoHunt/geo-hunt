@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">GeoHunt</string>
     <string name="title_activity_compose">ComposeActivity</string>
+
+    <string name="navigation.home">Home</string>
+    <string name="navigation.explore">Explore</string>
+    <string name="navigation.create">Create a hunt</string>
+    <string name="navigation.active_hunts">Active hunts</string>
+    <string name="navigation.profile">Profile</string>
 </resources>
