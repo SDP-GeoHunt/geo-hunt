@@ -29,7 +29,6 @@ class ComposeActivity : ComponentActivity() {
             GeoHuntTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-//                    Greeting("Android")
                     CreateNewChallenge(database)
                 }
             }

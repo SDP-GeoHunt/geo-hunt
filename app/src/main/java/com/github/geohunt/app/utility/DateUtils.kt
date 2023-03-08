@@ -26,14 +26,29 @@ private fun serverToLocalDate(date: Instant) : LocalDateTime {
     return LocalDateTime.ofInstant(date, ZoneOffset.UTC)
 }
 
+/**
+ * Convert the current local time to a ISO 6801 compliant String of the corresponding time at UTC
+ */
 fun utcIso6801Now() : String {
     return utcIso6801FromLocal(LocalDateTime.now())
 }
+
+/**
+ * Convert the given localtime to a ISO 6801 compliant String of the corresponding time at UTC
+ *
+ * @param localDateTime the datetime to be converted
+ */
 
 fun utcIso6801FromLocal(localDateTime: LocalDateTime) : String {
     return toIso8601(localToServerDate(localDateTime))
 }
 
+/**
+ * Convert the given nullable localtime to a ISO 6801 compliant String of the corresponding time at
+ * UTC. The string will be "null" when no localDateTime was provided
+ *
+ * @param localDateTime the datetime to be converted
+ */
 fun utcIso6801FromLocalNullable(localDateTime: LocalDateTime?) : String {
     return when (localDateTime) {
         null -> "null"
@@ -41,17 +56,23 @@ fun utcIso6801FromLocalNullable(localDateTime: LocalDateTime?) : String {
     }
 }
 
+/**
+ * Convert a ISO 6801 compliant String at UTC to the corresponding local date time
+ *
+ * @param value the ISO 6801 complaint String to be converted
+ */
 fun localFromUtcIso6801(value: String) : LocalDateTime {
     return serverToLocalDate(fromIso6801(value))
 }
 
+/**
+ * Convert a ISO 6801 compliant String at UTC to the corresponding nullable local date time
+ *
+ * @param value the ISO 6801 complaint String to be converted, also can be "null"
+ */
 fun localNullableFromUtcIso6801(value: String) : LocalDateTime? {
     return when (value) {
         "null" -> null
         else -> localFromUtcIso6801(value)
     }
-}
-
-fun formatDateTime(date: LocalDateTime) : String {
-    return date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
 }

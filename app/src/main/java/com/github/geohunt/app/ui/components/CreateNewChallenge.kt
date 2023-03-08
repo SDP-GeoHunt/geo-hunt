@@ -37,8 +37,6 @@ private fun CreateChallengeForm(
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
-    val dropdownExpanded = remember { mutableStateOf(false) }
-
 
     LaunchedEffect(true) {
         locationPermission.requestPermissions()
