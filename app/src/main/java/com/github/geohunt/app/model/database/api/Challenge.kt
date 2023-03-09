@@ -37,5 +37,10 @@ interface Challenge
     val correctLocation: Location
 
     val claims: List<String>
+
+    /**
+     * The number of likes received by the challenge
+     */
+    var likes: Int
 }
 
