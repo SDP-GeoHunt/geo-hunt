@@ -29,13 +29,13 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val authenticator = FirebaseAuthenticator()
+
+        authenticator.user?.let { loggedIn() }
+
         if (intent.hasExtra("login")) {
-            FirebaseAuthenticator().authenticate(this@LoginActivity).thenAccept {
-                it?.let {
-                    startActivity(
-                        Intent(this@LoginActivity, MainActivity::class.java)
-                    )
-                }
+            authenticator.authenticate(this@LoginActivity).thenAccept {
+                it?.let { loggedIn() }
             }
         }
 
@@ -73,5 +73,11 @@ class LoginActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun loggedIn() {
+        startActivity(
+            Intent(this@LoginActivity, MainActivity::class.java)
+        )
     }
 }

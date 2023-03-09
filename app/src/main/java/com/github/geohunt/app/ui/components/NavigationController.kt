@@ -30,7 +30,7 @@ enum class Route(val titleStringId: Int, val route: String, val icon: Composable
 
 @Composable
 fun NavigationController(navController: NavHostController, modifier: Modifier = Modifier) {
-    NavHost(navController, startDestination = "home", modifier = modifier) {
+    NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
             Text("Home")
         }

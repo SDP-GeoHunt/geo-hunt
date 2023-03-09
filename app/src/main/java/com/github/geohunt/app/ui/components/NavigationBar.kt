@@ -5,6 +5,8 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -21,6 +23,7 @@ fun NavigationBar(navController: NavController) {
         for (route in Route.values()) {
             BottomNavigationItem(
                 selected = currentRoute?.hierarchy?.any { it.route == route.route } == true,
+                modifier = Modifier.testTag("navbtn-" + route.route),
                 onClick = {
                     navController.navigate(route.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
