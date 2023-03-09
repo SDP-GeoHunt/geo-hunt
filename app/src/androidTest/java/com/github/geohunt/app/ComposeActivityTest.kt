@@ -19,6 +19,6 @@ class ComposeActivityTest {
         }
 
         composeTestRule.onNodeWithText("Hello Android!")
-                .assertIsDisplayed();
+                .assertIsDisplayed()
     }
 }
