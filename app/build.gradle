@@ -78,6 +78,7 @@ dependencies {
     // Authentication
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
 
     // Tests
     testImplementation 'junit:junit:4.13.2'
@@ -127,3 +128,5 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
 connectedCheck {
     finalizedBy jacocoTestReport
 }
+
+apply plugin: 'com.google.gms.google-services'

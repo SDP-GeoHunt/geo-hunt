@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.github.geohunt.app.BuildConfig
+import com.github.geohunt.app.R
 import java.util.concurrent.CompletableFuture
 import com.github.geohunt.app.model.database.api.User
 
@@ -35,10 +37,12 @@ class FirebaseAuthenticator(
 
         val signInIntent = authUi
             .createSignInIntentBuilder()
+            .setIsSmartLockEnabled(!BuildConfig.DEBUG /* credentials */, true /* hints */)
             .setAvailableProviders(arrayListOf(
                 AuthUI.IdpConfig.GoogleBuilder().build(),
                 AuthUI.IdpConfig.EmailBuilder().build()
             ))
+            .setTheme(R.style.GeoHunt)
             .build()
 
         signInLauncher.launch(signInIntent)
