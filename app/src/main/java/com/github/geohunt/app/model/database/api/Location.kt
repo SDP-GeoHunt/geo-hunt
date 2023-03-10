@@ -27,8 +27,8 @@ data class Location(var latitude: Double,
     @Exclude
     fun getCoarseLocation(): Location {
         return Location(
-            latitude.quantize(10.0),
-            longitude.quantize(10.0)
+            latitude.quantize(0.1),
+            longitude.quantize(0.1)
         )
     }
 
@@ -45,8 +45,8 @@ data class Location(var latitude: Double,
         // Create the byte buffer
         crc32.update(
             ByteBuffer.allocate(2 * Long.SIZE_BYTES)
-                .putLong(0, latitude.quantizeToLong(10.0))
-                .putLong(Long.SIZE_BYTES, longitude.quantizeToLong(10.0))
+                .putLong(0, latitude.quantizeToLong(0.1))
+                .putLong(Long.SIZE_BYTES, longitude.quantizeToLong(0.1))
         )
 
         // Finally return the result in form of a string

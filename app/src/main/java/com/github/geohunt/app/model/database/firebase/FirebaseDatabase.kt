@@ -1,28 +1,23 @@
 package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
-import android.app.Application
 import android.graphics.Bitmap
-import android.os.Environment
-import android.util.Log
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.utility.*
+import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
+import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
+import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.UploadTask.TaskSnapshot
 import com.google.firebase.storage.ktx.storage
 import java.io.File
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
 
 class FirebaseDatabase(internal val activity: Activity) : Database {
     private val database = Firebase.database.reference
@@ -85,13 +80,13 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
 
         val challengeEntry = ChallengeEntry(
             authorId = currentUser,
-            publishedDate = utcIso6801Now(),
-            expirationDate = utcIso6801FromLocalNullable(expirationDate),
+            publishedDate = utcIso8601Now(),
+            expirationDate = utcIso8601FromLocalNullable(expirationDate),
             claims = listOf(),
             location = location
         )
         // Convert the publishedDate from UTC to Local time
-        val publishedDate = localFromUtcIso6801(challengeEntry.publishedDate!!)
+        val publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!)
 
         // Get the reference to the thumbnail Bitmap
         val thumbnailBitmap = getThumbnailRefById(challengeId)

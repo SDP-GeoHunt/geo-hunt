@@ -17,6 +17,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
@@ -88,7 +90,10 @@ private fun CreateChallengeForm(
 
             Spacer(Modifier.height(25.dp))
 
-            Image(painter = bitmapPainter, contentDescription = "Photo just taken of the challenge")
+            Image(
+                painter = bitmapPainter,
+                contentDescription = "Photo just taken of the challenge"
+            )
 
             Spacer(Modifier.height(25.dp))
 

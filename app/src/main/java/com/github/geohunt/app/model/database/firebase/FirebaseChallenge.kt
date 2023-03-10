@@ -10,7 +10,6 @@ import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.utility.*
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
 
 data class FirebaseChallenge(
     override val cid: String,
@@ -42,8 +41,8 @@ class FirebaseChallengeRef(
                     cid = id,
                     author = database.getUserRefById(challengeEntry.authorId!!),
                     thumbnail = database.getThumbnailRefById(id),
-                    publishedDate = localFromUtcIso6801(challengeEntry.publishedDate!!),
-                    expirationDate = localNullableFromUtcIso6801(challengeEntry.expirationDate!!),
+                    publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
+                    expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate!!),
                     correctLocation =  challengeEntry.location!!,
                     claims = challengeEntry.claims!!.map(database::getClaimRefById)
                 )
