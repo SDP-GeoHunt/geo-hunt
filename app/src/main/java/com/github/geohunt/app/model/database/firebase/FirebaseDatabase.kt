@@ -14,6 +14,8 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.utility.*
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.UploadTask.TaskSnapshot
@@ -37,20 +39,20 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
     internal val localImageFolder : File  =  activity.getExternalFilesDir("images")!!
 
     // Create the object pool in order to save some memory
-    private val userRefById = DataPool<String, FirebaseUserRef> {
+    private val userRefById = HashMap<String, FirebaseUserRef>().withDefault {
         FirebaseUserRef(
             id = it
         )
     }
 
-    private val challengeRefById = DataPool<String, FirebaseChallengeRef> {
+    private val challengeRefById = HashMap<String, FirebaseChallengeRef>().withDefault {
         FirebaseChallengeRef(
             id = it,
             database = this
         )
     }
 
-    private val imageRefById = DataPool<String, FirebaseBitmapRef> {
+    private val imageRefById = HashMap<String, FirebaseBitmapRef>().withDefault {
         FirebaseBitmapRef(
             id = it,
             database = this
@@ -63,11 +65,19 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
         }
     }
 
+    /**
+     * Creates a new Challenge and stores it to the Firebase Database and Storage.
+     *
+     * @param thumbnail the thumbnail of the challenge
+     * @param location the location of the challenge
+     * @param expirationDate the expiration date of the challenge, can be null
+     * @return a Task that will complete with the created Challenge
+     */
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
         expirationDate: LocalDateTime?
-    ): CompletableFuture<Challenge> {
+    ): Task<Challenge> {
         // State variable
         val coarseHash = location.getCoarseHash()
         val dbChallengeRef = dbChallengeRef.child(coarseHash).push()
@@ -80,20 +90,21 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
             claims = listOf(),
             location = location
         )
-
-        Log.i("GeoHunt", "challengeEntry is $challengeEntry")
-
+        // Convert the publishedDate from UTC to Local time
         val publishedDate = localFromUtcIso6801(challengeEntry.publishedDate!!)
+
+        // Get the reference to the thumbnail Bitmap
         val thumbnailBitmap = getThumbnailRefById(challengeId)
 
+        // Set the value of the thumbnail Bitmap to the provided thumbnail
         thumbnailBitmap.value = thumbnail
 
         // Create both jobs (update database, update storage)
-        val dbFuture = dbChallengeRef.setValue(challengeEntry).toCompletableFuture(activity)
-        val storageFuture = thumbnailBitmap.saveToLocalStorageThenSubmit(activity)
+        val submitToDatabaseTask = dbChallengeRef.setValue(challengeEntry)
+        val submitToStorageTask = thumbnailBitmap.saveToLocalStorageThenSubmit()
 
         // Finally make the completable task that succeed if both task succeeded
-        return dbFuture.thenCombine(storageFuture) { _: Void, _: TaskSnapshot ->
+        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
             FirebaseChallenge(
                 cid = challengeId,
                 author = getUserRefById(currentUser),
@@ -106,27 +117,27 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
         }
     }
 
-    override fun getChallengeById(cid: String): CompletableFuture<Challenge> {
+    override fun getChallengeById(cid: String): Task<Challenge> {
         throw NotImplementedError()
     }
 
     internal fun getChallengeRefById(cid: String): FirebaseChallengeRef {
-        return challengeRefById[cid]
+        return challengeRefById.getValue(cid)
     }
 
     internal fun getUserRefById(uid: String): FirebaseUserRef {
-        return userRefById[uid]
+        return userRefById.getValue(uid)
     }
 
     internal fun getThumbnailRefById(cid: String) : FirebaseBitmapRef {
-        return imageRefById[FirebaseBitmapRef.getImageIdFromChallengeId(cid)]
+        return imageRefById.getValue(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
     }
 
     internal fun getClaimRefById(id: String) : LazyRef<Claim> {
         TODO()
     }
 
-    override fun getNearbyChallenge(location: Location): CompletableFuture<List<Challenge>> {
+    override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         TODO()
     }
 }

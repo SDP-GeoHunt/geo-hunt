@@ -1,6 +1,7 @@
 package com.github.geohunt.app
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +30,14 @@ class ComposeActivity : ComponentActivity() {
             GeoHuntTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    CreateNewChallenge(database)
+                    CreateNewChallenge(database,
+                        onChallengeCreated = {
+                            Log.i("GeoHunt", "The challenge was successfully created")
+                        },
+                        onFailure = {
+                            Log.e("GeoHunt", "Failed because of exception $it")
+                        }
+                    )
                 }
             }
         }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
+import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -12,15 +13,15 @@ abstract class BaseMockDatabase : Database {
         thumbnail: Bitmap,
         location: Location,
         expirationDate: LocalDateTime?
-    ): CompletableFuture<Challenge> {
+    ): Task<Challenge> {
         throw NotImplementedError()
     }
 
-    override fun getChallengeById(cid: String): CompletableFuture<Challenge> {
+    override fun getChallengeById(cid: String): Task<Challenge> {
         throw NotImplementedError()
     }
 
-    override fun getNearbyChallenge(location: Location): CompletableFuture<List<Challenge>> {
+    override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         throw NotImplementedError()
     }
 }

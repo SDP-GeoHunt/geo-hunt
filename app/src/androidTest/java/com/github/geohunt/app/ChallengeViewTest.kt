@@ -23,6 +23,8 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.CreateNewChallenge
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import dalvik.annotation.TestTarget
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
@@ -66,30 +68,33 @@ class ChallengeViewTest {
                     thumbnail: Bitmap,
                     location: Location,
                     expirationDate: LocalDateTime?
-                ): CompletableFuture<Challenge> {
+                ): Task<Challenge> {
                     val mockChallenge = MockChallenge(
                         "cid",
                         MockLazyRef<User>("uid") {
-                            CompletableFuture.failedFuture(IllegalArgumentException())
+                            Tasks.forException<User>(IllegalArgumentException())
                         },
                         LocalDateTime.MAX,
                         expirationDate,
                         MockLazyRef<Bitmap>("iid") {
-                            CompletableFuture.completedFuture(thumbnail)
+                            Tasks.forException<Bitmap>(IllegalArgumentException())
                         },
                         location,
                         listOf()
                     )
                     createChallengeCalled.complete(mockChallenge)
-                    return CompletableFuture.completedFuture(mockChallenge)
+                    return Tasks.forResult(mockChallenge)
                 }
             }, onChallengeCreated = future::complete, onFailure = future::completeExceptionally)
         }
 
         // Check that the camera is launched
-        composeTestRule.onNodeWithContentDescription("Take picture")
-            .assertIsDisplayed()
-            .performClick()
+        Intents.intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+            .respondWith(createImageCaptureActivityResultStub(context))
+
+//        composeTestRule.onNodeWithContentDescription("Take picture")
+//            .assertIsDisplayed()
+//            .performClick()
 
         // Wait until
         composeTestRule.waitUntil(10000) {

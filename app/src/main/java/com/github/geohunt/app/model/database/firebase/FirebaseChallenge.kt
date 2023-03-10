@@ -7,9 +7,8 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.utility.localFromUtcIso6801
-import com.github.geohunt.app.utility.localNullableFromUtcIso6801
-import com.github.geohunt.app.utility.toCompletableFuture
+import com.github.geohunt.app.utility.*
+import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -31,13 +30,12 @@ class FirebaseChallengeRef(
     private val database: FirebaseDatabase
 ) : BaseLazyRef<Challenge>() {
 
-    override fun fetchValue(): CompletableFuture<Challenge> {
+    override fun fetchValue(): Task<Challenge> {
         val coarseHash = id.substring(0, Location.COARSE_HASH_SIZE)
         val elementId = id.substring(Location.COARSE_HASH_SIZE)
         return database.dbChallengeRef
             .child(coarseHash).child(elementId).get()
-            .toCompletableFuture(database.activity)
-            .thenApply {
+            .thenMap {
                 val challengeEntry = it.getValue(ChallengeEntry::class.java)!!
 
                 FirebaseChallenge(

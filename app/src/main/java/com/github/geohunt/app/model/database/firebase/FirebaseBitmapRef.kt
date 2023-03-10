@@ -1,68 +1,84 @@
 package com.github.geohunt.app.model.database.firebase
 
-import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.databinding.BaseObservable
 import com.github.geohunt.app.model.BaseLazyRef
-import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.utility.BitmapUtils
-import com.github.geohunt.app.utility.exceptionallyCompose
-import com.github.geohunt.app.utility.toCompletableFuture
+import com.github.geohunt.app.utility.thenDo
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.UploadTask.TaskSnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.asTask
 import java.io.File
-import java.util.concurrent.CompletableFuture
 
 internal class FirebaseBitmapRef(
     override val id: String,
     private val database: FirebaseDatabase
 ) : BaseLazyRef<Bitmap>() {
 
-    override fun fetchValue(): CompletableFuture<Bitmap> {
-        // Launch the async process
+    /**
+     * Fetches the value of the referenced object by first attempting to load it from local storage.
+     * If local storage retrieval fails, the object will be fetched from the remote database and stored locally for future
+     * use.
+     *
+     * @return A task representing the loading of the object.
+     */
+    override fun fetchValue(): Task<Bitmap> {
+        // Attempt to load the object from local storage
         val file = File(database.localImageFolder.absolutePath, id)
 
-        val readFileFuture = BitmapUtils.loadFromFile(file).toCompletableFuture(database.activity)
-
-        // Fetch the database if local storage failed
-        return readFileFuture.exceptionallyCompose {
-            database.storageImagesRef.child(id)
-                .getFile(file)
-                .toCompletableFuture(database.activity)
-                .thenCompose {
-                    BitmapUtils.loadFromFile(file).toCompletableFuture(database.activity)
-                }
+        // If local storage retrieval fails, fetch the object from the remote database and store it locally
+        return BitmapUtils.loadFromFile(file).continueWithTask {
+            if (it.isSuccessful) {
+                // If the object was successfully loaded from local storage, return it
+                Tasks.forResult(it.result)
+            }
+            else {
+                // If local storage retrieval failed, fetch the object from the remote database and store it locally
+                database.storageImagesRef.child(id)
+                    .getFile(file)
+                    .thenDo {
+                        BitmapUtils.loadFromFile(file)
+                    }
+            }
         }
     }
 
-    internal fun saveToLocalStorageThenSubmit(activity: Activity) : CompletableFuture<TaskSnapshot> {
+    /**
+     * Saves the referenced object to local storage and then submits it to the remote database.
+     * Throws an IllegalArgumentException if the object is not yet loaded.
+     *
+     * @return A task representing the submission of the object to the remote database.
+     * @throws IllegalArgumentException If the value has not yet been sets.
+     */
+    internal fun saveToLocalStorageThenSubmit() : Task<TaskSnapshot> {
         if (!isLoaded) {
             throw IllegalArgumentException("saveToLocalStorageThenSubmit suppose the value is already loaded")
         }
         val bitmap = value!!
+        val file = File(database.localImageFolder.absolutePath, id)
 
-        // Launch the write file process
-        val writeFileFuture = CoroutineScope(Dispatchers.IO).async {
-            val file = File(database.localImageFolder.absolutePath, id)
-            BitmapUtils.saveToFile(bitmap, file, Bitmap.CompressFormat.PNG, 100)
-            file
-        }.asTask().toCompletableFuture(activity)
+        // Write the object to a file on disk
+        val writeFileFuture = BitmapUtils.saveToFile(bitmap, file, Bitmap.CompressFormat.PNG, 100)
 
-        return writeFileFuture.thenCompose { file ->
+        // Submit the object to the remote database
+        return writeFileFuture.thenDo {
             val uri = Uri.fromFile(file)
             val imageRef = database.storageImagesRef.child(id)
-            val uploadTask = imageRef.putFile(uri)
-
-            uploadTask.toCompletableFuture(activity)
+            imageRef.putFile(uri)
         }
     }
 
     companion object {
+        /**
+         * Returns the image ID corresponding to the given challenge ID.
+         *
+         * @param cid The ID of the challenge.
+         * @return The image ID for the challenge.
+         */
         internal fun getImageIdFromChallengeId(cid: String) : String {
             return "challenges-$cid.png"
         }

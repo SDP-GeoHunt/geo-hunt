@@ -5,6 +5,7 @@ import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
+import com.google.android.gms.tasks.Task
 import java.util.concurrent.CompletableFuture
 
 class FirebaseUser(
@@ -19,7 +20,7 @@ class FirebaseUser(
 }
 
 class FirebaseUserRef(override val id: String) : BaseLazyRef<User>() {
-    override fun fetchValue(): CompletableFuture<User> {
+    override fun fetchValue(): Task<User> {
         TODO("Not yet implemented")
     }
 }
