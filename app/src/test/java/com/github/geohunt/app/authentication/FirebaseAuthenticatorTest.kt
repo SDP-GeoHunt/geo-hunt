@@ -60,4 +60,20 @@ class FirebaseAuthenticatorTest {
         verify(mockedFirebaseAuthUi).signOut(eq(context))
     }
 
+    @Test
+    fun signInShouldSimplyReturnUserWhenLoggedIn() {
+        val mockedUser = mock<FirebaseUser> {
+            on { displayName } doReturn("Display name")
+            on  { uid } doReturn("Uid")
+        }
+        val mockedFirebaseAuth = mock<FirebaseAuth> {
+            on { currentUser } doReturn mockedUser
+        }
+        val auth = FirebaseAuthenticator(mockedFirebaseAuth, mock())
+
+        val res = auth.authenticate(mock())
+        assert(res.isDone)
+        assert(res.get().uid == "Uid")
+    }
+
 }

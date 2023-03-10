@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components
+package com.github.geohunt.app.ui.components.navigation
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
