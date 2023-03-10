@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.leaderboard
 
+/*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.*
@@ -16,6 +17,8 @@ enum class LeaderboardChoice(val text: String) {
 /**
  * Draws the leaderboard chips used to select between global and friends
  * leaderboards.
+ *
+ * This file can be ignored until different leaderboards are implemented.
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -46,3 +49,4 @@ fun LeaderboardChips() {
         LeaderboardChip(LeaderboardChoice.FRIENDS, isSelected = selectedLeaderboard == LeaderboardChoice.FRIENDS)
     }
 }
+*/

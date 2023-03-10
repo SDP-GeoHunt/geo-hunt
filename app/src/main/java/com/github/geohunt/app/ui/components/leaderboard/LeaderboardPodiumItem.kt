@@ -30,19 +30,15 @@ import com.github.geohunt.app.ui.theme.geoHuntRed
  * @param position A number between 0 and 2 indicating the user's ranking.
  */
 @Composable
-fun PodiumItem(user: User, position: Int) {
+fun LeaderboardPodiumItem(user: User, position: Int) {
     assert(position in 0..2) { "Position in PodiumItem should be in 0..2" }
 
     val height = arrayOf(100. dp, 70. dp, 70. dp)[position]
     val opacity = (80 - (20 * position)) / 100.0f
 
-    @Composable
-    fun Points(score: Number) {
-        Text("$score pts", fontSize = 16.sp, fontWeight = FontWeight.Light, color = Color.White)
-    }
-
     Row(
         Modifier
+            .padding(horizontal = 16. dp)
             .clip(CircleShape)
             .background(color = geoHuntRed.copy(alpha = opacity))
             .height(height)
@@ -50,7 +46,7 @@ fun PodiumItem(user: User, position: Int) {
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data("https://picsum.photos/430/400")
+                .data("https://picsum.photos/430/400") // TODO Integrate with user
                 .crossfade(true)
                 .build(),
             contentDescription = "${user.displayName} profile picture",
@@ -74,7 +70,7 @@ fun PodiumItem(user: User, position: Int) {
             )
 
             if (position == 0) {
-                Points(user.score)
+                LeaderboardScore(user.score, color = Color.White)
             }
         }
 
@@ -87,7 +83,7 @@ fun PodiumItem(user: User, position: Int) {
             verticalArrangement = Arrangement.Center
         ) {
             if (position != 0) {
-                Points(user.score)
+                LeaderboardScore(user.score, color = Color.White)
             } else {
                 Icon(
                     painter = painterResource(R.drawable.baseline_local_fire_department_24),
