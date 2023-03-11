@@ -68,7 +68,7 @@ class LeaderboardTest {
             )
 
             GeoHuntTheme {
-                Leaderboard(sortedUsers = mockUsers, currentUser = mockUsers[youIndex])
+                Leaderboard(users = mockUsers, currentUser = mockUsers[youIndex])
             }
         }
     }
