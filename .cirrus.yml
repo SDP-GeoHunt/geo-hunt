@@ -12,7 +12,7 @@ check_android_task:
   alias: check_android
   install_ffmpeg_script: |
     sudo apt-get update
-    sudo apt-get install -y ffmpeg
+    sudo apt-get install -y ffmpeg netcat
   install_emulator_script:
     sdkmanager --install "system-images;android-30;google_apis;x86"
   create_avd_script:
@@ -33,6 +33,8 @@ check_android_task:
     ./gradlew assembleDebugAndroidTest
   wait_for_avd_script:
     adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 3; done; input keyevent 82'
+  avd_set_location_script:
+    echo -n geo fix 41.40338 2.17403 | nc -q 1 localhost 5554
   disable_animations_script: |
     adb shell settings put global window_animation_scale 0.0
     adb shell settings put global transition_animation_scale 0.0

@@ -109,11 +109,7 @@ class CreateChallengeViewTest {
         }
 
         // Wait until
-        composeTestRule.waitUntil(10000) {
-            composeTestRule
-                .onAllNodes(hasText("Create challenge").and(androidx.compose.ui.test.isEnabled()))
-                .fetchSemanticsNodes().size == 1
-        }
+        composeTestRule.waitForIdle()
 
         // Check that the button create challenge is displayed
         composeTestRule.onNodeWithText("Create challenge")
