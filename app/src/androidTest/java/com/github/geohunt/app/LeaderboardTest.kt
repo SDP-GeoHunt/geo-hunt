@@ -79,6 +79,16 @@ class LeaderboardTest {
     }
 
     @Test
+    fun timeDropdownCorrectlySelectsOption() {
+        testRule.onNode(hasText("All time") and hasClickAction()).performClick()
+        testRule.onNode(hasText("Monthly") and hasClickAction()).performClick()
+
+        // Check that the option was correctly selected
+        testRule.onAllNodesWithText("All time").assertCountEquals(0)
+        testRule.onAllNodesWithText("Monthly").assertCountEquals(1)
+    }
+
+    @Test
     fun usersAppearExactlyOnceInLeaderboard() {
         for ((i, user) in mockUsers.withIndex()) {
             // Check that every name is printed exactly once
