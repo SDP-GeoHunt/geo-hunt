@@ -18,14 +18,13 @@ import com.github.geohunt.app.ui.components.user.ProfileIcon
  *
  * @param position The position of the user in the leaderboard.
  * @param user The user in the ranking.
- * @param isYou Whether the shown user should be sticky instead of a list item.
- *              This uses alternate styling.
+ * @param isCurrent Whether the item corresponds to the current user shown at the bottom of the screen
  */
 @Composable
 fun LeaderboardListItem(
     position: Int,
     user: User,
-    isYou: Boolean = false
+    isCurrent: Boolean = false
 ) {
     assert(position >= 0) { "position should be non-negative."}
 
@@ -36,8 +35,8 @@ fun LeaderboardListItem(
         else -> 12. sp
     }
 
-    val backgroundColor = if (isYou) Color(0xFFFF7A00) else Color.White
-    val textColor = if (isYou) Color.White else Color.Black
+    val backgroundColor = if (isCurrent) Color(0xFFFF7A00) else Color.White
+    val textColor = if (isCurrent) Color.White else Color.Black
 
     Row(
         Modifier
@@ -57,7 +56,7 @@ fun LeaderboardListItem(
         ProfileIcon(user = user)
 
         when {
-            isYou -> Text("You", color = textColor, fontWeight = FontWeight.SemiBold)
+            isCurrent -> Text("You", color = textColor, fontWeight = FontWeight.SemiBold)
             else -> Text(user.displayName, color = textColor)
         }
 

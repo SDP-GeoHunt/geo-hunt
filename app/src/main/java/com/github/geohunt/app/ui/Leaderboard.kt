@@ -13,14 +13,14 @@ import com.github.geohunt.app.ui.components.leaderboard.*
 /**
  * Creates the leaderboard view.
  * 
- * The top 3 users are given special styling (see [[LeaderboardPodiumItem]]).
+ * The top 3 users are given special styling (see [LeaderboardPodiumItem]).
  *
- * @param sortedUsers The users of the leaderboard, ranked by score.
+ * @param users The users of the leaderboard, ranked by score.
  * @param currentUser The current user viewing the leaderboard, as seen in the bottom of the screen.
  */
 @Composable
 fun Leaderboard(
-    sortedUsers: List<User>,
+    users: List<User>,
     currentUser: User
 ) {
     Column {
@@ -38,7 +38,7 @@ fun Leaderboard(
         LazyColumn(
             Modifier.weight(1.0f)
         ) {
-            itemsIndexed(sortedUsers) { index: Int, user: User ->
+            itemsIndexed(users) { index: Int, user: User ->
                 when(index) {
                     in 0..2 -> {
                         LeaderboardPodiumItem(position = index, user = user)
@@ -59,10 +59,11 @@ fun Leaderboard(
             }
         }
 
+        // Bottom "You" item
         LeaderboardListItem(
-            position = sortedUsers.indexOf(currentUser),
+            position = users.indexOf(currentUser),
             user = currentUser,
-            isYou = true
+            isCurrent = true
         )
     }
 }
