@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.sp
  * Draws the score of the user on the leaderboard
  *
  * @param score The score to be drawn.
+ * @param color The color of the text.
  */
 @Composable
 fun LeaderboardScore(score: Number, color: Color = Color.Black) {

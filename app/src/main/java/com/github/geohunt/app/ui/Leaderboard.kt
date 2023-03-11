@@ -12,6 +12,8 @@ import com.github.geohunt.app.ui.components.leaderboard.*
 
 /**
  * Creates the leaderboard view.
+ * 
+ * The top 3 users are given special styling (see [[LeaderboardPodiumItem]]).
  *
  * @param sortedUsers The users of the leaderboard, ranked by score.
  * @param currentUser The current user viewing the leaderboard, as seen in the bottom of the screen.
