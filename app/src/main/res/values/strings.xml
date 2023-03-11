@@ -9,4 +9,6 @@
     <string name="navigation.profile">Profile</string>
     <string name="title_activity_start">StartActivity</string>
     <string name="title_activity_login">LoginActivity</string>
+
+    <string name="sign_in">Sign in</string>
 </resources>

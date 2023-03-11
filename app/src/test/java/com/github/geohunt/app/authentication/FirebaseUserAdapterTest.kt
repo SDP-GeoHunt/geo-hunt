@@ -27,7 +27,7 @@ class FirebaseUserAdapterTest {
             on { uid } doReturn "uid"
         }
         val adapter = FirebaseUserAdapter(firebaseUser)
-        assert(adapter.uid.equals("uid"))
+        assert(adapter.uid == "uid")
     }
 
     @Test

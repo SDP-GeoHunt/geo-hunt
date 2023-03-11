@@ -19,16 +19,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.authentication.Authenticator
-import com.github.geohunt.app.authentication.FirebaseAuthenticator
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.github.geohunt.app.ui.theme.md_theme_light_primary
 import com.github.geohunt.app.ui.theme.seed
 
-class LoginActivity(
-    private val authenticator: Authenticator = FirebaseAuthenticator()
-) : ComponentActivity() {
+class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val authenticator: Authenticator = ServiceLocator.getAuthenticator()
 
         authenticator.user?.let { loggedIn() }
 
