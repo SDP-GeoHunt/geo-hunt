@@ -1,0 +1,98 @@
+package com.github.geohunt.app
+
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.createComposeRule
+import com.github.geohunt.app.model.database.api.PictureImage
+import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.Leaderboard
+import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+
+class LeaderboardTest {
+    private val names = listOf(
+        "John Smith",
+        "Amrit Ayuba",
+        "Teodósio Kajal",
+        "Hjalmar Radoslav",
+        "Arthit Dwain"
+    )
+
+    private val youIndex = 2
+
+    /**
+     * Creates a mock user with a random name in [[names]].
+     */
+    private fun mockUser(pos: Int): User {
+        return object : User {
+            override var displayName: String = names[pos]
+            override val uid: String = pos.toString()
+            override val profilePicture: PictureImage? = null
+            override val challenges: List<String> = listOf()
+            override val hunts: List<String> = listOf()
+            override var score: Number = 1500 - pos * 100
+        }
+    }
+
+    private val mockUsers = List(names.size) { i -> mockUser(i) }
+
+    @get:Rule
+    val testRule = createComposeRule()
+
+    @Before
+    fun setupMockLeaderboard() {
+        testRule.setContent {
+            GeoHuntTheme {
+                Leaderboard(sortedUsers = mockUsers, currentUser = mockUsers[youIndex])
+            }
+        }
+    }
+
+    @Test
+    fun usersAppearExactlyOnceInLeaderboard() {
+        for ((i, user) in mockUsers.withIndex()) {
+            // Check that every name is printed exactly once
+            testRule.onAllNodesWithText(user.displayName).assertCountEquals(1)
+
+            val siblings = testRule.onNodeWithText(user.displayName).onSiblings()
+
+            // Check that the position is printed once
+            val position = when(i) {
+                in 0..2 -> "${i+1}."
+                else -> (i + 1).toString()
+            }
+
+            siblings
+                .filter(hasText(position))
+                .assertCountEquals(1)
+
+            // Check that the image is printed once
+            siblings
+                .filter(hasContentDescription("${user.displayName} profile picture"))
+                .assertCountEquals(1)
+
+            // Check that the score is printed once
+            siblings
+                .filter(hasText("${user.score} pts"))
+                .assertCountEquals(1)
+        }
+    }
+
+    @Test
+    fun topUserGetsFireIcon() {
+        testRule.onNodeWithText(mockUsers[0].displayName)
+            .onSiblings()
+            .filterToOne(hasContentDescription("Fire !"))
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun youItemIsPresent() {
+        val you = testRule.onNodeWithText("You", useUnmergedTree = true)
+
+        you.assertIsDisplayed()
+        you.onSiblings().filterToOne(hasTextExactly((youIndex + 1).toString())).assertIsDisplayed()
+        you.onSiblings().filterToOne(hasTextExactly("${mockUsers[youIndex].score} pts")).assertIsDisplayed()
+    }
+}
