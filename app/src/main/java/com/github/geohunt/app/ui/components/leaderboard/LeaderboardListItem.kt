@@ -2,20 +2,16 @@ package com.github.geohunt.app.ui.components.leaderboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 /**
  * Draws a leaderboard list item.
@@ -58,16 +54,7 @@ fun LeaderboardListItem(
             color = textColor
         )
 
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data("https://picsum.photos/430/400") // TODO Integrate with user
-                .crossfade(true)
-                .build(),
-            contentDescription = "${user.displayName} profile picture",
-            modifier = Modifier
-                .padding(8.dp)
-                .clip(CircleShape)
-        )
+        ProfileIcon(user = user)
 
         when {
             isYou -> Text("You", color = textColor, fontWeight = FontWeight.SemiBold)

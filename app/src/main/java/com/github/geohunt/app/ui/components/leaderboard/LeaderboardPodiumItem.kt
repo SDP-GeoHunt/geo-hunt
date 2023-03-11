@@ -9,14 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.theme.Lobster
 import com.github.geohunt.app.ui.theme.geoHuntRed
 
@@ -43,14 +41,7 @@ fun LeaderboardPodiumItem(user: User, position: Int) {
             .height(height)
             .fillMaxWidth()
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data("https://picsum.photos/430/400") // TODO Integrate with user
-                .crossfade(true)
-                .build(),
-            contentDescription = "${user.displayName} profile picture",
-            modifier = Modifier.padding(8. dp).clip(CircleShape)
-        )
+        ProfileIcon(user = user)
 
         Column(
             verticalArrangement = Arrangement.Center
