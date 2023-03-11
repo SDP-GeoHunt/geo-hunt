@@ -2,15 +2,26 @@ package com.github.geohunt.app
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import coil.Coil
+import coil.ImageLoader
+import coil.request.CachePolicy
 import com.github.geohunt.app.model.database.api.PictureImage
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.Leaderboard
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import com.github.geohunt.app.utils.ImageIdlingResource
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class LeaderboardTest {
+    /**
+     * The image idling resources. Need to be setup before and released after every test.
+     */
+    private lateinit var imageResources: ImageIdlingResource
+
     private val names = listOf(
         "John Smith",
         "Amrit Ayuba",
@@ -42,11 +53,29 @@ class LeaderboardTest {
 
     @Before
     fun setupMockLeaderboard() {
+        imageResources = ImageIdlingResource()
+        testRule.registerIdlingResource(imageResources)
+
         testRule.setContent {
+            // Set up every [AsyncImage] to use this custom ImageLoader so that calls can be tracked
+            Coil.setImageLoader(
+                ImageLoader.Builder(getApplicationContext())
+                    .memoryCachePolicy(CachePolicy.DISABLED)
+                    .diskCachePolicy(CachePolicy.DISABLED)
+                    .networkObserverEnabled(false)
+                    .eventListener(imageResources)
+                    .build()
+            )
+
             GeoHuntTheme {
                 Leaderboard(sortedUsers = mockUsers, currentUser = mockUsers[youIndex])
             }
         }
+    }
+
+    @After
+    fun releaseResources() {
+        testRule.unregisterIdlingResource(imageResources)
     }
 
     @Test
