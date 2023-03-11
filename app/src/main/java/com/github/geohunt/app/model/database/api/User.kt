@@ -1,9 +1,7 @@
 package com.github.geohunt.app.model.database.api
 
-import com.github.geohunt.app.model.database.api.PictureImage
-
 interface User {
-    var displayName: String?
+    var displayName: String
 
     val uid: String
 

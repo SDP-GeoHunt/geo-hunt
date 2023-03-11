@@ -11,7 +11,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -64,7 +63,7 @@ fun LeaderboardPodiumItem(user: User, position: Int) {
                 modifier = Modifier.height(38. dp).padding(top = 3. dp)
             )
             Text(
-                user.displayName ?: ("@" + user.uid),
+                user.displayName,
                 fontSize = 18. sp,
                 color = Color.White
             )

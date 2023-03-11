@@ -71,7 +71,7 @@ fun LeaderboardListItem(
 
         when {
             isYou -> Text("You", color = textColor, fontWeight = FontWeight.SemiBold)
-            else -> Text(user.displayName ?: ("@" + user.uid), color = textColor)
+            else -> Text(user.displayName, color = textColor)
         }
 
         Spacer(Modifier.weight(1.0f))
