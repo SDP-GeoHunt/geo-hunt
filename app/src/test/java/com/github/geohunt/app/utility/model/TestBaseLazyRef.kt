@@ -1,5 +1,6 @@
-package com.github.geohunt.app.model
+package com.github.geohunt.app.utility.model
 
+import com.github.geohunt.app.model.BaseLazyRef
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
