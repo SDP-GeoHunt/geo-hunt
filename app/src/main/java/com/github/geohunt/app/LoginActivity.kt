@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -66,7 +68,7 @@ fun LoginScreen(context: Context) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "GeoHunt",
+            text = stringResource(id = R.string.app_name),
             textAlign = TextAlign.Center,
             style = TextStyle(
                 brush = Brush.linearGradient(
@@ -77,12 +79,13 @@ fun LoginScreen(context: Context) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = {
+        Button(modifier = Modifier.testTag("signin-btn"),
+            onClick = {
             val intent = Intent(context, LoginActivity::class.java)
             intent.putExtra("login", 1)
             context.startActivity(intent)
         }) {
-            Text("Sign in")
+            Text(stringResource(id = R.string.sign_in))
         }
 
     }
