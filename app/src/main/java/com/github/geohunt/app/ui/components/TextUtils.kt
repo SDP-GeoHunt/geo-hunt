@@ -11,9 +11,9 @@ import com.github.geohunt.app.ui.theme.Typography
 
 data class LinkTextData(
         val text: String,
-        val tag: String? = null,
-        val annotation: String? = null,
-        val onClick: ((str: AnnotatedString.Range<String>) -> Unit)? = null,
+        val tag: String ?= null,
+        val annotation: String ?= null,
+        val onClick: ((str: AnnotatedString.Range<String>) -> Unit) ?= null,
 )
 
 @Composable

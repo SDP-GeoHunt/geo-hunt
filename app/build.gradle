@@ -84,6 +84,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.hamcrest:hamcrest:2.2'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
     // required if you want to use Mockito for unit tests
     testImplementation 'org.mockito:mockito-inline:4.8.0'
     testImplementation "org.powermock:powermock-core:1.7.3"

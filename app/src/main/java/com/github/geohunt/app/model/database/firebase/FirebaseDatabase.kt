@@ -2,6 +2,7 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
 import android.graphics.Bitmap
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
@@ -62,6 +63,9 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
 
     /**
      * Creates a new Challenge and stores it to the Firebase Database and Storage.
+     * Notice that the given bitmap should not have more pixel than
+     * [R.integer.maximum_number_of_pixel_per_photo] overwise this function will throw
+     * an [IllegalArgumentException]
      *
      * @param thumbnail the thumbnail of the challenge
      * @param location the location of the challenge
@@ -73,6 +77,9 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
         location: Location,
         expirationDate: LocalDateTime?
     ): Task<Challenge> {
+        // Requirements
+        require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
+
         // State variable
         val coarseHash = location.getCoarseHash()
         val dbChallengeRef = dbChallengeRef.child(coarseHash).push()

@@ -4,9 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -17,28 +14,24 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.lifecycle.ViewModel
 import com.github.geohunt.app.BuildConfig
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.sensor.rememberLocationRequestState
 import com.github.geohunt.app.sensor.rememberPermissionsState
-import com.github.geohunt.app.ui.findActivity
-import com.github.geohunt.app.utility.BitmapUtils
-import com.github.geohunt.app.utility.onException
-import com.github.geohunt.app.utility.toCompletableFuture
+import com.github.geohunt.app.utility.*
+import kotlinx.coroutines.tasks.asTask
 import java.io.File
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 private fun Context.createImageFile(): File {
@@ -47,12 +40,12 @@ private fun Context.createImageFile(): File {
     return File.createTempFile(
         imageFileName, /* prefix */
         ".jpg", /* suffix */
-        externalCacheDir      /* directory */
+        externalCacheDir /* directory */
     )
 }
 
 @Composable
-private fun CreateChallengeForm(
+fun CreateChallengeForm(
     bitmap: Bitmap,
     database: Database,
     onChallengeCreated: (Challenge) -> Unit,
@@ -71,7 +64,8 @@ private fun CreateChallengeForm(
             .thenCompose {
                 locationRequest.launchLocationRequest()
             }
-            .onException(onFailure)
+            .thenApply {  }
+            .exceptionally(onFailure)
     }
 
     Box(
@@ -92,6 +86,9 @@ private fun CreateChallengeForm(
 
             Image(
                 painter = bitmapPainter,
+                modifier = Modifier
+                    .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
+                    .fillMaxSize(),
                 contentDescription = "Photo just taken of the challenge"
             )
 
@@ -105,7 +102,8 @@ private fun CreateChallengeForm(
                               expirationDate = null
                           ).toCompletableFuture(activity)
                               .thenApply(onChallengeCreated)
-                              .onException(onFailure)
+                              .thenApply {  }
+                              .exceptionally(onFailure)
                 },
                 enabled = (locationRequest.lastLocation.value != null)
             ) {
@@ -139,12 +137,16 @@ fun CreateNewChallenge(
             onFailure(RuntimeException("Failed to take the photo"))
         }
         else {
-            BitmapUtils.loadFromFile(file)
+            BitmapUtils.loadFromFileAsync(file).asTask()
+                .thenDo {  bitmap ->
+                    BitmapUtils.resizeBitmapToFitAsync(bitmap, R.integer.maximum_number_of_pixel_per_photo).asTask()
+                }
                 .toCompletableFuture(context.findActivity())
                 .thenAccept { bitmap ->
                     bitmapResult.value = bitmap
                 }
-                .onException(onFailure)
+                .thenApply {  }
+                .exceptionally(onFailure)
         }
     }
 

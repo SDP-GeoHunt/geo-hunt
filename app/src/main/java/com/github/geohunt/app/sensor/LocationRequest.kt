@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.ui.findActivity
+import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource

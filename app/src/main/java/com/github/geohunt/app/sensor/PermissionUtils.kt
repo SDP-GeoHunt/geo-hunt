@@ -15,7 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.github.geohunt.app.sensor.PermissionStatus.Denied
 import com.github.geohunt.app.sensor.PermissionStatus.Granted
-import com.github.geohunt.app.ui.findActivity
+import com.github.geohunt.app.utility.findActivity
 import java.util.concurrent.CompletableFuture
 
 /**

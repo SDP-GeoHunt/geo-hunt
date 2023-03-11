@@ -15,8 +15,7 @@ import kotlinx.coroutines.tasks.asTask
 import java.io.File
 
 internal class FirebaseBitmapRef(
-    override val id: String,
-    private val database: FirebaseDatabase
+    override val id: String, private val database: FirebaseDatabase
 ) : BaseLazyRef<Bitmap>() {
 
     /**
@@ -31,17 +30,14 @@ internal class FirebaseBitmapRef(
         val file = File(database.localImageFolder.absolutePath, id)
 
         // If local storage retrieval fails, fetch the object from the remote database and store it locally
-        return BitmapUtils.loadFromFile(file).continueWithTask {
+        return BitmapUtils.loadFromFileAsync(file).asTask().continueWithTask {
             if (it.isSuccessful) {
                 // If the object was successfully loaded from local storage, return it
                 Tasks.forResult(it.result)
-            }
-            else {
+            } else {
                 // If local storage retrieval failed, fetch the object from the remote database and store it locally
-                database.storageImagesRef.child(id)
-                    .getFile(file)
-                    .thenDo {
-                        BitmapUtils.loadFromFile(file)
+                database.storageImagesRef.child(id).getFile(file).thenDo {
+                        BitmapUtils.loadFromFileAsync(file).asTask()
                     }
             }
         }
@@ -54,7 +50,7 @@ internal class FirebaseBitmapRef(
      * @return A task representing the submission of the object to the remote database.
      * @throws IllegalArgumentException If the value has not yet been sets.
      */
-    internal fun saveToLocalStorageThenSubmit() : Task<TaskSnapshot> {
+    internal fun saveToLocalStorageThenSubmit(): Task<TaskSnapshot> {
         if (!isLoaded) {
             throw IllegalArgumentException("saveToLocalStorageThenSubmit suppose the value is already loaded")
         }
@@ -62,7 +58,8 @@ internal class FirebaseBitmapRef(
         val file = File(database.localImageFolder.absolutePath, id)
 
         // Write the object to a file on disk
-        val writeFileFuture = BitmapUtils.saveToFile(bitmap, file, Bitmap.CompressFormat.PNG, 100)
+        val writeFileFuture =
+            BitmapUtils.saveToFileAsync(bitmap, file, Bitmap.CompressFormat.PNG, 100).asTask()
 
         // Submit the object to the remote database
         return writeFileFuture.thenDo {
@@ -79,7 +76,7 @@ internal class FirebaseBitmapRef(
          * @param cid The ID of the challenge.
          * @return The image ID for the challenge.
          */
-        internal fun getImageIdFromChallengeId(cid: String) : String {
+        internal fun getImageIdFromChallengeId(cid: String): String {
             return "challenges-$cid.png"
         }
     }
