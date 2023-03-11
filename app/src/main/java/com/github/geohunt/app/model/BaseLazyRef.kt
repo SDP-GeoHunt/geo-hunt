@@ -3,7 +3,6 @@ package com.github.geohunt.app.model
 import androidx.databinding.BaseObservable
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 

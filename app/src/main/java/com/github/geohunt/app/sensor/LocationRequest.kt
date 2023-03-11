@@ -1,8 +1,10 @@
 package com.github.geohunt.app.sensor
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.annotation.RequiresPermission
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -12,11 +14,11 @@ import androidx.core.app.ActivityCompat
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.utility.findActivity
-import com.google.android.gms.location.LocationRequest
+import com.github.geohunt.app.utility.toCompletableFuture
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import java.util.concurrent.CompletableFuture
-import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * State of a location request
@@ -36,7 +38,7 @@ interface LocationRequestState {
      *
      * Launch the location request and await the result
      */
-    fun launchLocationRequest() : CompletableFuture<Location>
+    fun requestLocation() : CompletableFuture<Location>
 }
 
 
@@ -45,29 +47,47 @@ interface LocationRequestState {
  */
 @Composable
 fun rememberLocationRequestState() : LocationRequestState {
-    val locationManager = LocationRequestAndroidImplementation(LocalContext.current)
-    locationManager.lastLocation = remember { mutableStateOf(null) }
-    locationManager.multiplePermissionState = rememberPermissionsState(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
+    return LocationRequestAndroidImplementation(
+        LocalContext.current,
+        remember { mutableStateOf(null) },
+        rememberPermissionsState(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
     )
-
-    return locationManager
 }
 
 /**
  * Default implementation for the [LocationRequestState]
  */
-private class LocationRequestAndroidImplementation(private val context : Context) : LocationRequestState
+private class LocationRequestAndroidImplementation(private val context : Context,
+                                                   override val lastLocation : MutableState<Location?>,
+                                                   val multiplePermissionState : MultiplePermissionState) : LocationRequestState
 {
-    override lateinit var lastLocation : MutableState<Location?>
-
     private val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context.findActivity())
     private val cancellationTokenSource = CancellationTokenSource()
     private var currentFuture : CompletableFuture<Location>? = null
-    internal var multiplePermissionState : MultiplePermissionState? = null
 
-    override fun launchLocationRequest(): CompletableFuture<Location> {
+    /**
+     * Request the location after having check that the corresponding permissions were granted
+     */
+    @RequiresPermission(anyOf = ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"])
+    private fun requestLocationWithPermissions(activity: Activity) {
+        fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token)
+            .toCompletableFuture(activity)
+            .thenApply {
+                var location = Location(it.latitude, it.longitude)
+                // The server is currently public and therefore we should maybe protect our location :)
+                if (BuildConfig.DEBUG) {
+                    location = location.getCoarseLocation()
+                }
+                lastLocation.value = location
+                currentFuture!!.complete(location)
+            }
+            .exceptionally(currentFuture!!::completeExceptionally)
+    }
+
+    override fun requestLocation(): CompletableFuture<Location> {
         if (currentFuture != null) {
             return currentFuture!!
         }
@@ -76,30 +96,13 @@ private class LocationRequestAndroidImplementation(private val context : Context
         val future = CompletableFuture<Location>()
         currentFuture = future
 
-        multiplePermissionState!!.requestPermissions().thenRun {
+        multiplePermissionState.requestPermissions().thenRun {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            {
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 future.completeExceptionally(IllegalStateException("Permission race condition detected"))
             }
-            else
-            {
-                fusedLocationProviderClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, cancellationTokenSource.token)
-                    .addOnSuccessListener(activity) {
-                        var location = Location(it.latitude, it.longitude)
-                        // The server is currently public and therefore we should maybe protect our location :)
-                        if (BuildConfig.DEBUG) {
-                            location = location.getCoarseLocation()
-                        }
-                        lastLocation.value = location
-                        future.complete(location)
-                    }
-                    .addOnFailureListener(activity) {
-                        future.completeExceptionally(it)
-                    }
-                    .addOnCanceledListener(activity) {
-                        future.completeExceptionally(CancellationException())
-                    }
+            else {
+                requestLocationWithPermissions(activity)
             }
         }
 

@@ -2,7 +2,6 @@ package com.github.geohunt.app.sensor
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -122,62 +121,58 @@ class PermissionDeniedException(permissions: List<String>) :
  */
 @Composable
 fun rememberPermissionsState(vararg permissions: String): MultiplePermissionState {
-    val context = LocalContext.current
     val mutableMultiplePermissionState = remember {
         MutableMultiplePermissionState()
     }
+    mutableMultiplePermissionState.Initialize(permissions.asList())
+    return mutableMultiplePermissionState
+}
 
-    // Create permission list
-    mutableMultiplePermissionState.permissions = remember {
-        mutableStateOf(permissions.asList().map {
-            Permission(it).updated(context)
-        })
+
+private class MutableMultiplePermissionState() : MultiplePermissionState {
+
+    override lateinit var permissions: MutableState<List<Permission>>
+    var launcher: ActivityResultLauncher<Array<String>>? = null
+    var future: CompletableFuture<Void>? = null
+
+    @Composable
+    fun Initialize(perms : List<String>) {
+        val context = LocalContext.current
+
+        permissions = remember {
+            mutableStateOf(perms.map {
+                Permission(it).updated(context)
+            })
+        }
+
+        launcher = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result ->
+            updatePermissions(result)
+        }
     }
 
-    mutableMultiplePermissionState.launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions()
-    ) { result ->
-        // First update the state of the mutable permission state
-        mutableMultiplePermissionState.permissions.value =
-            mutableMultiplePermissionState.permissions.value.map {
-                if (result.getOrElse(it.name) { true }) {
+    private fun updatePermissions(permissionsUpdated: Map<String, Boolean>) {
+        // First update list of the mutable permission state
+        permissions.value =
+            permissions.value.map {
+                if (permissionsUpdated.getOrElse(it.name) { true }) {
                     it.updated(Granted)
                 } else {
                     it.updated(Denied(true))
                 }
             }
 
-        // Secondly make the future either succeed or failed
-        val deniedPermissions = mutableMultiplePermissionState.permissions
-            .value
-            .filter { it.status.isDenied }
-            .map { it.name }
+        // Complete the future (either succeed or failed)
+        val deniedPermissions = permissions.value.filter { it.status.isDenied }.map { it.name }
 
+        // Either succeed or deny the future
         if (deniedPermissions.isEmpty()) {
-            mutableMultiplePermissionState.future?.complete(null)
+            future?.complete(null)
         } else {
-            Log.e(
-                "GeoHunt",
-                "The following permissions: $deniedPermissions were denied by the user"
-            )
-            mutableMultiplePermissionState.future?.completeExceptionally(
-                PermissionDeniedException(
-                    deniedPermissions
-                )
-            )
+            future?.completeExceptionally(PermissionDeniedException(deniedPermissions))
         }
     }
-
-    return mutableMultiplePermissionState
-}
-
-
-private class MutableMultiplePermissionState() : MultiplePermissionState {
-    override lateinit var permissions: MutableState<List<Permission>>
-
-    internal var launcher: ActivityResultLauncher<Array<String>>? = null
-
-    var future: CompletableFuture<Void>? = null
 
     override fun requestPermissions(): CompletableFuture<Void> {
         if (future != null) {

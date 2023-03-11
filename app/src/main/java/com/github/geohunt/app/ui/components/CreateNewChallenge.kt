@@ -3,7 +3,6 @@ package com.github.geohunt.app.ui.components
 import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -18,10 +17,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
-import androidx.lifecycle.ViewModel
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.Database
@@ -62,7 +59,7 @@ fun CreateChallengeForm(
     LaunchedEffect(true) {
         locationPermission.requestPermissions()
             .thenCompose {
-                locationRequest.launchLocationRequest()
+                locationRequest.requestLocation()
             }
             .thenApply {  }
             .exceptionally(onFailure)

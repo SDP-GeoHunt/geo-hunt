@@ -92,13 +92,9 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
             claims = listOf(),
             location = location
         )
-        // Convert the publishedDate from UTC to Local time
-        val publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!)
 
-        // Get the reference to the thumbnail Bitmap
+        // Get the reference to the thumbnail Bitmap and set the value
         val thumbnailBitmap = getThumbnailRefById(challengeId)
-
-        // Set the value of the thumbnail Bitmap to the provided thumbnail
         thumbnailBitmap.value = thumbnail
 
         // Create both jobs (update database, update storage)
@@ -111,7 +107,7 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
                 cid = challengeId,
                 author = getUserRefById(currentUser),
                 thumbnail = thumbnailBitmap,
-                publishedDate = publishedDate,
+                publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!),
                 expirationDate = expirationDate,
                 correctLocation = location,
                 claims = listOf()
