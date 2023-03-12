@@ -42,17 +42,11 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
     }
 
     private val challengeRefById = HashMap<String, FirebaseChallengeRef>().withDefault {
-        FirebaseChallengeRef(
-            id = it,
-            database = this
-        )
+        FirebaseChallengeRef(it, this)
     }
 
     private val imageRefById = HashMap<String, FirebaseBitmapRef>().withDefault {
-        FirebaseBitmapRef(
-            id = it,
-            database = this
-        )
+        FirebaseBitmapRef(it, this)
     }
 
     init {

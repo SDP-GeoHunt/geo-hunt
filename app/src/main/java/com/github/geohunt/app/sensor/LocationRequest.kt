@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.utility.Singleton
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.toCompletableFuture
 import com.google.android.gms.location.LocationServices
@@ -39,6 +40,22 @@ interface LocationRequestState {
      * Launch the location request and await the result
      */
     fun requestLocation() : CompletableFuture<Location>
+
+    companion object {
+        /**
+         * Default [LocationRequestState] factory (used for mocking during testing)
+         */
+        val defaultFactory = Singleton<@Composable () -> LocationRequestState> {
+            LocationRequestAndroidImplementation(
+                LocalContext.current,
+                remember { mutableStateOf(null) },
+                rememberPermissionsState(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            )
+        }
+    }
 }
 
 
@@ -47,14 +64,7 @@ interface LocationRequestState {
  */
 @Composable
 fun rememberLocationRequestState() : LocationRequestState {
-    return LocationRequestAndroidImplementation(
-        LocalContext.current,
-        remember { mutableStateOf(null) },
-        rememberPermissionsState(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-    )
+    return LocationRequestState.defaultFactory.get()()
 }
 
 /**
