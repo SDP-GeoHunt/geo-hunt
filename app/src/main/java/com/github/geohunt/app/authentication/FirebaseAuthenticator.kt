@@ -23,7 +23,7 @@ class FirebaseAuthenticator(
         }
 
     override fun authenticate(activity: ComponentActivity): CompletableFuture<User> {
-        if (user != null) CompletableFuture.completedFuture(user)
+        if (user != null) return CompletableFuture.completedFuture(user)
 
         val completableFuture = CompletableFuture<User>()
         val signInLauncher = activity.registerForActivityResult(
