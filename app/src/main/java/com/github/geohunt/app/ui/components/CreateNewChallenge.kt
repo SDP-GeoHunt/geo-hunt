@@ -1,8 +1,12 @@
 package com.github.geohunt.app.ui.components
 
 import android.Manifest
+import android.R.style
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -16,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -25,11 +30,13 @@ import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.sensor.rememberLocationRequestState
 import com.github.geohunt.app.sensor.rememberPermissionsState
+import com.github.geohunt.app.ui.theme.Typography
 import com.github.geohunt.app.utility.*
 import kotlinx.coroutines.tasks.asTask
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 private fun Context.createImageFile(): File {
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
@@ -48,9 +55,14 @@ fun CreateChallengeForm(
     onChallengeCreated: (Challenge) -> Unit,
     onFailure: (Throwable) -> Unit
 ) {
-    val activity = LocalContext.current.findActivity()
+    val context = LocalContext.current
+    val activity = context.findActivity()
     val bitmapPainter = remember { BitmapPainter(bitmap.asImageBitmap()) }
     val locationRequest = rememberLocationRequestState()
+    val communityGuidelinesUrl = stringResource(R.string.community_guidelines_url)
+    val openCommunityGuidelinesIntent = remember {
+        Intent(Intent.ACTION_VIEW, Uri.parse(communityGuidelinesUrl))
+    }
     val locationPermission = rememberPermissionsState(
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_FINE_LOCATION
@@ -91,6 +103,20 @@ fun CreateChallengeForm(
 
             Spacer(Modifier.height(25.dp))
 
+            LinkText(listOf(
+                LinkTextData("By creating a challenge, you agree to GeoHunt's "),
+                LinkTextData(
+                    text = "Community Guidelines",
+                    tag = "",
+                    annotation = "",
+                    onClick = {
+                        context.startActivity(openCommunityGuidelinesIntent)
+                    }
+                )
+            ), style = Typography.h5)
+
+            Spacer(Modifier.height(15.dp))
+
             Button(
                 onClick = {
                           database.createChallenge(
@@ -130,16 +156,19 @@ fun CreateNewChallenge(
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) {
+        Log.i("GeoHunt", "Returning from camera")
         if (!it) {
             onFailure(RuntimeException("Failed to take the photo"))
         }
         else {
             BitmapUtils.loadFromFileAsync(file).asTask()
                 .thenDo {  bitmap ->
+                    Log.i("GeoHunt", "Resizing the bitmap...")
                     BitmapUtils.resizeBitmapToFitAsync(bitmap, R.integer.maximum_number_of_pixel_per_photo).asTask()
                 }
                 .toCompletableFuture(context.findActivity())
                 .thenAccept { bitmap ->
+                    Log.i("GeoHunt", "Updating bitmapResult value")
                     bitmapResult.value = bitmap
                 }
                 .thenApply {  }

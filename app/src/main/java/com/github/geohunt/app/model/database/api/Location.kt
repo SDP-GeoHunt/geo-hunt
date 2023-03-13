@@ -71,7 +71,7 @@ data class Location(var latitude: Double,
 
         value = (value - minutes) * 60.0
 
-        return "$degree° $minutes' ${String.format("%.2f", value)}'' ${if (v > 0.0) positive else negative}"
+        return "$degree° $minutes' ${String.format("%.2f", value)}\"${if (v > 0.0) positive else negative}"
     }
 
 }
