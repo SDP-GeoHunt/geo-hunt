@@ -2,11 +2,13 @@ package com.github.geohunt.app.model.database
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.provider.ContactsContract.Data
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.utility.Singleton
 import com.google.android.gms.tasks.Task
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -39,19 +41,19 @@ interface Database {
      * @param location the location where we should search for challenges
      */
     fun getNearbyChallenge(location: Location): Task<List<Challenge>>
-}
 
-/**
- * Utility class to create a new database handle (this is used for testing purpose
- * to replace the database instance with a mock one using mockito)
- */
-object DatabaseFactory {
+    companion object {
+        val databaseFactory = Singleton<(Activity) -> Database> {
+            FirebaseDatabase(it)
+        }
 
-    /**
-     * Create a new instance of a database
-     */
-    fun createDatabaseHandle(activity: Activity): Database {
-        return FirebaseDatabase(activity)
+        /**
+         * Create a new instance of a database linked to an activity
+         */
+        fun createDatabaseHandle(activity: Activity) : Database {
+            return databaseFactory.get()(activity)
+        }
     }
 }
+
 

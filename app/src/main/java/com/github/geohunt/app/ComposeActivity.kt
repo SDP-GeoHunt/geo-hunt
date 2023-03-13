@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.DatabaseFactory
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 
@@ -24,7 +23,7 @@ class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        database = DatabaseFactory.createDatabaseHandle(this)
+        database = Database.createDatabaseHandle(this)
 
         setContent {
             GeoHuntTheme {

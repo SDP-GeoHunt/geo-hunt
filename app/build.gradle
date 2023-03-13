@@ -134,7 +134,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
             '**/databinding/**/*.*',
             '**/*MapperImpl*.*',
             '**/BR.class',
-            '**/DataBindingTriggerClass.class'
+            '**/DataBindingTriggerClass.class',
+            '**/database/firebase/*.*'
     ]
 
     def debugTree = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)

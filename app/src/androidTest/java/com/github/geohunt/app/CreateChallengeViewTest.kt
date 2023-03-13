@@ -61,8 +61,7 @@ class CreateChallengeViewTest {
         testChallenge(locationRequestFailed = false, createChallengeFailed = true)
     }
 
-
-    fun testChallenge(
+    private fun testChallenge(
         locationRequestFailed : Boolean = false,
         createChallengeFailed : Boolean = false
     ) {
