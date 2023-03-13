@@ -3,12 +3,8 @@ package com.github.geohunt.app
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -72,8 +68,8 @@ class ComposeActivity : AppCompatActivity(), OnMapReadyCallback {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun enableLocation(){
-        if (isPermissionGranted()){
+    private fun enableLocation() {
+        if (isPermissionGranted()) {
             map.isMyLocationEnabled = true
         } else {
             ActivityCompat.requestPermissions(
@@ -82,18 +78,5 @@ class ComposeActivity : AppCompatActivity(), OnMapReadyCallback {
                     REQUEST_CODE_LOCATION_PERMISSION
             )
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    GeoHuntTheme {
-        Greeting("Android")
     }
 }

@@ -91,6 +91,16 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
     testImplementation "org.mockito:mockito-inline:4.1.0"
+
+    //Google Maps Test dependencies
+    androidTestImplementation 'androidx.test:core-ktx:1.5.0'
+    //testImplementation 'org.robolectric:robolectric:4.9'
+
+    //testImplementation 'org.robolectric:robolectric:4.4'
+    /////androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    /////androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    //androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
+    ////androidTestImplementation "androidx.test.uiautomator:uiautomator:2.3.0-alpha02"
 }
 
 tasks.withType(Test) {
