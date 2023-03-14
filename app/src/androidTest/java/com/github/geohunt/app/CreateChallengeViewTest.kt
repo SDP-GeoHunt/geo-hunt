@@ -96,7 +96,7 @@ class CreateChallengeViewTest {
     ) {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val future = CompletableFuture<Challenge>()
-        val resultingPhoto = createImageCaptureResult(context)
+        val resultingPhoto = createTestBitmap(context)
         val futureLocation = CompletableFuture<Location>()
         val futureChallenge = CompletableFuture<Challenge>()
         val taskChallengeCompletionSource = TaskCompletionSource<Challenge>()
@@ -198,7 +198,7 @@ class CreateChallengeViewTest {
         }
     }
 
-    private fun createImageCaptureResult(context: Context) : Bitmap {
+    private fun createTestBitmap(context: Context) : Bitmap {
         return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
     }
 }

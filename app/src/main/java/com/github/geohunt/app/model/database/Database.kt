@@ -43,6 +43,7 @@ interface Database {
     fun getNearbyChallenge(location: Location): Task<List<Challenge>>
 
     companion object {
+        @JvmStatic
         val databaseFactory = Singleton<(Activity) -> Database> {
             FirebaseDatabase(it)
         }

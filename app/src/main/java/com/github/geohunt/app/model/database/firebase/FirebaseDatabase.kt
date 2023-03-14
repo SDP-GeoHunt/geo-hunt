@@ -2,7 +2,9 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.util.Log
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
@@ -20,7 +22,7 @@ import com.google.firebase.storage.ktx.storage
 import java.io.File
 import java.time.LocalDateTime
 
-class FirebaseDatabase(internal val activity: Activity) : Database {
+class FirebaseDatabase(activity: Activity) : Database {
     private val database = Firebase.database.reference
     private val storage = Firebase.storage("gs://geohunt-1.appspot.com").reference
     private val currentUser : String = "8b8b0392-ba8b-11ed-afa1-0242ac120002"
@@ -35,17 +37,17 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
     internal val localImageFolder : File  =  activity.getExternalFilesDir("images")!!
 
     // Create the object pool in order to save some memory
-    private val userRefById = HashMap<String, FirebaseUserRef>().withDefault {
+    private val userRefById = DataPool<String, FirebaseUserRef> {
         FirebaseUserRef(
             id = it
         )
     }
 
-    private val challengeRefById = HashMap<String, FirebaseChallengeRef>().withDefault {
+    private val challengeRefById = DataPool<String, FirebaseChallengeRef> {
         FirebaseChallengeRef(it, this)
     }
 
-    private val imageRefById = HashMap<String, FirebaseBitmapRef>().withDefault {
+    private val imageRefById = DataPool<String, FirebaseBitmapRef> {
         FirebaseBitmapRef(it, this)
     }
 
@@ -58,7 +60,7 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
     /**
      * Creates a new Challenge and stores it to the Firebase Database and Storage.
      * Notice that the given bitmap should not have more pixel than
-     * [R.integer.maximum_number_of_pixel_per_photo] overwise this function will throw
+     * [R.integer.maximum_number_of_pixel_per_photo] otherwise this function will throw
      * an [IllegalArgumentException]
      *
      * @param thumbnail the thumbnail of the challenge
@@ -114,15 +116,15 @@ class FirebaseDatabase(internal val activity: Activity) : Database {
     }
 
     internal fun getChallengeRefById(cid: String): FirebaseChallengeRef {
-        return challengeRefById.getValue(cid)
+        return challengeRefById.get(cid)
     }
 
     internal fun getUserRefById(uid: String): FirebaseUserRef {
-        return userRefById.getValue(uid)
+        return userRefById.get(uid)
     }
 
     internal fun getThumbnailRefById(cid: String) : FirebaseBitmapRef {
-        return imageRefById.getValue(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
+        return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
     }
 
     internal fun getClaimRefById(id: String) : LazyRef<Claim> {
