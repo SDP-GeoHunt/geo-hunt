@@ -31,7 +31,7 @@ check_android_task:
       -no-window
       -camera-back none
   start_firebase_background_script: |
-    firebase emulators:start
+    firebase emulators:start --import=emulator/bundled
   assemble_instrumented_tests_script: |
     chmod +x gradlew
     ./gradlew assembleDebugAndroidTest

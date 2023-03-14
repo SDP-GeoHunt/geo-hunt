@@ -83,6 +83,25 @@ class TestTaskUtils {
     }
 
     @Test
+    fun testTaskThenMapWithExceptionThrown() {
+        var called = 0
+        val resultTask = Tasks.forResult(5).thenMap {
+            called++
+            throw IllegalArgumentException()
+            it.toDouble() + 10.0
+        }
+
+        try {
+            Tasks.await(resultTask)
+        } catch (_: Exception) {
+        }
+
+        assertThat(called, equalTo(1))
+        assertThat("Assert the task completed with failure", resultTask.isComplete && !resultTask.isSuccessful)
+        assertThat(resultTask.exception, not(nullValue()))
+    }
+
+    @Test
     fun testTaskThenMapAfterFailure() {
         var called = 0
         val resultTask = Tasks.forException<Int>(IllegalStateException()).thenMap {

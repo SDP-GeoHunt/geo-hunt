@@ -33,15 +33,7 @@ class TestFirebaseDatabase {
 
     @Before
     fun setup() {
-        try {
-            val firebaseDatabase = Firebase.database
-            firebaseDatabase.useEmulator("10.0.2.2", 9000)
-
-            val firebaseStorage = Firebase.storage
-            firebaseStorage.useEmulator("10.0.2.2", 9199)
-        }
-        catch(ignored: IllegalStateException) {}
-
+        FirebaseEmulator.init()
         composeTestRule.setContent {
             database = FirebaseDatabase(LocalContext.current.findActivity())
         }

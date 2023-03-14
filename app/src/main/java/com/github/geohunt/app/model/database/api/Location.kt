@@ -11,8 +11,8 @@ import kotlin.math.roundToLong
 /**
  * Represent the location on earth using the latitude and longitude as double valued numbers
  */
-data class Location(var latitude: Double,
-                    var longitude: Double) {
+data class Location(var latitude: Double = 0.0,
+                    var longitude: Double = 0.0) {
     /**
      * Convert the current location to the degrees-minutes-seconds more standardized notation
      */
@@ -57,7 +57,7 @@ data class Location(var latitude: Double,
         /**
          * Length of the string representing the coarse hash
          */
-        const val COARSE_HASH_SIZE = (2 * Long.SIZE_BYTES) / 4;
+        const val COARSE_HASH_SIZE = (2 * Long.SIZE_BYTES) / 2;
     }
 
     @Exclude

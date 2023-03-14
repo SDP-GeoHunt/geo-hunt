@@ -35,6 +35,10 @@ class FirebaseChallengeRef(
         return database.dbChallengeRef
             .child(coarseHash).child(elementId).get()
             .thenMap {
+                if (!it.exists()) {
+                    throw RuntimeException("The required reference was not found")
+                }
+
                 val challengeEntry = it.getValue(ChallengeEntry::class.java)!!
 
                 FirebaseChallenge(
@@ -44,7 +48,7 @@ class FirebaseChallengeRef(
                     publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
                     expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate!!),
                     correctLocation =  challengeEntry.location!!,
-                    claims = challengeEntry.claims!!.map(database::getClaimRefById)
+                    claims = (challengeEntry.claims ?: listOf()).map(database::getClaimRefById)
                 )
             }
     }
@@ -55,9 +59,9 @@ class FirebaseChallengeRef(
  * A data storage class that defines challenges as represented within the database
  */
 internal data class ChallengeEntry(
-    val authorId: String? = null,
-    val publishedDate: String? = null,
-    val expirationDate: String? = null,
-    val claims: List<String>? = null,
-    val location: Location? = null
+    var authorId: String? = null,
+    var publishedDate: String? = null,
+    var expirationDate: String? = null,
+    var claims: List<String>? = null,
+    var location: Location? = null
 )

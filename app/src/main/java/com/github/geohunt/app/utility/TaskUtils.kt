@@ -62,7 +62,12 @@ fun <TResult, U> Task<TResult>.thenMap(fn: (TResult) -> U) : Task<U>
 {
     return this.continueWithTask {
         if (it.isSuccessful) {
-            Tasks.forResult(fn(it.result))
+            try {
+                Tasks.forResult(fn(it.result))
+            }
+            catch (e: Exception) {
+                Tasks.forException(e)
+            }
         }
         else {
             Tasks.forException(it.exception!!)

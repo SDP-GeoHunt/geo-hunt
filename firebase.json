@@ -1,9 +1,9 @@
 {
   "database": {
-    "rules": "database.rules.json"
+    "rules": "emulator/database.rules.json"
   },
   "storage": {
-    "rules": "storage.rules"
+    "rules": "emulator/storage.rules"
   },
   "emulators": {
     "database": {
