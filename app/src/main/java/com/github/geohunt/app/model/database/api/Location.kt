@@ -8,9 +8,9 @@ import kotlin.math.*
 data class Location(var latitude: Double,
                     var longitude: Double) {
     /**
-     * Computes the distance in meters to another Location
+     * Computes the distance in kilometers to another Location
      * Uses the haversine formula to perform the calculation (https://en.wikipedia.org/wiki/Haversine_formula)
-     * @param that Location to which calculate the distance
+     * @param that Location to which we want to calculate the distance
      */
     fun distanceTo(that: Location): Double {
         val lat1 = toRadians(this.latitude)
@@ -45,9 +45,9 @@ data class Location(var latitude: Double,
 
     companion object {
         /**
-         * Mean earth radius in meters, used to compute the distance between two Locations
+         * Mean earth radius in kilometers, used to compute the distance between two Locations
          */
-        private const val EARTH_MEAN_RADIUS = 6371e3
+        private const val EARTH_MEAN_RADIUS = 6371
 
         fun getCoarseHash(location: Location) : String {
             val crc32 = CRC32()
