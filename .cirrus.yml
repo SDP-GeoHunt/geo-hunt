@@ -18,23 +18,23 @@ check_android_task:
     sdkmanager --install "system-images;android-30;google_apis;x86"
   create_avd_script:
     echo no | avdmanager create avd --force
-      --name emulator
-      --package "system-images;android-30;google_apis;x86"
+    --name emulator
+    --package "system-images;android-30;google_apis;x86"
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
-      -avd emulator
-      -no-audio
-      -no-boot-anim
-      -gpu swiftshader_indirect
-      -no-snapshot
-      -no-window
-      -camera-back none
-  assemble_instrumented_tests_script: |
-    chmod +x gradlew
-    ./gradlew assembleDebugAndroidTest
+    -avd emulator
+    -no-audio
+    -no-boot-anim
+    -gpu swiftshader_indirect
+    -no-snapshot
+    -no-window
+    -camera-back none
   extract_api_script: |
     touch ./local.properties
     echo MAPS_API_KEY=$MAPS_API_KEY >> ./local.properties
+  assemble_instrumented_tests_script: |
+    chmod +x gradlew
+    ./gradlew assembleDebugAndroidTest
   wait_for_avd_script:
     adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 3; done; input keyevent 82'
   disable_animations_script: |
@@ -48,7 +48,7 @@ check_android_task:
   screen_record_background_script:
     for n in $(seq 1 20); do adb exec-out screenrecord --time-limit=180 --output-format=h264 - > $n.h264; done
   check_script:
-    ./gradlew check connectedCheck 
+    ./gradlew check connectedCheck
   report_codeclimate_script: |
     export JACOCO_SOURCE_PATH=app/src/main/java/
     ./cc-test-reporter format-coverage ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
@@ -57,7 +57,7 @@ check_android_task:
     wait_for_screenrecord_script: |
       pkill -2 -x adb
       sleep 2
-    convert_to_mp4_script: 
+    convert_to_mp4_script:
       find *.h264 | sed 's:\ :\\\ :g'| sed 's/^/file /' > fl.txt; ffmpeg -f concat -i fl.txt -c copy recording.mp4; rm fl.txt
     screenrecord_artifacts:
       path: "recording.mp4"
