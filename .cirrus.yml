@@ -12,7 +12,9 @@ check_android_task:
   alias: check_android
   install_ffmpeg_script: |
     sudo apt-get update
-    sudo apt-get install -y ffmpeg
+    sudo apt-get install -y ffmpeg netcat
+  install_firebase_emulator_script: |
+    sudo curl -sL https://firebase.tools | bash
   install_emulator_script:
     sdkmanager --install "system-images;android-30;google_apis;x86"
   create_avd_script:
@@ -28,6 +30,8 @@ check_android_task:
       -no-snapshot
       -no-window
       -camera-back none
+  start_firebase_background_script: |
+    firebase emulators:start --import=emulator/bundled
   assemble_instrumented_tests_script: |
     chmod +x gradlew
     ./gradlew assembleDebugAndroidTest

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "15816182548",
+    "firebase_url": "https://geohunt-1-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "geohunt-1",
+    "storage_bucket": "geohunt-1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15816182548:android:6d4f06473677d2912fd001",
+        "android_client_info": {
+          "package_name": "com.github.geohunt.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15816182548-l7314t8ki5jne863st050q39nkcsacbm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.geohunt.app",
+            "certificate_hash": "7957c662560a0708ee408cccd621af842ab270c8"
+          }
+        },
+        {
+          "client_id": "15816182548-p8de1gj7h3idhou8cgsapbftcvnmr9ah.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6b8dIRERs2I-ksyo4tqHU3fm4qn2kPPk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15816182548-p8de1gj7h3idhou8cgsapbftcvnmr9ah.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
