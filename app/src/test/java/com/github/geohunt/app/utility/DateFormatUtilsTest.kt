@@ -26,19 +26,41 @@ class DateFormatUtilsTest{
     @Test
     fun formatRemainingTimeCorrectlyReturnsHours() {
         val now = LocalDateTime.now()
-        //add one minute to take into account the fact that DateFormatUtils also uses .now() but later
+        //add one minute to take into account the fact that DateFormatUtils also uses .now()
+        // but slightly later in the execution of the Test
         val later = now.plusHours(3).plusMinutes(1)
 
-        assertEquals("3 hour(s)", DateFormatUtils.formatRemainingTime(later))
+        assertEquals("3 hours", DateFormatUtils.formatRemainingTime(later))
+    }
+
+    @Test
+    fun formatRemainingTimeCorrectlyExpressesSingularHours() {
+        val now = LocalDateTime.now()
+        //add one minute to take into account the fact that DateFormatUtils also uses .now()
+        // but slightly later in the execution of the Test
+        val later = now.plusHours(1).plusMinutes(1)
+
+        assertEquals("1 hour", DateFormatUtils.formatRemainingTime(later))
     }
 
     @Test
     fun formatRemainingTimeCorrectlyReturnsDays() {
         val now = LocalDateTime.now()
-        //add one hour to take into account the fact that DateFormatUtils also uses .now() but later
+        //add one hour to take into account the fact that DateFormatUtils also uses .now()
+        // but slightly later in the execution of the Test
         val later = now.plusDays(5).plusHours(1)
 
-        assertEquals("5 day(s)", DateFormatUtils.formatRemainingTime(later))
+        assertEquals("5 days", DateFormatUtils.formatRemainingTime(later))
+    }
+
+    @Test
+    fun formatRemainingTimeCorrectlyExpressesSingularDays() {
+        val now = LocalDateTime.now()
+        //add one minute to take into account the fact that DateFormatUtils also uses .now()
+        // but slightly later in the execution of the Test
+        val later = now.plusDays(1).plusHours(1)
+
+        assertEquals("1 day", DateFormatUtils.formatRemainingTime(later))
     }
 
     @Test
