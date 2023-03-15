@@ -71,16 +71,13 @@ fun LoginScreen(context: Context) {
             text = stringResource(id = R.string.app_name),
             textAlign = TextAlign.Center,
             style = TextStyle(
-                brush = Brush.linearGradient(
-                    colors = listOf(md_theme_light_primary, seed)
-                )
+                brush = Brush.linearGradient(listOf(md_theme_light_primary, seed))
             )
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(modifier = Modifier.testTag("signin-btn"),
-            onClick = {
+        Button(modifier = Modifier.testTag("signin-btn"), onClick = {
             val intent = Intent(context, LoginActivity::class.java)
             intent.putExtra("login", 1)
             context.startActivity(intent)
