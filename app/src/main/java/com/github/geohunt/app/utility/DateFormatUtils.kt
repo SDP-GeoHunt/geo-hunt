@@ -36,10 +36,11 @@ object DateFormatUtils {
                 val now = LocalDateTime.now()
 
                 val days = now.until(to, ChronoUnit.DAYS)
-                if (days != 0L) return "$days day(s)"
+                if (days > 0L) return if (days > 1L) "$days days" else "1 day"
 
                 val hours = now.until(to, ChronoUnit.HOURS)
-                if (hours != 0L) return "$hours hour(s)"
+                if (hours > 0L) return if (hours > 1L) "$hours hours" else "1 hour"
+
 
                 return "Less than 1 hour"
             }
