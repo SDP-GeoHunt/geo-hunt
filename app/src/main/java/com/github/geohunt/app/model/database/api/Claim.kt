@@ -13,14 +13,14 @@ interface Claim {
     val id: String
 
     /**
-     * Unique identifier of the challenge that was claimed by the corresponding user
+     * Reference to the challenge claimed by this current claim
      */
-    val cid: LazyRef<Challenge>
+    val challenge: LazyRef<Challenge>
 
     /**
      * Unique identifier of the user that claimed the corresponding challenge
      */
-    val uid: String
+    val user: String
 
     /**
      * Time at which the user claimed the challenge
