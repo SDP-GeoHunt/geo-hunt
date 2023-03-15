@@ -43,13 +43,24 @@ interface Database {
     fun getNearbyChallenge(location: Location): Task<List<Challenge>>
 
     companion object {
-        @JvmStatic
+
+        /**
+         * A Singleton instance of a factory function that creates a  Database instance
+         * for a given Android Activity. This factory method is used by [createDatabaseHandle]
+         * 
+         * @param Activity the Android Activity class for which a Database instance will be created
+         * @return a Database instance created using the FirebaseDatabase constructor
+         */
         val databaseFactory = Singleton<(Activity) -> Database> {
             FirebaseDatabase(it)
         }
 
         /**
-         * Create a new instance of a database linked to an activity
+         * Returns a Database instance for a given Android Activity. The function uses the `databaseFactory`
+         * Singleton instance to create or retrieve a `Database` instance for the given activity.
+         *
+         * @param activity the Android Activity for which a Database instance will be created or retrieved
+         * @return a `Database` instance created or retrieved using the `databaseFactory` Singleton instance
          */
         fun createDatabaseHandle(activity: Activity) : Database {
             return databaseFactory.get()(activity)
