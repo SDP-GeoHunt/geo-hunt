@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">GeoHunt</string>
     <string name="title_activity_compose">ComposeActivity</string>
+
     <string name="title_activity_claim">ClaimActivity</string>
 
     <string name="challenge_claim">Claim</string>
@@ -19,4 +20,7 @@
     <string name="date_format_less_one_hour">Less than 1 hour</string>
     <string name="date_format_never">NEVER</string>
     <string name="date_format_format">dd/MM/yyyy</string>
+
+    <string name="community_guidelines_url">https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines</string>
+    <string name="privacy_policy_url">https://github.com/SDP-GeoHunt/geo-hunt/wiki/Privacy-Policy</string>
 </resources>
