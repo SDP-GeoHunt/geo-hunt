@@ -66,7 +66,7 @@ fun Challenge(challenge: Challenge) {
             }
         }
 
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth().padding(5.dp, 0.dp)) {
 
             Text(text = stringResource(id = R.string.challenge_created_by, challenge.uid),
                     color = Color.Gray)
