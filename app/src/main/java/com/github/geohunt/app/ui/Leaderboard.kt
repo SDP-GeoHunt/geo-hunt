@@ -1,14 +1,15 @@
 package com.github.geohunt.app.ui
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Divider
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.components.leaderboard.*
+import com.github.geohunt.app.ui.components.leaderboard.LeaderboardList
+import com.github.geohunt.app.ui.components.leaderboard.LeaderboardListItem
+import com.github.geohunt.app.ui.components.leaderboard.LeaderboardPodiumItem
+import com.github.geohunt.app.ui.components.leaderboard.LeaderboardTitleBar
 
 /**
  * Creates the leaderboard view.
@@ -35,29 +36,7 @@ fun Leaderboard(
             // LeaderboardChips()
         }
 
-        LazyColumn(
-            Modifier.weight(1.0f)
-        ) {
-            itemsIndexed(users) { index: Int, user: User ->
-                when(index) {
-                    in 0..2 -> {
-                        LeaderboardPodiumItem(position = index, user = user)
-                        Spacer(Modifier.height(10.dp))
-                    }
-
-                    else -> {
-                        if (index == 3) {
-                            Spacer(Modifier.height(14.dp))
-                        }
-
-                        Divider(
-                            Modifier.padding(horizontal = 16. dp)
-                        )
-                        LeaderboardListItem(position = index, user = user)
-                    }
-                }
-            }
-        }
+        LeaderboardList(users = users, Modifier.weight(1.0f))
 
         // Bottom "You" item
         LeaderboardListItem(
