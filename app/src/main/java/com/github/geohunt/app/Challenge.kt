@@ -31,6 +31,17 @@ import com.github.geohunt.app.utility.DateFormatUtils
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
+/**
+ * Composable function that displays a challenge given as an argument
+ * Following info is displayed :
+ *      - The thumbnail of the challenge
+ *      - The creator of the challenge
+ *      - The date of the creation of the challenge
+ *      - The time remaining to complete the challenge
+ *      - The pictures submitted by users who already completed the challenge
+ * It also adds a button that allows the user to add a submission to given challenge.
+ * @param challenge The challenge to display
+ */
 @Composable
 fun Challenge(challenge: Challenge) {
     val published = challenge.published
@@ -50,7 +61,7 @@ fun Challenge(challenge: Challenge) {
             Button(onClick = { submitPosition() }) {
                 Row (verticalAlignment = Alignment.CenterVertically){
                     Text(text = stringResource(id = R.string.challenge_claim))
-                    Icon(painter = painterResource(id = R.drawable.radar_icon), contentDescription = "radar icon of claim button")
+                    Icon(painter = painterResource(id = R.drawable.radar_icon), contentDescription = "Radar icon of claim button")
                 }
             }
         }
@@ -82,6 +93,9 @@ fun Challenge(challenge: Challenge) {
     }
 }
 
+/**
+ * Function called when the claim button is clicked
+ */
 fun submitPosition() {
     //Todo use utility function to get Localisation and create Claim
     return
