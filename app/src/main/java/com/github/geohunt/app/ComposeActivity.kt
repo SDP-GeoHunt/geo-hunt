@@ -1,37 +1,54 @@
 package com.github.geohunt.app
 
+import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.github.geohunt.app.event.marker.EventMarkerActionDisplay
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.time.LocalDateTime
+import java.time.Month
 
 class ComposeActivity : AppCompatActivity(), OnMapReadyCallback {
-
     private lateinit var map: GoogleMap
     //Hardcoded list used to test correct display of events on the map
-    private var markerList: MutableList<MarkerOptions> = mutableListOf(MarkerOptions().position(LatLng(46.51958, 6.56398)).title("Event 1"), MarkerOptions().position(LatLng(46.52064, 6.56780)).title("Event 2"), MarkerOptions().position(LatLng(46.51881, 6.56779)).title("Event 3"))
     private val REQUEST_CODE_LOCATION_PERMISSION = 1
-    //
+    private var mockBitmap: Bitmap = Bitmap.createBitmap(IntArray(120*120){Color.CYAN}, 90, 90, Bitmap.Config.ARGB_8888)
+    private var mockChallengeDatabase : List<Triple<Bitmap, LatLng, LocalDateTime>> = listOf(
+            Triple(mockBitmap, LatLng(46.51958, 6.56398), LocalDateTime.of(2023, Month.MAY, 1, 19, 39, 12)),
+            Triple(mockBitmap, LatLng(46.52064, 6.56780), LocalDateTime.of(2023, Month.MAY, 2, 12, 24, 35)),
+            Triple(mockBitmap, LatLng(46.51881, 6.56779), LocalDateTime.of(2023, Month.MAY, 3, 16, 12, 12)))
+
+    /**
+     * Called when the activity is starting
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_compose)
 
         val mapFragment =
                 supportFragmentManager.findFragmentById(R.id.map_container_view) as? SupportMapFragment
-
         mapFragment?.getMapAsync(this)
+        mapFragment?.getMapAsync{ map ->
+            map.setInfoWindowAdapter(EventMarkerActionDisplay(this))
+        }
     }
 
+    /**
+     * Called when the map is ready to be used
+     */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        addMarkersOnTheMap(googleMap, markerList)
+        addMarkersOnTheMap(googleMap, mockChallengeDatabase)
         enableLocation()
 
         val epflLatitude = 46.519585
@@ -42,12 +59,23 @@ class ComposeActivity : AppCompatActivity(), OnMapReadyCallback {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(epflCoordinates, mapZoomValue))
     }
 
-    private fun addMarkersOnTheMap(googleMap: GoogleMap, markerList : MutableList<MarkerOptions>){
-        for (marker in markerList) {
-            googleMap.addMarker(marker)
+    /**
+     * Adds the data from the database to the map as markers
+     */
+    private fun addMarkersOnTheMap(map: GoogleMap, challenges: List<Triple<Bitmap, LatLng, LocalDateTime>>){
+        challenges.forEach{challenge ->
+                val marker = map.addMarker(
+                MarkerOptions()
+                        .position(challenge.second)
+                )
+            marker?.tag = challenge
         }
     }
 
+    /**
+     * Enables the location layer if the permission has been granted
+     * Otherwise, requests the permission
+     */
     override fun onRequestPermissionsResult(
             requestCode: Int,
             permissions: Array<out String>,
@@ -61,20 +89,31 @@ class ComposeActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Checks if the user has granted the location permission
+     * @return true if the permission is granted, false otherwise
+     */
     private fun isPermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(
                 this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    /**
+     * Enables the location layer if the permission has been granted
+     * Otherwise, requests the permission
+     */
     private fun enableLocation() {
         if (isPermissionGranted()) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return
+            }
             map.isMyLocationEnabled = true
         } else {
             ActivityCompat.requestPermissions(
                     this,
-                    arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     REQUEST_CODE_LOCATION_PERMISSION
             )
         }

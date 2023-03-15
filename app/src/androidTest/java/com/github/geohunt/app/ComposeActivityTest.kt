@@ -12,7 +12,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class)
 class ComposeActivityTest {
 
@@ -23,7 +22,7 @@ class ComposeActivityTest {
     val permissionRuleFineLocation: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
 
     @get:Rule
-    val permissionRuleCoarseLocation = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+    val permissionRuleCoarseLocation: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     @Test
     fun testMapDisplayed() {
