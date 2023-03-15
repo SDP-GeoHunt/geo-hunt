@@ -23,4 +23,5 @@ val md_theme_dark_onBackground = Color(0xFFEDE0DC)
 val md_theme_dark_surface = Color(0xFF201A18)
 val md_theme_dark_onSurface = Color(0xFFD0C4C0)
 
-
+@Suppress("unused")
+val seed = Color(0xFFD24F00)

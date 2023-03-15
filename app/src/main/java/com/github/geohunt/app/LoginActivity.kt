@@ -87,6 +87,5 @@ fun LoginScreen(context: Context) {
         }) {
             Text(stringResource(id = R.string.sign_in))
         }
-
     }
 }
