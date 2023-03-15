@@ -26,12 +26,13 @@ object DateFormatUtils {
      * The output depends on the difference in time, it will first try to give the difference in days
      * and will give it in hours if less than a day is left. If less than an hour remains it will
      * simply return the string "Less than 1 hour"
-     * If argument is null it returns the string "NEVER"
+     * If argument is null it returns the string "NEVER". Note that a null value
+     * represents an unlimited duration.
      * @param to LocalDateTime to which the remaining time should be computed
      */
     fun formatRemainingTime(to: LocalDateTime?): String {
         when(to) {
-            null -> return "NEVER"
+            null -> return "Never"
             else -> {
                 val now = LocalDateTime.now()
 

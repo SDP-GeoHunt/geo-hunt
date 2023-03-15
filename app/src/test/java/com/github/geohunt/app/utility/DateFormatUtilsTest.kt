@@ -20,7 +20,7 @@ class DateFormatUtilsTest{
 
     @Test
     fun formatRemainingTimeWorksOnNullInput() {
-        assertEquals("NEVER", DateFormatUtils.formatRemainingTime(null))
+        assertEquals("Never", DateFormatUtils.formatRemainingTime(null))
     }
 
     @Test
