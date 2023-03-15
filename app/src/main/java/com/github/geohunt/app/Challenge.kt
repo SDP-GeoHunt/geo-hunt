@@ -44,9 +44,6 @@ import java.util.concurrent.CompletableFuture
  */
 @Composable
 fun Challenge(challenge: Challenge) {
-    val published = challenge.published
-    val expirationDate = challenge.expirationDate
-
     Column(modifier = Modifier.fillMaxSize()) {
         Column (horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()) {
@@ -58,41 +55,66 @@ fun Challenge(challenge: Challenge) {
                     modifier = Modifier
                             .clip(RoundedCornerShape(10.dp)))
 
-            Button(onClick = { submitPosition() }) {
-                Row (verticalAlignment = Alignment.CenterVertically){
-                    Text(text = stringResource(id = R.string.challenge_claim))
-                    Icon(painter = painterResource(id = R.drawable.radar_icon), contentDescription = "Radar icon of claim button")
-                }
-            }
+            ClaimButton()
         }
 
-        Column(modifier = Modifier.fillMaxWidth().padding(5.dp, 0.dp)) {
-
-            Text(text = stringResource(id = R.string.challenge_created_by, challenge.uid),
-                    color = Color.Gray)
-
-            Row(modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = stringResource(id = R.string.challenge_published, DateFormatUtils.formatDate(published)),
-                    color = Color.Gray)
-                Text(text = stringResource(id = R.string.challenge_time_remaining, DateFormatUtils.formatRemainingTime(expirationDate)),
-                    color = Color.Gray)
-            }
-        }
+        ChallengeInformation(challenge)
 
         Spacer(modifier = Modifier.size(20.dp))
 
-        LazyVerticalGrid(columns = GridCells.Fixed(3)) {
-            items(challenge.claims) {cid ->
-                //placeholder, will be replaced by images of claims made to the challenge
-                Box(modifier = Modifier.border(BorderStroke(1.dp, Color.Red)).aspectRatio(1f)) {
-                    Text(text = cid, color = Color.Red, textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize())
-                }
-            }
+        ClaimPictures(challenge.claims)
+    }
+}
+
+@Composable
+fun ClaimButton() {
+    Button(onClick = { submitPosition() }) {
+        Row (verticalAlignment = Alignment.CenterVertically){
+            Text(text = stringResource(id = R.string.challenge_claim))
+            Icon(painter = painterResource(id = R.drawable.radar_icon),
+                    contentDescription = "Radar icon of claim button")
         }
     }
 }
 
+@Composable
+fun ChallengeInformation(challenge: Challenge) {
+    val published = challenge.published
+    val expirationDate = challenge.expirationDate
+
+    Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp, 0.dp)) {
+
+        Text(text = stringResource(id = R.string.challenge_created_by, challenge.uid),
+                color = Color.Gray)
+
+        Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+            GrayText(stringResource(id = R.string.challenge_published, DateFormatUtils.formatDate(published)))
+            GrayText(stringResource(id = R.string.challenge_time_remaining, DateFormatUtils.formatRemainingTime(expirationDate)))
+        }
+    }
+}
+
+@Composable
+fun GrayText(text: String) {
+    Text(text = text, color = Color.Gray)
+}
+
+@Composable
+fun ClaimPictures(claims: List<String>) {
+    LazyVerticalGrid(columns = GridCells.Fixed(3)) {
+        items(claims) {cid ->
+            //placeholder, will be replaced by images of claims made to the challenge
+            Box(modifier = Modifier
+                    .border(BorderStroke(1.dp, Color.Red))
+                    .aspectRatio(1f)) {
+                Text(text = cid, color = Color.Red, textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize())
+            }
+        }
+    }
+}
 /**
  * Function called when the claim button is clicked
  */

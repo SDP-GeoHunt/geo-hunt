@@ -70,6 +70,6 @@ class ChallengeTest {
 
     @Test
     fun buttonIsClickable() {
-        testRule.onNodeWithText("Claim").onParent().assertHasClickAction()
+        testRule.onNodeWithText("Claim", useUnmergedTree = true).onParent().assertHasClickAction()
     }
 }
