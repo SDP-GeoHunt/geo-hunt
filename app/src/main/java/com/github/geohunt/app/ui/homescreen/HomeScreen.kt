@@ -2,7 +2,6 @@ package com.github.geohunt.app.ui.homescreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,145 +14,134 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.ui.theme.homeScreenBackground
-import com.github.geohunt.app.ui.theme.whiteBackground
-import java.util.*
 import com.github.geohunt.app.R
-import kotlin.random.Random
 
-data class MockChallenge (
+data class MockChallenge(
     val challengeId: String,
     val challengeImg: Int,
     val username: String,
     val profilePhoto: Int,
     val likes: Int,
-    )
+)
 
-class HomeScreen {
-
-    private val mockChallengeImages = listOf(R.drawable.mock_image_1, R.drawable.mock_image_3,
-                                    R.drawable.mock_image_3, R.drawable.mock_image_4, R.drawable.mock_image_5)
-
-    private val mockUsernames = listOf("John Smith", "Ben Smith", "Cole Stevens", "Dennis Gray", "Eric Smith")
-
-    private val mockChallenges = List(100) {
-        val challengeId = UUID.randomUUID().toString()
-        val profilePhoto = R.drawable.mock_user
-        val username = mockUsernames[Random.nextInt(mockUsernames.size)]
-        val challengeImg = mockChallengeImages[Random.nextInt(mockChallengeImages.size)]
-        val likes = Random.nextInt(1000)
-        MockChallenge(challengeId, challengeImg, username, profilePhoto, likes)
-    }
-
-    @Composable
-    fun FeedScreen() {
-        Column(
+@Composable
+fun HomeScreen(challenges: List<MockChallenge>) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.LightGray)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.LightGray)
-        ) {
-            Row (horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
                 .height(60.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.header),
-                    contentDescription = null,
-                    modifier = Modifier.size(200.dp)
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .background(Color.White)
-            ) {
-                HorizontalDivider()
-            }
-            LazyColumn (modifier = Modifier
-                .padding(10.dp, 10.dp)
-                .background(Color.White)) {
-                items(mockChallenges) { challenge ->
-                    ChallengeItem(challenge = challenge)
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun ChallengeItem(challenge: MockChallenge) {
-        Box(modifier = Modifier
-            .background(Color.LightGray)
-            .padding(10.dp)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(Color.White)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(5.dp)) {
-                    RoundImageCard(
-                        image = challenge.profilePhoto,
-                        Modifier
-                            .size(48.dp)
-                            .padding(3.dp)
-                    )
-                    Text(text = challenge.username, fontWeight = FontWeight.Bold)
-                }
-                Image(
-                    painter = painterResource(id = challenge.challengeImg),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .clip(RoundedCornerShape(18.dp)),
-                    contentScale = ContentScale.FillWidth,
-                )
-                Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.likes),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier.size(30.dp)
-                    )
-                    Text(text = "${challenge.likes}", modifier = Modifier.padding(start = 8.dp), fontWeight = FontWeight.SemiBold)
-                }
-            }
-        }
-    }
-    
-    @Composable
-    fun RoundImageCard(image: Int,
-                       modifier: Modifier = Modifier
-                           .padding(9.dp)
-                           .size(40.dp)) {
-        Card(shape = CircleShape, modifier = modifier) {
-            Image(painter = painterResource(id = image),
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.header),
                 contentDescription = null,
-                contentScale = ContentScale.Crop)
+                modifier = Modifier.size(200.dp)
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(Color.White)
+        ) {
+            HorizontalDivider()
+        }
+        LazyColumn(
+            modifier = Modifier
+                .padding(10.dp, 10.dp)
+                .background(Color.White)
+        ) {
+            items(challenges) { challenge ->
+                ChallengeItem(challenge = challenge)
+            }
         }
     }
+}
 
-    @Composable
-    fun HorizontalDivider() {
-        Divider(
-            color = Color.LightGray,
-            thickness = 1.dp,
+@Composable
+fun ChallengeItem(challenge: MockChallenge) {
+    Box(
+        modifier = Modifier
+            .background(Color.LightGray)
+            .padding(10.dp)
+    ) {
+        Column(
             modifier = Modifier
-                .alpha(0.3f)
-                .padding(top = 8.dp, bottom = 8.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color.White)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(5.dp)) {
+                RoundImageCard(
+                    image = challenge.profilePhoto,
+                    Modifier
+                        .size(48.dp)
+                        .padding(3.dp)
+                )
+                Text(text = challenge.username, fontWeight = FontWeight.Bold)
+            }
+            Image(
+                painter = painterResource(id = challenge.challengeImg),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(18.dp)),
+                contentScale = ContentScale.FillWidth,
+            )
+            Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = R.drawable.likes),
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.size(30.dp)
+                )
+                Text(
+                    text = "${challenge.likes}",
+                    modifier = Modifier.padding(start = 8.dp),
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun RoundImageCard(
+    image: Int,
+    modifier: Modifier = Modifier
+        .padding(9.dp)
+        .size(40.dp)
+) {
+    Card(shape = CircleShape, modifier = modifier) {
+        Image(
+            painter = painterResource(id = image),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
         )
     }
+}
+
+@Composable
+fun HorizontalDivider() {
+    Divider(
+        color = Color.LightGray,
+        thickness = 1.dp,
+        modifier = Modifier
+            .alpha(0.3f)
+            .padding(top = 8.dp, bottom = 8.dp)
+    )
 }
