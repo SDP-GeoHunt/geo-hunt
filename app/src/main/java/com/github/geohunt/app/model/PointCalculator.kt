@@ -1,10 +1,7 @@
 package com.github.geohunt.app.model
 
 import com.github.geohunt.app.model.database.api.Location
-import kotlin.math.exp
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.sqrt
+import kotlin.math.*
 
 /**
  * Object giving access to its only method computePoints, which allows the user to compute
@@ -57,7 +54,7 @@ object PointCalculator {
      */
     private fun gaussianDistributionPDF (mean: Double, std: Double): (Double) -> Double {
         return fun(x: Double): Double {
-            val piFactor = sqrt(2 * Math.PI)
+            val piFactor = sqrt(2 * PI)
             val exponent = (-1.0/2.0) * ((x - mean) / std) * ((x - mean) / std)
             return (1 / (std * piFactor)) * exp(exponent)
         }
