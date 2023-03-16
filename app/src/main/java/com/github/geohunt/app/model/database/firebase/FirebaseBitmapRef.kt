@@ -68,9 +68,6 @@ internal class FirebaseBitmapRef(
             val imageRef = database.storageImagesRef.child(id)
             imageRef.putFile(uri)
         }
-            .addOnFailureListener {
-                Log.e("GeoHunt", "$it")
-            }
     }
 
     companion object {
