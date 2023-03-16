@@ -1,8 +1,8 @@
 plugins {
+    id 'com.android.application'
     id 'jacoco'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
-    id 'com.android.application'
 }
 
 android {
@@ -32,8 +32,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_9
+        targetCompatibility JavaVersion.VERSION_1_9
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -41,24 +41,6 @@ android {
     buildFeatures {
         compose true
         dataBinding true
-    }
-    testOptions {
-        unitTests.includeAndroidResources  = true
-        unitTests.returnDefaultValues = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.2.0'
-    }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-    buildFeatures {
-        compose true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.2.0'
@@ -75,6 +57,7 @@ android {
         unitTests.returnDefaultValues = true
     }
 }
+
 
 dependencies {
     constraints {
