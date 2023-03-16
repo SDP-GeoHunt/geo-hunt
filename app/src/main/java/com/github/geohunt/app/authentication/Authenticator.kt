@@ -2,6 +2,7 @@ package com.github.geohunt.app.authentication
 
 import androidx.activity.ComponentActivity
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.utility.Singleton
 import java.util.concurrent.CompletableFuture
 
 interface Authenticator {
@@ -23,5 +24,9 @@ interface Authenticator {
      * @return The completable future is finished when the signing out is finished.
      */
     fun signOut(activity: ComponentActivity): CompletableFuture<Void>
+
+    companion object {
+        val authInstance: Singleton<Authenticator> = Singleton(FirebaseAuthenticator())
+    }
 
 }

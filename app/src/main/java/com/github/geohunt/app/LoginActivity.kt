@@ -29,7 +29,7 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val authenticator: Authenticator = ServiceLocator.getAuthenticator()
+        val authenticator: Authenticator = Authenticator.authInstance.get()
 
         authenticator.user?.let { loggedIn() }
 

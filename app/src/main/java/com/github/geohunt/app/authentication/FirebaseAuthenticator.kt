@@ -57,6 +57,4 @@ class FirebaseAuthenticator(
         authUi.signOut(activity).addOnCompleteListener { cf.complete(null) }
         return cf
     }
-
-
 }

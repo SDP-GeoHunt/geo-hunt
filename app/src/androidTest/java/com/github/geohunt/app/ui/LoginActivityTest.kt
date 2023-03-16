@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui
 
+import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -14,10 +15,14 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.MainActivity
-import com.github.geohunt.app.ServiceLocator
 import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.mocks.MockLazyRef
+import com.github.geohunt.app.model.BaseLazyRef
+import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.PictureImage
 import com.github.geohunt.app.model.database.api.User
+import com.google.android.gms.tasks.Task
 import org.hamcrest.Matchers.*
 import org.junit.Rule
 import org.junit.Test
@@ -30,7 +35,7 @@ class LoginActivityTest {
 
     @Test
     fun opensHomeActivityWhenLoggedIn() {
-        ServiceLocator.setAuthenticator(MockAuthenticator(MockUser("hello")))
+        Authenticator.authInstance.set(MockAuthenticator(MockUser("hello")))
 
         Intents.init()
         launchActivity<LoginActivity>()
@@ -40,7 +45,7 @@ class LoginActivityTest {
 
     @Test
     fun doesNothingIfNotSignedIn() {
-        ServiceLocator.setAuthenticator(MockAuthenticator(null))
+        Authenticator.authInstance.set(MockAuthenticator(null))
         Intents.init()
 
         launchActivity<LoginActivity>()
@@ -51,7 +56,7 @@ class LoginActivityTest {
 
     @Test
     fun titleOfAppIsShown() {
-        ServiceLocator.setAuthenticator(MockAuthenticator(null))
+        Authenticator.authInstance.set(MockAuthenticator(null))
         launchActivity<LoginActivity>()
         composeTestRule.onNodeWithText("GeoHunt").assertExists("Title of app does not appear on log in")
     }
@@ -59,7 +64,7 @@ class LoginActivityTest {
     @Test
     fun clickingOnButtonTriggersSignIn() {
         val cf = CompletableFuture<Void>()
-        ServiceLocator.setAuthenticator(MockAuthenticator(null) {
+        Authenticator.authInstance.set(MockAuthenticator(null) {
             cf.complete(null)
             return@MockAuthenticator CompletableFuture.completedFuture(null)
         })
@@ -77,9 +82,9 @@ class LoginActivityTest {
     class MockUser(
         override var displayName: String? = null,
         override val uid: String = "1",
-        override val profilePicture: PictureImage? = null,
-        override val challenges: List<String> = emptyList(),
-        override val hunts: List<String> = emptyList(),
+        override val profilePicture: LazyRef<Bitmap> = MockLazyRef("1") { TODO() },
+        override val challenges: List<LazyRef<Challenge>> = emptyList(),
+        override val hunts: List<LazyRef<Challenge>> = emptyList(),
         override var score: Number = 1
     ) : User
 

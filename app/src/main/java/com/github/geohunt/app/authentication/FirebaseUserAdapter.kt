@@ -1,5 +1,9 @@
 package com.github.geohunt.app.authentication
 
+import android.graphics.Bitmap
+import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.PictureImage
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -14,15 +18,17 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
             user.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(value).build())
         }
 
-    override val uid get() = user.uid
-    override val profilePicture: PictureImage?
-        get() = null // TODO: needs to be get by the database
+    private val db = Database.databaseFactory.get()
 
-    override val challenges: List<String>
-        get() = TODO("Not yet implemented")
-    override val hunts: List<String>
-        get() = TODO("Not yet implemented")
+    override val uid get() = user.uid
+    override val profilePicture: LazyRef<Bitmap>
+        get() = TODO("Not yet implemented (need database)")
+
+    override val challenges: List<LazyRef<Challenge>>
+        get() = TODO("Not yet implemented (need database)")
+    override val hunts: List<LazyRef<Challenge>>
+        get() = TODO("Not yet implemented (need database)")
     override var score: Number
-        get() = TODO("Not yet implemented")
+        get() = TODO("Not yet implemented (need database)")
         set(value) {}
 }
