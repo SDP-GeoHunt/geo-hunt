@@ -26,7 +26,7 @@ fun LeaderboardListItem(
     user: User,
     isCurrent: Boolean = false
 ) {
-    assert(position >= 0) { "position should be non-negative."}
+    require(position >= 0) { "position should be non-negative."}
 
     // Make the text fit for large positions
     val positionSize = when (position + 1) {
