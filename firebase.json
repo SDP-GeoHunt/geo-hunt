@@ -1,0 +1,20 @@
+{
+  "database": {
+    "rules": "emulator/database.rules.json"
+  },
+  "storage": {
+    "rules": "emulator/storage.rules"
+  },
+  "emulators": {
+    "database": {
+      "port": 9000
+    },
+    "storage": {
+      "port": 9199
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true
+  }
+}
