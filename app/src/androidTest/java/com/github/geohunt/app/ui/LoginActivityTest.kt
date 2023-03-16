@@ -17,12 +17,9 @@ import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.MockLazyRef
-import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.PictureImage
 import com.github.geohunt.app.model.database.api.User
-import com.google.android.gms.tasks.Task
 import org.hamcrest.Matchers.*
 import org.junit.Rule
 import org.junit.Test

@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.PictureImage
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.github.geohunt.app.model.database.api.User
