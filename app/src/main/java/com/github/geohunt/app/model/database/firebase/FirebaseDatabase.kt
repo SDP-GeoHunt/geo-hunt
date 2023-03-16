@@ -111,8 +111,14 @@ class FirebaseDatabase(activity: Activity) : Database {
         }
     }
 
+    /**
+     * Retrieve a challenge with a given ID and return a [Task] upon completion
+     * 
+     * @param cid the challenge unique identifier
+     * @return A [Task] linked to the result of the operation
+     */
     override fun getChallengeById(cid: String): Task<Challenge> {
-        throw NotImplementedError()
+        return getChallengeRefById(cid).fetch()
     }
 
     internal fun getChallengeRefById(cid: String): FirebaseChallengeRef {

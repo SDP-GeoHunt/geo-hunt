@@ -39,16 +39,28 @@ import com.github.geohunt.app.utility.DateFormatUtils
  */
 @Composable
 fun Challenge(challenge: Challenge) {
+    val bitmap = rememberLazyRef {
+        challenge.thumbnail
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Column (horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()) {
 
             Spacer(modifier = Modifier.size(20.dp))
 
-            Image(painter = painterResource(id = R.drawable.eiffel),
-                    contentDescription = "Thumbnail of the challenge",
-                    modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp)))
+            if (bitmap == null) {
+                CircularProgressIndicator(
+                    modifier = Modifier.fillMaxSize(0.8)
+                )
+            }
+            else {
+                Image(painter = painterResource(id = R.drawable.eiffel),
+                        contentDescription = "Thumbnail of the challenge",
+                        modifier = Modifier
+                                .fillMaxSize(0.8)
+                                .clip(RoundedCornerShape(10.dp)))
+            }
 
             ClaimButton()
         }

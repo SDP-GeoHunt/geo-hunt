@@ -31,7 +31,12 @@ interface Database {
         expirationDate: LocalDateTime? = null
     ): Task<Challenge>
 
-    @Deprecated("No longer used, users must privilege the use of LazyRef<Users> which does this in the background")
+    /**
+     * Retrieve a challenge with a given ID and return a [Task] upon completion
+     * 
+     * @param cid the challenge unique identifier
+     * @return A [Task] linked to the result of the operation
+     */
     fun getChallengeById(cid: String): Task<Challenge>
 
     /**
