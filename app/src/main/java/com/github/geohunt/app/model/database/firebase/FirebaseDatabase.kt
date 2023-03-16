@@ -112,13 +112,13 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
-     * Retrieve a challenge with a given ID and return a [Task] upon completion
+     * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
      * 
      * @param cid the challenge unique identifier
-     * @return A [Task] linked to the result of the operation
+     * @return A [LazyRef] linked to the result of the operation
      */
-    override fun getChallengeById(cid: String): Task<Challenge> {
-        return getChallengeRefById(cid).fetch()
+    override fun getChallengeById(cid: String): LazyRef<Challenge> {
+        return getChallengeRefById(cid)
     }
 
     internal fun getChallengeRefById(cid: String): FirebaseChallengeRef {

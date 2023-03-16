@@ -61,7 +61,6 @@ fun Challenge(challenge: Challenge) {
                 Image(painter = painterResource(id = R.drawable.eiffel),
                         contentDescription = "Thumbnail of the challenge",
                         modifier = Modifier
-                                .fillMaxSize(0.8F)
                                 .clip(RoundedCornerShape(10.dp)))
             }
 
@@ -96,7 +95,7 @@ fun ChallengeInformation(challenge: Challenge) {
             .fillMaxWidth()
             .padding(5.dp, 0.dp)) {
 
-        Text(text = stringResource(id = R.string.challenge_created_by, challenge.author),
+        Text(text = stringResource(id = R.string.challenge_created_by, challenge.author.id),
                 color = Color.Gray)
 
         Row(modifier = Modifier.fillMaxWidth(),

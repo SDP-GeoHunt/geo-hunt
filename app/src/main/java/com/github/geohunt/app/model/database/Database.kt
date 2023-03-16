@@ -32,12 +32,12 @@ interface Database {
     ): Task<Challenge>
 
     /**
-     * Retrieve a challenge with a given ID and return a [Task] upon completion
+     * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
      * 
      * @param cid the challenge unique identifier
-     * @return A [Task] linked to the result of the operation
+     * @return A [LazyRef] linked to the result of the operation
      */
-    fun getChallengeById(cid: String): Task<Challenge>
+    fun getChallengeById(cid: String): LazyRef<Challenge>
 
     /**
      * Retrieve a list of challenges surrounding a particular location. Notice that the exact number of
