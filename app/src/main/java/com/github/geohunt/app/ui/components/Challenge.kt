@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -45,30 +46,13 @@ import com.github.geohunt.app.utility.DateFormatUtils
  */
 @Composable
 fun Challenge(challenge: Challenge) {
-    val bitmap = rememberLazyRef {
-        challenge.thumbnail
-    }
-
     Column(modifier = Modifier.fillMaxSize()) {
         Column (horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()) {
 
             Spacer(modifier = Modifier.size(20.dp))
 
-            if (bitmap.value == null) {
-                CircularProgressIndicator(
-                    modifier = Modifier.fillMaxSize(0.8F)
-                )
-            }
-            else {
-                val painter = remember {
-                    BitmapPainter(bitmap.value!!.asImageBitmap())
-                }
-                Image(painter = painter,
-                        contentDescription = "Thumbnail of the challenge",
-                        modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp)))
-            }
+            ChallengeImage(thumbnail = challenge.thumbnail)
 
             ClaimButton()
         }
@@ -93,28 +77,45 @@ fun ClaimButton() {
 }
 
 @Composable
+fun ChallengeImage(thumbnail: LazyRef<Bitmap>) {
+    val bitmap = rememberLazyRef {
+        thumbnail
+    }
+
+    if (bitmap.value == null) {
+        CircularProgressIndicator(
+                modifier = Modifier.fillMaxSize(0.8F)
+        )
+    }
+    else {
+        val painter = remember {
+            BitmapPainter(bitmap.value!!.asImageBitmap())
+        }
+        Image(painter = painter,
+                contentDescription = "Thumbnail of the challenge",
+                modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp)))
+    }
+
+}
+
+@Composable
 fun ChallengeInformation(challenge: Challenge) {
     val published = challenge.publishedDate
     val expirationDate = challenge.expirationDate
 
     Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(5.dp, 0.dp)) {
+            .fillMaxWidth()
+            .padding(5.dp, 0.dp)) {
 
-        Text(text = stringResource(id = R.string.challenge_created_by, challenge.author.id),
-                color = Color.Gray)
+        Text(text = stringResource(id = R.string.challenge_created_by, challenge.author.id))
 
         Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween) {
-            GrayText(stringResource(id = R.string.challenge_published, DateFormatUtils.formatDate(published)))
-            GrayText(stringResource(id = R.string.challenge_time_remaining, DateFormatUtils.formatRemainingTime(expirationDate)))
+            Text(stringResource(id = R.string.challenge_published, DateFormatUtils.formatDate(published)))
+            Text(stringResource(id = R.string.challenge_time_remaining, DateFormatUtils.formatRemainingTime(expirationDate)))
         }
     }
-}
-
-@Composable
-fun GrayText(text: String) {
-    Text(text = text, color = Color.Gray)
 }
 
 @Composable
@@ -123,13 +124,14 @@ fun ClaimPictures(claims: List<LazyRef<Claim>>) {
         items(claims) {claim ->
             //placeholder, will be replaced by images of claims made to the challenge
             Box(modifier = Modifier
-                .border(BorderStroke(1.dp, Color.Red))
-                .aspectRatio(1f)) {
+                    .border(BorderStroke(1.dp, Color.Red))
+                    .aspectRatio(1f)) {
                 Text(text = claim.id, color = Color.Red, textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize())
             }
         }
     }
 }
+
 /**
  * Function called when the claim button is clicked
  */
