@@ -1,4 +1,4 @@
-package com.github.geohunt.app
+package com.github.geohunt.app.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 
 import androidx.compose.material.Text
@@ -21,9 +22,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
+import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.DateFormatUtils
 
 /**
@@ -49,16 +52,16 @@ fun Challenge(challenge: Challenge) {
 
             Spacer(modifier = Modifier.size(20.dp))
 
-            if (bitmap == null) {
+            if (bitmap.value == null) {
                 CircularProgressIndicator(
-                    modifier = Modifier.fillMaxSize(0.8)
+                    modifier = Modifier.fillMaxSize(0.8F)
                 )
             }
             else {
                 Image(painter = painterResource(id = R.drawable.eiffel),
                         contentDescription = "Thumbnail of the challenge",
                         modifier = Modifier
-                                .fillMaxSize(0.8)
+                                .fillMaxSize(0.8F)
                                 .clip(RoundedCornerShape(10.dp)))
             }
 
