@@ -15,7 +15,7 @@ class ComposeActivityTest {
     fun testMainComposeActivity() {
         // Start the application
         composeTestRule.setContent {
-             ComposeActivity()
+            DefaultPreview()
         }
 
         composeTestRule.onNodeWithText("Hello Android!")
