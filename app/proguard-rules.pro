@@ -19,3 +19,16 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# When using Firebase Realtime Database in your app along with ProGuard, you need to consider how
+# your model objects will be serialized and deserialized after obfuscation
+# Add this global rule
+-keepattributes Signature
+
+# This rule will properly ProGuard all the model classes in
+# the package com.yourcompany.models.
+# Modify this rule to fit the structure of your app.
+-keepclassmembers class com.github.geohunt.app.model.database.firebase.** {
+    *;
+}
+
