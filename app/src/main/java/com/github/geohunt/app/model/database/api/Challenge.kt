@@ -45,10 +45,11 @@ interface Challenge
      * but the author
      */
     val correctLocation: Location
-
+    
     /**
      * A list of reference to all of the claims from users
      */
     val claims: List<LazyRef<Claim>>
+
 }
 

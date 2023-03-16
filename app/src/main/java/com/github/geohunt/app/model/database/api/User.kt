@@ -11,6 +11,9 @@ interface User {
 
     var displayName: String?
 
+    val name: String
+        get() = displayName ?: ("@" + uid)
+
     val profilePicture: LazyRef<Bitmap>
 
     val challenges: List<LazyRef<Challenge>>
