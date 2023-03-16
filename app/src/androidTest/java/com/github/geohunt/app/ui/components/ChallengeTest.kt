@@ -1,8 +1,9 @@
-package com.github.geohunt.app
+package com.github.geohunt.app.ui.components
 
 import android.graphics.Bitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.github.geohunt.app.Challenge
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
