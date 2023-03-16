@@ -36,6 +36,8 @@ fun Leaderboard(
             // LeaderboardChips()
         }
 
+        // Note that the modifier argument can not be removed, as [Modifier.weight] is an extension
+        // method only available in a [ColumnScope] or [RowScope]
         LeaderboardList(users = users, Modifier.weight(1.0f))
 
         // Bottom "You" item
