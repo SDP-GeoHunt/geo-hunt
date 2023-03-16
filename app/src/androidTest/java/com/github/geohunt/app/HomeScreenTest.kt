@@ -37,12 +37,13 @@ class HomeScreenTest {
     fun imagesVisible() {
         testRule.onNodeWithTag(R.drawable.header.toString())
             .assertIsDisplayed()
-        testRule.onNodeWithTag(R.drawable.mock_image_1.toString())
-            .assertIsDisplayed()
-        testRule.onNodeWithTag(R.drawable.mock_user.toString())
-            .assertIsDisplayed()
-        testRule.onNodeWithTag(R.drawable.likes.toString())
-            .assertIsDisplayed()
+        testRule.onAllNodesWithTag(R.drawable.mock_user.toString())
+            .onFirst().assertIsDisplayed()
+        testRule.onAllNodesWithTag(R.drawable.likes.toString())
+            .onFirst().assertIsDisplayed()
+        testRule.onAllNodesWithTag(R.drawable.mock_image_1.toString())
+            .onFirst().assertIsDisplayed()
+
     }
 
     @Test
