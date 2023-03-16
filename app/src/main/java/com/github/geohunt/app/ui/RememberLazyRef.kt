@@ -19,16 +19,16 @@ import com.github.geohunt.app.model.LazyRef
  */
 @Composable
 fun <T> rememberLazyRef(lazyRef: () -> LazyRef<T>): MutableState<T?> {
-    val value = remember { mutableStateOf<T?>(null) }
+    val value = remember {
+        mutableStateOf<T?>(null)
+    }
     remember {
         val ref = lazyRef()
-        ref.fetch()
-        ref.addOnPropertyChangedCallback(object: OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                value.value = ref.value
-            }
-        })
         value.value = ref.value
+        ref.fetch()
+            .addOnSuccessListener {
+                value.value = it
+            }
         ref
     }
     return value
@@ -49,13 +49,11 @@ fun <T> rememberLazyRef(default: T, lazyRef: () -> LazyRef<T>) : MutableState<T>
     val value = remember { mutableStateOf<T>(default) }
     remember {
         val ref = lazyRef()
-        ref.fetch()
-        ref.addOnPropertyChangedCallback(object: OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                value.value = ref.value ?: default
-            }
-        })
         value.value = ref.value ?: default
+        ref.fetch()
+            .addOnSuccessListener {
+                value.value = it
+            }
         ref
     }
     return value

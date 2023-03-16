@@ -1,9 +1,7 @@
 package com.github.geohunt.app.model
 
-import androidx.databinding.Observable
 import com.github.geohunt.app.utility.toCompletableFuture
 import com.google.android.gms.tasks.Task
-import java.util.concurrent.CompletableFuture
 
 /**
  * Interface used to represent indirection within the database in order to ease the process of
@@ -11,7 +9,7 @@ import java.util.concurrent.CompletableFuture
  *
  * @param T the type of parameter being referenced
  */
-interface LazyRef<T> : androidx.databinding.Observable {
+interface LazyRef<T> {
 
     /**
      * Identifies the current resource within the database.

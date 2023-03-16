@@ -2,6 +2,24 @@
     <string name="app_name">GeoHunt</string>
     <string name="title_activity_compose">ComposeActivity</string>
 
+    <string name="title_activity_claim">ClaimActivity</string>
+
+    <string name="challenge_claim">Claim</string>
+    <string name="challenge_created_by">Created by : %1$s</string>
+    <string name="challenge_published">Published : %1$s</string>
+    <string name="challenge_time_remaining">Time remaining : %1$s </string>
+
+    <plurals name="date_format_time_remaining_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="date_format_time_remaining_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <string name="date_format_less_one_hour">Less than 1 hour</string>
+    <string name="date_format_never">NEVER</string>
+    <string name="date_format_format">dd/MM/yyyy</string>
     <string name="navigation.home">Home</string>
     <string name="navigation.explore">Explore</string>
     <string name="navigation.create">Create a hunt</string>

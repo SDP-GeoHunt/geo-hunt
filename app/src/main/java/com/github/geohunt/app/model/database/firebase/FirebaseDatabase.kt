@@ -23,8 +23,8 @@ import java.io.File
 import java.time.LocalDateTime
 
 class FirebaseDatabase(activity: Activity) : Database {
-    private val database = Firebase.database.reference
-    private val storage = Firebase.storage("gs://geohunt-1.appspot.com").reference
+    private val database = FirebaseSingletons.database.get()
+    private val storage = FirebaseSingletons.storage.get()
     private val currentUser : String = "8b8b0392-ba8b-11ed-afa1-0242ac120002"
 
     // Database references
@@ -111,8 +111,14 @@ class FirebaseDatabase(activity: Activity) : Database {
         }
     }
 
-    override fun getChallengeById(cid: String): Task<Challenge> {
-        throw NotImplementedError()
+    /**
+     * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
+     * 
+     * @param cid the challenge unique identifier
+     * @return A [LazyRef] linked to the result of the operation
+     */
+    override fun getChallengeById(cid: String): LazyRef<Challenge> {
+        return getChallengeRefById(cid)
     }
 
     internal fun getChallengeRefById(cid: String): FirebaseChallengeRef {
