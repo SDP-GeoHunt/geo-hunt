@@ -15,10 +15,10 @@ check_android_task:
     sudo apt-get update
     sudo apt-get install -y ffmpeg
   install_emulator_script:
-    sdkmanager --install "system-images;android-30;google_apis;x86"
+    sdkmanager --install "system-images;android-30;google_apis_playstore;x86_64"
   create_avd_script: echo no | avdmanager create avd --force
     --name emulator
-    --package "system-images;android-30;google_apis;x86"
+    --package "system-images;android-30;google_apis_playstore;x86_64"
   start_avd_background_script: $ANDROID_HOME/emulator/emulator
     -avd emulator
     -no-audio
