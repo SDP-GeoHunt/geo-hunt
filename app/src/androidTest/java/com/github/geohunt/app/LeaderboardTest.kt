@@ -1,12 +1,15 @@
 package com.github.geohunt.app
 
+import android.graphics.Bitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import coil.Coil
 import coil.ImageLoader
 import coil.request.CachePolicy
-import com.github.geohunt.app.model.database.api.PictureImage
+import com.github.geohunt.app.mocks.MockLazyRef
+import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.Leaderboard
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
@@ -39,9 +42,9 @@ class LeaderboardTest {
         return object : User {
             override var displayName: String? = names[pos]
             override val uid: String = pos.toString()
-            override val profilePicture: PictureImage? = null
-            override val challenges: List<String> = listOf()
-            override val hunts: List<String> = listOf()
+            override val profilePicture: LazyRef<Bitmap> = MockLazyRef("1") { throw NotImplementedError() }
+            override val challenges: List<LazyRef<Challenge>> = listOf()
+            override val hunts: List<LazyRef<Challenge>> = listOf()
             override var score: Number = 1500 - pos * 100
         }
     }
