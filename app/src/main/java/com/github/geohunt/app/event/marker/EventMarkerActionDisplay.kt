@@ -15,16 +15,16 @@ class EventMarkerActionDisplay(private val context: Context) : GoogleMap.InfoWin
     @SuppressLint("InflateParams")
     override fun getInfoContents(marker: Marker): View? {
         // Obtain the data from the marker's tag
-        val data = marker.tag as Triple<*, *, *>
+        val data = marker.tag as MarkerData
 
         // Inflate the view and set the data
         val view = LayoutInflater.from(context).inflate(R.layout.event_marker_field, null)
 
         // Load the image from the marker's tag
-        view.findViewById<ImageView>(R.id.text_view_title).setImageBitmap(data.first as Bitmap?)
+        view.findViewById<ImageView>(R.id.text_view_title).setImageBitmap(data.image as Bitmap?)
 
         // Load the challenge expiration date from the marker's tag
-        view.findViewById<TextView>(R.id.text_expiration_date).text = data.third.toString()
+        view.findViewById<TextView>(R.id.text_expiration_date).text = data.expiryDate.toString()
 
         return view
     }

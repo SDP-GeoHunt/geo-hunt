@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.github.geohunt.app.event.marker.EventMarkerActionDisplay
+import com.github.geohunt.app.event.marker.MarkerData
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -18,15 +19,16 @@ import com.google.android.gms.maps.model.MarkerOptions
 import java.time.LocalDateTime
 import java.time.Month
 
-class ComposeActivity : AppCompatActivity(), OnMapReadyCallback {
-    private lateinit var map: GoogleMap
-    //Hardcoded list used to test correct display of events on the map
+class ComposeActivity() : AppCompatActivity(), OnMapReadyCallback {
+    lateinit var map: GoogleMap
     private val REQUEST_CODE_LOCATION_PERMISSION = 1
-    private var mockBitmap: Bitmap = Bitmap.createBitmap(IntArray(120*120){Color.CYAN}, 90, 90, Bitmap.Config.ARGB_8888)
-    private var mockChallengeDatabase : List<Triple<Bitmap, LatLng, LocalDateTime>> = listOf(
-            Triple(mockBitmap, LatLng(46.51958, 6.56398), LocalDateTime.of(2023, Month.MAY, 1, 19, 39, 12)),
-            Triple(mockBitmap, LatLng(46.52064, 6.56780), LocalDateTime.of(2023, Month.MAY, 2, 12, 24, 35)),
-            Triple(mockBitmap, LatLng(46.51881, 6.56779), LocalDateTime.of(2023, Month.MAY, 3, 16, 12, 12)))
+
+    //Hardcoded list used to test correct display of events on the map
+    private val mockBitmap: Bitmap = Bitmap.createBitmap(IntArray(120*120){ Color.CYAN}, 90, 90, Bitmap.Config.ARGB_8888)
+    private val mockChallengeDatabase : List<MarkerData> = listOf(
+            MarkerData("Event 1", mockBitmap, LatLng(46.51958, 6.56398), LocalDateTime.of(2023, Month.MAY, 1, 19, 39, 12)),
+            MarkerData("Event 2", mockBitmap, LatLng(46.52064, 6.56780), LocalDateTime.of(2023, Month.MAY, 2, 12, 24, 35)),
+            MarkerData("Event 3", mockBitmap, LatLng(46.51881, 6.56779), LocalDateTime.of(2023, Month.MAY, 3, 16, 12, 12)))
 
     /**
      * Called when the activity is starting
@@ -48,7 +50,6 @@ class ComposeActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        addMarkersOnTheMap(googleMap, mockChallengeDatabase)
         enableLocation()
 
         val epflLatitude = 46.519585
@@ -57,19 +58,8 @@ class ComposeActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val mapZoomValue = 15f
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(epflCoordinates, mapZoomValue))
-    }
 
-    /**
-     * Adds the data from the database to the map as markers
-     */
-    private fun addMarkersOnTheMap(map: GoogleMap, challenges: List<Triple<Bitmap, LatLng, LocalDateTime>>){
-        challenges.forEach{challenge ->
-                val marker = map.addMarker(
-                MarkerOptions()
-                        .position(challenge.second)
-                )
-            marker?.tag = challenge
-        }
+        addMarkersOnTheMap(googleMap, mockChallengeDatabase)
     }
 
     /**
@@ -116,6 +106,20 @@ class ComposeActivity : AppCompatActivity(), OnMapReadyCallback {
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     REQUEST_CODE_LOCATION_PERMISSION
             )
+        }
+    }
+
+    /**
+     * Adds the data from the database to the map as markers
+     */
+    fun addMarkersOnTheMap(map: GoogleMap, challenges: List<MarkerData>){
+        challenges.forEach{challenge ->
+            val marker = map.addMarker(
+                    MarkerOptions()
+                            .title(challenge.title)
+                            .position(challenge.coordinates)
+            )
+            marker?.tag = challenge
         }
     }
 }

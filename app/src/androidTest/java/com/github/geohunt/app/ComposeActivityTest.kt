@@ -6,15 +6,19 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject
+import androidx.test.uiautomator.UiSelector
 import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+
 @RunWith(AndroidJUnit4::class)
 class ComposeActivityTest {
-
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComposeActivity>()
 
@@ -32,5 +36,26 @@ class ComposeActivityTest {
     @Test
     fun testMapIsNotNull() {
         onView(withId(R.id.map_container_view)).check(matches(notNullValue()))
+    }
+
+    @Test
+    fun testMarkerClickOnEvent1WorksCorrectly() {
+        val device: UiDevice = UiDevice.getInstance(getInstrumentation())
+        val marker: UiObject = device.findObject(UiSelector().descriptionContains("Event 1"))
+        marker.click()
+    }
+
+    @Test
+    fun testMarkerClickOnEvent2WorksCorrectly() {
+        val device: UiDevice = UiDevice.getInstance(getInstrumentation())
+        val marker: UiObject = device.findObject(UiSelector().descriptionContains("Event 2"))
+        marker.click()
+    }
+
+    @Test
+    fun testMarkerClickOnEvent3WorksCorrectly() {
+        val device: UiDevice = UiDevice.getInstance(getInstrumentation())
+        val marker: UiObject = device.findObject(UiSelector().descriptionContains("Event 3"))
+        marker.click()
     }
 }
