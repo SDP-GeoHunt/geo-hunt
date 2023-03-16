@@ -24,13 +24,11 @@ fun <T> rememberLazyRef(lazyRef: () -> LazyRef<T>): MutableState<T?> {
     }
     remember {
         val ref = lazyRef()
-        ref.addOnPropertyChangedCallback(object: OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                value.value = ref.value
-            }
-        })
-        ref.fetch()
         value.value = ref.value
+        ref.fetch()
+            .addOnSuccessListener {
+                value.value = it
+            }
         ref
     }
     return value
@@ -51,13 +49,11 @@ fun <T> rememberLazyRef(default: T, lazyRef: () -> LazyRef<T>) : MutableState<T>
     val value = remember { mutableStateOf<T>(default) }
     remember {
         val ref = lazyRef()
-        ref.addOnPropertyChangedCallback(object: OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                value.value = ref.value ?: default
-            }
-        })
-        ref.fetch()
         value.value = ref.value ?: default
+        ref.fetch()
+            .addOnSuccessListener {
+                value.value = it
+            }
         ref
     }
     return value

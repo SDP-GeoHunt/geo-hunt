@@ -9,7 +9,7 @@ import com.google.android.gms.tasks.Task
  *
  * @param T the type of parameter being referenced
  */
-interface LazyRef<T> : androidx.databinding.Observable {
+interface LazyRef<T> {
 
     /**
      * Identifies the current resource within the database.
