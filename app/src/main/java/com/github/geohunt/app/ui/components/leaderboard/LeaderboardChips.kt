@@ -1,5 +1,10 @@
 package com.github.geohunt.app.ui.components.leaderboard
 
+// Important warning:
+// This file is for future use, and is commented to prevent code coverage from taking it into account.
+// It can be ignored until different leaderboards are implemented, or removed when we decide that it
+// is no longer a feature we want.
+
 /*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -17,8 +22,6 @@ enum class LeaderboardChoice(val text: String) {
 /**
  * Draws the leaderboard chips used to select between global and friends
  * leaderboards.
- *
- * This file can be ignored until different leaderboards are implemented.
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
