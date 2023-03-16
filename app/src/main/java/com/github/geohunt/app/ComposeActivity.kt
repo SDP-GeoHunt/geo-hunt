@@ -9,7 +9,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.ui.components.Challenge
 import com.github.geohunt.app.ui.components.CreateNewChallenge
+import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 
 
@@ -23,17 +25,25 @@ class ComposeActivity : ComponentActivity() {
         database = Database.createDatabaseHandle(this)
 
         setContent {
+            val challenge = rememberLazyRef {
+                database.getChallengeById("98d755ad-NQfISf2o_QzWLjCpedB")
+            }
+
             GeoHuntTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    CreateNewChallenge(database,
-                        onChallengeCreated = {
-                            Log.i("GeoHunt", "The challenge was successfully created")
-                        },
-                        onFailure = {
-                            Log.e("GeoHunt", "Failed because of exception $it")
-                        }
-                    )
+//                    CreateNewChallenge(database,
+//                        onChallengeCreated = {
+//                            Log.i("GeoHunt", "The challenge was successfully created")
+//                        },
+//                        onFailure = {
+//                            Log.e("GeoHunt", "Failed because of exception $it")
+//                        }
+//                    )
+                    if (challenge.value != null) {
+                        Challenge(challenge = challenge.value!!)
+                    }
+
                 }
             }
         }

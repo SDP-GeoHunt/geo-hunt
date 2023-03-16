@@ -14,10 +14,13 @@ import androidx.compose.material.Icon
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -58,7 +61,10 @@ fun Challenge(challenge: Challenge) {
                 )
             }
             else {
-                Image(painter = painterResource(id = R.drawable.eiffel),
+                val painter = remember {
+                    BitmapPainter(bitmap.value!!.asImageBitmap())
+                }
+                Image(painter = painter,
                         contentDescription = "Thumbnail of the challenge",
                         modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp)))
@@ -92,8 +98,8 @@ fun ChallengeInformation(challenge: Challenge) {
     val expirationDate = challenge.expirationDate
 
     Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp, 0.dp)) {
+        .fillMaxWidth()
+        .padding(5.dp, 0.dp)) {
 
         Text(text = stringResource(id = R.string.challenge_created_by, challenge.author.id),
                 color = Color.Gray)
@@ -117,8 +123,8 @@ fun ClaimPictures(claims: List<LazyRef<Claim>>) {
         items(claims) {claim ->
             //placeholder, will be replaced by images of claims made to the challenge
             Box(modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Red))
-                    .aspectRatio(1f)) {
+                .border(BorderStroke(1.dp, Color.Red))
+                .aspectRatio(1f)) {
                 Text(text = claim.id, color = Color.Red, textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize())
             }
         }

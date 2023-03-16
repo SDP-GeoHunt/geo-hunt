@@ -12,7 +12,8 @@ object FirebaseEmulator {
         val databaseInstance = FirebaseDatabase.getInstance("http://10.0.2.2:9000/?ns=geohunt-1-default-rtdb").reference
         FirebaseSingletons.database.set(databaseInstance)
 
-        val storageInstance = FirebaseStorage.getInstance("gs://10.0.2.2:9199").reference
-        FirebaseSingletons.storage.set(storageInstance)
+        val storageInstance = FirebaseStorage.getInstance("gs://geohunt-1.appspot.com")
+        storageInstance.useEmulator("10.0.2.2", 9199)
+        FirebaseSingletons.storage.set(storageInstance.reference)
     }
 }

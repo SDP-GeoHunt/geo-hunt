@@ -2,6 +2,7 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.thenDo
@@ -67,6 +68,9 @@ internal class FirebaseBitmapRef(
             val imageRef = database.storageImagesRef.child(id)
             imageRef.putFile(uri)
         }
+            .addOnFailureListener {
+                Log.e("GeoHunt", "$it")
+            }
     }
 
     companion object {
