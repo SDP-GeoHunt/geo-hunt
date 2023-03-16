@@ -34,31 +34,13 @@ class HomeScreenTest {
     }
 
     @Test
-    fun imagesVisibleHeader() {
+    fun imagesVisible() {
         testRule.onNodeWithTag(R.drawable.header.toString())
             .assertIsDisplayed()
-//        testRule.onNodeWithTag(R.drawable.mock_image_1.toString())
-//            .assertIsDisplayed()
-//        testRule.onNodeWithTag(R.drawable.mock_user.toString())
-//            .assertIsDisplayed()
-//        testRule.onNodeWithTag(R.drawable.likes.toString())
-//            .assertIsDisplayed()
-    }
-
-    @Test
-    fun imageVisibleThumbnail() {
         testRule.onNodeWithTag(R.drawable.mock_image_1.toString())
             .assertIsDisplayed()
-    }
-
-    @Test
-    fun imageVisibleUserImage() {
         testRule.onNodeWithTag(R.drawable.mock_user.toString())
             .assertIsDisplayed()
-    }
-
-    @Test
-    fun imageVisibleLikeImage() {
         testRule.onNodeWithTag(R.drawable.likes.toString())
             .assertIsDisplayed()
     }

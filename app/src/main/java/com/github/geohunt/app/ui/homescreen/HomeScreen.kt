@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,7 @@ fun HomeScreen(challenges: List<MockChallenge>) {
                 painter = painterResource(id = R.drawable.header),
                 contentDescription = null,
                 modifier = Modifier.size(200.dp)
+                    .testTag(R.drawable.header.toString())
             )
         }
         Box(
@@ -99,7 +101,8 @@ fun ChallengeItem(challenge: MockChallenge) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
-                    .clip(RoundedCornerShape(18.dp)),
+                    .clip(RoundedCornerShape(18.dp))
+                    .testTag(challenge.challengeImg.toString()),
                 contentScale = ContentScale.FillWidth,
             )
             Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -107,7 +110,7 @@ fun ChallengeItem(challenge: MockChallenge) {
                     painter = painterResource(id = R.drawable.likes),
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp).testTag(R.drawable.likes.toString())
                 )
                 Text(
                     text = "${challenge.likes}",
@@ -130,7 +133,8 @@ fun RoundImageCard(
         Image(
             painter = painterResource(id = image),
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.testTag(image.toString())
         )
     }
 }
