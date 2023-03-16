@@ -1,9 +1,7 @@
 package com.github.geohunt.app
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import com.github.geohunt.app.ui.homescreen.HomeScreen
 import com.github.geohunt.app.ui.homescreen.MockChallenge
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
@@ -36,20 +34,38 @@ class HomeScreenTest {
     }
 
     @Test
-    fun imagesVisible() {
+    fun imagesVisibleHeader() {
         testRule.onNodeWithTag(R.drawable.header.toString())
             .assertIsDisplayed()
+//        testRule.onNodeWithTag(R.drawable.mock_image_1.toString())
+//            .assertIsDisplayed()
+//        testRule.onNodeWithTag(R.drawable.mock_user.toString())
+//            .assertIsDisplayed()
+//        testRule.onNodeWithTag(R.drawable.likes.toString())
+//            .assertIsDisplayed()
+    }
+
+    @Test
+    fun imageVisibleThumbnail() {
         testRule.onNodeWithTag(R.drawable.mock_image_1.toString())
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun imageVisibleUserImage() {
         testRule.onNodeWithTag(R.drawable.mock_user.toString())
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun imageVisibleLikeImage() {
         testRule.onNodeWithTag(R.drawable.likes.toString())
             .assertIsDisplayed()
     }
 
     @Test
     fun textsVisible() {
-        testRule.onNodeWithText("John Smith", substring = true).assertExists()
-        testRule.onNodeWithText("57", substring = true).assertExists()
+        testRule.onAllNodesWithText("John Smith").onFirst().assertExists()
+        testRule.onAllNodesWithText("57").onFirst().assertExists()
     }
 }
