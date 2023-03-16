@@ -16,3 +16,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+database-debug.log
+ui-debug.log
+
