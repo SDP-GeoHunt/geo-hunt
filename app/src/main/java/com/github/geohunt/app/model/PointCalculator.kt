@@ -40,6 +40,8 @@ object PointCalculator {
      * Main function of the PointCalculator, computes the amount of points a claim is worth.
      * Uses a gaussian distribution and the distance between the two Locations to compute
      * the points.
+     * @param l1 First location used to compute points
+     * @param l2 Second location used to compute points
      */
     fun computePoints(l1: Location, l2: Location): Double {
         val points = calculator(l1.distanceTo(l2)) * ratio
