@@ -26,7 +26,7 @@ fun ProfileIcon(user: User, size: Size = Size.ORIGINAL) {
             .size(size)
             .crossfade(true)
             .build(),
-        contentDescription = "${user.displayName} profile picture",
+        contentDescription = "${user.name} profile picture",
         modifier = Modifier
             .padding(8.dp)
             .clip(CircleShape)

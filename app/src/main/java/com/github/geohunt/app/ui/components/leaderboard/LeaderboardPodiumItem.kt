@@ -54,7 +54,7 @@ fun LeaderboardPodiumItem(user: User, position: Int) {
                 modifier = Modifier.height(38. dp).padding(top = 3. dp)
             )
             Text(
-                user.displayName,
+                user.name,
                 fontSize = 18. sp,
                 color = Color.White
             )

@@ -9,7 +9,10 @@ import com.github.geohunt.app.model.LazyRef
 interface User {
     val uid: String
 
-    var displayName: String
+    var displayName: String?
+
+    val name: String
+        get() = displayName ?: ("@" + uid)
 
     val profilePicture: LazyRef<Bitmap>
 

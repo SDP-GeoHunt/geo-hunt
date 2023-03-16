@@ -37,7 +37,7 @@ class LeaderboardTest {
      */
     private fun mockUser(pos: Int): User {
         return object : User {
-            override var displayName: String = names[pos]
+            override var displayName: String? = names[pos]
             override val uid: String = pos.toString()
             override val profilePicture: PictureImage? = null
             override val challenges: List<String> = listOf()
@@ -92,9 +92,9 @@ class LeaderboardTest {
     fun usersAppearExactlyOnceInLeaderboard() {
         for ((i, user) in mockUsers.withIndex()) {
             // Check that every name is printed exactly once
-            testRule.onAllNodesWithText(user.displayName).assertCountEquals(1)
+            testRule.onAllNodesWithText(user.name).assertCountEquals(1)
 
-            val siblings = testRule.onNodeWithText(user.displayName).onSiblings()
+            val siblings = testRule.onNodeWithText(user.name).onSiblings()
 
             // Check that the position is printed once
             val position = when(i) {
@@ -108,7 +108,7 @@ class LeaderboardTest {
 
             // Check that the image is printed once
             siblings
-                .filter(hasContentDescription("${user.displayName} profile picture"))
+                .filter(hasContentDescription("${user.name} profile picture"))
                 .assertCountEquals(1)
 
             // Check that the score is printed once
@@ -120,7 +120,7 @@ class LeaderboardTest {
 
     @Test
     fun topUserGetsFireIcon() {
-        testRule.onNodeWithText(mockUsers[0].displayName)
+        testRule.onNodeWithText(mockUsers[0].name)
             .onSiblings()
             .filterToOne(hasContentDescription("Fire !"))
             .assertIsDisplayed()
