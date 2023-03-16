@@ -19,7 +19,7 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name=".ComposeActivity"
+            android:name=".GoogleMapsActivity"
             android:exported="true"
             android:label="@string/title_activity_compose"
             android:theme="@style/Theme.GeoHunt">

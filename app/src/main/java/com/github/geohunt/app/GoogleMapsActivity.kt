@@ -19,7 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import java.time.LocalDateTime
 import java.time.Month
 
-class ComposeActivity() : AppCompatActivity(), OnMapReadyCallback {
+class GoogleMapsActivity() : AppCompatActivity(), OnMapReadyCallback {
     lateinit var map: GoogleMap
     private val REQUEST_CODE_LOCATION_PERMISSION = 1
 
