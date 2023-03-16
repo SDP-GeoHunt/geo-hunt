@@ -1,9 +1,7 @@
 package com.github.geohunt.app.model
 
-import androidx.databinding.Observable
 import com.github.geohunt.app.utility.toCompletableFuture
 import com.google.android.gms.tasks.Task
-import java.util.concurrent.CompletableFuture
 
 /**
  * Interface used to represent indirection within the database in order to ease the process of

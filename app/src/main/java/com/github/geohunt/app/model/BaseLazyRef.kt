@@ -1,5 +1,6 @@
 package com.github.geohunt.app.model
 
+import android.util.Log
 import androidx.databinding.BaseObservable
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
@@ -43,9 +44,17 @@ abstract class BaseLazyRef<T> : LazyRef<T>, BaseObservable() {
                 task!!
             }
             else {
-                task = fetchValue().addOnSuccessListener {
-                    value = it
-                }
+                task = fetchValue()
+                    .addOnSuccessListener {
+                        value = it
+                    }
+                    .addOnFailureListener {
+                        Log.e("GeoHunt", "Failed to fetch the given lazyRef, exception $it was thrown")
+                    }
+                    .addOnCanceledListener {
+                        Log.e("GeoHunt", "Failed to fetch the given lazyRef, fetch was cancelled")
+                    }
+
                 task!!
             }
         }

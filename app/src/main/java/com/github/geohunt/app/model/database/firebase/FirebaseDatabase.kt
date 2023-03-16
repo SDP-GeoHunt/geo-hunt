@@ -23,8 +23,8 @@ import java.io.File
 import java.time.LocalDateTime
 
 class FirebaseDatabase(activity: Activity) : Database {
-    private val database = Firebase.database.reference
-    private val storage = Firebase.storage("gs://geohunt-1.appspot.com").reference
+    private val database = FirebaseSingletons.database.get()
+    private val storage = FirebaseSingletons.storage.get()
     private val currentUser : String = "8b8b0392-ba8b-11ed-afa1-0242ac120002"
 
     // Database references
