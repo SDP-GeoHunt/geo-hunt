@@ -31,7 +31,7 @@ fun LeaderboardPodiumItem(user: User, position: Int) {
     require(position in 0..2) { "Position in PodiumItem should be in 0..2" }
 
     val height = arrayOf(100. dp, 70. dp, 70. dp)[position]
-    val opacity = (80 - (20 * position)) / 100.0f
+    val opacity = (90 - (15 * position)) / 100.0f
 
     Row(
         Modifier
