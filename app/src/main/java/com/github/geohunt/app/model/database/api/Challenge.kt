@@ -45,12 +45,7 @@ interface Challenge
      * but the author
      */
     val correctLocation: Location
-
-    /**
-     * The number of likes received by the challenge
-     */
-    var likes: Int
-
+    
     /**
      * A list of reference to all of the claims from users
      */
