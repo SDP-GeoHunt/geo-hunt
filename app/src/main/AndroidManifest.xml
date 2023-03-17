@@ -39,9 +39,15 @@
 
         <activity
             android:name=".LoginActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_login"
-            android:theme="@style/GeoHunt" />
+            android:theme="@style/GeoHunt">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         
         <activity
             android:name=".GoogleMapsActivity"
@@ -54,11 +60,6 @@
             android:exported="true"
             android:label="@string/title_activity_compose"
             android:theme="@style/GeoHunt">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 </manifest>
