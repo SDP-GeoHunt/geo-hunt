@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">GeoHunt</string>
     <string name="title_activity_compose">ComposeActivity</string>
+    <string name="event_image">Event image</string>
 
     <string name="title_activity_claim">ClaimActivity</string>
 
