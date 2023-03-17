@@ -11,8 +11,8 @@ import kotlin.math.*
 /**
  * Represent the location on earth using the latitude and longitude as double valued numbers
  */
-data class Location(var latitude: Double,
-                    var longitude: Double) {
+data class Location(var latitude: Double = 0.0,
+                    var longitude: Double = 0.0) {
     /**
      * Computes the distance in kilometers to another Location
      * Uses the haversine formula to perform the calculation (https://en.wikipedia.org/wiki/Haversine_formula)
@@ -95,14 +95,14 @@ data class Location(var latitude: Double,
          /**
          * Length of the string representing the coarse hash
          */
-        const val COARSE_HASH_SIZE = (2 * Long.SIZE_BYTES) / 2;
+        const val COARSE_HASH_SIZE = (2 * Long.SIZE_BYTES) / 2
 
         fun getCoarseHash(location: Location) : String {
             val crc32 = CRC32()
 
             // Define a ~11.1km lattice (at the equator)
-            var coarseLatitude = (location.latitude * 10.0).roundToLong()
-            var coarseLongitude = (location.longitude * 10.0).roundToLong()
+            val coarseLatitude = (location.latitude * 10.0).roundToLong()
+            val coarseLongitude = (location.longitude * 10.0).roundToLong()
 
             val byteBuffer = ByteBuffer.allocate(2 * Long.SIZE_BYTES)
                     .putLong(0, coarseLatitude)
