@@ -14,6 +14,8 @@ check_android_task:
   install_ffmpeg_script: |
     sudo apt-get update
     sudo apt-get install -y ffmpeg
+  install_firebase_emulator_script: |
+    sudo curl -sL https://firebase.tools | bash
   install_emulator_script:
     sdkmanager --install "system-images;android-30;google_apis_playstore;x86_64"
   create_avd_script: echo no | avdmanager create avd --force
@@ -27,6 +29,8 @@ check_android_task:
     -no-snapshot
     -no-window
     -camera-back none
+  start_firebase_background_script: |
+    firebase emulators:start --import=emulator/bundled
   extract_api_script: |
     touch ./local.properties
     echo MAPS_API_KEY=$MAPS_API_KEY >> ./local.properties
