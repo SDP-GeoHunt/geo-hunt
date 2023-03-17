@@ -2,6 +2,15 @@ package com.github.geohunt.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val Purple200 = Color(0xFFBB86FC)
+val Purple500 = Color(0xFF6200EE)
+val Purple700 = Color(0xFF3700B3)
+val Teal200 = Color(0xFF03DAC5)
+
+val geoHuntRed = Color(0xFFFF3D00)
+val homeScreenBackground = Color(0xFFE0E0E0)
+val whiteBackground = Color(0xFFFFFFFF)
+
 val md_theme_light_primary = Color(0xFFA53C00)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_secondary = Color(0xFF99461E)

@@ -2,6 +2,7 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.thenDo
