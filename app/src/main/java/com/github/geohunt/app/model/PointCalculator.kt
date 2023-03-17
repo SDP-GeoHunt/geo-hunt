@@ -1,7 +1,8 @@
 package com.github.geohunt.app.model
 
 import com.github.geohunt.app.model.database.api.Location
-import kotlin.math.*
+import com.github.geohunt.app.utility.clamp
+import com.github.geohunt.app.utility.gaussianDistributionPDF
 
 /**
  * Object giving access to its only method computePoints, which allows the user to compute
@@ -11,7 +12,6 @@ object PointCalculator {
     /**
      * Hyper parameters of the function used to compute the points
      */
-    private const val MEAN = 0.0
     private const val STD = 0.15
 
     /**
@@ -29,8 +29,8 @@ object PointCalculator {
     /**
      * Utility definitions
      */
-    private val calculator = gaussianDistributionPDF(MEAN, STD)
-    private val fctMaxValue = calculator(MEAN)
+    private val calculator = gaussianDistributionPDF(0.0, STD)
+    private val fctMaxValue = calculator(0.0)
     private val ratio = MAX_POINTS / fctMaxValue
 
     /**
@@ -43,31 +43,6 @@ object PointCalculator {
     fun computePoints(l1: Location, l2: Location): Double {
         val points = calculator(l1.distanceTo(l2)) * ratio
         return clamp(MIN_POINTS, points, MAX_POINTS)
-    }
-
-    //TODO Should maybe be moved to some MathUtils class along with clamp
-    /**
-     * Returns a function representing the PDF of the gaussian distribution with given mean
-     * and standard deviation (std)
-     * @param mean Mean of the gaussian
-     * @param std Standard deviation of the gaussian
-     */
-    private fun gaussianDistributionPDF (mean: Double, std: Double): (Double) -> Double {
-        return fun(x: Double): Double {
-            val piFactor = sqrt(2 * PI)
-            val exponent = (-1.0/2.0) * ((x - mean) / std) * ((x - mean) / std)
-            return (1 / (std * piFactor)) * exp(exponent)
-        }
-    }
-
-    /**
-     * Restricts x between min and max
-     * @param min the minimum value
-     * @param x the value to restrict
-     * @param max the maximum value
-     */
-    private fun clamp(min: Double, x: Double, max: Double): Double {
-        return max(min(x, max), min)
     }
 
 }

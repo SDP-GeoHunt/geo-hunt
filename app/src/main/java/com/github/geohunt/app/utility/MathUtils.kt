@@ -1,7 +1,6 @@
 package com.github.geohunt.app.utility
 
-import java.time.Duration
-import kotlin.math.roundToLong
+import kotlin.math.*
 
 /**
  * Quantize the current double value in discrete bins of size scale
@@ -41,4 +40,28 @@ fun Double.quantizeToLong(binSize: Double) : Long {
 
     // Finally return the corresponding bin as Long
     return (this / binSize).roundToLong()
+}
+
+/**
+ * Returns a function representing the PDF of the gaussian distribution with given mean
+ * and standard deviation (std)
+ * @param mean Mean of the gaussian
+ * @param std Standard deviation of the gaussian
+ */
+fun gaussianDistributionPDF (mean: Double, std: Double): (Double) -> Double {
+    return fun(x: Double): Double {
+        val piFactor = sqrt(2 * PI)
+        val exponent = (-1.0/2.0) * ((x - mean) / std) * ((x - mean) / std)
+        return (1 / (std * piFactor)) * exp(exponent)
+    }
+}
+
+/**
+ * Restricts x between min and max
+ * @param min the minimum value
+ * @param x the value to restrict
+ * @param max the maximum value
+ */
+fun clamp(min: Double, x: Double, max: Double): Double {
+    return max(min(x, max), min)
 }
