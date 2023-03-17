@@ -53,5 +53,5 @@ fun GeoHuntTheme(
             typography = Typography,
             shapes = Shapes,
             content = content
-  )
+    )
 }

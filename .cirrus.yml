@@ -1,5 +1,6 @@
 env:
   CC_TEST_REPORTER_ID: ENCRYPTED[d691e43c7b6b4e3f07b5763b31ef435530b3d0bdb6e19f2035661955ba7b85c7a8b8a6527801cce1346fcd84e11fb436]
+  MAPS_API_KEY: ENCRYPTED[c6f0602a257026d81282f12942805107edbf80459f576f8919bd0090232770743df99a26fb0c08bf2024f39257f2fee4]
 
 container:
   image: cirrusci/android-sdk:30
@@ -12,26 +13,27 @@ check_android_task:
   alias: check_android
   install_ffmpeg_script: |
     sudo apt-get update
-    sudo apt-get install -y ffmpeg netcat
+    sudo apt-get install -y ffmpeg
   install_firebase_emulator_script: |
     sudo curl -sL https://firebase.tools | bash
   install_emulator_script:
-    sdkmanager --install "system-images;android-30;google_apis;x86"
-  create_avd_script:
-    echo no | avdmanager create avd --force
-      --name emulator
-      --package "system-images;android-30;google_apis;x86"
-  start_avd_background_script:
-    $ANDROID_HOME/emulator/emulator
-      -avd emulator
-      -no-audio
-      -no-boot-anim
-      -gpu swiftshader_indirect
-      -no-snapshot
-      -no-window
-      -camera-back none
+    sdkmanager --install "system-images;android-30;google_apis_playstore;x86_64"
+  create_avd_script: echo no | avdmanager create avd --force
+    --name emulator
+    --package "system-images;android-30;google_apis_playstore;x86_64"
+  start_avd_background_script: $ANDROID_HOME/emulator/emulator
+    -avd emulator
+    -no-audio
+    -no-boot-anim
+    -gpu swiftshader_indirect
+    -no-snapshot
+    -no-window
+    -camera-back none
   start_firebase_background_script: |
     firebase emulators:start --import=emulator/bundled
+  extract_api_script: |
+    touch ./local.properties
+    echo MAPS_API_KEY=$MAPS_API_KEY >> ./local.properties
   assemble_instrumented_tests_script: |
     chmod +x gradlew
     ./gradlew assembleDebugAndroidTest
@@ -48,7 +50,7 @@ check_android_task:
   screen_record_background_script:
     for n in $(seq 1 20); do adb exec-out screenrecord --time-limit=180 --output-format=h264 - > $n.h264; done
   check_script:
-    ./gradlew check connectedCheck 
+    ./gradlew check connectedCheck
   report_codeclimate_script: |
     export JACOCO_SOURCE_PATH=app/src/main/java/
     ./cc-test-reporter format-coverage ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
@@ -57,7 +59,7 @@ check_android_task:
     wait_for_screenrecord_script: |
       pkill -2 -x adb
       sleep 2
-    convert_to_mp4_script: 
+    convert_to_mp4_script:
       find *.h264 | sed 's:\ :\\\ :g'| sed 's/^/file /' > fl.txt; ffmpeg -f concat -i fl.txt -c copy recording.mp4; rm fl.txt
     screenrecord_artifacts:
       path: "recording.mp4"

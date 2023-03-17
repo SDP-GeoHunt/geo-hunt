@@ -23,7 +23,10 @@
         android:supportsRtl="true"
         android:theme="@style/GeoHunt"
         tools:targetApi="31">
-        
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -39,6 +42,13 @@
             android:exported="false"
             android:label="@string/title_activity_login"
             android:theme="@style/GeoHunt" />
+        
+        <activity
+            android:name=".GoogleMapsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_compose"
+            android:theme="@style/GeoHunt" />
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
