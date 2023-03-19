@@ -1,5 +1,7 @@
 package com.github.geohunt.app.model.database.api
 
+import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -39,5 +41,27 @@ class LocationTest {
 
         val expected = 19.13e-3
         assertEquals(expected, cinemaPatheFlon.distanceTo(MADCafeFlon), ERROR_RATIO * expected)
+    }
+
+    @Test
+    fun testLocationDMS() {
+        val location = Location(48.858283, 2.294645)
+        MatcherAssert.assertThat(location.toString(), Matchers.anyOf(Matchers.equalTo("48° 51' 29.82\"N, 2° 17' 40.72\"E"),
+        Matchers.equalTo("48° 51' 29,82\"N, 2° 17' 40,72\"E")))
+    }
+
+    @Test
+    fun testLocationCoarseHash() {
+        val location = Location(48.858283, 2.294645)
+        MatcherAssert.assertThat(location.getCoarseHash(), Matchers.equalTo("163f921c"))
+    }
+
+    @Test
+    fun testLocationCoarseLocation() {
+        val location = Location(0.0, 0.0)
+        location.latitude = 48.858283
+        location.longitude = 2.294645
+        MatcherAssert.assertThat(location.getCoarseLocation().latitude, Matchers.closeTo(48.9, 1e-5))
+        MatcherAssert.assertThat(location.getCoarseLocation().longitude, Matchers.closeTo(2.3, 1e-5))
     }
 }
