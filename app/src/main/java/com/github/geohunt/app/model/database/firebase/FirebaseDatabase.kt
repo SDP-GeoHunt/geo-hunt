@@ -115,7 +115,7 @@ class FirebaseDatabase(activity: Activity) : Database {
     override fun insertNewUser(user: User): Task<Void> {
         val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(),0)
 
-        return dbUserRef.child(user.uid).push().setValue(userEntry)
+        return dbUserRef.child(user.uid).setValue(userEntry)
     }
 
     /**

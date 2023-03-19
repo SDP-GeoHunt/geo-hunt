@@ -1,11 +1,10 @@
 package com.github.geohunt.app.ui.components.profile
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.R
@@ -26,7 +25,7 @@ fun ProfilePage(id: String) {
 fun ProfilePage(user: LazyRef<User>) {
     val lazyRefRemember = rememberLazyRef { user }
 
-    Box {
+    Box(modifier = Modifier.fillMaxSize().fillMaxWidth()) {
         if (lazyRefRemember.value == null) {
             CircularProgressIndicator()
         } else {
@@ -37,14 +36,14 @@ fun ProfilePage(user: LazyRef<User>) {
 
 @Composable
 private fun ProfilePageContent(user: User) {
-    Row {
-        Column {
+    Column {
+        Row {
             ProfileIcon(user = user)
 
-            Row {
+            Column {
                 Text(user.displayName ?: user.uid)
 
-                Column {
+                Row {
                     BigNumberWithText(
                         title = user.challenges.size.toString(),
                         subtitle = stringResource(id = R.string.profile_number_of_posts_subtitle)
