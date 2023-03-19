@@ -14,14 +14,23 @@ import kotlin.coroutines.cancellation.CancellationException
  */
 fun <TResult> Task<TResult>.toCompletableFuture(activity: Activity) : CompletableFuture<TResult>
 {
+    return this.toCompletableFuture()
+}
+
+/**
+ * Convert a given [Task] to a [CompletableFuture] that is executed in the context of a certain
+ * activity
+ */
+fun <TResult> Task<TResult>.toCompletableFuture() : CompletableFuture<TResult>
+{
     val completableFuture = CompletableFuture<TResult>()
-    this.addOnSuccessListener(activity) {
+    this.addOnSuccessListener {
             completableFuture.complete(it)
         }
-        .addOnFailureListener(activity) {
+        .addOnFailureListener {
             completableFuture.completeExceptionally(it)
         }
-        .addOnCanceledListener(activity) {
+        .addOnCanceledListener {
             completableFuture.completeExceptionally(CancellationException())
         }
     return completableFuture

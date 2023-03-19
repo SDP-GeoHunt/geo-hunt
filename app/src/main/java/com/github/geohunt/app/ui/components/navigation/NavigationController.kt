@@ -1,5 +1,7 @@
 package com.github.geohunt.app.ui.components.navigation
 
+import androidx.activity.ComponentActivity
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -13,6 +15,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.github.geohunt.app.R
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.ui.components.profile.ProfilePage
+import com.github.geohunt.app.utility.findActivity
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -30,9 +38,16 @@ enum class Route(val titleStringId: Int, val route: String, val icon: Composable
 
 @Composable
 fun NavigationController(navController: NavHostController, modifier: Modifier = Modifier) {
+    val authenticator = Authenticator.authInstance.get()
+    val activity: ComponentActivity = LocalContext.current.findActivity() as ComponentActivity
+
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
-            Text("Home")
+            Button(onClick = {
+                authenticator.signOut(activity)
+            }) {
+                Text("Sign out")
+            }
         }
         composable(Route.Explore.route) {
             Text("Explore")
@@ -43,8 +58,20 @@ fun NavigationController(navController: NavHostController, modifier: Modifier = 
         composable(Route.ActiveHunts.route) {
             Text("Active hunts")
         }
+
+        // Profile
         composable(Route.Profile.route) {
-            Text("Profile")
+            val user = Authenticator.authInstance.get().user
+
+            if (user == null) {
+                Text("You are not logged in. Weird :(")
+            } else {
+                ProfilePage(id = Authenticator.authInstance.get().user!!.uid)
+            }
+        }
+
+        composable("${Route.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+            it.arguments?.getString("userId")?.let { it1 -> ProfilePage(id = it1) }
         }
 
     }
