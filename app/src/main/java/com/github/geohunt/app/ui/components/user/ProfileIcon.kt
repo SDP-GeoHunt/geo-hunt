@@ -11,6 +11,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.rememberLazyRef
 
 /**
  * Creates a round profile icon of the given size.
@@ -20,9 +21,11 @@ import com.github.geohunt.app.model.database.api.User
  */
 @Composable
 fun ProfileIcon(user: User, size: Size = Size.ORIGINAL) {
+    val profilePicture = rememberLazyRef { user.profilePicture }
+
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
-            .data("https://picsum.photos/430/400") // TODO Integrate with user
+            .data(profilePicture.value)
             .size(size)
             .crossfade(true)
             .build(),
