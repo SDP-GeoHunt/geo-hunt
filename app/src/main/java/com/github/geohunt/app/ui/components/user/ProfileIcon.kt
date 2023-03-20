@@ -1,10 +1,12 @@
 package com.github.geohunt.app.ui.components.user
 
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -17,7 +19,6 @@ import com.github.geohunt.app.ui.rememberLazyRef
  * Creates a round profile icon of the given size.
  *
  * @param user The user for which we draw the profile picture.
- * @param size The size of the icon.
  */
 @Composable
 fun ProfileIcon(user: User, size: Size = Size.ORIGINAL) {
@@ -30,7 +31,9 @@ fun ProfileIcon(user: User, size: Size = Size.ORIGINAL) {
             .crossfade(true)
             .build(),
         contentDescription = "${user.name} profile picture",
+        contentScale = ContentScale.Crop,
         modifier = Modifier
+            .aspectRatio(1f)
             .padding(8.dp)
             .clip(CircleShape)
     )
