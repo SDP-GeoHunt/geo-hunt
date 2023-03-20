@@ -14,7 +14,7 @@ class FirebaseUser(
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
-    override var score: Number
+    override var score: Double
 ) : User {
 
 }
