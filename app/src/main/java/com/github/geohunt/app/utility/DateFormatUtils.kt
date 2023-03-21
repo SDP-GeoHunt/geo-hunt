@@ -1,5 +1,11 @@
 package com.github.geohunt.app.utility
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import com.github.geohunt.app.R
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -10,6 +16,12 @@ import java.time.temporal.ChronoUnit
 object DateFormatUtils {
     private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
+    @OptIn(ExperimentalComposeUiApi::class)
+    @Composable
+    private fun formatElapsedTime(id: Int, count: Long) : String {
+        return pluralStringResource(id = id, count = count.toInt(), formatArgs = arrayOf(count))
+    }
+
     /**
      * Formats given LocalDateTime into a string
      * Only takes year, month and day into account
@@ -18,6 +30,33 @@ object DateFormatUtils {
      */
     fun formatDate(dateTime: LocalDateTime): String {
         return dateFormatter.format(dateTime)
+    }
+
+    /**
+     * Returns a human-readable string representing the elapsed time between the given date-time
+     * and the current time, e.g., "2 days ago", "1 hour ago", "5 minutes ago", or "just now".
+     *
+     * @param dateTime The date-time to calculate the elapsed time from.
+     * @return A human-readable string representing the elapsed time.
+     */
+    @Composable
+    fun getElapsedTimeString(dateTime: LocalDateTime, prefix: Int) : String {
+        val duration = Duration.between(dateTime, LocalDateTime.now())
+
+        val raw = when {
+            duration.toDays() > 182 ->
+                formatElapsedTime(R.plurals.date_format_time_years_ago, (duration.toDays() + 182) / 365)
+            duration.toDays() > 12 ->
+                formatElapsedTime(R.plurals.date_format_time_months_ago, (duration.toDays() + 15) / 30)
+            duration.toDays() > 0 ->
+                formatElapsedTime(R.plurals.date_format_time_days_ago, duration.toDays())
+            duration.toHours() > 0 ->
+                formatElapsedTime(R.plurals.date_format_time_hours_ago, duration.toHours())
+            duration.toMinutes() > 3 ->
+                formatElapsedTime(R.plurals.date_format_time_minutes_ago, (duration.toMinutes() / 5) * 5)
+            else -> stringResource(id = R.string.just_now)
+        }
+        return stringResource(id = prefix, formatArgs = arrayOf(raw))
     }
 
     /**

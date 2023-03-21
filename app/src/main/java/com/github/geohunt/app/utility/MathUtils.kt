@@ -18,6 +18,19 @@ fun Double.quantize(binSize: Double) : Double {
 }
 
 /**
+ * Quantize the current double value in discrete bins then format it to string,
+ * notice that this method ensures that the string generated is not polluted by
+ * artifact due to string approximation
+ *
+ * @throws UnsupportedOperationException if the rounding operation to long value cannot be safely
+ * performed due to not enough bits in order to represent the double value
+ */
+fun Double.quantizeString(binSize: Double) : String {
+    val decimalPlace = (log10(1.0 / binSize) + 0.49).roundToLong()
+    return "%.${decimalPlace}f".format(this.quantize(binSize))
+}
+
+/**
  * Quantize the current double in bins and return the index of the specific bin, 0 being the bin
  * corresponding to all double value in [-1/2 * scale, 1/2 * scale]
  *
