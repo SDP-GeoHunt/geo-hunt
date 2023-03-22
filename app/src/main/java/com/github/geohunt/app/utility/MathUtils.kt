@@ -25,7 +25,7 @@ fun Double.quantize(binSize: Double) : Double {
  * @throws UnsupportedOperationException if the rounding operation to long value cannot be safely
  * performed due to not enough bits in order to represent the double value
  */
-fun Double.quantizeString(binSize: Double) : String {
+fun Double.quantizeToString(binSize: Double) : String {
     val decimalPlace = (log10(1.0 / binSize) + 0.49).roundToLong()
     return "%.${decimalPlace}f".format(this.quantize(binSize))
 }

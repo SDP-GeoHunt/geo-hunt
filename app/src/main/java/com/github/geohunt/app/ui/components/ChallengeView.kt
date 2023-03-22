@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +34,7 @@ import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.homescreen.HorizontalDivider
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.DateFormatUtils.getElapsedTimeString
@@ -146,7 +149,7 @@ private fun MainUserView(challenge: Challenge, author: User?) {
 }
 
 @Composable
-fun BellowImageButtons(challenge: Challenge) {
+private fun BellowImageButtons(challenge: Challenge) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -212,94 +215,100 @@ fun BellowImageButtons(challenge: Challenge) {
 }
 
 @Composable
-fun ClaimCard(claim: Claim) {
-
+private fun ClaimCard(claimRef: LazyRef<Claim>) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .aspectRatio(1.8f, false)
             .padding(5.dp)
     ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black)
-                    .aspectRatio(1.8f, false)
-            ) {
-                AsyncImage(
-                    contentScale = ContentScale.Crop,
+        FetchComponent(lazyRef = { claimRef }) { claim ->
+            Column {
+                Box(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .fillMaxHeight()
-                        .align(Alignment.Center),
-                    contentDescription = "claimed image") {
-                    claim.image
-                }
-            }
-
-            Row(
-                modifier = Modifier.padding(horizontal = 20.dp,
-                    vertical = 2.dp)
-            ) {
-                val user = rememberLazyRef {
-                    claim.user
-                }
-
-                if (user.value != null) {
-                    AsyncImage(contentDescription = "User",
+                        .background(Color.Black)
+//                        .aspectRatio(1.8f, false)
+                ) {
+                    AsyncImage(
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(35.dp)
-                            .clip(CircleShape))
-                    {
-                        user.value!!.profilePicture
+                            .fillMaxHeight()
+                            .align(Alignment.Center),
+                        contentDescription = "claimed image"
+                    ) {
+                        claim.image
                     }
+                }
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                Row(
+                    modifier = Modifier.padding(
+                        horizontal = 20.dp,
+                        vertical = 2.dp
+                    )
+                ) {
+                    FetchComponent(lazyRef = { claim.user }) { user ->
+                        AsyncImage(
+                            contentDescription = "User",
+                            modifier = Modifier
+                                .size(35.dp)
+                                .clip(CircleShape)
+                        ) {
+                            user.profilePicture
+                        }
 
-                    Column {
-                        Text(text = user.value!!.name,
-                            fontSize = 5.em)
-
-                        Row {
-                            Text(text = getElapsedTimeString(claim.time, R.string.claimed_format) + " · ",
-                                fontSize = 2.em,
-                                modifier = Modifier.padding(start = 10.dp),
-                                color = MaterialTheme.colors.primary
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = user.name,
+                                fontSize = 5.em
                             )
 
-                            LabelledIcon(text = claim.distance.toInt().toSuffixedString() + "m",
-                                painter = painterResource(id = R.drawable.ruler_measure),
-                                contentDescription = "Distance",
-                                fontColor = MaterialTheme.colors.primary,
-                                fontSize = 2.em,
-                                iconSize = 11.dp)
+                            Row {
+                                Text(
+                                    text = getElapsedTimeString(
+                                        claim.time,
+                                        R.string.claimed_format
+                                    ) + " · ",
+                                    fontSize = 2.em,
+                                    modifier = Modifier.padding(start = 10.dp),
+                                    color = MaterialTheme.colors.primary
+                                )
+
+                                LabelledIcon(
+                                    text = claim.distance.toInt().toSuffixedString() + "m",
+                                    painter = painterResource(id = R.drawable.ruler_measure),
+                                    contentDescription = "Distance",
+                                    fontColor = MaterialTheme.colors.primary,
+                                    fontSize = 2.em,
+                                    iconSize = 11.dp
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Column(
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        ) {
+                            Text(
+                                text = "+300",
+                                fontSize = 4.em,
+                                color = Color(R.color.md_theme_light_tertiary)
+                            )
+
+                            LabelledIcon(
+                                text = user.score.toInt().toSuffixedString(),
+                                painter = painterResource(id = R.drawable.cards_diamond),
+                                contentDescription = "Total points",
+                                fontSize = 3.em,
+                                iconSize = 13.dp
+                            )
                         }
                     }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Column(
-                        modifier = Modifier.padding(horizontal = 20.dp)
-                    ) {
-                        Text(
-                            text = "+300",
-                            fontSize = 4.em,
-                            color = Color(R.color.md_theme_light_tertiary)
-                        )
-
-                        LabelledIcon(text = "300k",
-                            painter = painterResource(id = R.drawable.cards_diamond),
-                            contentDescription = "Total points",
-                            fontSize = 3.em,
-                            iconSize = 13.dp)
-                    }
-                }
-                else {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
                 }
             }
-
         }
     }
 }
@@ -337,6 +346,7 @@ fun ChallengeView(challenge : Challenge) {
 
     Box {
         Column {
+            // Main challenge image
             AsyncImage(contentDescription = "Challenge Image",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -400,27 +410,31 @@ fun ChallengeView(challenge : Challenge) {
                 }
 
                 items(challenge.claims.size) { index : Int ->
-                    val claim = rememberLazyRef {
-                        challenge.claims[index]
-                    }
-
-                    if (claim.value != null) {
-                        ClaimCard(claim = claim.value!!)
-                    }
-                    else {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(5.dp)
-                                .aspectRatio(0.5f, false)
-                        ) {
-
-                        }
-                    }
+                    ClaimCard(claimRef = challenge.claims[index])
+//                    FetchComponent(lazyRef = { challenge.claims[index] }) {
+//                    }
+//                    val claim = rememberLazyRef {
+//                        challenge.claims[index]
+//                    }
+//
+//                    if (claim.value != null) {
+//                        ClaimCard(claim = claim.value!!)
+//                    }
+//                    else {
+//                        Card(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(5.dp)
+//                                .aspectRatio(0.5f, false)
+//                        ) {
+//
+//                        }
+//                    }
                 }
             }
         }
 
+        // Go back button (for navigation)
         IconButton(
             modifier = Modifier
                 .size(48.dp)

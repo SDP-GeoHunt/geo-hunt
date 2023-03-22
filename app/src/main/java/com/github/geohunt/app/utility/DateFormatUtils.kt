@@ -40,7 +40,7 @@ object DateFormatUtils {
      * @return A human-readable string representing the elapsed time.
      */
     @Composable
-    fun getElapsedTimeString(dateTime: LocalDateTime, prefix: Int) : String {
+    fun getElapsedTimeString(dateTime: LocalDateTime, prefixStringId: Int) : String {
         val duration = Duration.between(dateTime, LocalDateTime.now())
 
         val raw = when {
@@ -56,7 +56,7 @@ object DateFormatUtils {
                 formatElapsedTime(R.plurals.date_format_time_minutes_ago, (duration.toMinutes() / 5) * 5)
             else -> stringResource(id = R.string.just_now)
         }
-        return stringResource(id = prefix, formatArgs = arrayOf(raw))
+        return stringResource(id = prefixStringId, formatArgs = arrayOf(raw))
     }
 
     /**
