@@ -23,19 +23,19 @@ data class NotFoundUser(val id: String): Exception("User $id not found.")
 
 class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase) : BaseLazyRef<User>() {
     override fun fetchValue(): Task<User> {
-        return db.dbUserRef.child(id).get().thenMap {
-            if (!it.exists()) {
+        return db.dbUserRef.child(id).get().thenMap { data ->
+            if (!data.exists()) {
                 throw NotFoundUser(id)
             }
 
-            val entry = it.getValue(UserEntry::class.java)!!
+            val entry = data.getValue(UserEntry::class.java)!!
 
             FirebaseUser(
                 uid = entry.uid,
                 displayName = entry.displayName,
                 profilePicture = db.getProfilePicture(entry.uid),
-                challenges = entry.challenges.map { db.getChallengeRefById(it) },
-                hunts = entry.hunts.map { db.getChallengeRefById(it) },
+                challenges = entry.challenges.map { db.getChallengeById(it) },
+                hunts = entry.hunts.map { db.getChallengeById(it) },
                 score = entry.score
             )
         }

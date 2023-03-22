@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import androidx.navigation.NavController
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
@@ -46,7 +47,7 @@ private const val lorumIpsum =
 Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce accumsan laoreet tellus, vel eleifend tortor venenatis eget. Suspendisse fermentum tellus eget vestibulum tincidunt. Donec sed tempus libero. Vestibulum pellentesque tempus sodales. Suspendisse eros risus, egestas nec porta et, pulvinar at lorem. Nulla a ante sed enim pretium vehicula ut ac eros. Nullam sollicitudin justo eu est sagittis, at vulputate mauris interdum. Sed non tellus interdum, placerat velit nec, pharetra magna."""
 
 @Composable
-private fun MainUserView(challenge: Challenge, author: User?) {
+private fun MainUserView(challenge: Challenge) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -54,7 +55,10 @@ private fun MainUserView(challenge: Challenge, author: User?) {
             .height(70.dp)
             .clipToBounds()
     ) {
-        if (author != null) {
+        FetchComponent(
+            lazyRef = { challenge.author },
+            modifier = Modifier.align(Alignment.Center)
+        ) { author ->
             Row {
                 Image(
                     painter = painterResource(R.drawable.mock_user),
@@ -100,7 +104,10 @@ private fun MainUserView(challenge: Challenge, author: User?) {
 
                     Row {
                         Text(
-                            text = getElapsedTimeString(challenge.publishedDate, R.string.published_format),
+                            text = getElapsedTimeString(
+                                challenge.publishedDate,
+                                R.string.published_format
+                            ),
                             fontSize = 3.em,
                             color = MaterialTheme.colors.primaryVariant,
                             textAlign = TextAlign.Left,
@@ -139,12 +146,6 @@ private fun MainUserView(challenge: Challenge, author: User?) {
                 }
             }
         }
-        else {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-
     }
 }
 
@@ -314,31 +315,19 @@ private fun ClaimCard(claimRef: LazyRef<Claim>) {
 }
 
 @Composable
-fun ChallengeView(challenge : Challenge) {
-    val author = rememberLazyRef {
-        challenge.author
-    }
-
-    val user = object : User {
-        override val uid: String = "uid"
-        override var displayName: String? = "John Smith"
-        override val profilePicture: LazyRef<Bitmap>
-            get() = TODO()
-        override val challenges: List<LazyRef<Challenge>>
-            get() = TODO()
-        override val hunts: List<LazyRef<Challenge>>
-            get() = TODO()
-        override var score: Number
-            get() = 34580
-            set(value) {}
-    }
-
-    val isDescriptionExpanded = remember {
+fun ChallengeView(
+    challenge: Challenge,
+    navController: NavController
+) {
+    var isDescriptionExpanded by remember {
         mutableStateOf(false)
     }
 
     val lazyState = rememberLazyListState()
-    val transition = updateTransition(remember { derivedStateOf { lazyState.firstVisibleItemIndex != 0 } }, label = "Image size transition")
+    val transition = updateTransition(
+        remember { derivedStateOf { lazyState.firstVisibleItemIndex != 0 } },
+        label = "Image size transition"
+    )
 
     val imageAspectRatio by transition.animateFloat(label = "Animate image size ratio") { isScrolling ->
         if (isScrolling.value) 1.8f else 1.0f
@@ -347,11 +336,16 @@ fun ChallengeView(challenge : Challenge) {
     Box {
         Column {
             // Main challenge image
-            AsyncImage(contentDescription = "Challenge Image",
+            AsyncImage(
+                contentDescription = "Challenge Image",
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable {
+                        navController.navigate("image-view/${challenge.thumbnail.id}")
+                    }
                     .aspectRatio(imageAspectRatio, false),
-                contentScale = ContentScale.Crop) {
+                contentScale = ContentScale.Crop
+            ) {
                 challenge.thumbnail
             }
 
@@ -364,14 +358,15 @@ fun ChallengeView(challenge : Challenge) {
             )
 
             LazyColumn(
-                state = lazyState
+                state = lazyState,
+                modifier = Modifier.fillMaxHeight()
             ) {
                 item {
                     Spacer(modifier = Modifier.height(1.dp))
                 }
 
                 item {
-                    MainUserView(challenge = challenge, author = author.value)
+                    MainUserView(challenge = challenge)
                     HorizontalDivider(padding = 2.dp)
                 }
 
@@ -379,7 +374,7 @@ fun ChallengeView(challenge : Challenge) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .heightIn(max = if (isDescriptionExpanded.value) Int.MAX_VALUE.dp else 90.dp)
+                            .heightIn(max = if (isDescriptionExpanded) Int.MAX_VALUE.dp else 90.dp)
                             .padding(10.dp),
                         elevation = 10.dp
                     ) {
@@ -390,26 +385,26 @@ fun ChallengeView(challenge : Challenge) {
                                 lorumIpsum,
                                 fontSize = 3.em,
                                 color = MaterialTheme.colors.onBackground,
-                                maxLines = if (isDescriptionExpanded.value) Int.MAX_VALUE else 2,
+                                maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 2,
                                 modifier = Modifier.padding(10.dp),
                                 overflow = TextOverflow.Ellipsis
                             )
 
                             Text(
-                                text = if (isDescriptionExpanded.value) "less..." else "more...",
+                                text = if (isDescriptionExpanded) "less..." else "more...",
                                 fontSize = 3.em,
                                 modifier = Modifier
                                     .align(Alignment.CenterHorizontally)
                                     .padding(bottom = 5.dp)
                                     .clickable {
-                                        isDescriptionExpanded.value = !isDescriptionExpanded.value
+                                        isDescriptionExpanded = !isDescriptionExpanded
                                     }
                             )
                         }
                     }
                 }
 
-                items(challenge.claims.size) { index : Int ->
+                items(challenge.claims.size) { index: Int ->
                     ClaimCard(claimRef = challenge.claims[index])
 //                    FetchComponent(lazyRef = { challenge.claims[index] }) {
 //                    }
@@ -439,7 +434,8 @@ fun ChallengeView(challenge : Challenge) {
             modifier = Modifier
                 .size(48.dp)
                 .padding(10.dp),
-            onClick = { /*TODO*/ }) {
+            onClick = { navController.popBackStack() }
+        ) {
             Icon(
                 Icons.Rounded.ArrowBack,
                 contentDescription = "Go back"

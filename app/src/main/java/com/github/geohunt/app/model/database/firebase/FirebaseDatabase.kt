@@ -132,9 +132,14 @@ class FirebaseDatabase(activity: Activity) : Database {
      * @return A [LazyRef] linked to the result of the operation
      */
     override fun getChallengeById(cid: String): LazyRef<Challenge> {
-        return getChallengeRefById(cid)
+        return challengeRefById.get(cid)
     }
 
+    override fun getImageById(iid: String): LazyRef<Bitmap> {
+        return imageRefById.get(iid)
+    }
+
+    @Deprecated("Should user getChallengeById instead")
     internal fun getChallengeRefById(cid: String): FirebaseChallengeRef {
         return challengeRefById.get(cid)
     }

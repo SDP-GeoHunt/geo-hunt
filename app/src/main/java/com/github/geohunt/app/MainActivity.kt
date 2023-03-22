@@ -13,13 +13,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.Dp
 import androidx.navigation.compose.rememberNavController
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var database : Database
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        database = Database.createDatabaseHandle(this)
+
         setContent {
             GeoHuntTheme {
                 // A surface container using the 'background' color from the theme
@@ -27,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MainComposable()
+                    MainComposable(database)
                 }
             }
         }
@@ -35,7 +42,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainComposable() {
+fun MainComposable(database: Database) {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
@@ -44,6 +51,8 @@ fun MainComposable() {
             }
         }
     ) { padding ->
-        NavigationController(navController = navController, Modifier.padding(padding))
+        NavigationController(navController = navController,
+            database = database,
+            Modifier.padding(padding))
     }
 }
