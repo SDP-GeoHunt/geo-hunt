@@ -47,7 +47,7 @@ fun ProfilePage(user: LazyRef<User>) {
 private fun ProfilePageContent(user: User) {
     Column {
         Row {
-            ProfileIcon(user = user)
+            ProfileIcon(user = user, modifier = Modifier.width(124.dp).aspectRatio(1f))
 
             Column(modifier = Modifier.padding(0.dp, 12.dp)) {
                 Text(user.displayName ?: user.uid)
