@@ -2,23 +2,20 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
 import android.graphics.Bitmap
-import android.util.Log
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.utility.*
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
+import com.github.geohunt.app.utility.thenMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import java.io.File
 import java.time.LocalDateTime
 
@@ -29,6 +26,7 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     // Database references
     internal val dbChallengeRef = database.child("challenges")
+    internal val dbFollowsRef = database.child("followers")
 
     // Storage references
     internal val storageImagesRef = storage.child("images")
@@ -139,6 +137,20 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         TODO()
+    }
+
+    override fun getFollowersOf(uid: String): LazyRef<List<FirebaseUserRef>> {
+        return object : BaseLazyRef<List<FirebaseUserRef>>() {
+            override fun fetchValue(): Task<List<FirebaseUserRef>> {
+                return dbFollowsRef.child(uid)
+                    .get()
+                    .thenMap { list ->
+                        (list as List<*>).map { FirebaseUserRef(it as String) }
+                    }
+            }
+
+            override val id: String = uid
+        }
     }
 }
 

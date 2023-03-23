@@ -2,17 +2,14 @@ package com.github.geohunt.app.model.database
 
 import android.app.Activity
 import android.graphics.Bitmap
-import android.provider.ContactsContract.Data
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
+import com.github.geohunt.app.model.database.firebase.FirebaseUserRef
 import com.github.geohunt.app.utility.Singleton
 import com.google.android.gms.tasks.Task
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
 
 /**
  * Interface representing the API used to communicate with the remote database and the application
@@ -46,6 +43,13 @@ interface Database {
      * @param location the location where we should search for challenges
      */
     fun getNearbyChallenge(location: Location): Task<List<Challenge>>
+
+    /**
+     * Returns the list of followers of the user with the given user ID.
+     *
+     * @param uid The user ID.
+     */
+    fun getFollowersOf(uid: String): LazyRef<List<FirebaseUserRef>>
 
     companion object {
 
