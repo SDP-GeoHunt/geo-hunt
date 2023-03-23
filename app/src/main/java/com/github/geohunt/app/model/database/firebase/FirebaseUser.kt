@@ -6,7 +6,6 @@ import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
 import com.google.android.gms.tasks.Task
-import java.util.concurrent.CompletableFuture
 
 class FirebaseUser(
     override val uid: String,
@@ -14,10 +13,10 @@ class FirebaseUser(
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
+    override val followerNumber: Int,
+    override val followList: List<LazyRef<User>>,
     override var score: Number
-) : User {
-
-}
+) : User
 
 class FirebaseUserRef(override val id: String) : BaseLazyRef<User>() {
     override fun fetchValue(): Task<User> {

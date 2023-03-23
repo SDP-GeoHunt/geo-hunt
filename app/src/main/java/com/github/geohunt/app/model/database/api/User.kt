@@ -20,5 +20,15 @@ interface User {
 
     val hunts: List<LazyRef<Challenge>>
 
+    /**
+     * The number of users that follow this user.
+     */
+    val followerNumber: Int
+
+    /**
+     * The list of users this user is following.
+     */
+    val followList: List<LazyRef<User>>
+
     var score: Number
 }
