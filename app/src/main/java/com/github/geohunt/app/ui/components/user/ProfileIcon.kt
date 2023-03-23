@@ -11,7 +11,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import coil.size.Size
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.rememberLazyRef
 
@@ -21,13 +20,12 @@ import com.github.geohunt.app.ui.rememberLazyRef
  * @param user The user for which we draw the profile picture.
  */
 @Composable
-fun ProfileIcon(user: User, size: Size = Size.ORIGINAL) {
+fun ProfileIcon(user: User) {
     val profilePicture = rememberLazyRef { user.profilePicture }
 
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(profilePicture.value)
-            .size(size)
             .crossfade(true)
             .build(),
         contentDescription = "${user.name} profile picture",
