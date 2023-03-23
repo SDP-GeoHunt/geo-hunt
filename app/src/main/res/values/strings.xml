@@ -36,6 +36,11 @@
 
     <string name="profile_number_of_posts_subtitle">posts</string>
     <string name="profile_number_of_hunts_subtitle">hunts</string>
-    <string name="profile_number_of_ranking_subtitle">rank</string>
+    <string name="profile_score_subtitle">points</string>
 
+    <string name="challenges">Challenges</string>
+    <string name="hunts">Hunts</string>
+
+    <string name="no_past_challenges">No challenges :(</string>
+    <string name="no_past_hunts">No past hunts ;(</string>
 </resources>
