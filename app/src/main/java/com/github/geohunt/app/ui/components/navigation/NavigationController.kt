@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -13,6 +14,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.github.geohunt.app.R
 import androidx.compose.ui.Modifier
+import com.github.geohunt.app.maps.GoogleMapView
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -35,7 +41,18 @@ fun NavigationController(navController: NavHostController, modifier: Modifier = 
             Text("Home")
         }
         composable(Route.Explore.route) {
-            Text("Explore")
+            val epflCoordinates = LatLng(46.519585, 6.5684919)
+            val epflCameraPositionState = CameraPositionState(CameraPosition(epflCoordinates, 15f, 0f, 0f))
+            GoogleMapView(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = epflCameraPositionState,
+                onMapLoaded = { map: GoogleMap ->
+                    map.setOnMapClickListener { latLng ->
+                        navController.navigate("challenge-create/${latLng.latitude}/${latLng.longitude}")
+                    }
+                }
+
+            )
         }
         composable(Route.Create.route) {
             Text("Create")
