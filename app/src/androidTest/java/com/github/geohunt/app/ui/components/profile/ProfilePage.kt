@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import com.github.geohunt.app.mocks.InstantLazyRef
 import com.github.geohunt.app.mocks.MockChallenge
 import com.github.geohunt.app.mocks.MockLazyRef
 import com.github.geohunt.app.mocks.MockUser
@@ -20,7 +21,7 @@ class ProfilePage {
     @Test
     fun showsLoadingIfNotReady() {
         testRule.setContent {
-            ProfilePage(user = MockLazyRef("1") { Tasks.forCanceled() })
+            ProfilePage(user = InstantLazyRef("1", null))
         }
         testRule.onNodeWithTag("progress").assertIsDisplayed()
     }
@@ -28,7 +29,7 @@ class ProfilePage {
     @Test
     fun doesNotShowLoadingIfReady() {
         testRule.setContent {
-            ProfilePage(user = MockLazyRef("1") { Tasks.forResult(MockUser()) })
+            ProfilePage(user = InstantLazyRef("1", MockUser()))
         }
         testRule.onNodeWithTag("progress").assertDoesNotExist()
     }
@@ -36,7 +37,7 @@ class ProfilePage {
     @Test
     fun showsScore() {
         testRule.setContent {
-            ProfilePage(user = MockLazyRef("1") { Tasks.forResult(MockUser(score = 2321))})
+            ProfilePage(user = InstantLazyRef("1", MockUser(score = 2321)))
         }
         testRule.onNodeWithText("2321").assertExists().assertIsDisplayed()
     }
@@ -44,7 +45,7 @@ class ProfilePage {
     @Test
     fun showsDisplayName() {
         testRule.setContent {
-            ProfilePage(user = MockLazyRef("1") { Tasks.forResult(MockUser(displayName = "coucou")) })
+            ProfilePage(user = InstantLazyRef("1", MockUser(displayName = "coucou")))
         }
         testRule.onNodeWithText("coucou").assertExists().assertIsDisplayed()
     }
@@ -56,8 +57,9 @@ class ProfilePage {
             wrapLazyChallenge(MockChallenge()),
             wrapLazyChallenge(MockChallenge())
         ))
+
         testRule.setContent {
-            ProfilePage(user = MockLazyRef("1") { Tasks.forResult(mockuser) })
+            ProfilePage(user = InstantLazyRef("1", mockuser) )
         }
         testRule.onNodeWithText(mockuser.challenges.size.toString()).assertExists().assertIsDisplayed()
     }
@@ -70,7 +72,7 @@ class ProfilePage {
             wrapLazyChallenge(MockChallenge())
         ))
         testRule.setContent {
-            ProfilePage(user = MockLazyRef("1") { Tasks.forResult(mockuser) })
+            ProfilePage(user = InstantLazyRef("1", mockuser))
         }
         testRule.onNodeWithText(mockuser.challenges.size.toString()).assertExists().assertIsDisplayed()
     }
