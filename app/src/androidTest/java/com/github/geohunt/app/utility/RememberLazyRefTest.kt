@@ -1,0 +1,159 @@
+package com.github.geohunt.app.utility
+
+import androidx.compose.material.Text
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.test.espresso.matcher.ViewMatchers.assertThat
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.geohunt.app.mocks.MockLazyRef
+import com.github.geohunt.app.ui.FetchComponent
+import com.github.geohunt.app.ui.rememberLazyRef
+import com.google.android.gms.tasks.TaskCompletionSource
+import org.hamcrest.Matchers.equalTo
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class RememberLazyRefTest {
+    @get:Rule
+    val composeTestRule = createComposeRule()
+
+    private val longString = "The only verdict is vengeance; a vendetta, held as a votive, " +
+            "not in vain, for the value and veracity of such shall one day vindicate the " +
+            "vigilant and the virtuous"
+
+    @Test
+    fun testFetchComponentWhenFailure()
+    {
+        val completionSource = TaskCompletionSource<String>()
+        val lazyRef = MockLazyRef<String>("ref-id-d98d44f1200d7d45d29867fa27730666") {
+            completionSource.task
+        }
+        var counter = 0
+        var counter2 = 0
+
+        composeTestRule.setContent {
+            FetchComponent(lazyRef = {
+                counter += 1
+                lazyRef
+            }, onFailure = { counter2 += 1 }) { value ->
+                Text(text = "result: $value")
+            }
+        }
+
+        // check counter has been incremented only once
+        assertThat(counter, equalTo(1))
+        assertThat(counter2, equalTo(0))
+
+        // Assert still loading
+        composeTestRule.onNodeWithText("An exception has occurred, failed to fetch reference @ref-id-d98d44f1200d7d45d29867fa27730666")
+            .assertDoesNotExist()
+
+        composeTestRule.onNodeWithTag("circular-progress-indicator")
+            .assertIsDisplayed()
+
+        // Secondly the object failed
+        completionSource.setException(RuntimeException())
+        composeTestRule.onNodeWithText("An exception has occurred, failed to fetch reference @ref-id-d98d44f1200d7d45d29867fa27730666")
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag("circular-progress-indicator")
+            .assertDoesNotExist()
+
+        assertThat(counter, equalTo(1))
+        assertThat(counter2, equalTo(1))
+    }
+
+    @Test
+    fun testFetchComponentWhenSucceed()
+    {
+        val completionSource = TaskCompletionSource<String>()
+        val lazyRef = MockLazyRef<String>("ref-id-d98d44f1200d7d45d29867fa27730666") {
+            completionSource.task
+        }
+        var counter = 0
+
+        composeTestRule.setContent {
+            FetchComponent(lazyRef = {
+                counter += 1
+                lazyRef
+            }) { value ->
+                Text(text = "result: $value")
+            }
+        }
+
+        // check counter has been incremented only once
+        assertThat(counter, equalTo(1))
+
+        // Assert still loading
+        composeTestRule.onNodeWithText("result: $longString")
+            .assertDoesNotExist()
+
+        composeTestRule.onNodeWithTag("circular-progress-indicator")
+            .assertIsDisplayed()
+
+        // Secondly complete the object
+        completionSource.setResult(longString)
+
+        composeTestRule.onNodeWithTag("circular-progress-indicator")
+            .assertDoesNotExist()
+
+        composeTestRule.onNodeWithText("result: $longString")
+            .assertIsDisplayed()
+
+        // check counter has been incremented only once
+        assertThat(counter, equalTo(1))
+    }
+
+    @Test
+    fun testRememberLazyRef() {
+        val completionSource = TaskCompletionSource<String>()
+        val lazyRef = MockLazyRef<String>("lzyRef") {
+            completionSource.task
+        }
+
+        composeTestRule.setContent {
+            val lazyRefMutable = rememberLazyRef { lazyRef }
+            Text(text = lazyRefMutable.value ?: "null")
+        }
+
+        // Assert the lazy ref is null
+        composeTestRule.onNodeWithText("null")
+            .assertIsDisplayed()
+        assertThat(lazyRef.isLoaded, equalTo(false))
+
+        completionSource.setResult("Society of Depressed People")
+
+        // Assert the lazy ref is no longer null and UI was updated
+        composeTestRule.onNodeWithText("Society of Depressed People")
+            .assertIsDisplayed()
+        assertThat(lazyRef.isLoaded, equalTo(true))
+    }
+
+    @Test
+    fun testRememberLazyRefWithDefault() {
+        val completionSource = TaskCompletionSource<String>()
+        val lazyRef = MockLazyRef<String>("lzyRef") {
+            completionSource.task
+        }
+
+        composeTestRule.setContent {
+            val lazyRefMutable = rememberLazyRef("SDP") { lazyRef }
+            Text(lazyRefMutable.value)
+        }
+
+        // Assert the lazy ref is null
+        composeTestRule.onNodeWithText("SDP")
+            .assertIsDisplayed()
+
+        completionSource.setResult("Society of Depressed People")
+
+        // Assert the lazy ref is no longer null and UI was updated
+        composeTestRule.onNodeWithText("Society of Depressed People")
+            .assertIsDisplayed()
+    }
+}

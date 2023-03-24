@@ -24,21 +24,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
+import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.homescreen.HorizontalDivider
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.DateFormatUtils.getElapsedTimeString
+import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.toSuffixedString
 
 private const val lorumIpsum =
@@ -60,23 +65,16 @@ private fun MainUserView(challenge: Challenge) {
             modifier = Modifier.align(Alignment.Center)
         ) { author ->
             Row {
-                Image(
-                    painter = painterResource(R.drawable.mock_user),
-                    contentDescription = "User profile picture",
-                    modifier = Modifier
-                        .size(70.dp)
-                        .align(Alignment.Top)
-                        .clip(CircleShape)
-                )
+                ProfileIcon(user = author, size = 70.dp, modifier = Modifier.testTag("profile-icon"))
 
-                Spacer(modifier = Modifier.width(15.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
                 Column(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
                     Row {
                         Text(
-                            text = author.displayName ?: author.name,
+                            text = author.name,
                             fontSize = 7.em,
                             maxLines = 1,
                             textAlign = TextAlign.Left,
@@ -127,14 +125,12 @@ private fun MainUserView(challenge: Challenge) {
                             shape = RoundedCornerShape(12.dp),
                             onClick = { /*TODO*/ })
                         {
-                            Text(
-                                text = "Follow",
-                                fontSize = 3.em
-                            )
+                            Text(text = "Follow", fontSize = 3.em)
                         }
 
                         IconButton(
-                            modifier = Modifier.align(Alignment.CenterVertically),
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                                .testTag("btn-notification"),
                             onClick = { /*TODO*/ }
                         ) {
                             Icon(
@@ -172,7 +168,6 @@ private fun BellowImageButtons(challenge: Challenge) {
                 .width(18.dp)
                 .weight(0.2f)
         )
-
 
         LabelledIcon(
             text = challenge.claims.size.toString(),
@@ -317,7 +312,8 @@ private fun ClaimCard(claimRef: LazyRef<Claim>) {
 @Composable
 fun ChallengeView(
     challenge: Challenge,
-    navController: NavController
+    onButtonBack: () -> Unit,
+    displayImage: (String) -> Unit
 ) {
     var isDescriptionExpanded by remember {
         mutableStateOf(false)
@@ -341,7 +337,7 @@ fun ChallengeView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navController.navigate("image-view/${challenge.thumbnail.id}")
+                        displayImage(challenge.thumbnail.id)
                     }
                     .aspectRatio(imageAspectRatio, false),
                 contentScale = ContentScale.Crop
@@ -433,8 +429,9 @@ fun ChallengeView(
         IconButton(
             modifier = Modifier
                 .size(48.dp)
-                .padding(10.dp),
-            onClick = { navController.popBackStack() }
+                .padding(10.dp)
+                .testTag("btn-go-back"),
+            onClick = { onButtonBack() }
         ) {
             Icon(
                 Icons.Rounded.ArrowBack,

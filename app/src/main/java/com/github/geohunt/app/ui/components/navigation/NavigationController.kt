@@ -70,7 +70,7 @@ fun NavigationController(
         composable(Route.Explore.route) {
             // Text("Explore")
             Button(onClick = {
-                navController.navigate("challenge-view/98d755ad-NQfISf2o_QzWLjCpedB")
+                    navController.navigate("challenge-view/98d755ad-NQfISf2o_QzWLjCpedB")
             }) {
                 Text(text = "Open challenge view")
             }
@@ -121,6 +121,7 @@ fun NavigationController(
             }
         }
 
+        // Open the view for a certain challenge
         composable(
             "challenge-view/{challengeId}",
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
@@ -131,7 +132,12 @@ fun NavigationController(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ChallengeView(it, navController)
+                    ChallengeView(it,
+                        onButtonBack = navController::popBackStack,
+                        displayImage = { iid ->
+                            navController.navigate("image-view/$iid")
+                        }
+                    )
                 }
             }
         }

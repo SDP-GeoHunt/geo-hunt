@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
+import com.github.geohunt.app.mocks.BaseMockDatabase
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 import com.github.geohunt.app.ui.components.navigation.Route
@@ -23,10 +24,12 @@ class TestNavigation {
 
     @Before
     fun setUp() {
+        val database = object : BaseMockDatabase(){}
+
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
-            NavigationController(navController = navController)
+            NavigationController(navController = navController, database = database)
             NavigationBar(navController = navController)
         }
     }

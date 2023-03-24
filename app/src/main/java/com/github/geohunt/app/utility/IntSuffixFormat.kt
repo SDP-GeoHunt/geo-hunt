@@ -12,9 +12,9 @@ fun Int.toSuffixedString() : String {
     require(this >= 0) { "Negative values are not allowed." }
 
     return when {
-        this >= 10_000_000 -> "${this / 1_000_000}M"
+        this >= 10_000_000 -> "${(this + 500_000) / 1_000_000}M"
         this >= 1_000_000 -> "${(this / 1e6).quantizeToString(0.1)}M"
-        this >= 10_000 -> "${this / 1_000}k"
+        this >= 10_000 -> "${(this + 500) / 1_000}k"
         this >= 1_000 -> "${(this / 1e3).quantizeToString(0.1)}k"
         else -> "$this"
     }

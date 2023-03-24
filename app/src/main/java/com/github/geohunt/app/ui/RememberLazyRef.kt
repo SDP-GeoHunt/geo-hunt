@@ -1,11 +1,18 @@
 package com.github.geohunt.app.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.em
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.utility.findActivity
 import kotlin.coroutines.cancellation.CancellationException
@@ -76,40 +83,40 @@ fun <T> FetchComponent(lazyRef: () -> LazyRef<T>,
                        renderer: @Composable (T) -> Unit)
 {
     val currentActivity = LocalContext.current.findActivity()
-
-    val result = remember {
-        mutableStateOf<Result<T>?>(null)
-    }
+    var refId by remember { mutableStateOf("???")  }
+    var result by remember { mutableStateOf<Result<T>?>(null) }
 
     // Fetch the current LazyRef<T> and register callbacks in case of not yet loaded
     LaunchedEffect(lazyRef) {
         val ref = lazyRef()
+        refId = ref.id
         if (ref.value != null) {
-            result.value = Result.success(ref.value!!)
+            result = Result.success(ref.value!!)
         }
         ref.fetch()
             .addOnSuccessListener(currentActivity) {
-                result.value = Result.success(it)
+                result = Result.success(it)
             }
             .addOnFailureListener(currentActivity) {
-                result.value = Result.failure(it)
+                result = Result.failure(it)
             }
             .addOnCanceledListener(currentActivity) {
-                result.value = Result.failure(CancellationException())
+                result = Result.failure(CancellationException())
             }
     }
 
     // If the result is still loading
-    if (result.value == null) {
+    if (result == null) {
         CircularProgressIndicator(
             modifier = modifier
+                .testTag("circular-progress-indicator")
         )
     }
 
     // If the result has been loaded or the operation failed
     else
     {
-        val value = result.value!!
+        val value = result!!
 
         // In case of failure launched the onFailure callback
         if (value.isFailure) {
@@ -117,11 +124,23 @@ fun <T> FetchComponent(lazyRef: () -> LazyRef<T>,
                 onFailure(value.exceptionOrNull()!!)
             }
 
-            Text(
-                modifier = modifier,
-                text = "An exception has occurred",
-                color = MaterialTheme.colors.error
-            )
+            Column(modifier = modifier) {
+                Text(
+                    modifier = modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 4.em,
+                    text = "An exception has occurred",
+                    color = MaterialTheme.colors.error
+                )
+
+                Text(
+                    modifier = modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 2.em,
+                    text = "failed to fetch reference @$refId",
+                    color = MaterialTheme.colors.error
+                )
+            }
         }
 
         // Otherwise simply use provided function to compose
