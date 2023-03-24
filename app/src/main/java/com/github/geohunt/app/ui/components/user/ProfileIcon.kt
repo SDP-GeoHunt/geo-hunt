@@ -19,7 +19,7 @@ import com.github.geohunt.app.model.database.api.User
  * @param size The size of the icon.
  */
 @Composable
-fun ProfileIcon(user: User, size: Size = Size.ORIGINAL) {
+fun ProfileIcon(user: User, modifier: Modifier = Modifier, size: Size = Size.ORIGINAL) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data("https://picsum.photos/430/400") // TODO Integrate with user
@@ -27,7 +27,7 @@ fun ProfileIcon(user: User, size: Size = Size.ORIGINAL) {
             .crossfade(true)
             .build(),
         contentDescription = "${user.name} profile picture",
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .clip(CircleShape)
     )
