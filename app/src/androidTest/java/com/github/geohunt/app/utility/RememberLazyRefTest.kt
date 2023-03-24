@@ -62,7 +62,11 @@ class RememberLazyRefTest {
 
         // Secondly the object failed
         completionSource.setException(RuntimeException())
-        composeTestRule.onNodeWithText("An exception has occurred, failed to fetch reference @ref-id-d98d44f1200d7d45d29867fa27730666")
+        composeTestRule.onNodeWithText("An exception has occurred")
+            .performScrollTo()
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithText("failed to fetch reference @ref-id-d98d44f1200d7d45d29867fa27730666")
             .performScrollTo()
             .assertIsDisplayed()
 

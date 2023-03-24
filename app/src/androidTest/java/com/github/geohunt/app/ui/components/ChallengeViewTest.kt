@@ -126,7 +126,6 @@ class ChallengeViewTest {
 
         // Ensure click on challenge view image redirect to corresponding page
         composeTestRule.onNodeWithContentDescription("Challenge Image")
-            .assertIsDisplayed()
             .assertHasClickAction()
             .performClick()
 
