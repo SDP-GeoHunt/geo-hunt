@@ -42,7 +42,7 @@ fun DisplayMarkers() {
             title = challenge.title,
             snippet = challenge.expiryDate.toString(),
             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)//challenge.image
-        ) { marker ->
+        ) { _ ->
             Box(
                 modifier = Modifier
                     .background(
