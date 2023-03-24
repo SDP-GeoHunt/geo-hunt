@@ -24,7 +24,7 @@ import com.github.geohunt.app.ui.components.AsyncImage
 @Composable
 fun ProfileIcon(user: User, modifier: Modifier = Modifier, size: Dp = 60.dp) {
 //    AsyncImage(
-//        contentDescription = "User profile icon",
+//        contentDescription = "${user.name} profile picture",
 //        modifier = modifier.size(size)
 //            .padding(8.dp)
 //            .clip(CircleShape),
@@ -33,7 +33,7 @@ fun ProfileIcon(user: User, modifier: Modifier = Modifier, size: Dp = 60.dp) {
 //        user.profilePicture
 //    }
     Image(painter = painterResource(id = R.drawable.mock_user),
-        contentDescription = "profile icon",
+        contentDescription = "${user.name} profile picture",
         modifier = modifier.size(size)
             .padding(2.dp)
             .clip(CircleShape),

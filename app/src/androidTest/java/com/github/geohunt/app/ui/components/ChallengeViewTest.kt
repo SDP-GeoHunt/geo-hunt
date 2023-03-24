@@ -71,17 +71,21 @@ class ChallengeViewTest {
 
         // Ensure click on challenge view image redirect to corresponding page
         composeTestRule.onNodeWithText("John wick")
+            .performScrollTo()
             .assertIsDisplayed()
 
         composeTestRule.onNodeWithText("Follow")
+            .performScrollTo()
             .assertIsDisplayed()
             .assertHasClickAction()
 
         composeTestRule.onNodeWithTag("btn-notification")
+            .performScrollTo()
             .assertIsDisplayed()
             .assertHasClickAction()
 
         composeTestRule.onNodeWithText("published just now")
+            .performScrollTo()
             .assertIsDisplayed()
     }
 
@@ -126,7 +130,7 @@ class ChallengeViewTest {
             .assertHasClickAction()
             .performClick()
 
-        assertThat(future.orTimeout(15, TimeUnit.SECONDS).join(),
+        assertThat(future.join(),
             equalTo("img-ze5f16zaef1465"))
     }
 }

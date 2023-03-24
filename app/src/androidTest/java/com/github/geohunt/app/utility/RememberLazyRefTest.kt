@@ -1,11 +1,14 @@
 package com.github.geohunt.app.utility
 
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
-import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.mocks.MockLazyRef
@@ -22,9 +25,7 @@ class RememberLazyRefTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val longString = "The only verdict is vengeance; a vendetta, held as a votive, " +
-            "not in vain, for the value and veracity of such shall one day vindicate the " +
-            "vigilant and the virtuous"
+    private val longString = "The only verdict is vengeance; a vendetta, held as a votive"
 
     @Test
     fun testFetchComponentWhenFailure()
@@ -37,11 +38,14 @@ class RememberLazyRefTest {
         var counter2 = 0
 
         composeTestRule.setContent {
-            FetchComponent(lazyRef = {
-                counter += 1
-                lazyRef
-            }, onFailure = { counter2 += 1 }) { value ->
-                Text(text = "result: $value")
+            Column(modifier = Modifier.verticalScroll(rememberScrollState()))
+            {
+                FetchComponent(lazyRef = {
+                    counter += 1
+                    lazyRef
+                }, onFailure = { counter2 += 1 }) { value ->
+                    Text(text = "result: $value")
+                }
             }
         }
 
@@ -59,6 +63,7 @@ class RememberLazyRefTest {
         // Secondly the object failed
         completionSource.setException(RuntimeException())
         composeTestRule.onNodeWithText("An exception has occurred, failed to fetch reference @ref-id-d98d44f1200d7d45d29867fa27730666")
+            .performScrollTo()
             .assertIsDisplayed()
 
         composeTestRule.onNodeWithTag("circular-progress-indicator")
