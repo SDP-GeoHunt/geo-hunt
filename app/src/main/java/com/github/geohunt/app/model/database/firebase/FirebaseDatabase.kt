@@ -3,6 +3,7 @@ package com.github.geohunt.app.model.database.firebase
 import android.app.Activity
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
@@ -19,6 +20,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import okhttp3.internal.toImmutableList
 import java.io.File
 import java.time.LocalDateTime
 
@@ -34,7 +36,7 @@ class FirebaseDatabase(activity: Activity) : Database {
     internal val storageImagesRef = storage.child("images")
 
     // Local Folders
-    internal val localImageFolder : File  =  activity.getExternalFilesDir("images")!!
+    internal val localImageFolder : File = activity.getExternalFilesDir("images")!!
 
     // Create the object pool in order to save some memory
     private val userRefById = DataPool<String, FirebaseUserRef> {
@@ -138,7 +140,19 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
-        TODO()
+        val listOfQuadrant = listOf("3cc359ec")
+
+        val xs = listOfQuadrant.map { cid ->
+            dbChallengeRef.child(cid).get()
+                .thenMap {
+                    val challenge = it.buildChallenge(this, cid)
+                    challengeRefById.register(cid, FirebaseChallengeRef(cid, this, challenge))
+                    challenge
+                }
+        }
+
+        return Tasks.whenAllSuccess<Challenge>(xs)
+            .thenMap { it.toImmutableList() }
     }
 }
 
