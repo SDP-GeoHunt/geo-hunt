@@ -9,13 +9,13 @@ import com.github.geohunt.app.model.database.api.User
 import java.time.LocalDateTime
 
 class MockChallenge(
-    override val cid: String,
-    override val author: LazyRef<User>,
-    override val publishedDate: LocalDateTime,
-    override val expirationDate: LocalDateTime?,
-    override val thumbnail: LazyRef<Bitmap>,
-    override val correctLocation: Location,
-    override val claims: List<LazyRef<Claim>>
+    override val cid: String = "1",
+    override val author: LazyRef<User> = MockLazyRef("1") { TODO() },
+    override val publishedDate: LocalDateTime = LocalDateTime.now(),
+    override val expirationDate: LocalDateTime? = null,
+    override val thumbnail: LazyRef<Bitmap> = MockLazyRef("1") { TODO() },
+    override val correctLocation: Location = Location(.0, .0),
+    override val claims: List<LazyRef<Claim>> = listOf()
 ) : Challenge {
 
     override val coarseLocation: Location

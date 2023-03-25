@@ -2,16 +2,12 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.thenDo
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.storage.UploadTask.TaskSnapshot
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.asTask
 import java.io.File
 
@@ -79,6 +75,10 @@ internal class FirebaseBitmapRef(
          */
         internal fun getImageIdFromChallengeId(cid: String): String {
             return "challenges-$cid.png"
+        }
+
+        internal fun getImageIdFromUserId(uid: String): String {
+            return "user-$uid.png"
         }
     }
 }

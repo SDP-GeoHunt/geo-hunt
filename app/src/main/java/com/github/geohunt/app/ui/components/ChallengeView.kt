@@ -3,7 +3,6 @@ package com.github.geohunt.app.ui.components
 import android.graphics.Bitmap
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,36 +14,33 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Notifications
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.FetchComponent
+import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.homescreen.HorizontalDivider
-import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import com.github.geohunt.app.utility.DateFormatUtils.getElapsedTimeString
+import com.github.geohunt.app.utility.toSuffixedString
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import java.time.LocalDateTime
 
 private const val lorumIpsum =
@@ -52,43 +48,10 @@ private const val lorumIpsum =
 
 Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce accumsan laoreet tellus, vel eleifend tortor venenatis eget. Suspendisse fermentum tellus eget vestibulum tincidunt. Donec sed tempus libero. Vestibulum pellentesque tempus sodales. Suspendisse eros risus, egestas nec porta et, pulvinar at lorem. Nulla a ante sed enim pretium vehicula ut ac eros. Nullam sollicitudin justo eu est sagittis, at vulputate mauris interdum. Sed non tellus interdum, placerat velit nec, pharetra magna."""
 
-@Composable
-fun LabelledIcon(
-    text: String,
-    painter: Painter,
-    contentDescription: String,
-    fontSize: TextUnit = TextUnit.Unspecified,
-    fontStyle: FontStyle? = null,
-    fontColor: Color = Color.Unspecified,
-    iconSize: Dp = 25.dp,
-    tint : Color = Color.Unspecified,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Text(
-            text = text,
-            color = fontColor,
-            fontStyle = fontStyle,
-            fontSize = fontSize,
-            modifier = Modifier.align(Alignment.CenterVertically)
-        )
 
-        Spacer(modifier = Modifier.width(2.dp))
-
-        Icon(
-            painter,
-            tint = tint.takeOrElse { MaterialTheme.colors.primary },
-            contentDescription = contentDescription,
-            modifier = Modifier.size(iconSize)
-        )
-    }
-}
 
 @Composable
-private fun MainUserView(user: User) {
+private fun MainUserView(challenge: Challenge) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,85 +59,89 @@ private fun MainUserView(user: User) {
             .height(70.dp)
             .clipToBounds()
     ) {
-        Row {
-            Image(
-                painter = painterResource(R.drawable.mock_user),
-                contentDescription = "User profile picture",
-                modifier = Modifier
-                    .size(70.dp)
-                    .align(Alignment.Top)
-                    .clip(CircleShape)
-            )
+        FetchComponent(
+            lazyRef = { challenge.author },
+            modifier = Modifier.align(Alignment.Center)
+        ) { author ->
+            Row {
+                ProfileIcon(
+                    user = author,
+                    size = 70.dp,
+                    modifier = Modifier.testTag("profile-icon")
+                )
 
-            Spacer(modifier = Modifier.width(15.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
-            Column(
-                modifier = Modifier.align(Alignment.CenterVertically)
-            ) {
-                Row {
-                    Text(
-                        text = user.displayName ?: user.name,
-                        fontSize = 7.em,
-                        maxLines = 1,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .align(Alignment.Bottom)
-                            .padding(2.dp)
-                            .wrapContentSize(unbounded = true)
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    LabelledIcon(
-                        text = "34k",
-                        painter = painterResource(id = R.drawable.cards_diamond),
-                        tint = Color(R.color.md_theme_light_tertiary),
-                        contentDescription = "Card diamond",
-                        fontColor = MaterialTheme.colors.primaryVariant,
-                        fontSize = 4.em,
-                        iconSize = 20.dp,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = 15.dp)
-                    )
-                }
-
-                Row {
-                    Text(
-                        text = "published 1 hour ago",
-                        fontSize = 3.em,
-                        color = MaterialTheme.colors.primaryVariant,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier
-                            .padding(start = 12.dp)
-                            .align(Alignment.Top)
-                            .wrapContentSize(unbounded = true)
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Button(
-                        modifier = Modifier
-                            .size(63.dp, 24.dp)
-                            .align(Alignment.CenterVertically),
-                        contentPadding = PaddingValues(2.dp, 2.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        onClick = { /*TODO*/ })
-                    {
+                Column(
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    Row {
                         Text(
-                            text = "Follow",
-                            fontSize = 3.em
+                            text = author.name,
+                            fontSize = 27.sp,
+                            maxLines = 1,
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier
+                                .align(Alignment.Bottom)
+                                .padding(2.dp)
+                                .wrapContentSize(unbounded = true)
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        LabelledIcon(
+                            text = author.score.toInt().toSuffixedString(),
+                            painter = painterResource(id = R.drawable.cards_diamond),
+                            tint = Color(R.color.md_theme_light_tertiary),
+                            contentDescription = "Card diamond",
+                            fontColor = MaterialTheme.colors.primaryVariant,
+                            fontSize = 19.sp,
+                            iconSize = 20.dp,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(end = 15.dp)
                         )
                     }
 
-                    IconButton(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Icon(
-                            Icons.Rounded.Notifications,
-                            contentDescription = "Notification bell"
+                    Row {
+                        Text(
+                            text = getElapsedTimeString(
+                                challenge.publishedDate,
+                                R.string.published_format
+                            ),
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colors.primaryVariant,
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier
+                                .padding(start = 12.dp)
+                                .align(Alignment.Top)
+                                .wrapContentSize(unbounded = true)
                         )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Button(
+                            modifier = Modifier
+                                .size(63.dp, 24.dp)
+                                .align(Alignment.CenterVertically),
+                            contentPadding = PaddingValues(2.dp, 2.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            onClick = { /*TODO*/ })
+                        {
+                            Text(text = "Follow", fontSize = 11.sp)
+                        }
+
+                        IconButton(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .testTag("btn-notification"),
+                            onClick = { /*TODO*/ }
+                        ) {
+                            Icon(
+                                Icons.Rounded.Notifications,
+                                contentDescription = "Notification bell"
+                            )
+                        }
                     }
                 }
             }
@@ -183,13 +150,13 @@ private fun MainUserView(user: User) {
 }
 
 @Composable
-fun BellowImageButtons() {
+private fun BellowImageButtons(challenge: Challenge) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp, 5.dp)
     ) {
-        val fontSize = 5.em
+        val fontSize = 18.sp
         val iconSize = 22.dp
 
         LabelledIcon(
@@ -206,9 +173,8 @@ fun BellowImageButtons() {
                 .weight(0.2f)
         )
 
-
         LabelledIcon(
-            text = "32",
+            text = challenge.claims.size.toString(),
             painter = painterResource(R.drawable.target_arrow),
             contentDescription = "Claims",
             fontSize = fontSize,
@@ -242,222 +208,223 @@ fun BellowImageButtons() {
         {
             Text(
                 text = "Join",
-                fontSize = 4.em
+                fontSize = 17.sp
             )
         }
     }
 }
 
 @Composable
-fun ClaimCard(claim: Claim) {
+private fun ClaimCard(claimRef: LazyRef<Claim>, displayImage: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .aspectRatio(1.8f, false)
             .padding(5.dp)
     ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Black)
-                    .aspectRatio(1.8f, false)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.eiffel),
-                    contentScale = ContentScale.Crop,
+        FetchComponent(
+            lazyRef = { claimRef },
+            modifier = Modifier.fillMaxSize()
+        ) { claim ->
+            Column {
+                Box(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .align(Alignment.Center),
-                    contentDescription = "claimed image")
-            }
-
-            Row(
-                modifier = Modifier.padding(horizontal = 20.dp,
-                    vertical = 2.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.mock_user),
-                    contentDescription = "mock user",
-                    modifier = Modifier
-                        .size(35.dp)
-                        .clip(CircleShape)
-                )
-                
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Column {
-                    Text(text = "John Smith",
-                        fontSize = 5.em)
-
-                    Row {
-                        Text(text = "claimed 1 day ago · ",
-                            fontSize = 2.em,
-                            modifier = Modifier.padding(start = 10.dp),
-                            color = MaterialTheme.colors.primary
-                        )
-
-                        LabelledIcon(text = "10km",
-                            painter = painterResource(id = R.drawable.ruler_measure),
-                            contentDescription = "Distance",
-                            fontColor = MaterialTheme.colors.primary,
-                            fontSize = 2.em,
-                            iconSize = 11.dp)
+                        .weight(1f)
+                        .background(Color.Black)
+                ) {
+                    AsyncImage(
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .align(Alignment.Center)
+                            .clickable {
+                                displayImage(claim.image.id)
+                            },
+                        contentDescription = "claimed image"
+                    ) {
+                        claim.image
                     }
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
-                
-                Column(
-                    modifier = Modifier.padding(horizontal = 20.dp)
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp, vertical = 2.dp)
+                        .height(39.dp)
                 ) {
-                    Text(
-                        text = "+300",
-                        fontSize = 4.em,
-                        color = Color(R.color.md_theme_light_tertiary)
-                    )
+                    FetchComponent(lazyRef = { claim.user }) { user ->
+                        AsyncImage(
+                            contentDescription = "User",
+                            modifier = Modifier
+                                .size(35.dp)
+                                .clip(CircleShape)
+                        ) {
+                            user.profilePicture
+                        }
 
-                    LabelledIcon(text = "300k",
-                        painter = painterResource(id = R.drawable.cards_diamond),
-                        contentDescription = "Total points",
-                        fontSize = 3.em,
-                        iconSize = 13.dp)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
+                            Text(
+                                text = user.name,
+                                fontSize = 16.sp
+                            )
+
+                            Row {
+                                Text(
+                                    text = getElapsedTimeString(
+                                        claim.time,
+                                        R.string.claimed_format
+                                    ) + " · ",
+                                    fontSize = 11.sp,
+                                    modifier = Modifier.padding(start = 10.dp),
+                                    color = MaterialTheme.colors.primary
+                                )
+
+                                LabelledIcon(
+                                    text = claim.distance.toInt().toSuffixedString() + "m",
+                                    painter = painterResource(id = R.drawable.ruler_measure),
+                                    contentDescription = "Distance",
+                                    fontColor = MaterialTheme.colors.primary,
+                                    fontSize = 11.sp,
+                                    iconSize = 11.dp
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Column(
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        ) {
+                            Text(
+                                text = "+300",
+                                fontSize = 16.sp,
+                                color = Color(R.color.md_theme_light_tertiary)
+                            )
+
+                            LabelledIcon(
+                                text = user.score.toInt().toSuffixedString(),
+                                painter = painterResource(id = R.drawable.cards_diamond),
+                                contentDescription = "Total points",
+                                fontSize = 13.sp,
+                                iconSize = 13.dp
+                            )
+                        }
+                    }
                 }
             }
-
         }
     }
 }
 
-
-@Preview
 @Composable
-fun ChallengeViewPreview() {
-    GeoHuntTheme() {
-        ChallengeView()
-    }
-}
-
-@Composable
-fun ChallengeView() {
-    val user = object : User {
-        override val uid: String = "uid"
-        override var displayName: String? = "John Smith"
-        override val profilePicture: LazyRef<Bitmap>
-            get() = TODO()
-        override val challenges: List<LazyRef<Challenge>>
-            get() = TODO()
-        override val hunts: List<LazyRef<Challenge>>
-            get() = TODO()
-        override var score: Number
-            get() = 34580
-            set(value) {}
-    }
-
-    val isDescriptionExpanded = remember {
+fun ChallengeView(
+    challenge: Challenge,
+    onButtonBack: () -> Unit,
+    displayImage: (String) -> Unit
+) {
+    var isDescriptionExpanded by remember {
         mutableStateOf(false)
     }
 
     val lazyState = rememberLazyListState()
-    val transition = updateTransition(lazyState.firstVisibleItemIndex != 0, label = "Image size transition")
+    val transition = updateTransition(
+        remember { derivedStateOf { lazyState.firstVisibleItemIndex != 0 } },
+        label = "Image size transition"
+    )
 
     val imageAspectRatio by transition.animateFloat(label = "Animate image size ratio") { isScrolling ->
-        if (isScrolling) 1.8f else 1.0f
+        if (isScrolling.value) 1.8f else 1.0f
     }
 
-    Column {
-        Image(
-            painter = painterResource(id = R.drawable.eiffel),
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(imageAspectRatio, false),
-            contentScale = ContentScale.Crop,
-            contentDescription = "Challenge Image"
-        )
-
-        BellowImageButtons()
-
-        Spacer(Modifier.height(2.dp))
-
-        HorizontalDivider(
-            padding = 2.dp
-        )
-
-        LazyColumn(
-            state = lazyState
-        ) {
-            item { 
-                Spacer(modifier = Modifier.height(1.dp))
+    Box {
+        Column {
+            // Main challenge image
+            AsyncImage(
+                contentDescription = "Challenge Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        displayImage(challenge.thumbnail.id)
+                    }
+                    .aspectRatio(imageAspectRatio, false),
+                contentScale = ContentScale.Crop
+            ) {
+                challenge.thumbnail
             }
 
-            item {
-                MainUserView(user = user)
-                HorizontalDivider(
-                    padding = 2.dp
-                )
-            }
+            BellowImageButtons(challenge)
 
-            item {
+            Spacer(Modifier.height(2.dp))
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = if (isDescriptionExpanded.value) Int.MAX_VALUE.dp else 90.dp)
-                        .padding(10.dp),
-                    elevation = 10.dp
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.SpaceAround
+            HorizontalDivider(
+                padding = 2.dp
+            )
+
+            LazyColumn(
+                state = lazyState,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(1.dp))
+                }
+
+                item {
+                    MainUserView(challenge = challenge)
+                    HorizontalDivider(padding = 2.dp)
+                }
+
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = if (isDescriptionExpanded) Int.MAX_VALUE.dp else 90.dp)
+                            .padding(10.dp),
+                        elevation = 10.dp
                     ) {
-                        Text(
-                            lorumIpsum,
-                            fontSize = 3.em,
-                            color = MaterialTheme.colors.onBackground,
-                            maxLines = if (isDescriptionExpanded.value) Int.MAX_VALUE else 2,
-                            modifier = Modifier.padding(10.dp),
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Column(
+                            verticalArrangement = Arrangement.SpaceAround
+                        ) {
+                            Text(
+                                lorumIpsum,
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colors.onBackground,
+                                maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 2,
+                                modifier = Modifier.padding(10.dp),
+                                overflow = TextOverflow.Ellipsis
+                            )
 
-                        Text(
-                            text = if (isDescriptionExpanded.value) "less..." else "more...",
-                            fontSize = 3.em,
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(bottom = 5.dp)
-                                .clickable {
-                                    isDescriptionExpanded.value = !isDescriptionExpanded.value
-                                }
-                        )
+                            Text(
+                                text = if (isDescriptionExpanded) "less..." else "more...",
+                                fontSize = 11.sp,
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(bottom = 5.dp)
+                                    .clickable {
+                                        isDescriptionExpanded = !isDescriptionExpanded
+                                    }
+                            )
+                        }
                     }
                 }
-            }
 
-            items(500) { index ->
-                val claim = object : Claim {
-                    override val id: String
-                        get() = TODO("Not yet implemented")
-                    override val challenge: LazyRef<Challenge>
-                        get() = TODO("Not yet implemented")
-                    override val user: String
-                        get() = "user"
-                    override val time: LocalDateTime
-                        get() = LocalDateTime.now().minusHours(2)
-                    override val location: Location
-                        get() = TODO("Not yet implemented")
+                items(challenge.claims.size) { index: Int ->
+                    ClaimCard(claimRef = challenge.claims[index], displayImage = displayImage)
                 }
-
-                ClaimCard(claim = claim)
             }
         }
-    }
 
-    IconButton(
-        modifier = Modifier
-            .size(54.dp)
-            .padding(10.dp),
-        onClick = { /*TODO*/ }) {
-        Icon(
-            Icons.Rounded.ArrowBack,
-            contentDescription = "Go back"
-        )
+        // Go back button (for navigation)
+        IconButton(
+            modifier = Modifier
+                .size(48.dp)
+                .padding(10.dp)
+                .testTag("btn-go-back"),
+            onClick = { onButtonBack() }
+        ) {
+            Icon(
+                Icons.Rounded.ArrowBack,
+                contentDescription = "Go back"
+            )
+        }
     }
 }

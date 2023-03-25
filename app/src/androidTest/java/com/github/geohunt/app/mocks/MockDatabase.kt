@@ -5,6 +5,7 @@ import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.database.api.User
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
 
@@ -21,7 +22,19 @@ abstract class BaseMockDatabase : Database {
         throw NotImplementedError()
     }
 
+    override fun getImageById(iid: String): LazyRef<Bitmap> {
+        TODO("Not yet implemented")
+    }
+
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         throw NotImplementedError()
+    }
+
+    override fun insertNewUser(user: User): Task<Void> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getUser(uid: String): LazyRef<User> {
+        TODO("Not yet implemented")
     }
 }

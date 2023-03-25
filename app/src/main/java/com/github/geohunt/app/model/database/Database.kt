@@ -2,7 +2,6 @@ package com.github.geohunt.app.model.database
 
 import android.app.Activity
 import android.graphics.Bitmap
-import android.provider.ContactsContract.Data
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.model.database.api.Challenge
@@ -10,9 +9,7 @@ import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.utility.Singleton
 import com.google.android.gms.tasks.Task
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
 
 /**
  * Interface representing the API used to communicate with the remote database and the application
@@ -40,12 +37,27 @@ interface Database {
     fun getChallengeById(cid: String): LazyRef<Challenge>
 
     /**
+     * Retrieve a image with a given ID and return a [LazyRef] upon completion
+     *
+     * @param iid the image id, this may depend for image type
+     * @return A [LazyRef] linked to the result of the operation
+     */
+    fun getImageById(iid: String): LazyRef<Bitmap>
+
+    /**
      * Retrieve a list of challenges surrounding a particular location. Notice that the exact number of
      * challenges may depend on the fetched region
      *
      * @param location the location where we should search for challenges
      */
     fun getNearbyChallenge(location: Location): Task<List<Challenge>>
+
+    /**
+     * Inserts a new user into the database
+     */
+    fun insertNewUser(user: User): Task<Void>
+
+    fun getUser(uid: String): LazyRef<User>
 
     companion object {
 

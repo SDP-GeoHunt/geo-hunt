@@ -10,14 +10,36 @@
     <string name="challenge_published">Published : %1$s</string>
     <string name="challenge_time_remaining">Time remaining : %1$s </string>
 
-    <plurals name="date_format_time_remaining_days">
-        <item quantity="one">%d day</item>
-        <item quantity="other">%d days</item>
+    <!-- All string for formatting message like "published just now" -->
+    <plurals name="date_format_time_years_ago">
+        <item quantity="one">one year ago</item>
+        <item quantity="other">%d years ago</item>
     </plurals>
-    <plurals name="date_format_time_remaining_hours">
-        <item quantity="one">%d hour</item>
-        <item quantity="other">%d hours</item>
+    <plurals name="date_format_time_months_ago">
+        <item quantity="one">one month ago</item>
+        <item quantity="other">%d months ago</item>
     </plurals>
+    <plurals name="date_format_time_weeks_ago">
+        <item quantity="one">one week ago</item>
+        <item quantity="other">%d weeks ago</item>
+    </plurals>
+    <plurals name="date_format_time_days_ago">
+        <item quantity="one">one day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="date_format_time_hours_ago">
+        <item quantity="one">one hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="date_format_time_minutes_ago">
+        <item quantity="one">one minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <string name="just_now">just now</string>
+
+    <string name="published_format">published %s</string>
+    <string name="claimed_format">claimed %s</string>
+
     <string name="date_format_less_one_hour">Less than 1 hour</string>
     <string name="date_format_never">NEVER</string>
     <string name="date_format_format">dd/MM/yyyy</string>
@@ -34,4 +56,13 @@
     <string name="community_guidelines_url">https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines</string>
     <string name="privacy_policy_url">https://github.com/SDP-GeoHunt/geo-hunt/wiki/Privacy-Policy</string>
 
+    <string name="profile_number_of_posts_subtitle">posts</string>
+    <string name="profile_number_of_hunts_subtitle">hunts</string>
+    <string name="profile_score_subtitle">points</string>
+
+    <string name="challenges">Challenges</string>
+    <string name="hunts">Hunts</string>
+
+    <string name="no_past_challenges">No challenges :(</string>
+    <string name="no_past_hunts">No past hunts ;(</string>
 </resources>

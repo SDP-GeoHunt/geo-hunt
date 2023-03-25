@@ -1,5 +1,6 @@
 package com.github.geohunt.app.model.database.api
 
+import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
 import java.time.LocalDateTime
 
@@ -18,14 +19,21 @@ interface Claim {
     val challenge: LazyRef<Challenge>
 
     /**
-     * Unique identifier of the user that claimed the corresponding challenge
+     * Reference to the image of the claimed image
      */
-    val user: String
+    val image: LazyRef<Bitmap>
+
+    /**
+     * Reference to the user
+     */
+    val user: LazyRef<User>
 
     /**
      * Time at which the user claimed the challenge
      */
     val time: LocalDateTime
+
+    val distance : Long
 
     /**
      * Location at which the user claimed the challenge. This is used to compute the score the user
