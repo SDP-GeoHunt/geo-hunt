@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithText
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,7 +16,7 @@ class ActiveHuntsTest {
     private fun setupComposable(challenges: List<LazyRef<Challenge>>) {
         testRule.setContent {
             GeoHuntTheme {
-                ActiveHunts(challenges = listOf())
+                ActiveHunts(challenges = challenges)
             }
         }
     }

@@ -67,7 +67,7 @@ fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>) {
             EmptyChallengesScreen()
         }
         else {
-            LazyRow() {
+            LazyRow {
                 items(challenges) { challenge ->
                     ChallengePreview(challenge = challenge)
                 }
