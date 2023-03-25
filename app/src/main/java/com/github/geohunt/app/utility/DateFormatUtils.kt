@@ -46,7 +46,7 @@ object DateFormatUtils {
         val raw = when {
             duration.toDays() > 182 ->
                 formatElapsedTime(R.plurals.date_format_time_years_ago, (duration.toDays() + 182) / 365)
-            duration.toDays() > 12 ->
+            duration.toDays() > 29 ->
                 formatElapsedTime(R.plurals.date_format_time_months_ago, (duration.toDays() + 15) / 30)
             duration.toDays() > 0 ->
                 formatElapsedTime(R.plurals.date_format_time_days_ago, duration.toDays())
