@@ -12,12 +12,13 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
-import com.github.geohunt.app.mocks.BaseMockDatabase
-import com.github.geohunt.app.mocks.MockChallenge
-import com.github.geohunt.app.mocks.MockLazyRef
-import com.github.geohunt.app.mocks.MockUser
+import com.github.geohunt.app.mocks.*
+import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.Claim
+import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 import com.google.android.gms.tasks.Tasks
@@ -26,6 +27,7 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -42,11 +44,37 @@ class ChallengeViewTest {
     fun testChallengeViewDisplayUserProperly()
     {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val profilePicture = createTestBitmap(context)
+        var challenge2 : Challenge? = null
 
         val author = MockUser(
             displayName = "John wick",
-            score = 48723
+            score = 48723,
+            profilePicture = InstantLazyRef("izufiozef", profilePicture)
         )
+
+        val author2 = MockUser(
+            displayName = "John Williams",
+            score = 1248,
+            profilePicture = InstantLazyRef("izufiozef", profilePicture)
+        )
+
+        val claim = object : Claim {
+            override val id: String
+                get() = "claim-ar4f165erf146a5c"
+            override val challenge: LazyRef<Challenge>
+                get() = MockLazyRef<Challenge>("cid") { TODO() }
+            override val image: LazyRef<Bitmap>
+                get() = MockLazyRef<Bitmap>("bitmap") { Tasks.forResult(createTestBitmap(context)) }
+            override val user: LazyRef<User>
+                get() = InstantLazyRef(author2.uid, author2)
+            override val time: LocalDateTime
+                get() = LocalDateTime.now()
+            override val distance: Long
+                get() = 62
+            override val location: Location
+                get() = Location()
+        }
 
         val challenge = MockChallenge(
             author = MockLazyRef("user-f425zez6z4ef6z15f4") {
@@ -54,8 +82,10 @@ class ChallengeViewTest {
             },
             thumbnail = MockLazyRef("img-ze5f16zaef1465") {
                 Tasks.forResult(createTestBitmap(context))
-            }
+            },
+            claims = listOf(InstantLazyRef("claim", claim))
         )
+        challenge2 = challenge
 
         // Sets the composeTestRule content
         composeTestRule.setContent {
@@ -70,24 +100,32 @@ class ChallengeViewTest {
         }
 
         // Ensure click on challenge view image redirect to corresponding page
-        
-//        composeTestRule.onNodeWithText("John wick")
-//            .performScrollTo()
-//            .assertIsDisplayed()
-//
-//        composeTestRule.onNodeWithText("Follow")
-//            .performScrollTo()
-//            .assertIsDisplayed()
-//            .assertHasClickAction()
-//
-//        composeTestRule.onNodeWithTag("btn-notification")
-//            .performScrollTo()
-//            .assertIsDisplayed()
-//            .assertHasClickAction()
-//
-//        composeTestRule.onNodeWithText("published just now")
-//            .performScrollTo()
-//            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithText("John wick")
+            .performScrollTo()
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithText("Follow")
+            .performScrollTo()
+            .assertIsDisplayed()
+            .assertHasClickAction()
+
+        composeTestRule.onNodeWithTag("btn-notification")
+            .performScrollTo()
+            .assertIsDisplayed()
+            .assertHasClickAction()
+
+        composeTestRule.onNodeWithText("published just now")
+            .performScrollTo()
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithText("John Williams")
+            .performScrollTo()
+            .assertExists()
+
+        composeTestRule.onNodeWithText("62m")
+            .performScrollTo()
+            .assertExists()
     }
 
     @Test

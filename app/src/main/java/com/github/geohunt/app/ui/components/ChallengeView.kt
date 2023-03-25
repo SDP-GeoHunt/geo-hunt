@@ -3,7 +3,6 @@ package com.github.geohunt.app.ui.components
 import android.graphics.Bitmap
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -21,35 +20,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
+import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
+import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.homescreen.HorizontalDivider
-import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.DateFormatUtils.getElapsedTimeString
-import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.toSuffixedString
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import java.time.LocalDateTime
 
 private const val lorumIpsum =
     """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc bibendum enim non iaculis malesuada. Praesent non accumsan eros. Ut ut eros dolor. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus scelerisque eros nec porta facilisis. Mauris quis consectetur libero, nec vestibulum leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate ipsum eu felis consectetur mollis. Proin varius dui felis, sit amet mattis nibh sollicitudin et. Nunc semper felis tortor, quis tempus sapien porta eget. Proin convallis est nec mauris efficitur posuere. Nam sit amet varius tellus, et mollis enim. Sed vel ligula imperdiet, cursus arcu eget, consequat turpis. Suspendisse potenti.
 
 Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce accumsan laoreet tellus, vel eleifend tortor venenatis eget. Suspendisse fermentum tellus eget vestibulum tincidunt. Donec sed tempus libero. Vestibulum pellentesque tempus sodales. Suspendisse eros risus, egestas nec porta et, pulvinar at lorem. Nulla a ante sed enim pretium vehicula ut ac eros. Nullam sollicitudin justo eu est sagittis, at vulputate mauris interdum. Sed non tellus interdum, placerat velit nec, pharetra magna."""
+
+
 
 @Composable
 private fun MainUserView(challenge: Challenge) {
@@ -65,7 +64,11 @@ private fun MainUserView(challenge: Challenge) {
             modifier = Modifier.align(Alignment.Center)
         ) { author ->
             Row {
-                ProfileIcon(user = author, size = 70.dp, modifier = Modifier.testTag("profile-icon"))
+                ProfileIcon(
+                    user = author,
+                    size = 70.dp,
+                    modifier = Modifier.testTag("profile-icon")
+                )
 
                 Spacer(modifier = Modifier.width(10.dp))
 
@@ -75,7 +78,7 @@ private fun MainUserView(challenge: Challenge) {
                     Row {
                         Text(
                             text = author.name,
-                            fontSize = 7.em,
+                            fontSize = 27.sp,
                             maxLines = 1,
                             textAlign = TextAlign.Left,
                             modifier = Modifier
@@ -92,7 +95,7 @@ private fun MainUserView(challenge: Challenge) {
                             tint = Color(R.color.md_theme_light_tertiary),
                             contentDescription = "Card diamond",
                             fontColor = MaterialTheme.colors.primaryVariant,
-                            fontSize = 4.em,
+                            fontSize = 19.sp,
                             iconSize = 20.dp,
                             modifier = Modifier
                                 .align(Alignment.CenterVertically)
@@ -106,7 +109,7 @@ private fun MainUserView(challenge: Challenge) {
                                 challenge.publishedDate,
                                 R.string.published_format
                             ),
-                            fontSize = 3.em,
+                            fontSize = 10.sp,
                             color = MaterialTheme.colors.primaryVariant,
                             textAlign = TextAlign.Left,
                             modifier = Modifier
@@ -125,11 +128,12 @@ private fun MainUserView(challenge: Challenge) {
                             shape = RoundedCornerShape(12.dp),
                             onClick = { /*TODO*/ })
                         {
-                            Text(text = "Follow", fontSize = 3.em)
+                            Text(text = "Follow", fontSize = 11.sp)
                         }
 
                         IconButton(
-                            modifier = Modifier.align(Alignment.CenterVertically)
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
                                 .testTag("btn-notification"),
                             onClick = { /*TODO*/ }
                         ) {
@@ -152,7 +156,7 @@ private fun BellowImageButtons(challenge: Challenge) {
             .fillMaxWidth()
             .padding(15.dp, 5.dp)
     ) {
-        val fontSize = 5.em
+        val fontSize = 18.sp
         val iconSize = 22.dp
 
         LabelledIcon(
@@ -204,34 +208,38 @@ private fun BellowImageButtons(challenge: Challenge) {
         {
             Text(
                 text = "Join",
-                fontSize = 4.em
+                fontSize = 17.sp
             )
         }
     }
 }
 
 @Composable
-private fun ClaimCard(claimRef: LazyRef<Claim>) {
+private fun ClaimCard(claimRef: LazyRef<Claim>, displayImage: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1.8f, false)
             .padding(5.dp)
     ) {
-        FetchComponent(lazyRef = { claimRef }) { claim ->
+        FetchComponent(
+            lazyRef = { claimRef },
+            modifier = Modifier.fillMaxSize()
+        ) { claim ->
             Column {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
+                        .weight(1f)
                         .background(Color.Black)
-//                        .aspectRatio(1.8f, false)
                 ) {
                     AsyncImage(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxHeight()
-                            .align(Alignment.Center),
+                            .align(Alignment.Center)
+                            .clickable {
+                                displayImage(claim.image.id)
+                            },
                         contentDescription = "claimed image"
                     ) {
                         claim.image
@@ -239,10 +247,9 @@ private fun ClaimCard(claimRef: LazyRef<Claim>) {
                 }
 
                 Row(
-                    modifier = Modifier.padding(
-                        horizontal = 20.dp,
-                        vertical = 2.dp
-                    )
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp, vertical = 2.dp)
+                        .height(39.dp)
                 ) {
                     FetchComponent(lazyRef = { claim.user }) { user ->
                         AsyncImage(
@@ -258,7 +265,7 @@ private fun ClaimCard(claimRef: LazyRef<Claim>) {
                         Column {
                             Text(
                                 text = user.name,
-                                fontSize = 5.em
+                                fontSize = 16.sp
                             )
 
                             Row {
@@ -267,7 +274,7 @@ private fun ClaimCard(claimRef: LazyRef<Claim>) {
                                         claim.time,
                                         R.string.claimed_format
                                     ) + " · ",
-                                    fontSize = 2.em,
+                                    fontSize = 11.sp,
                                     modifier = Modifier.padding(start = 10.dp),
                                     color = MaterialTheme.colors.primary
                                 )
@@ -277,7 +284,7 @@ private fun ClaimCard(claimRef: LazyRef<Claim>) {
                                     painter = painterResource(id = R.drawable.ruler_measure),
                                     contentDescription = "Distance",
                                     fontColor = MaterialTheme.colors.primary,
-                                    fontSize = 2.em,
+                                    fontSize = 11.sp,
                                     iconSize = 11.dp
                                 )
                             }
@@ -290,7 +297,7 @@ private fun ClaimCard(claimRef: LazyRef<Claim>) {
                         ) {
                             Text(
                                 text = "+300",
-                                fontSize = 4.em,
+                                fontSize = 16.sp,
                                 color = Color(R.color.md_theme_light_tertiary)
                             )
 
@@ -298,7 +305,7 @@ private fun ClaimCard(claimRef: LazyRef<Claim>) {
                                 text = user.score.toInt().toSuffixedString(),
                                 painter = painterResource(id = R.drawable.cards_diamond),
                                 contentDescription = "Total points",
-                                fontSize = 3.em,
+                                fontSize = 13.sp,
                                 iconSize = 13.dp
                             )
                         }
@@ -379,7 +386,7 @@ fun ChallengeView(
                         ) {
                             Text(
                                 lorumIpsum,
-                                fontSize = 3.em,
+                                fontSize = 11.sp,
                                 color = MaterialTheme.colors.onBackground,
                                 maxLines = if (isDescriptionExpanded) Int.MAX_VALUE else 2,
                                 modifier = Modifier.padding(10.dp),
@@ -388,7 +395,7 @@ fun ChallengeView(
 
                             Text(
                                 text = if (isDescriptionExpanded) "less..." else "more...",
-                                fontSize = 3.em,
+                                fontSize = 11.sp,
                                 modifier = Modifier
                                     .align(Alignment.CenterHorizontally)
                                     .padding(bottom = 5.dp)
@@ -401,26 +408,7 @@ fun ChallengeView(
                 }
 
                 items(challenge.claims.size) { index: Int ->
-                    ClaimCard(claimRef = challenge.claims[index])
-//                    FetchComponent(lazyRef = { challenge.claims[index] }) {
-//                    }
-//                    val claim = rememberLazyRef {
-//                        challenge.claims[index]
-//                    }
-//
-//                    if (claim.value != null) {
-//                        ClaimCard(claim = claim.value!!)
-//                    }
-//                    else {
-//                        Card(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(5.dp)
-//                                .aspectRatio(0.5f, false)
-//                        ) {
-//
-//                        }
-//                    }
+                    ClaimCard(claimRef = challenge.claims[index], displayImage = displayImage)
                 }
             }
         }
