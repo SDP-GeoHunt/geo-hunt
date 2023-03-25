@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.components.Challenge
+import com.github.geohunt.app.ui.components.ChallengeView
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
@@ -42,7 +43,8 @@ class ComposeActivity : ComponentActivity() {
 //                        }
 //                    )
                     if (challenge.value != null) {
-                        Challenge(challenge = challenge.value!!)
+//                        Challenge(challenge = challenge.value!!)
+                        ChallengeView()
                     }
 
                 }
