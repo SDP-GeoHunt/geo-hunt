@@ -41,7 +41,7 @@ fun DisplayMarkers() {
             state = rememberMarkerState(position = challenge.coordinates),
             title = challenge.title,
             snippet = challenge.expiryDate.toString(),
-            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)//challenge.image
+            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
         ) { _ ->
             Box(
                 modifier = Modifier
