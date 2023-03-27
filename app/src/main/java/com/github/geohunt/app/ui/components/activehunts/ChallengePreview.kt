@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -36,9 +35,9 @@ fun ChallengePreview(challenge: LazyRef<Challenge>) {
 
     FetchComponent(lazyRef = { challenge }) { resolvedChallenge ->
         Column(modifier = Modifier.fillMaxSize()) {
-            ChallengeImage(challenge = resolvedChallenge, modifier = Modifier.weight(0.75F))
+            ChallengeImage(challenge = resolvedChallenge, modifier = Modifier.weight(1F))
 
-            ChallengeDescription(challenge = resolvedChallenge, modifier = Modifier.weight(0.75F))
+            ChallengeDescription(challenge = resolvedChallenge)
         }
     }
 
@@ -56,8 +55,8 @@ fun ChallengeImage(challenge: Challenge, modifier: Modifier) {
 }
 
 @Composable
-fun ChallengeDescription(challenge: Challenge, modifier: Modifier) {
-    Column(verticalArrangement = Arrangement.SpaceBetween, modifier = modifier) {
+fun ChallengeDescription(challenge: Challenge) {
+    Column(verticalArrangement = Arrangement.SpaceBetween) {
         AuthorName(challenge.author)
 
         Location()
