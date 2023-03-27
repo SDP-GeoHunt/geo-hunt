@@ -14,7 +14,7 @@ import com.google.android.gms.tasks.Tasks
 import org.junit.Rule
 import org.junit.Test
 
-class ProfilePage {
+class ProfilePageTest {
     @get:Rule
     val testRule = createComposeRule()
 
