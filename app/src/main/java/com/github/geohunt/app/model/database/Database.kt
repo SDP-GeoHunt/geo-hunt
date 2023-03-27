@@ -56,6 +56,11 @@ interface Database {
      */
     suspend fun follow(follower: String, followee: String)
 
+    /**
+     * Makes the first user with the given uid unfollow the second user.
+     */
+    suspend fun unfollow(follower: String, followee: String)
+
     companion object {
 
         /**

@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.tasks.await
 import java.io.File
+import java.lang.Integer.max
 import java.time.LocalDateTime
 
 class FirebaseDatabase(activity: Activity) : Database {
@@ -157,32 +158,43 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
-     * Makes the first user with the given UID follow the second user.
+     * Updates the database to (un)follow the given users.
      *
      * @note To ensure easier data querying, the data must be synchronized at 3 places in the database :
-     *       - In the follower's follow list, the followee should be added,
-     *       - The followee's follow counter should be incremented,
-     *       - The follower should be added to the followee's list in the `follows` relationship.
+     *       - In the follower's follow list, the followee should be added/removed,
+     *       - The followee's follow counter should be incremented/decremented,
+     *       - The follower should be added/removed to the followee's list in the `follows` relationship.
      */
-    override suspend fun follow(follower: String, followee: String) {
+    private suspend fun doFollow(follower: String, followee: String, follow: Boolean = true) {
         val followerListRef = dbUserRef.child(follower).child("followList")
         val counterRef = dbUserRef.child(followee).child("followCounter")
         val follows = dbFollowsRef.child(followee)
 
-        val followerList = followerListRef.get().await().getValue<List<*>>()?.filterIsInstance<String>()
-        val followedCounter = counterRef.get().await().getValue<Int>()
-        val followsPairs = follows.get().await().getValue<List<*>>()?.filterIsInstance<String>()
+        val followerList = followerListRef.get().await().getValue<List<*>>()?.filterIsInstance<String>() ?: emptyList()
+        val followedCounter = counterRef.get().await().getValue<Int>() ?: 0
+        val followsPairs = follows.get().await().getValue<List<*>>()?.filterIsInstance<String>() ?: emptyList()
 
         Tasks.whenAll(
             // Update the follower's follow list
-            followerListRef.setValue((followerList ?: emptyList()) + followee),
+            followerListRef.setValue(if (follow) (followerList + followee) else followerList.minus(followee)),
 
             // Update the follow counter of the followee
-            counterRef.setValue((followedCounter ?: 0) + 1),
+            counterRef.setValue(if (follow) followedCounter + 1 else max(followedCounter - 1, 0)),
 
             // Update the follows relationship
-            follows.setValue((followsPairs ?: emptyList()) + follower)
+            follows.setValue(if (follow) followsPairs + follower else followsPairs - follower)
         ).await()
+    }
+
+    /**
+     * Makes the first user with the given UID follow the second user.
+     */
+    override suspend fun follow(follower: String, followee: String) {
+        doFollow(follower, followee, follow = true)
+    }
+
+    override suspend fun unfollow(follower: String, followee: String) {
+        doFollow(follower, followee, follow = false)
     }
 }
 
