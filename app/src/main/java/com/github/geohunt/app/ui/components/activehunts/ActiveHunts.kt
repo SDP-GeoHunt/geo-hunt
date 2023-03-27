@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.ui.theme.Lobster
+import com.github.geohunt.app.ui.theme.geoHuntRed
 
 @Composable
 fun ActiveHunts(challenges: List<LazyRef<Challenge>>) {
@@ -50,7 +51,7 @@ fun TitleText() {
 
                     append(" ")
 
-                    withStyle(style = SpanStyle(color = Color.Red)) {
+                    withStyle(style = SpanStyle(color = geoHuntRed)) {
                         append("hunts")
                     }
                 }
