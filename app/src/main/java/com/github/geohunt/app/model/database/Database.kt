@@ -74,6 +74,11 @@ interface Database {
      */
     fun removeUserLike(uid: String, cid: String): Task<Void>
 
+    /**
+     * Returns true if the user with the given user ID has liked the challenge with the given challenge ID
+     */
+    fun isUserLiked(uid: String, cid: String): Task<Boolean>
+
     companion object {
 
         /**

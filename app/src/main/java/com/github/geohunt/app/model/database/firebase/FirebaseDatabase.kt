@@ -209,6 +209,11 @@ class FirebaseDatabase(activity: Activity) : Database {
         return dbLikesRef.child(uid).child(cid).removeValue()
     }
 
+    override fun isUserLiked(uid: String, cid: String): Task<Boolean> {
+        return dbLikesRef.child(uid).child(cid).get().thenMap {
+            it.exists()
+        }
+    }
 }
 
 

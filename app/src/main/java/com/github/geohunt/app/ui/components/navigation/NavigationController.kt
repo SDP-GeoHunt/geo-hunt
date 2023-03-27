@@ -25,6 +25,7 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
+import com.github.geohunt.app.ui.components.ChallengeLikeView
 import com.github.geohunt.app.ui.components.ChallengeView
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
@@ -138,6 +139,12 @@ fun NavigationController(
                             navController.navigate("image-view/$iid")
                         }
                     )
+
+                    //TODO here button to like challenge
+                    ChallengeLikeView(
+                        db = database,
+                        user = Authenticator.authInstance.get().user!!,
+                        challengeId = cid)
                 }
             }
         }
