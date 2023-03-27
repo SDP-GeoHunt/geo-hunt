@@ -4,10 +4,7 @@ import android.content.res.Resources.NotFoundException
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.utility.*
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks

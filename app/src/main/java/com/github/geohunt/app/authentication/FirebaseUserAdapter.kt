@@ -30,4 +30,8 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
     override var score: Number
         get() = TODO("Not yet implemented (need database)")
         set(value) {}
+
+    override var likedChallenges: List<LazyRef<Challenge>>
+        get() = TODO("Not yet implemented (need database)")
+        set(value) {}
 }

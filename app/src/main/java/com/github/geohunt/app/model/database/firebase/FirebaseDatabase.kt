@@ -2,8 +2,8 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
 import android.graphics.Bitmap
-import androidx.compose.ui.platform.LocalContext
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
@@ -29,6 +29,7 @@ class FirebaseDatabase(activity: Activity) : Database {
     // Database references
     internal val dbChallengeRef = database.child("challenges")
     internal val dbUserRef = database.child("users")
+    internal val dbLikesRef = database.child("likes")
 
     // Storage references
     internal val storageImagesRef = storage.child("images")
@@ -177,6 +178,37 @@ class FirebaseDatabase(activity: Activity) : Database {
         return Tasks.whenAllSuccess<Challenge>(xs)
             .thenMap { it.toImmutableList() }
     }
+
+    override fun getLikesOf(uid: String): LazyRef<List<Challenge>> {
+        return object : BaseLazyRef<List<Challenge>>() {
+            override fun fetchValue(): Task<List<Challenge>> {
+                return dbLikesRef.child(uid)
+                    .get()
+                    .thenMap {
+                        val xs = it.children.map { child ->
+                            val cid = child.key!!
+                            val challenge = child.buildChallenge(this@FirebaseDatabase, cid)
+                            challengeRefById.register(
+                                cid,
+                                FirebaseChallengeRef(cid, this@FirebaseDatabase, challenge)
+                            )
+                            challenge
+                        }
+                        xs
+                    }
+            }
+            override val id: String = uid
+        }
+    }
+
+    override fun insertUserLike(uid: String, cid: String): Task<Void> {
+        return dbLikesRef.child(uid).child(cid).setValue(true)
+    }
+
+    override fun removeUserLike(uid: String, cid: String): Task<Void> {
+        return dbLikesRef.child(uid).child(cid).removeValue()
+    }
+
 }
 
 

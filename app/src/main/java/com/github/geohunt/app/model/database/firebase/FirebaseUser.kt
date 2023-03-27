@@ -14,9 +14,9 @@ class FirebaseUser(
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
-    override var score: Number  
+    override var score: Number,
+    override var likedChallenges: List<LazyRef<Challenge>>
 ) : User {
-
 }
 
 data class NotFoundUser(val id: String): Exception("User $id not found.")
@@ -36,9 +36,18 @@ class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase)
                 profilePicture = db.getProfilePicture(entry.uid),
                 challenges = entry.challenges.map { db.getChallengeById(it) },
                 hunts = entry.hunts.map { db.getChallengeById(it) },
-                score = entry.score
+                score = entry.score,
+                likedChallenges = entry.likedChallenges.map { db.getChallengeById(it) }
             )
         }
+    }
+
+    fun likeChallenge(cid: String): Task<Void> {
+        return db.dbUserRef.child(id).child("likedChallenges").child(cid).setValue(true)
+    }
+
+    fun unlikeChallenge(cid: String): Task<Void> {
+        return db.dbUserRef.child(id).child("likedChallenges").child(cid).removeValue()
     }
 }
 
@@ -47,5 +56,6 @@ internal data class UserEntry(
     var displayName: String? = null,
     var challenges: List<String> = listOf(),
     var hunts: List<String> = listOf(),
-    var score: Int = 0
+    var score: Int = 0,
+    var likedChallenges: List<String> = listOf()
 )
