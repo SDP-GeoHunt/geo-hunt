@@ -16,6 +16,8 @@ import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
 import com.github.geohunt.app.utility.thenMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.database.ktx.getValue
+import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.time.LocalDateTime
 
@@ -25,8 +27,9 @@ class FirebaseDatabase(activity: Activity) : Database {
     private val currentUser : String = "8b8b0392-ba8b-11ed-afa1-0242ac120002"
 
     // Database references
+    internal val dbUserRef = database.child("users")
     internal val dbChallengeRef = database.child("challenges")
-    internal val dbFollowsRef = database.child("followers")
+    internal val dbFollowsRef = database.child("follows")
 
     // Storage references
     internal val storageImagesRef = storage.child("images")
@@ -151,6 +154,35 @@ class FirebaseDatabase(activity: Activity) : Database {
 
             override val id: String = uid
         }
+    }
+
+    /**
+     * Makes the first user with the given UID follow the second user.
+     *
+     * @note To ensure easier data querying, the data must be synchronized at 3 places in the database :
+     *       - In the follower's follow list, the followee should be added,
+     *       - The followee's follow counter should be incremented,
+     *       - The follower should be added to the followee's list in the `follows` relationship.
+     */
+    override suspend fun follow(follower: String, followee: String) {
+        val followerListRef = dbUserRef.child(follower).child("followList")
+        val counterRef = dbUserRef.child(followee).child("followCounter")
+        val follows = dbFollowsRef.child(followee)
+
+        val followerList = followerListRef.get().await().getValue<List<*>>()?.filterIsInstance<String>()
+        val followedCounter = counterRef.get().await().getValue<Int>()
+        val followsPairs = follows.get().await().getValue<List<*>>()?.filterIsInstance<String>()
+
+        Tasks.whenAll(
+            // Update the follower's follow list
+            followerListRef.setValue((followerList ?: emptyList()) + followee),
+
+            // Update the follow counter of the followee
+            counterRef.setValue((followedCounter ?: 0) + 1),
+
+            // Update the follows relationship
+            follows.setValue((followsPairs ?: emptyList()) + follower)
+        ).await()
     }
 }
 

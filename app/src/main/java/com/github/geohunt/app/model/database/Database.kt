@@ -51,6 +51,11 @@ interface Database {
      */
     fun getFollowersOf(uid: String): LazyRef<List<FirebaseUserRef>>
 
+    /**
+     * Makes the first user with the given uid follow the second user.
+     */
+    suspend fun follow(follower: String, followee: String)
+
     companion object {
 
         /**
