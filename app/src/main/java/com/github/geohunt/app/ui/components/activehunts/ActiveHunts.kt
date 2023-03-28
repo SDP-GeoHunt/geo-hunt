@@ -77,14 +77,17 @@ fun TitleText() {
 fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>) {
     //wrapper Box
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-
         if(challenges.isEmpty()) {
             EmptyChallengesScreen()
         }
         else {
-            LazyRow(modifier = Modifier.testTag("challenge_row")) {
+            LazyRow(modifier = Modifier.testTag("challenge_row"),
+                    contentPadding = PaddingValues(30.dp, 0.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(challenges) { challenge ->
-                    ChallengePreview(challenge = challenge)
+                    Box(modifier = Modifier.size(300.dp, 600.dp)) {
+                        ChallengePreview(challenge = challenge)
+                    }
                 }
             }
         }

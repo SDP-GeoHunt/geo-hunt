@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -35,9 +36,11 @@ fun ChallengePreview(challenge: LazyRef<Challenge>) {
 
     FetchComponent(lazyRef = { challenge }, modifier = Modifier.fillMaxSize()) { resolvedChallenge ->
         Column(modifier = Modifier.fillMaxSize()) {
-            ChallengeImage(challenge = resolvedChallenge, modifier = Modifier.weight(0.8F))
+            ChallengeImage(challenge = resolvedChallenge, modifier = Modifier.weight(0.85F))
 
-            ChallengeDescription(challenge = resolvedChallenge, modifier = Modifier.weight(0.2F))
+            Spacer(modifier = Modifier.size(10.dp))
+
+            ChallengeDescription(challenge = resolvedChallenge, modifier = Modifier.weight(0.15F))
         }
     }
 
@@ -47,10 +50,13 @@ fun ChallengePreview(challenge: LazyRef<Challenge>) {
 fun ChallengeImage(challenge: Challenge, modifier: Modifier) {
     val thumbnail = challenge.thumbnail
 
-    FetchComponent(lazyRef = { thumbnail }) {resolvedThumbnail ->
-        Image(painter = BitmapPainter(resolvedThumbnail.asImageBitmap()),
-                contentDescription = "Challenge ${challenge.cid}",
-                modifier = modifier.clip(RoundedCornerShape(5.dp)))
+    Box(modifier = modifier.fillMaxWidth()) { //image "frame"
+        FetchComponent(lazyRef = { thumbnail }) {resolvedThumbnail ->
+            Image(painter = BitmapPainter(resolvedThumbnail.asImageBitmap()),
+                    contentDescription = "Challenge ${challenge.cid}",
+                    modifier = Modifier.clip(RoundedCornerShape(20.dp)).fillMaxSize(),
+                    contentScale = ContentScale.FillBounds)
+        }
     }
 }
 
