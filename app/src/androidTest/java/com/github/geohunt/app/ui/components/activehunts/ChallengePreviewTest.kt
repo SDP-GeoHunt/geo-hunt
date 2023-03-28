@@ -15,35 +15,20 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDateTime
 
-class ActiveHuntsTest {
+class ChallengePreviewTest {
     @get:Rule
     val testRule = createComposeRule()
 
-    private fun setupComposable(challenges: List<LazyRef<Challenge>>) {
-        testRule.setContent {
-            GeoHuntTheme {
-                ActiveHunts(challenges = challenges)
-            }
-        }
-    }
+    private val challengeId = "98d755ad-NRDJLd1aM1I2QXK4qjD"
 
-    @Test
-    fun titleTextIsDisplayed() {
-        setupComposable(listOf())
-
-        testRule.onNodeWithText("Active hunts").assertIsDisplayed()
-    }
-
-    @Test
-    fun textIsDisplayedOnEmptyChallengeList() {
-        setupComposable(listOf())
-
-        testRule.onNodeWithText("No challenges yet", substring = true).assertIsDisplayed()
-        testRule.onNodeWithText("Search", substring = true, useUnmergedTree = true).assertIsDisplayed()
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
+    private fun createTestBitmap(): Bitmap {
+        return ContextCompat.getDrawable(context, R.drawable.eiffel)?.toBitmap()!!
     }
 
     private val dummyChallenge = object : Challenge {
@@ -65,21 +50,32 @@ class ActiveHuntsTest {
             get() = TODO("Not yet implemented")
     }
 
-    private val challengeId = "dummy"
-
-    private val context = InstrumentationRegistry.getInstrumentation().targetContext
-    private fun createTestBitmap(): Bitmap {
-        return ContextCompat.getDrawable(context, R.drawable.eiffel)?.toBitmap()!!
+    @Before
+    fun setupComposable() {
+        testRule.setContent {
+            GeoHuntTheme {
+                ChallengePreview(challenge = InstantLazyRef(challengeId, dummyChallenge))
+            }
+        }
     }
-    @Test
-    fun correctAmountOfChallengesIsDisplayed() {
-        val challenge: LazyRef<Challenge> = InstantLazyRef("dummyRef", dummyChallenge)
-        val challenges = listOf(challenge, challenge, challenge)
-        setupComposable(challenges)
 
-        testRule.onNodeWithTag("challenge_row")
-                .onChildren()
-                .filter(hasContentDescription("Challenge ${dummyChallenge.cid}"))
-                .assertCountEquals(challenges.size)
+    @Test
+    fun challengeInformationAreDisplayed() {
+        testRule.onNodeWithText("Expires", substring = true).assertIsDisplayed().assertTextContains("never", substring = true)
+        testRule.onNodeWithText("Debug User", substring = true).assertIsDisplayed()
+        testRule.onNodeWithText("Italy", substring = true).assertIsDisplayed()
+    }
+
+    @Test
+    fun iconsAreDisplayed() {
+        testRule.onAllNodesWithContentDescription("icon", substring = true).assertCountEquals(3)
+        testRule.onNodeWithContentDescription("person", substring = true).assertIsDisplayed()
+        testRule.onNodeWithContentDescription("location", substring = true).assertIsDisplayed()
+        testRule.onNodeWithContentDescription("calendar", substring = true).assertIsDisplayed()
+    }
+
+    @Test
+    fun imageIsDisplayed() {
+        testRule.onNodeWithContentDescription("Challenge", substring = true).assertIsDisplayed().assertContentDescriptionContains(challengeId, substring = true)
     }
 }
