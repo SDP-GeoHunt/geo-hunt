@@ -414,17 +414,6 @@ fun ChallengeView(
         }
 
         // Go back button (for navigation)
-        IconButton(
-            modifier = Modifier
-                .size(48.dp)
-                .padding(10.dp)
-                .testTag("btn-go-back"),
-            onClick = { onButtonBack() }
-        ) {
-            Icon(
-                Icons.Rounded.ArrowBack,
-                contentDescription = "Go back"
-            )
-        }
+        GoBackBtn(onButtonBack)
     }
 }
