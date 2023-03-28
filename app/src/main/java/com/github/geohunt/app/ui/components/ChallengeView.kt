@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui.components
 
-import android.graphics.Bitmap
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
@@ -28,20 +27,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.homescreen.HorizontalDivider
 import com.github.geohunt.app.utility.DateFormatUtils.getElapsedTimeString
 import com.github.geohunt.app.utility.toSuffixedString
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
-import java.time.LocalDateTime
 
 private const val lorumIpsum =
     """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc bibendum enim non iaculis malesuada. Praesent non accumsan eros. Ut ut eros dolor. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus scelerisque eros nec porta facilisis. Mauris quis consectetur libero, nec vestibulum leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate ipsum eu felis consectetur mollis. Proin varius dui felis, sit amet mattis nibh sollicitudin et. Nunc semper felis tortor, quis tempus sapien porta eget. Proin convallis est nec mauris efficitur posuere. Nam sit amet varius tellus, et mollis enim. Sed vel ligula imperdiet, cursus arcu eget, consequat turpis. Suspendisse potenti.
@@ -150,7 +145,11 @@ private fun MainUserView(challenge: Challenge) {
 }
 
 @Composable
-private fun BellowImageButtons(challenge: Challenge) {
+private fun BellowImageButtons(
+    challenge: Challenge,
+    user: User,
+    database: Database,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -159,13 +158,83 @@ private fun BellowImageButtons(challenge: Challenge) {
         val fontSize = 18.sp
         val iconSize = 22.dp
 
-        LabelledIcon(
-            text = "42",
-            painter = painterResource(R.drawable.likes),
-            contentDescription = "Likes",
-            fontSize = fontSize,
-            iconSize = iconSize
-        )
+        database.isUserLiked(user.uid, challenge.cid).isSuccessful.let { isLiked ->
+            if (isLiked) {
+                IconButton(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .testTag("btn-like"),
+                    onClick = {
+                        database.removeUserLike(
+                            user.uid,
+                            challenge.cid
+                        )
+                    }
+                ) {
+                    Text(
+                        text = challenge.likes.toString(),
+                        fontSize = fontSize,
+                    )
+
+                    Icon(
+                        painter = painterResource(R.drawable.challenge_liked),
+                        contentDescription = "Likes",
+                        tint = MaterialTheme.colors.primaryVariant,
+                        modifier = Modifier.size(iconSize)
+                    )
+                }
+            } else {
+                IconButton(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .testTag("btn-like"),
+                    onClick = {
+                        database.insertUserLike(
+                            user.uid,
+                            challenge.cid
+                        )
+                    }
+                ) {
+                    Text(
+                        text = challenge.likes.toString(),
+                        fontSize = fontSize,
+                    )
+
+                    Icon(
+                        painter = painterResource(R.drawable.challenge_not_liked),
+                        contentDescription = "Likes",
+                        tint = MaterialTheme.colors.primaryVariant,
+                        modifier = Modifier.size(iconSize)
+                    )
+                }
+            }
+        }
+
+        /*IconButton(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .testTag("btn-like"),
+            onClick = {
+                database.insertUserLike(
+                    user.uid,
+                    challenge.cid
+                )
+            }
+        ){
+            Text(
+                text = challenge.likes.toString(),
+                fontSize = fontSize,
+            )
+
+            Icon(
+                painter = painterResource(R.drawable.likes),
+                contentDescription = "Likes",
+                tint = MaterialTheme.colors.primaryVariant,
+                modifier = Modifier.size(iconSize)
+            )
+        }*/
+
+
 
         Spacer(
             modifier = Modifier
@@ -319,8 +388,10 @@ private fun ClaimCard(claimRef: LazyRef<Claim>, displayImage: (String) -> Unit) 
 @Composable
 fun ChallengeView(
     challenge: Challenge,
+    user: User,
+    database: Database,
     onButtonBack: () -> Unit,
-    displayImage: (String) -> Unit
+    displayImage: (String) -> Unit,
 ) {
     var isDescriptionExpanded by remember {
         mutableStateOf(false)
@@ -352,7 +423,7 @@ fun ChallengeView(
                 challenge.thumbnail
             }
 
-            BellowImageButtons(challenge)
+            BellowImageButtons(challenge, user, database)
 
             Spacer(Modifier.height(2.dp))
 

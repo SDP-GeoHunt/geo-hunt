@@ -105,7 +105,8 @@ class FirebaseDatabase(activity: Activity) : Database {
                 publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!),
                 expirationDate = expirationDate,
                 correctLocation = location,
-                claims = listOf()
+                claims = listOf(),
+                likes = 0,
             )
         }
     }
@@ -202,14 +203,31 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     override fun insertUserLike(uid: String, cid: String): Task<Void> {
+        //Increase the number of likes of the challenge by one
+        getChallengeById(cid).value?.let {
+            val challengeLikes = it.likes
+            val dbChallengeRef = dbChallengeRef.child(cid)
+            dbChallengeRef.child("likes").setValue(challengeLikes + 1)
+        }
+
+        //Add the challenge to the user's liked challenges
         return dbLikesRef.child(uid).child(cid).setValue(true)
     }
 
     override fun removeUserLike(uid: String, cid: String): Task<Void> {
+        //Decrease the number of likes of the challenge by one
+        getChallengeById(cid).value?.let {
+            val challengeLikes = it.likes
+            val dbChallengeRef = dbChallengeRef.child(cid)
+            dbChallengeRef.child("likes").setValue(challengeLikes - 1)
+        }
+
+        //Remove the challenge from the user's liked challenges
         return dbLikesRef.child(uid).child(cid).removeValue()
     }
 
     override fun isUserLiked(uid: String, cid: String): Task<Boolean> {
+        //Check if the challenge is in the user's liked challenges
         return dbLikesRef.child(uid).child(cid).get().thenMap {
             it.exists()
         }

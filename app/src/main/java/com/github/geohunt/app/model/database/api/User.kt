@@ -23,6 +23,4 @@ interface User {
 
     var score: Number
 
-    var likedChallenges: List<LazyRef<Challenge>>
-
 }

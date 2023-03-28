@@ -51,5 +51,9 @@ interface Challenge
      */
     val claims: List<LazyRef<Claim>>
 
+    /**
+     * The number of likes this challenge has received
+     */
+    var likes: Int
 }
 
