@@ -28,6 +28,7 @@ import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ChallengeView
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
+import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.utility.findActivity
 
@@ -89,7 +90,16 @@ fun NavigationController(
             )
         }
         composable(Route.ActiveHunts.route) {
-            Text("Active hunts")
+            val user = Authenticator.authInstance.get().user
+
+            if(user == null) {
+                Text("Something went terribly wrong :/")
+            }
+            else {
+                val uid = user.uid
+
+                ActiveHunts(id = uid)
+            }
         }
 
         // Profile
