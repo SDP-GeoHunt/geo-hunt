@@ -158,12 +158,17 @@ private fun BellowImageButtons(
         val fontSize = 18.sp
         val iconSize = 22.dp
 
-        database.isUserLiked(user.uid, challenge.cid).isSuccessful.let { isLiked ->
+        //Fetch if user liked the challenge and then display the button
+        val isLiked = database.isUserLiked(user.uid, challenge.cid)
+
+        FetchComponent(
+            lazyRef = { isLiked },
+        ) { isLiked ->
             if (isLiked) {
                 IconButton(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .testTag("btn-like"),
+                        .testTag("like_button"),
                     onClick = {
                         database.removeUserLike(
                             user.uid,
@@ -187,7 +192,7 @@ private fun BellowImageButtons(
                 IconButton(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .testTag("btn-like"),
+                        .testTag("like_button"),
                     onClick = {
                         database.insertUserLike(
                             user.uid,
@@ -208,33 +213,8 @@ private fun BellowImageButtons(
                     )
                 }
             }
+
         }
-
-        /*IconButton(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .testTag("btn-like"),
-            onClick = {
-                database.insertUserLike(
-                    user.uid,
-                    challenge.cid
-                )
-            }
-        ){
-            Text(
-                text = challenge.likes.toString(),
-                fontSize = fontSize,
-            )
-
-            Icon(
-                painter = painterResource(R.drawable.likes),
-                contentDescription = "Likes",
-                tint = MaterialTheme.colors.primaryVariant,
-                modifier = Modifier.size(iconSize)
-            )
-        }*/
-
-
 
         Spacer(
             modifier = Modifier

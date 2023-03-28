@@ -77,7 +77,7 @@ interface Database {
     /**
      * Returns true if the user with the given user ID has liked the challenge with the given challenge ID
      */
-    fun isUserLiked(uid: String, cid: String): Task<Boolean>
+    fun isUserLiked(uid: String, cid: String): LazyRef<Boolean>
 
     companion object {
 

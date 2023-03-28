@@ -226,10 +226,15 @@ class FirebaseDatabase(activity: Activity) : Database {
         return dbLikesRef.child(uid).child(cid).removeValue()
     }
 
-    override fun isUserLiked(uid: String, cid: String): Task<Boolean> {
+    override fun isUserLiked(uid: String, cid: String): LazyRef<Boolean> {
         //Check if the challenge is in the user's liked challenges
-        return dbLikesRef.child(uid).child(cid).get().thenMap {
-            it.exists()
+        return object : BaseLazyRef<Boolean>() {
+            override fun fetchValue(): Task<Boolean> {
+                return dbLikesRef.child(uid).child(cid).get().thenMap {
+                    it.exists()
+                }
+            }
+            override val id: String = uid
         }
     }
 }

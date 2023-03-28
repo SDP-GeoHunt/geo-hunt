@@ -3,6 +3,7 @@ package com.github.geohunt.app.ui.components
 import android.content.Context
 import android.graphics.Bitmap
 import android.widget.BaseExpandableListAdapter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
@@ -15,15 +16,19 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.FirebaseEmulator
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
+import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,8 +41,15 @@ class ChallengeViewTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    private lateinit var database : FirebaseDatabase
+
     private fun createTestBitmap(context: Context) : Bitmap {
         return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
+    }
+
+    @Before
+    fun setup() {
+        FirebaseEmulator.init()
     }
 
     @Test
@@ -87,9 +99,18 @@ class ChallengeViewTest {
         )
         challenge2 = challenge
 
+        composeTestRule.setContent {
+            database = FirebaseDatabase(LocalContext.current.findActivity())
+        }
+
         // Sets the composeTestRule content
         composeTestRule.setContent {
-            ChallengeView(challenge = challenge, onButtonBack = {}, {})
+            ChallengeView(
+                challenge = challenge,
+                user = author,
+                database = database,
+                {},
+                displayImage = {})
         }
 
         // Test stuff once loaded
@@ -148,9 +169,18 @@ class ChallengeViewTest {
             }
         )
 
+       // composeTestRule.setContent {
+       // }
+
         // Sets the composeTestRule content
         composeTestRule.setContent {
-            ChallengeView(challenge = challenge, {},
+            database = FirebaseDatabase(LocalContext.current.findActivity())
+
+            ChallengeView(
+                challenge = challenge,
+                user = author,
+                database = database,
+                {},
                 displayImage = { iid ->
                     future.complete(iid)
                 })
@@ -167,6 +197,78 @@ class ChallengeViewTest {
         composeTestRule.onNodeWithContentDescription("Challenge Image")
             .assertHasClickAction()
             .performClick()
+
+        assertThat(future.join(),
+            equalTo("img-ze5f16zaef1465"))
+    }
+
+    @Test
+    fun testLikingButtonWorksProperly() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val future = CompletableFuture<String>()
+
+        val profilePicture = createTestBitmap(context)
+
+        val author = MockUser(
+            displayName = "John wick",
+            score = 48723,
+            uid = "user-f425zez6z4ef6z15f4",
+        )
+
+        val challenge = MockChallenge(
+            author = MockLazyRef("user-f425zez6z4ef6z15f4") {
+                Tasks.forResult(author)
+            },
+            thumbnail = MockLazyRef("img-ze5f16zaef1465") {
+                Tasks.forResult(createTestBitmap(context))
+            },
+            cid = "challenge-ze5f16zaef1465"
+        )
+
+        // Sets the composeTestRule content
+        composeTestRule.setContent {
+            database = FirebaseDatabase(LocalContext.current.findActivity())
+
+            ChallengeView(
+                challenge = challenge,
+                user = author,
+                //database
+                database  = object : BaseMockDatabase() {},
+                {},
+                displayImage = { iid ->
+                    future.complete(iid)
+                })
+        }
+
+        // Test stuff once loaded
+        composeTestRule.waitUntil(2000) {
+            composeTestRule.onAllNodesWithContentDescription("Challenge Image")
+                .fetchSemanticsNodes()
+                .size == 1
+        }
+
+        //////Remove later
+        // Ensure click on challenge view image redirect to corresponding page
+        composeTestRule.onNodeWithContentDescription("Challenge Image")
+            .assertHasClickAction()
+            .performClick()
+        //////////////////////////////
+
+        composeTestRule.waitUntil(10000) {
+            composeTestRule.onAllNodesWithTag("like_button")
+                .fetchSemanticsNodes()
+                .size == 1
+        }
+
+        // Click on the like button
+        composeTestRule.onNodeWithText("like_button")
+            .assertExists()
+            //.performClick()
+
+        // Check if the number of likes has increased
+        composeTestRule.onNodeWithText("0") //TODO: Change to 1
+            .assertExists()
+
 
         assertThat(future.join(),
             equalTo("img-ze5f16zaef1465"))
