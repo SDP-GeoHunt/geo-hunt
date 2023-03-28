@@ -33,11 +33,11 @@ import com.github.geohunt.app.utility.DateFormatUtils
 @Composable
 fun ChallengePreview(challenge: LazyRef<Challenge>) {
 
-    FetchComponent(lazyRef = { challenge }) { resolvedChallenge ->
+    FetchComponent(lazyRef = { challenge }, modifier = Modifier.fillMaxSize()) { resolvedChallenge ->
         Column(modifier = Modifier.fillMaxSize()) {
-            ChallengeImage(challenge = resolvedChallenge, modifier = Modifier.weight(1F))
+            ChallengeImage(challenge = resolvedChallenge, modifier = Modifier.weight(0.8F))
 
-            ChallengeDescription(challenge = resolvedChallenge)
+            ChallengeDescription(challenge = resolvedChallenge, modifier = Modifier.weight(0.2F))
         }
     }
 
@@ -55,8 +55,8 @@ fun ChallengeImage(challenge: Challenge, modifier: Modifier) {
 }
 
 @Composable
-fun ChallengeDescription(challenge: Challenge) {
-    Column(verticalArrangement = Arrangement.SpaceBetween) {
+fun ChallengeDescription(challenge: Challenge, modifier: Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.SpaceBetween) {
         AuthorName(challenge.author)
 
         Location()
