@@ -30,10 +30,12 @@ import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.ui.theme.geoHuntRed
 import com.github.geohunt.app.utility.DateFormatUtils
 
-
+/**
+ * The preview of a challenge, contains basic information about the challenge
+ * and the picture
+ */
 @Composable
 fun ChallengePreview(challenge: LazyRef<Challenge>) {
-
     FetchComponent(lazyRef = { challenge }, modifier = Modifier.fillMaxSize()) { resolvedChallenge ->
         Column(modifier = Modifier.fillMaxSize()) {
             ChallengeImage(challenge = resolvedChallenge, modifier = Modifier.weight(0.85F))
@@ -43,9 +45,13 @@ fun ChallengePreview(challenge: LazyRef<Challenge>) {
             ChallengeDescription(challenge = resolvedChallenge, modifier = Modifier.weight(0.15F))
         }
     }
-
 }
 
+/**
+ * The image of the challenge
+ * Note that this method tries to scale the image to the exact size of the box
+ * this might be changed in the future as it could distort the image
+ */
 @Composable
 fun ChallengeImage(challenge: Challenge, modifier: Modifier) {
     val thumbnail = challenge.thumbnail
@@ -60,6 +66,11 @@ fun ChallengeImage(challenge: Challenge, modifier: Modifier) {
     }
 }
 
+/**
+ * A basic description of the challenge,
+ * displays the author, the location and the
+ * expiration date
+ */
 @Composable
 fun ChallengeDescription(challenge: Challenge, modifier: Modifier) {
     Column(modifier = modifier, verticalArrangement = Arrangement.SpaceBetween) {

@@ -27,11 +27,19 @@ import com.github.geohunt.app.ui.theme.Lobster
 import com.github.geohunt.app.ui.theme.geoHuntRed
 import com.github.geohunt.app.utility.findActivity
 
+/**
+ * Utility function to show the hunts of a user taking only the id of the user
+ * @param id the uid of the user which active hunts we want to display
+ */
 @Composable
 fun ActiveHunts(id: String) {
     ActiveHunts(user = FirebaseUserRef(id, FirebaseDatabase(LocalContext.current.findActivity())))
 }
 
+/**
+ * Utility function to show the hunts of a user which is currently getting fetched from the database
+ * @param user the LazyRef instance of the user
+ */
 @Composable
 fun ActiveHunts(user: LazyRef<User>) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -40,6 +48,12 @@ fun ActiveHunts(user: LazyRef<User>) {
         }
     }
 }
+
+/**
+ * A screen that shows all the active hunts of a user
+ * The hunts are displayed on a horizontal scrollable list
+ * @param challenges the challenges the screen has to display
+ */
 @Composable
 fun ActiveHunts(challenges: List<LazyRef<Challenge>>) {
     Column(modifier = Modifier
@@ -53,6 +67,9 @@ fun ActiveHunts(challenges: List<LazyRef<Challenge>>) {
     }
 }
 
+/**
+ * The title of the screen, displays "Active Hunts" using the correct colors
+ */
 @Composable
 fun TitleText() {
     Text(
@@ -73,6 +90,12 @@ fun TitleText() {
     )
 }
 
+/**
+ * The list of active hunts
+ * Creates a scrollable list of challenges using the given list
+ * If the list is empty, shows EmptyChallengeScreen
+ * @param challenges the challenges to display
+ */
 @Composable
 fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>) {
     //wrapper Box
@@ -95,6 +118,11 @@ fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>) {
     }
 }
 
+/**
+ * The screen to show when they are no challenges to display
+ * Simply displays a text saying no challenges have been selected yet
+ * and a button redirecting to the screen to select new challenges
+ */
 @Composable
 fun EmptyChallengesScreen() {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
