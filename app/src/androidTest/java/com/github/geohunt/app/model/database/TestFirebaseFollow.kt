@@ -29,7 +29,7 @@ class TestFirebaseFollow {
     private suspend fun followList() =
         userRef1.child("followList").get().thenMap { snapshot -> snapshot.toMap<Boolean>() }.await()
     private suspend fun counter() =
-        userRef2.child("followers").get().await().value as Int
+        userRef2.child("followers").get().await().value as Long
     private suspend fun followers() =
         database.getFollowersOf(userRef2.key!!).await()
 
