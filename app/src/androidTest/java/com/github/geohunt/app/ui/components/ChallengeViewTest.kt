@@ -99,12 +99,10 @@ class ChallengeViewTest {
         )
         challenge2 = challenge
 
-        composeTestRule.setContent {
-            database = FirebaseDatabase(LocalContext.current.findActivity())
-        }
-
         // Sets the composeTestRule content
         composeTestRule.setContent {
+            database = FirebaseDatabase(LocalContext.current.findActivity())
+
             ChallengeView(
                 challenge = challenge,
                 user = author,
@@ -168,9 +166,6 @@ class ChallengeViewTest {
                 Tasks.forResult(createTestBitmap(context))
             }
         )
-
-       // composeTestRule.setContent {
-       // }
 
         // Sets the composeTestRule content
         composeTestRule.setContent {
