@@ -15,7 +15,6 @@ import androidx.navigation.compose.composable
 import com.github.geohunt.app.R
 import androidx.compose.ui.Modifier
 import com.github.geohunt.app.maps.GoogleMapView
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
@@ -45,12 +44,7 @@ fun NavigationController(navController: NavHostController, modifier: Modifier = 
             val epflCameraPositionState = CameraPositionState(CameraPosition(epflCoordinates, 15f, 0f, 0f))
             GoogleMapView(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = epflCameraPositionState,
-                onMapLoaded = { map: GoogleMap ->
-                    map.setOnMapClickListener { latLng ->
-                        navController.navigate("challenge-create/${latLng.latitude}/${latLng.longitude}")
-                    }
-                }
+                cameraPositionState = epflCameraPositionState
 
             )
         }

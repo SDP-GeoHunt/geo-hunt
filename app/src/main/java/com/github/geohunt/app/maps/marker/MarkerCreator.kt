@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
+import com.github.geohunt.app.ui.theme.geoHuntRed
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.MarkerInfoWindowContent
@@ -41,7 +42,7 @@ fun DisplayMarkers() {
             state = rememberMarkerState(position = challenge.coordinates),
             title = challenge.title,
             snippet = challenge.expiryDate.toString(),
-            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+            icon = BitmapDescriptorFactory.defaultMarker(geoHuntRed.red)
         ) { _ ->
             Box(
                 modifier = Modifier
