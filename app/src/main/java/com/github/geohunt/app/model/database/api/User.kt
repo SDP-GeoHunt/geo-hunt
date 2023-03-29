@@ -23,12 +23,14 @@ interface User {
     /**
      * The number of users that follow this user.
      */
-    val followerNumber: Int
+    val followers: Int
 
     /**
-     * The list of users this user is following.
+     * For a given UID, returns true if and only if this user follows the user with the given UID.
+     *
+     * By default, a user follows nobody, hence it returns false on all keys.
      */
-    val followList: List<LazyRef<User>>
+    val follows: Map<String, Boolean>
 
     var score: Number
 }

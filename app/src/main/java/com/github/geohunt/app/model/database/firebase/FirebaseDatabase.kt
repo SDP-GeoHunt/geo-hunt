@@ -3,7 +3,6 @@ package com.github.geohunt.app.model.database.firebase
 import android.app.Activity
 import android.graphics.Bitmap
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
@@ -14,6 +13,7 @@ import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
 import com.github.geohunt.app.utility.thenMap
+import com.github.geohunt.app.utility.toMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.ktx.getValue
@@ -30,7 +30,7 @@ class FirebaseDatabase(activity: Activity) : Database {
     // Database references
     internal val dbUserRef = database.child("users")
     internal val dbChallengeRef = database.child("challenges")
-    internal val dbFollowsRef = database.child("follows")
+    internal val dbFollowersRef = database.child("followers")
 
     // Storage references
     internal val storageImagesRef = storage.child("images")
@@ -143,18 +143,12 @@ class FirebaseDatabase(activity: Activity) : Database {
         TODO()
     }
 
-    override fun getFollowersOf(uid: String): LazyRef<List<FirebaseUserRef>> {
-        return object : BaseLazyRef<List<FirebaseUserRef>>() {
-            override fun fetchValue(): Task<List<FirebaseUserRef>> {
-                return dbFollowsRef.child(uid)
-                    .get()
-                    .thenMap { list ->
-                        (list as List<*>).map { FirebaseUserRef(it as String) }
-                    }
+    override fun getFollowersOf(uid: String): Task<Map<String, Boolean>> {
+        return dbFollowersRef.child(uid)
+            .get()
+            .thenMap { snapshot ->
+                snapshot.toMap<Boolean>().withDefault { false }
             }
-
-            override val id: String = uid
-        }
     }
 
     /**
@@ -162,32 +156,34 @@ class FirebaseDatabase(activity: Activity) : Database {
      *
      * @note To ensure easier data querying, the data must be synchronized at 3 places in the database :
      *       - In the follower's follow list, the followee should be added/removed,
-     *       - The followee's follow counter should be incremented/decremented,
-     *       - The follower should be added/removed to the followee's list in the `follows` relationship.
+     *       - The followee's counter should be incremented/decremented,
+     *       - The follower should be added/removed to the followee's follower list.
      */
     private suspend fun doFollow(follower: String, followee: String, follow: Boolean = true) {
         val followerListRef = dbUserRef.child(follower).child("followList")
-        val counterRef = dbUserRef.child(followee).child("followCounter")
-        val follows = dbFollowsRef.child(followee)
+        val counterRef = dbUserRef.child(followee).child("followers")
+        val follows = dbFollowersRef.child(followee)
 
-        val followerList = followerListRef.get().await().getValue<List<*>>()?.filterIsInstance<String>() ?: emptyList()
+        val followerList = followerListRef.get().await().getValue<Map<String, Boolean>>()
+            ?: emptyMap<String, Boolean>().withDefault { false }
         val followedCounter = counterRef.get().await().getValue<Int>() ?: 0
-        val followsPairs = follows.get().await().getValue<List<*>>()?.filterIsInstance<String>() ?: emptyList()
+        val followsPairs = follows.get().await().getValue<Map<String, Boolean>>()
+            ?: emptyMap<String, Boolean>().withDefault { false }
 
         // Abort if the user already follows the followee
-        if (follow && followerList.contains(followee)) {
+        if (follow && followerList[followee] == true) {
             return
         }
 
         Tasks.whenAll(
             // Update the follower's follow list
-            followerListRef.setValue(if (follow) (followerList + followee) else followerList.minus(followee)),
+            followerListRef.setValue(if (follow) (followerList + (followee to true)) else followerList - followee),
 
             // Update the follow counter of the followee
             counterRef.setValue(if (follow) followedCounter + 1 else max(followedCounter - 1, 0)),
 
             // Update the follows relationship
-            follows.setValue(if (follow) followsPairs + follower else followsPairs - follower)
+            follows.setValue(if (follow) followsPairs + (follower to true) else followsPairs - follower)
         ).await()
     }
 

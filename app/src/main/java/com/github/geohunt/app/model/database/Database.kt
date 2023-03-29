@@ -6,7 +6,6 @@ import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
-import com.github.geohunt.app.model.database.firebase.FirebaseUserRef
 import com.github.geohunt.app.utility.Singleton
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
@@ -45,11 +44,12 @@ interface Database {
     fun getNearbyChallenge(location: Location): Task<List<Challenge>>
 
     /**
-     * Returns the list of followers of the user with the given user ID.
+     * Returns the followers of the user with the given user id.
      *
      * @param uid The user ID.
+     * @return A map where keys that are mapped to true indicates that it is a follower.
      */
-    fun getFollowersOf(uid: String): LazyRef<List<FirebaseUserRef>>
+    fun getFollowersOf(uid: String): Task<Map<String, Boolean>>
 
     /**
      * Makes the first user with the given uid follow the second user.

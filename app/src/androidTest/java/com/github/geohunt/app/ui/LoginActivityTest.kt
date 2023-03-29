@@ -82,8 +82,8 @@ class LoginActivityTest {
         override val profilePicture: LazyRef<Bitmap> = MockLazyRef("1") { TODO() },
         override val challenges: List<LazyRef<Challenge>> = emptyList(),
         override val hunts: List<LazyRef<Challenge>> = emptyList(),
-        override val followerNumber: Int = 0,
-        override val followList: List<LazyRef<User>> = emptyList(),
+        override val followers: Int = 0,
+        override val follows: Map<String, Boolean> = emptyMap(),
         override var score: Number = 1
     ) : User
 
