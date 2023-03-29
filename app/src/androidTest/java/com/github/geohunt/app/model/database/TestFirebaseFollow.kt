@@ -8,6 +8,7 @@ import com.github.geohunt.app.utility.thenMap
 import com.github.geohunt.app.utility.toMap
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.MatcherAssert.*
@@ -33,21 +34,23 @@ class TestFirebaseFollow {
         database.getFollowersOf(userRef2.key!!).await()
 
     @Before
-    suspend fun setup() {
-        FirebaseEmulator.init()
-        composeTestRule.setContent {
-            database = FirebaseDatabase(LocalContext.current.findActivity())
+    fun setup() {
+        runBlocking {
+            FirebaseEmulator.init()
+            composeTestRule.setContent {
+                database = FirebaseDatabase(LocalContext.current.findActivity())
+            }
+
+            composeTestRule.awaitIdle()
+
+            userRef1 = database.dbUserRef.push()
+            userRef2 = database.dbUserRef.push()
+
+            val mockUser = mapOf("followers" to 0, "followList" to emptyMap<String, Boolean>())
+
+            userRef1.setValue(mockUser).await()
+            userRef2.setValue(mockUser).await()
         }
-
-        composeTestRule.awaitIdle()
-
-        userRef1 = database.dbUserRef.push()
-        userRef2 = database.dbUserRef.push()
-
-        val mockUser = mapOf("followers" to 0, "followList" to emptyMap<String, Boolean>())
-
-        userRef1.setValue(mockUser).await()
-        userRef2.setValue(mockUser).await()
     }
 
     @Test
