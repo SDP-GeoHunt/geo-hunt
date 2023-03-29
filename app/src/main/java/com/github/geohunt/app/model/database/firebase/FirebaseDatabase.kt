@@ -12,11 +12,11 @@ import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
+import com.github.geohunt.app.utility.queryAs
 import com.github.geohunt.app.utility.thenMap
 import com.github.geohunt.app.utility.toMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.lang.Integer.max
@@ -164,11 +164,10 @@ class FirebaseDatabase(activity: Activity) : Database {
         val counterRef = dbUserRef.child(followee).child("followers")
         val follows = dbFollowersRef.child(followee)
 
-        val followerList = followerListRef.get().await().getValue<Map<String, Boolean>>()
-            ?: emptyMap<String, Boolean>().withDefault { false }
-        val followedCounter = counterRef.get().await().getValue<Int>() ?: 0
-        val followsPairs = follows.get().await().getValue<Map<String, Boolean>>()
-            ?: emptyMap<String, Boolean>().withDefault { false }
+        val defaultMap = emptyMap<String, Boolean>().withDefault { false }
+        val followerList = followerListRef.queryAs<Map<String, Boolean>>() ?: defaultMap
+        val followedCounter = counterRef.queryAs<Int>() ?: 0
+        val followsPairs = follows.queryAs<Map<String, Boolean>>() ?: defaultMap
 
         // Abort if the user already follows the followee
         // or if the user tries to unfollow someone not followed
