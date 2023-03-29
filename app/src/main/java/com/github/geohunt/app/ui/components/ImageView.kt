@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
@@ -36,7 +37,9 @@ fun ZoomableImageView(database: Database, iid: String, fnGoBackCallback: () -> U
         FetchComponent(lazyRef = { image }, modifier = Modifier.align(Alignment.Center)) { bitmap ->
             ZoomableBox(modifier = Modifier.fillMaxSize()) {
                 Image(
-                    modifier = Modifier.fillMaxSize().applyZoom(),
+                    modifier = Modifier.fillMaxSize()
+                        .applyZoom()
+                        .testTag("image-view-$iid"),
                     contentScale = ContentScale.Fit,
                     alignment = Alignment.Center,
                     painter = BitmapPainter(bitmap.asImageBitmap()),
