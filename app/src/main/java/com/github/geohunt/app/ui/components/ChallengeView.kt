@@ -179,6 +179,8 @@ private fun BellowImageButtons(
                     Text(
                         text = challenge.likes.toString(),
                         fontSize = fontSize,
+                                modifier = Modifier
+                                .testTag("like_count"),
                     )
 
                     Icon(
@@ -203,6 +205,8 @@ private fun BellowImageButtons(
                     Text(
                         text = challenge.likes.toString(),
                         fontSize = fontSize,
+                        modifier = Modifier
+                            .testTag("like_count"),
                     )
 
                     Icon(

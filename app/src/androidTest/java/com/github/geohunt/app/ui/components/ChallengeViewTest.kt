@@ -259,7 +259,9 @@ class ChallengeViewTest {
         //}
 
         // Check if the initial number of likes is 0
-        composeTestRule.onNodeWithText("0")
+        composeTestRule.onNodeWithTag("like_count")
+            .assertTextEquals("0")
+        //onNodeWithText("0")
             .assertExists()
 
         // Perform click that will add the like
@@ -269,7 +271,9 @@ class ChallengeViewTest {
             .performClick()
 
         // Check if the number of likes has increased to 1
-        composeTestRule.onNodeWithText("1")
+        composeTestRule.onNodeWithTag("like_count")
+            //.onNodeWithText("1")
+            .assertTextEquals("1")
             .assertExists()
 
         // Perform click that will remove the like
