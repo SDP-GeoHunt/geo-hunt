@@ -171,7 +171,9 @@ class FirebaseDatabase(activity: Activity) : Database {
             ?: emptyMap<String, Boolean>().withDefault { false }
 
         // Abort if the user already follows the followee
-        if (follow && followerList[followee] == true) {
+        // or if the user tries to unfollow someone not followed
+        if ((follow && followerList[followee] == true)
+            || (!follow && followerList[followee] != true)) {
             return
         }
 
