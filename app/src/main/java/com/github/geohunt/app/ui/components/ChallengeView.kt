@@ -163,8 +163,8 @@ private fun BellowImageButtons(
 
         FetchComponent(
             lazyRef = { isLiked },
-        ) { isLiked ->
-            if (isLiked) {
+        ) { liked ->
+            if (liked) {
                 IconButton(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -176,18 +176,16 @@ private fun BellowImageButtons(
                         )
                     }
                 ) {
-                    Text(
+                    LabelledIcon(
                         text = challenge.likes.toString(),
-                        fontSize = fontSize,
-                                modifier = Modifier
-                                .testTag("like_count"),
-                    )
 
-                    Icon(
                         painter = painterResource(R.drawable.challenge_liked),
                         contentDescription = "Likes",
                         tint = MaterialTheme.colors.primaryVariant,
-                        modifier = Modifier.size(iconSize)
+                        fontSize = fontSize,
+                        iconSize = iconSize,
+                        modifier = Modifier
+                            .testTag("like_count")
                     )
                 }
             } else {
@@ -202,18 +200,15 @@ private fun BellowImageButtons(
                         )
                     }
                 ) {
-                    Text(
+                    LabelledIcon(
                         text = challenge.likes.toString(),
-                        fontSize = fontSize,
-                        modifier = Modifier
-                            .testTag("like_count"),
-                    )
-
-                    Icon(
                         painter = painterResource(R.drawable.challenge_not_liked),
                         contentDescription = "Likes",
                         tint = MaterialTheme.colors.primaryVariant,
-                        modifier = Modifier.size(iconSize)
+                        fontSize = fontSize,
+                        iconSize = iconSize,
+                        modifier = Modifier
+                            .testTag("like_count")
                     )
                 }
             }

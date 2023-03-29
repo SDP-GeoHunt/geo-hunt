@@ -21,6 +21,7 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.firebase.FirebaseChallenge
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
@@ -208,14 +209,20 @@ class ChallengeViewTest {
             uid = "user-f425zez6z4ef6z15f4",
         )
 
-        val challenge = MockChallenge(
+        val challenge = FirebaseChallenge(
             author = MockLazyRef("user-f425zez6z4ef6z15f4") {
                 Tasks.forResult(author)
             },
+            claims = listOf(),
+
             thumbnail = MockLazyRef("img-ze5f16zaef1465") {
                 Tasks.forResult(createTestBitmap(context))
             },
-            cid = "challenge-ze5f16zaef1465"
+            correctLocation = Location(50.06638888888889, -5.714722222222222),
+            cid = "cid",
+            expirationDate = LocalDateTime.now().plusDays(1),
+            publishedDate = LocalDateTime.now(),
+            likes = 0,
         )
 
         // Sets the composeTestRule content
