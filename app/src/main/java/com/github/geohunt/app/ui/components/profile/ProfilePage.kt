@@ -47,33 +47,39 @@ fun ProfilePage(user: LazyRef<User>) {
 private fun ProfilePageContent(user: User) {
     Column {
         Row {
-            ProfileIcon(user = user, modifier = Modifier.width(124.dp).aspectRatio(1f))
+            ProfileIcon(user = user, modifier = Modifier
+                .width(124.dp)
+                .aspectRatio(1f))
 
             Column(modifier = Modifier.padding(0.dp, 12.dp)) {
                 Text(user.displayName ?: user.uid)
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)) {
-                    BigNumberWithText(
-                        title = user.challenges.size.toString(),
-                        subtitle = stringResource(id = R.string.profile_number_of_posts_subtitle)
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    BigNumberWithText(
-                        title = user.hunts.size.toString(),
-                        subtitle = stringResource(id = R.string.profile_number_of_hunts_subtitle)
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    BigNumberWithText(
-                        title = user.score.toString(),
-                        subtitle = stringResource(id = R.string.profile_score_subtitle)
-                    )
-                }
+                UserNumberDetails(user)
             }
         }
 
         PastChallengeAndHunts(user)
+    }
+}
+
+private data class BigNumberContent(val title: String, val subtitleId: Int)
+@Composable
+private fun UserNumberDetails(user: User) {
+    val numbers = listOf(
+        BigNumberContent(user.challenges.size.toString(), R.string.profile_number_of_posts_subtitle),
+        BigNumberContent(user.hunts.size.toString(), R.string.profile_number_of_hunts_subtitle),
+        BigNumberContent(user.score.toString(), R.string.profile_score_subtitle),
+    )
+
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween) {
+
+        for(n in numbers) {
+            BigNumberWithText(title = n.title, subtitle = stringResource(n.subtitleId))
+        }
+
     }
 }
 

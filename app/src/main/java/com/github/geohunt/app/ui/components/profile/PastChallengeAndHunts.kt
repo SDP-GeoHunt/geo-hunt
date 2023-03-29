@@ -15,21 +15,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.api.Challenge
 
 typealias ComposableFun = @Composable (User) -> Unit
 
-enum class Tabs(val tabName: Int, val tabContent: ComposableFun) {
+enum class ProfileTabs(val tabName: Int, val tabContent: ComposableFun) {
     PastChallenges(R.string.challenges, { PastChallengesContent(it) }),
     PastHunts(R.string.hunts, { PastHuntsContent(it) })
 }
 
 @Composable
 fun PastChallengeAndHunts(user: User) {
-    var currentTab by remember { mutableStateOf(Tabs.PastChallenges) }
+    var currentTab by remember { mutableStateOf(ProfileTabs.PastChallenges) }
 
     Column {
         TabRow(selectedTabIndex = currentTab.ordinal, backgroundColor = MaterialTheme.colors.background) {
-            Tabs.values().forEach {
+            ProfileTabs.values().forEach {
                 Tab(
                     selected = it.ordinal == currentTab.ordinal,
                     text = { Text(stringResource(id = it.tabName)) },
@@ -45,19 +47,22 @@ fun PastChallengeAndHunts(user: User) {
 
 @Composable
 fun PastChallengesContent(user: User) {
-    if (user.challenges.isEmpty()) {
-        CenteredText(str = stringResource(id = R.string.no_past_challenges))
-    } else {
-        ChallengeGrid(challenges = user.challenges)
-    }
+    MakeTheGrid(testTag = "past-challenges", challenges = user.challenges, whenEmptyText = stringResource(id = R.string.no_past_challenges))
 }
 
 @Composable
 fun PastHuntsContent(user: User) {
-    if (user.challenges.isEmpty()) {
-        CenteredText(str = stringResource(id = R.string.no_past_hunts))
-    } else {
-        ChallengeGrid(challenges = user.challenges)
+    MakeTheGrid(testTag = "past-hunts", challenges = user.hunts, whenEmptyText = stringResource(id = R.string.no_past_hunts))
+}
+
+@Composable
+private fun MakeTheGrid(testTag: String, challenges: List<LazyRef<Challenge>>, whenEmptyText: String) {
+    Box(modifier = Modifier.testTag(testTag)) {
+        if (challenges.isEmpty()) {
+            CenteredText(str = whenEmptyText)
+        } else {
+            ChallengeGrid(challenges = challenges)
+        }
     }
 }
 
