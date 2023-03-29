@@ -174,6 +174,11 @@ class FirebaseDatabase(activity: Activity) : Database {
         val followedCounter = counterRef.get().await().getValue<Int>() ?: 0
         val followsPairs = follows.get().await().getValue<List<*>>()?.filterIsInstance<String>() ?: emptyList()
 
+        // Abort if the user already follows the followee
+        if (follow && followerList.contains(followee)) {
+            return
+        }
+
         Tasks.whenAll(
             // Update the follower's follow list
             followerListRef.setValue(if (follow) (followerList + followee) else followerList.minus(followee)),
