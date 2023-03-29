@@ -26,11 +26,11 @@ class TestFirebaseFollow {
     private lateinit var userRef1: DatabaseReference
     private lateinit var userRef2: DatabaseReference
 
-    private suspend fun followList() =
+    private suspend fun getFollowList() =
         userRef1.child("followList").get().thenMap { snapshot -> snapshot.toMap<Boolean>() }.await()
-    private suspend fun counter() =
+    private suspend fun getCounter() =
         userRef2.child("followers").get().await().value as Long
-    private suspend fun followers() =
+    private suspend fun getFollowers() =
         database.getFollowersOf(userRef2.key!!).await()
 
     @Before
@@ -57,21 +57,21 @@ class TestFirebaseFollow {
     fun testFollowsUpdatesFollowList() = runTest {
         database.follow(userRef1.key!!, userRef2.key!!)
 
-        assertThat(followList(), hasEntry(userRef2.key!!, true))
+        assertThat(getFollowList(), hasEntry(userRef2.key!!, true))
     }
 
     @Test
     fun testFollowsIncrementCounter() = runTest {
         database.follow(userRef1.key!!, userRef2.key!!)
 
-        assertThat(counter(), `is`(1))
+        assertThat(getCounter(), `is`(1))
     }
 
     @Test
     fun testFollowsUpdatesFollowerList() = runTest {
         database.follow(userRef1.key!!, userRef2.key!!)
 
-        assertThat(followers(), hasEntry(userRef1.key!!, true))
+        assertThat(getFollowers(), hasEntry(userRef1.key!!, true))
     }
 
     @Test
@@ -81,9 +81,9 @@ class TestFirebaseFollow {
         database.follow(userRef1.key!!, userRef2.key!!)
 
         // Assert that there is only one entry in each list
-        assertThat(followList(), not(hasEntry(not(userRef2.key!!), true)))
-        assertThat(counter(), `is`(1))
-        assertThat(followers(), not(hasEntry(not(userRef1.key!!), true)))
+        assertThat(getFollowList(), not(hasEntry(not(userRef2.key!!), true)))
+        assertThat(getCounter(), `is`(1))
+        assertThat(getFollowers(), not(hasEntry(not(userRef1.key!!), true)))
     }
 
     @Test
@@ -91,7 +91,7 @@ class TestFirebaseFollow {
         database.follow(userRef1.key!!, userRef2.key!!)
         database.unfollow(userRef1.key!!, userRef2.key!!)
 
-        assertThat(followList(), not(hasEntry(userRef2.key!!, true)))
+        assertThat(getFollowList(), not(hasEntry(userRef2.key!!, true)))
     }
 
     @Test
@@ -99,7 +99,7 @@ class TestFirebaseFollow {
         database.follow(userRef1.key!!, userRef2.key!!)
         database.unfollow(userRef1.key!!, userRef2.key!!)
 
-        assertThat(counter(), `is`(0))
+        assertThat(getCounter(), `is`(0))
     }
 
     @Test
@@ -107,7 +107,7 @@ class TestFirebaseFollow {
         database.follow(userRef1.key!!, userRef2.key!!)
         database.unfollow(userRef1.key!!, userRef2.key!!)
 
-        assertThat(followers(), not(hasEntry(userRef1.key!!, true)))
+        assertThat(getFollowers(), not(hasEntry(userRef1.key!!, true)))
     }
 
     @Test
@@ -117,8 +117,8 @@ class TestFirebaseFollow {
         database.unfollow(userRef1.key!!, userRef2.key!!)
         database.unfollow(userRef1.key!!, userRef2.key!!)
 
-        assertThat(followList(), not(hasValue(true)))
-        assertThat(counter(), `is`(0))
-        assertThat(followers(), not(hasValue(true)))
+        assertThat(getFollowList(), not(hasValue(true)))
+        assertThat(getCounter(), `is`(0))
+        assertThat(getFollowers(), not(hasValue(true)))
     }
 }
