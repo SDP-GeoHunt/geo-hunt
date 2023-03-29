@@ -207,8 +207,6 @@ class ChallengeViewTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val future = CompletableFuture<String>()
 
-        val profilePicture = createTestBitmap(context)
-
         val author = MockUser(
             displayName = "John wick",
             score = 48723,
@@ -233,7 +231,7 @@ class ChallengeViewTest {
                 challenge = challenge,
                 user = author,
                 //database
-                database  = object : BaseMockDatabase() {},
+                database  = database, //object : BaseMockDatabase() {},
                 {},
                 displayImage = { iid ->
                     future.complete(iid)
@@ -241,7 +239,7 @@ class ChallengeViewTest {
         }
 
         // Test stuff once loaded
-        composeTestRule.waitUntil(2000) {
+        composeTestRule.waitUntil(5000) {
             composeTestRule.onAllNodesWithContentDescription("Challenge Image")
                 .fetchSemanticsNodes()
                 .size == 1
@@ -254,20 +252,46 @@ class ChallengeViewTest {
             .performClick()
         //////////////////////////////
 
-        composeTestRule.waitUntil(10000) {
-            composeTestRule.onAllNodesWithTag("like_button")
-                .fetchSemanticsNodes()
-                .size == 1
-        }
+        //composeTestRule.waitUntil(10000) {
+        //    composeTestRule.onAllNodesWithTag("like_button")
+        //        .fetchSemanticsNodes()
+        //        .size == 1
+        //}
+
+        // Check if the initial number of likes is 0
+        composeTestRule.onNodeWithText("0")
+            .assertExists()
+
+        // Perform click that will add the like
+        composeTestRule.onNodeWithContentDescription("Likes")
+            .assertExists()
+            .assertHasClickAction()
+            .performClick()
+
+        // Check if the number of likes has increased to 1
+        composeTestRule.onNodeWithText("1")
+            .assertExists()
+
+        // Perform click that will remove the like
+        composeTestRule.onNodeWithContentDescription("Likes")
+            .assertExists()
+            .assertHasClickAction()
+            .performClick()
+
+        // Check if the number of likes has decreased to 0
+        composeTestRule.onNodeWithText("0")
+            .assertExists()
 
         // Click on the like button
-        composeTestRule.onNodeWithText("like_button")
-            .assertExists()
+       // composeTestRule.onAllNodesWithTag("like_button")
+       //     .assertCountEquals(1)
+       //     .assertAny(hasClickAction())
+            //.assertExists()
             //.performClick()
 
         // Check if the number of likes has increased
-        composeTestRule.onNodeWithText("0") //TODO: Change to 1
-            .assertExists()
+//        composeTestRule.onNodeWithText("0") //TODO: Change to 1
+//            .assertExists()
 
 
         assertThat(future.join(),
