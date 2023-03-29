@@ -24,4 +24,16 @@ abstract class BaseMockDatabase : Database {
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         throw NotImplementedError()
     }
+
+    override fun getFollowersOf(uid: String): Task<Map<String, Boolean>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun follow(follower: String, followee: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun unfollow(follower: String, followee: String) {
+        TODO("Not yet implemented")
+    }
 }
