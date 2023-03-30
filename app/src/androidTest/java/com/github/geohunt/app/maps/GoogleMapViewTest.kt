@@ -1,6 +1,7 @@
 package com.github.geohunt.app.maps
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -27,10 +28,15 @@ class GoogleMapViewTest {
     fun setup() {
         composeTestRule.setContent {
             GoogleMapView(
-                modifier = Modifier,
+                Modifier.testTag("Maps"),
                 cameraPositionState = CameraPositionState(CameraPosition(epflCoordinates, 15f, 0f, 0f)),
             )
         }
+    }
+
+    @Test
+    fun testMapIsDisplayed() {
+        composeTestRule.onNodeWithTag("Maps").assertExists()
     }
 
     @Test
