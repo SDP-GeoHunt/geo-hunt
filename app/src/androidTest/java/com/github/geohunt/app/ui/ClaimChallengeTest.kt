@@ -1,5 +1,4 @@
-package com.github.geohunt.app.ui.components
-
+package com.github.geohunt.app.ui
 import android.Manifest.permission
 import android.content.Context
 import android.graphics.Bitmap
@@ -28,6 +27,8 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.sensor.LocationRequestState
+import com.github.geohunt.app.ui.components.ClaimChallenge
+import com.github.geohunt.app.ui.components.SubmitClaimForm
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import org.hamcrest.Matchers.equalTo
@@ -166,7 +167,7 @@ class ClaimChallengeTest {
                 .assertIsNotEnabled()
 
             // Assert the request was launched
-            assertThat(counter, greaterThanOrEqualTo(1));
+            assertThat(counter, greaterThanOrEqualTo(1))
 
             // Resolve the future
             if (locationRequestFailed) {
