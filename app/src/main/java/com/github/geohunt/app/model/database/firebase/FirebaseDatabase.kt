@@ -204,7 +204,8 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     override fun insertUserLike(uid: String, cid: String): Task<Void> {
         //Increase the number of likes of the challenge by one
-        getChallengeById(cid).value?.let {
+        val challenge = getChallengeById(cid)
+        challenge.fetch().addOnSuccessListener {
             val challengeLikes = it.likes
             val dbChallengeRef = dbChallengeRef.child(cid)
             dbChallengeRef.child("likes").setValue(challengeLikes + 1)
@@ -216,12 +217,13 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     override fun removeUserLike(uid: String, cid: String): Task<Void> {
         //Decrease the number of likes of the challenge by one
-        getChallengeById(cid).value?.let {
+        val challenge = getChallengeById(cid)
+        challenge.fetch().addOnSuccessListener {
             val challengeLikes = it.likes
             val dbChallengeRef = dbChallengeRef.child(cid)
             dbChallengeRef.child("likes").setValue(challengeLikes - 1)
         }
-
+        
         //Remove the challenge from the user's liked challenges
         return dbLikesRef.child(uid).child(cid).removeValue()
     }
@@ -238,5 +240,3 @@ class FirebaseDatabase(activity: Activity) : Database {
         }
     }
 }
-
-
