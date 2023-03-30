@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
@@ -22,6 +23,14 @@ abstract class BaseMockDatabase : Database {
     }
 
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
+        throw NotImplementedError()
+    }
+
+    override fun submitClaim(
+        thumbnail: Bitmap,
+        challenge: Challenge,
+        location: Location
+    ): Task<Claim> {
         throw NotImplementedError()
     }
 }
