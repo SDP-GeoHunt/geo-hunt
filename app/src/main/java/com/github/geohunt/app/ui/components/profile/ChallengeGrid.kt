@@ -23,9 +23,7 @@ import com.github.geohunt.app.ui.theme.skeleton_loading_background
 fun ChallengeGrid(challenges: List<LazyRef<Challenge>>) {
     LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp)) {
         items(challenges) { challenge ->
-            run {
-                ChallengeItem(challenge = challenge)
-            }
+            ChallengeItem(challenge = challenge)
         }
     }
 }

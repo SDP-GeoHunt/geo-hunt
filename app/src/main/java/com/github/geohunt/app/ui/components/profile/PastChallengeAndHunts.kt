@@ -47,16 +47,16 @@ fun PastChallengeAndHunts(user: User) {
 
 @Composable
 fun PastChallengesContent(user: User) {
-    MakeTheGrid(testTag = "past-challenges", challenges = user.challenges, whenEmptyText = stringResource(id = R.string.no_past_challenges))
+    MakeGrid(testTag = "past-challenges", challenges = user.challenges, whenEmptyText = stringResource(id = R.string.no_past_challenges))
 }
 
 @Composable
 fun PastHuntsContent(user: User) {
-    MakeTheGrid(testTag = "past-hunts", challenges = user.hunts, whenEmptyText = stringResource(id = R.string.no_past_hunts))
+    MakeGrid(testTag = "past-hunts", challenges = user.hunts, whenEmptyText = stringResource(id = R.string.no_past_hunts))
 }
 
 @Composable
-private fun MakeTheGrid(testTag: String, challenges: List<LazyRef<Challenge>>, whenEmptyText: String) {
+private fun MakeGrid(testTag: String, challenges: List<LazyRef<Challenge>>, whenEmptyText: String) {
     Box(modifier = Modifier.testTag(testTag)) {
         if (challenges.isEmpty()) {
             CenteredText(str = whenEmptyText)

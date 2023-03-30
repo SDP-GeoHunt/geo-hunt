@@ -32,8 +32,7 @@ fun ProfilePage(user: LazyRef<User>) {
     val lazyRefRemember = rememberLazyRef { user }
 
     Box(modifier = Modifier
-        .fillMaxSize()
-        .fillMaxWidth()) {
+        .fillMaxSize()) {
         if (lazyRefRemember.value == null) {
             Progress()
         } else {
