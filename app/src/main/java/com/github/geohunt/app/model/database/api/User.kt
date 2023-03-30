@@ -23,7 +23,7 @@ interface User {
     /**
      * The number of users that follow this user.
      */
-    val followers: Int
+    val numberOfFollowers: Int
 
     /**
      * For a given UID, returns true if and only if this user follows the user with the given UID.

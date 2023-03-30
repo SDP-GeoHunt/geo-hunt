@@ -161,7 +161,7 @@ class FirebaseDatabase(activity: Activity) : Database {
      */
     private suspend fun doFollow(follower: String, followee: String, follow: Boolean = true) {
         val followerListRef = dbUserRef.child(follower).child("followList")
-        val counterRef = dbUserRef.child(followee).child("followers")
+        val counterRef = dbUserRef.child(followee).child("numberOfFollowers")
         val follows = dbFollowersRef.child(followee)
 
         val defaultMap = emptyMap<String, Boolean>().withDefault { false }

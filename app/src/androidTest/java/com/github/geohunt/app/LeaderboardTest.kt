@@ -45,7 +45,7 @@ class LeaderboardTest {
             override val profilePicture: LazyRef<Bitmap> = MockLazyRef("1") { throw NotImplementedError() }
             override val challenges: List<LazyRef<Challenge>> = listOf()
             override val hunts: List<LazyRef<Challenge>> = listOf()
-            override val followers: Int = 10
+            override val numberOfFollowers: Int = 10
             override val follows: Map<String, Boolean> = emptyMap()
             override var score: Number = 1500 - pos * 100
         }

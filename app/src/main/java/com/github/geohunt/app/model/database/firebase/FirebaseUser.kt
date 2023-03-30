@@ -13,7 +13,7 @@ class FirebaseUser(
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
-    override val followers: Int,
+    override val numberOfFollowers: Int,
     override val follows: Map<String, Boolean>,
     override var score: Number
 ) : User
