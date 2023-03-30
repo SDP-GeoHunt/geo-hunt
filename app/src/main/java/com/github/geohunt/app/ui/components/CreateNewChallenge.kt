@@ -1,7 +1,6 @@
 package com.github.geohunt.app.ui.components
 
 import android.Manifest
-import android.R.style
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap

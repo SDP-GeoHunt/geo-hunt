@@ -9,11 +9,9 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.findActivity
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.After
@@ -82,5 +80,19 @@ class TestFirebaseDatabase {
 
     private fun createTestBitmap(context: Context) : Bitmap {
         return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
+    }
+
+    @Test
+    fun databaseRetrievesCorrectlyUsers() {
+        val cf = CompletableFuture<User>()
+        database.getUserRefById("1").fetch().addOnCompleteListener {
+            cf.complete(it.result)
+        }.addOnFailureListener {
+            cf.completeExceptionally(it)
+        }
+        val get = cf.get()
+        assert(get.uid == "1")
+        assert(get.displayName == "Debug user")
+        assert(get.score == 123.0)
     }
 }

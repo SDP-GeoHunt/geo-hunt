@@ -34,4 +34,13 @@
     <string name="community_guidelines_url">https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines</string>
     <string name="privacy_policy_url">https://github.com/SDP-GeoHunt/geo-hunt/wiki/Privacy-Policy</string>
 
+    <string name="profile_number_of_posts_subtitle">posts</string>
+    <string name="profile_number_of_hunts_subtitle">hunts</string>
+    <string name="profile_score_subtitle">points</string>
+
+    <string name="challenges">Challenges</string>
+    <string name="hunts">Hunts</string>
+
+    <string name="no_past_challenges">No challenges :(</string>
+    <string name="no_past_hunts">No past hunts ;(</string>
 </resources>
