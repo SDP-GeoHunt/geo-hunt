@@ -5,6 +5,7 @@ import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.utility.thenMap
 import com.google.android.gms.tasks.Task
 
 class FirebaseUser(
@@ -13,15 +14,38 @@ class FirebaseUser(
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
-    override val numberOfFollowers: Int,
-    override val follows: Map<String, Boolean>,
-    override var score: Number
-) : User
+    override var score: Double
+) : User {
 
-class FirebaseUserRef(override val id: String) : BaseLazyRef<User>() {
+}
+
+data class NotFoundUser(val id: String): Exception("User $id not found.")
+
+class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase) : BaseLazyRef<User>() {
     override fun fetchValue(): Task<User> {
-        TODO("Not yet implemented")
+        return db.dbUserRef.child(id).get().thenMap {
+            if (!it.exists()) {
+                throw NotFoundUser(id)
+            }
+
+            val entry = it.getValue(UserEntry::class.java)!!
+
+            FirebaseUser(
+                uid = entry.uid,
+                displayName = entry.displayName,
+                profilePicture = db.getProfilePicture(entry.uid),
+                challenges = entry.challenges.map { db.getChallengeRefById(it) },
+                hunts = entry.hunts.map { db.getChallengeRefById(it) },
+                score = entry.score
+            )
+        }
     }
 }
 
-
+internal data class UserEntry(
+    var uid: String = "",
+    var displayName: String? = null,
+    var challenges: List<String> = listOf(),
+    var hunts: List<String> = listOf(),
+    var score: Double = 0.0
+)

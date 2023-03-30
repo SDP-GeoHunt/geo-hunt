@@ -31,7 +31,7 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
         get() = TODO("Not yet implemented (need database)")
     override val follows: Map<String, Boolean>
         get() = TODO("Not yet implemented (need database)")
-    override var score: Number
+    override var score: Double
         get() = TODO("Not yet implemented (need database)")
         set(value) {}
 }

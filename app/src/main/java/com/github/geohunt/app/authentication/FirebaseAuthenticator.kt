@@ -7,8 +7,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.database.Database
 import java.util.concurrent.CompletableFuture
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.firebase.NotFoundUser
 
 /**
  * Implements the Authenticator for Firebase.
@@ -29,9 +31,16 @@ class FirebaseAuthenticator(
         val signInLauncher = activity.registerForActivityResult(
             FirebaseAuthUIActivityResultContract())
         { res ->
-            if (res.resultCode == RESULT_OK)
-                completableFuture.complete(user)
-            else
+            if (res.resultCode == RESULT_OK) {
+                if (user == null) {
+                    completableFuture.completeExceptionally(IllegalStateException("Auth returns that user is not logged in, despite a successful connection."))
+                } else {
+                    // insert into database if not
+                    insertIntoDatabase(activity, completableFuture)
+                }
+
+                user?.let { Database.databaseFactory.get()(activity).insertNewUser(it) }
+            } else
                 completableFuture.completeExceptionally(res.idpResponse?.error)
         }
 
@@ -47,6 +56,29 @@ class FirebaseAuthenticator(
 
         signInLauncher.launch(signInIntent)
         return completableFuture
+    }
+
+    private fun insertIntoDatabase(
+        activity: ComponentActivity,
+        completableFuture: CompletableFuture<User>,
+    ) {
+        val db = Database.databaseFactory.get()(activity)
+        user?.let {user ->
+            // Check if user is not found.
+            db.getUser(user.uid).fetch().addOnFailureListener {
+                when(it) {
+                    // If so, create it
+                    is NotFoundUser -> db.insertNewUser(user)
+                        .addOnCompleteListener { completableFuture.complete(user) }
+                        .addOnFailureListener { completableFuture.completeExceptionally(it) }
+                    else -> throw IllegalStateException("Unexpected response when fetching user $it")
+                }
+            }.addOnCompleteListener {
+                // otherwise, ignore it
+                completableFuture.complete(user)
+            }
+        }
+
     }
 
     override fun signOut(activity: ComponentActivity): CompletableFuture<Void> {

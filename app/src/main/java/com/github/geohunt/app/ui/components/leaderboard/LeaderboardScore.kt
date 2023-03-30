@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.sp
  * @param color The color of the text.
  */
 @Composable
-fun LeaderboardScore(score: Number, color: Color = Color.Black) {
+fun LeaderboardScore(score: Double, color: Color = Color.Black) {
     Text(
         "$score pts",
         fontSize = 16.sp,

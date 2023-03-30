@@ -61,6 +61,12 @@ interface Database {
      */
     suspend fun unfollow(follower: String, followee: String)
 
+     * Inserts a new user into the database
+     */
+    fun insertNewUser(user: User): Task<Void>
+
+    fun getUser(uid: String): LazyRef<User>
+
     companion object {
 
         /**

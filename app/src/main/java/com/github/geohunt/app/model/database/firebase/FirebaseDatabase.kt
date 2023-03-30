@@ -9,6 +9,8 @@ import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.utility.*
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
@@ -40,9 +42,7 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     // Create the object pool in order to save some memory
     private val userRefById = DataPool<String, FirebaseUserRef> {
-        FirebaseUserRef(
-            id = it
-        )
+        FirebaseUserRef(it, this)
     }
 
     private val challengeRefById = DataPool<String, FirebaseChallengeRef> {
@@ -114,6 +114,24 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
+     * Inserts a new user with empty information into the database.
+     * This does not take into consideration profile picture, etc.
+     * If the user already exists, it will override the user. Use with caution.
+     */
+    override fun insertNewUser(user: User): Task<Void> {
+        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(),0.0)
+
+        return dbUserRef.child(user.uid).setValue(userEntry)
+    }
+
+    /**
+     * Returns a lazy ref for a user
+     */
+    override fun getUser(uid: String): LazyRef<User> {
+        return getUserRefById(uid)
+    }
+
+    /**
      * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
      * 
      * @param cid the challenge unique identifier
@@ -133,6 +151,10 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     internal fun getThumbnailRefById(cid: String) : FirebaseBitmapRef {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
+    }
+
+    internal fun getProfilePicture(uid: String): FirebaseBitmapRef {
+        return imageRefById.get(FirebaseBitmapRef.getImageIdFromUserId(uid))
     }
 
     internal fun getClaimRefById(id: String) : LazyRef<Claim> {

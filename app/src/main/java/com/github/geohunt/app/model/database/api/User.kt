@@ -32,5 +32,5 @@ interface User {
      */
     val follows: Map<String, Boolean>
 
-    var score: Number
+    var score: Double
 }
