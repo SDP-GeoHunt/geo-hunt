@@ -6,6 +6,7 @@ import android.provider.ContactsContract.Data
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.utility.Singleton
@@ -30,6 +31,12 @@ interface Database {
         location: Location,
         expirationDate: LocalDateTime? = null
     ): Task<Challenge>
+
+    fun submitClaim(
+        thumbnail: Bitmap,
+        challenge: Challenge,
+        location: Location,
+    ): Task<Claim>
 
     /**
      * Retrieve a challenge with a given ID and return a [LazyRef] upon completion

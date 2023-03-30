@@ -20,7 +20,7 @@ interface Claim {
     /**
      * Unique identifier of the user that claimed the corresponding challenge
      */
-    val user: String
+    val user: LazyRef<User>
 
     /**
      * Time at which the user claimed the challenge

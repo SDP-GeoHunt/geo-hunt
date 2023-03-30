@@ -16,9 +16,6 @@ import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import java.io.File
 import java.time.LocalDateTime
 
@@ -29,6 +26,8 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     // Database references
     internal val dbChallengeRef = database.child("challenges")
+
+    internal val dbClaimRef = database.child("claims")
 
     // Storage references
     internal val storageImagesRef = storage.child("images")
@@ -88,6 +87,7 @@ class FirebaseDatabase(activity: Activity) : Database {
             claims = listOf(),
             location = location
         )
+        Log.i("CHALLENGE_ID:", challengeId)
 
         // Get the reference to the thumbnail Bitmap and set the value
         val thumbnailBitmap = getThumbnailRefById(challengeId)
@@ -107,6 +107,45 @@ class FirebaseDatabase(activity: Activity) : Database {
                 expirationDate = expirationDate,
                 correctLocation = location,
                 claims = listOf()
+            )
+        }
+    }
+
+    override fun submitClaim(
+        thumbnail: Bitmap,
+        challenge: Challenge,
+        location: Location
+    ): Task<Claim> {
+        require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
+
+        // State variable
+        val coarseHash = location.getCoarseHash()
+        val dbClaimRef = dbClaimRef.child(coarseHash).push()
+        val claimId = coarseHash + dbClaimRef.key!!
+
+        val claimEntry = ClaimEntry(
+            user = currentUser,
+            challenge = challenge,
+            time = utcIso8601Now(),
+            location = location
+        )
+
+        // Get the reference to the thumbnail Bitmap and set the value
+        val thumbnailBitmap = getThumbnailRefById(claimId)
+        thumbnailBitmap.value = thumbnail
+
+        // Create both jobs (update database, update storage)
+        val submitToDatabaseTask = dbClaimRef.setValue(claimEntry)
+        val submitToStorageTask = thumbnailBitmap.saveToLocalStorageThenSubmit()
+
+        // Finally make the completable task that succeed if both task succeeded
+        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
+            FirebaseClaim(
+                id = claimId,
+                user = getUserRefById(currentUser),
+                time = localFromUtcIso8601(claimEntry.time!!),
+                challenge = getChallengeRefById(challenge.cid),
+                location = location
             )
         }
     }

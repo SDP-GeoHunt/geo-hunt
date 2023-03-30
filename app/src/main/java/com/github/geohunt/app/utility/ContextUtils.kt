@@ -3,6 +3,9 @@ package com.github.geohunt.app.utility
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Searches up the context hierarchy to find the [Activity] associated with this [Context].
