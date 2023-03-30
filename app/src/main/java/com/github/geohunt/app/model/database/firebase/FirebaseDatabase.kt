@@ -160,6 +160,9 @@ class FirebaseDatabase(activity: Activity) : Database {
      *       - The follower should be added/removed to the followee's follower list.
      */
     private suspend fun doFollow(follower: String, followee: String, follow: Boolean = true) {
+        // TODO Writes are not made atomically and should be batched instead
+        //      See https://github.com/SDP-GeoHunt/geo-hunt/issues/88#issue-1647852411
+
         val followerListRef = dbUserRef.child(follower).child("followList")
         val counterRef = dbUserRef.child(followee).child("numberOfFollowers")
         val follows = dbFollowersRef.child(followee)
