@@ -18,9 +18,10 @@ import com.github.geohunt.app.ui.rememberLazyRef
  * Creates a round profile icon of the given size.
  *
  * @param user The user for which we draw the profile picture.
+ * @param modifier The modifier applied to the profile picture.
  */
 @Composable
-fun ProfileIcon(user: User) {
+fun ProfileIcon(user: User, modifier: Modifier = Modifier) {
     val profilePicture = rememberLazyRef { user.profilePicture }
 
     AsyncImage(
@@ -30,7 +31,7 @@ fun ProfileIcon(user: User) {
             .build(),
         contentDescription = "${user.name} profile picture",
         contentScale = ContentScale.Crop,
-        modifier = Modifier
+        modifier = modifier
             .aspectRatio(1f)
             .padding(8.dp)
             .clip(CircleShape)

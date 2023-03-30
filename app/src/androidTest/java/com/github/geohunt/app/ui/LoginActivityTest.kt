@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui
 
-import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -16,9 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.authentication.Authenticator
-import com.github.geohunt.app.mocks.MockLazyRef
-import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.database.api.User
 import org.hamcrest.Matchers.*
 import org.junit.Rule
@@ -75,15 +72,6 @@ class LoginActivityTest {
         Intents.release()
         assert(cf.isDone)
     }
-
-    class MockUser(
-        override var displayName: String? = null,
-        override val uid: String = "1",
-        override val profilePicture: LazyRef<Bitmap> = MockLazyRef("1") { TODO() },
-        override val challenges: List<LazyRef<Challenge>> = emptyList(),
-        override val hunts: List<LazyRef<Challenge>> = emptyList(),
-        override var score: Double = 1.0
-    ) : User
 
     class MockAuthenticator(override val user: User?,
                             val authenticateCb: (a: ComponentActivity) -> CompletableFuture<User> = {
