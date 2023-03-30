@@ -85,7 +85,7 @@ class FirebaseDatabase(activity: Activity) : Database {
             publishedDate = utcIso8601Now(),
             expirationDate = utcIso8601FromLocalNullable(expirationDate),
             claims = listOf(),
-            location = location
+            location = location,
         )
 
         // Get the reference to the thumbnail Bitmap and set the value
@@ -203,40 +203,25 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     override fun insertUserLike(uid: String, cid: String): Task<Void> {
-        //Increase the number of likes of the challenge by one
-        val challenge = getChallengeById(cid)
-        challenge.fetch().addOnSuccessListener {
-            val challengeLikes = it.likes
-            val dbChallengeRef = dbChallengeRef.child(cid)
-            dbChallengeRef.child("likes").setValue(challengeLikes + 1)
-        }
-
         //Add the challenge to the user's liked challenges
         return dbLikesRef.child(uid).child(cid).setValue(true)
     }
 
     override fun removeUserLike(uid: String, cid: String): Task<Void> {
-        //Decrease the number of likes of the challenge by one
-        val challenge = getChallengeById(cid)
-        challenge.fetch().addOnSuccessListener {
-            val challengeLikes = it.likes
-            val dbChallengeRef = dbChallengeRef.child(cid)
-            dbChallengeRef.child("likes").setValue(challengeLikes - 1)
-        }
-        
         //Remove the challenge from the user's liked challenges
         return dbLikesRef.child(uid).child(cid).removeValue()
     }
 
     override fun isUserLiked(uid: String, cid: String): LazyRef<Boolean> {
-        //Check if the challenge is in the user's liked challenges
+        //Check if the challenge is in the user's liked challenges, return false if the challenge is not present
         return object : BaseLazyRef<Boolean>() {
             override fun fetchValue(): Task<Boolean> {
-                return dbLikesRef.child(uid).child(cid).get().thenMap {
-                    it.exists()
-                }
+                return dbLikesRef.child(uid).child(cid).get()
+                    .thenMap {
+                        it.exists()
+                    }
             }
-            override val id: String = uid
+            override val id: String = uid + cid
         }
     }
 }

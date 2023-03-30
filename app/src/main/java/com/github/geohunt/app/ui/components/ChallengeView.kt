@@ -43,8 +43,6 @@ private const val lorumIpsum =
 
 Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce accumsan laoreet tellus, vel eleifend tortor venenatis eget. Suspendisse fermentum tellus eget vestibulum tincidunt. Donec sed tempus libero. Vestibulum pellentesque tempus sodales. Suspendisse eros risus, egestas nec porta et, pulvinar at lorem. Nulla a ante sed enim pretium vehicula ut ac eros. Nullam sollicitudin justo eu est sagittis, at vulputate mauris interdum. Sed non tellus interdum, placerat velit nec, pharetra magna."""
 
-//var DEBUG_LIKES = 0
-
 @Composable
 private fun MainUserView(challenge: Challenge) {
     Box(
@@ -158,97 +156,47 @@ private fun BellowImageButtons(
         val fontSize = 18.sp
         val iconSize = 22.dp
 
-        //Fetch if user liked the challenge and then display the button
-        val isLiked: LazyRef<Boolean> = database.isUserLiked(user.uid, challenge.cid)
-        var isLikedState: Boolean //by remember { mutableStateOf(false) }
-        var numberLikes by remember { mutableStateOf(0) }
+        val hasUserLikedChallenge: LazyRef<Boolean> = database.isUserLiked(user.uid, challenge.cid)
+        var numberOfLikes by remember { mutableStateOf(challenge.likes) }
 
-        //TODO remove challenge tags, refactor if-else
         FetchComponent(
-            lazyRef = { isLiked },
+            lazyRef = { hasUserLikedChallenge },
         ) { liked ->
-            isLikedState = liked
+            var isLiked = liked
 
-            //if (isLikedState.value) {
             IconButton(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .testTag(isLikedState.toString()),
+                    .testTag("Likes"),
                 onClick = {
-                    if (isLikedState) {
+                    if (isLiked) {
                         database.removeUserLike(
                             user.uid,
                             challenge.cid
                         )
+                        challenge.likes--
+                        isLiked = false
 
-                        //DEBUG_LIKES -= 1
-                        //print("LIKED2")
-                        isLikedState = false
-
-                        //Rerender the button
-                            //isLikedState.value = false
                     } else {
                         database.insertUserLike(
                             user.uid,
                             challenge.cid
                         )
-                        //DEBUG_LIKES += 1
-                        //print("LIKED2")
-                        isLikedState = true
+                        challenge.likes++
+                        isLiked = true
 
-                           // isLikedState.value = true
                     }
-                    //database.removeUserLike(
-                    //    user.uid,
-                    //    challenge.cid
-                    //)
-                    //DEBUG_LIKES -= 1
-                        //Rerender the button
-                    //isLikedState = !isLikedState
-                    numberLikes = challenge.likes
+                    numberOfLikes = challenge.likes
                 }
             ) {
                 LabelledIcon(
-                    text = numberLikes.toString(),
-
-                    painter = painterResource(R.drawable.challenge_liked),
+                    text = numberOfLikes.toString(),
+                    painter = if (isLiked) painterResource(R.drawable.challenge_liked) else painterResource(R.drawable.challenge_not_liked),
                     contentDescription = "Likes",
-                    tint = MaterialTheme.colors.primaryVariant,
                     fontSize = fontSize,
                     iconSize = iconSize,
-                    modifier = Modifier
-                        .testTag("like_count")
                 )
             }
-            //} else {
-            /*    IconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .testTag("like_button"),
-                    onClick = {
-                        database.insertUserLike(
-                            user.uid,
-                            challenge.cid
-                        )
-                        DEBUG_LIKES += 1
-
-                        isLikedState.value = true
-                    }
-                ) {
-                    LabelledIcon(
-                        text = DEBUG_LIKES.toString(),
-                        painter = painterResource(R.drawable.challenge_not_liked),
-                        contentDescription = "Likes",
-                        tint = MaterialTheme.colors.primaryVariant,
-                        fontSize = fontSize,
-                        iconSize = iconSize,
-                        modifier = Modifier
-
-                            .testTag("like_count")
-                    )
-                }
-            }*/
-
         }
 
         Spacer(

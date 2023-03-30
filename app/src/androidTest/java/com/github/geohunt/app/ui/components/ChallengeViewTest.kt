@@ -29,6 +29,7 @@ import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -43,6 +44,7 @@ class ChallengeViewTest {
     val composeTestRule = createComposeRule()
 
     private lateinit var database : FirebaseDatabase
+    private val TIMEOUT_TIME_MS = 5000L
 
     private fun createTestBitmap(context: Context) : Bitmap {
         return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
@@ -52,6 +54,9 @@ class ChallengeViewTest {
     fun setup() {
         FirebaseEmulator.init()
     }
+
+    @After
+    fun cleanup() {}
 
     @Test
     fun testChallengeViewDisplayUserProperly()
@@ -74,7 +79,7 @@ class ChallengeViewTest {
 
         val claim = object : Claim {
             override val id: String
-                get() = "claim-ar4f165erf146a5c"
+                get() = "claim-ar4f165erf146a5ct"
             override val challenge: LazyRef<Challenge>
                 get() = MockLazyRef<Challenge>("cid") { TODO() }
             override val image: LazyRef<Bitmap>
@@ -201,7 +206,6 @@ class ChallengeViewTest {
     @Test
     fun testLikingButtonWorksProperly() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val future = CompletableFuture<String>()
 
         val author = MockUser(
             displayName = "John wick",
@@ -214,7 +218,6 @@ class ChallengeViewTest {
                 Tasks.forResult(author)
             },
             claims = listOf(),
-
             thumbnail = MockLazyRef("img-ze5f16zaef1465") {
                 Tasks.forResult(createTestBitmap(context))
             },
@@ -232,71 +235,33 @@ class ChallengeViewTest {
             ChallengeView(
                 challenge = challenge,
                 user = author,
-                //database
                 database  = database,
-                {},
-                displayImage = { iid ->
-                    future.complete(iid)
-                })
+                onButtonBack =  {},
+                displayImage = {},
+            )
         }
 
         // Test stuff once loaded
-        composeTestRule.waitUntil(5000) {
-            composeTestRule.onAllNodesWithContentDescription("Challenge Image")
+        composeTestRule.waitUntil(TIMEOUT_TIME_MS) {
+            composeTestRule.onAllNodesWithContentDescription("Likes")
                 .fetchSemanticsNodes()
                 .size == 1
         }
 
-        //////Remove later
-        // Ensure click on challenge view image redirect to corresponding page
-        composeTestRule.onNodeWithContentDescription("Challenge Image")
-            .assertHasClickAction()
-            .performClick()
-        //////////////////////////////
-
-        //TODO refactor later
-
-        // Check if the initial number of likes is 0
+        // Find the button for liking and check if it exists
         composeTestRule.onNodeWithContentDescription("Likes")
+            .assertExists()
+            // Check if the number of likes is 0
             .assertTextEquals("0")
-            .assertExists()
-
-        // Perform click that will add the like
-        composeTestRule.onNodeWithContentDescription("Likes")
-            .assertExists()
+            // Check if the button has a click action and perform click
             .assertHasClickAction()
             .performClick()
-
-        // Check if the number of likes has increased to 1
-        composeTestRule.onNodeWithContentDescription("Likes")
-            //.onNodeWithText("1")
+            // Check if the number of likes has increased to 1
             .assertTextEquals("1")
-            .assertExists()
-
-        // Perform click that will remove the like
-        composeTestRule.onNodeWithContentDescription("Likes")
-            .assertExists()
+            // Check again if the button has a click action and perform click
             .assertHasClickAction()
             .performClick()
-
-        // Check if the number of likes has decreased to 0
-        composeTestRule.onNodeWithContentDescription("Likes")
+            // Check if the number of likes has decreased to 0
             .assertTextEquals("0")
-            .assertExists()
-
-        // Click on the like button
-       // composeTestRule.onAllNodesWithTag("like_button")
-       //     .assertCountEquals(1)
-       //     .assertAny(hasClickAction())
-            //.assertExists()
-            //.performClick()
-
-        // Check if the number of likes has increased
-//        composeTestRule.onNodeWithText("0") //TODO: Change to 1
-//            .assertExists()
-
-
-        assertThat(future.join(),
-            equalTo("img-ze5f16zaef1465"))
     }
 }
