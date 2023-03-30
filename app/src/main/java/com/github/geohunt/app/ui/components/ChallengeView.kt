@@ -43,7 +43,7 @@ private const val lorumIpsum =
 
 Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Fusce accumsan laoreet tellus, vel eleifend tortor venenatis eget. Suspendisse fermentum tellus eget vestibulum tincidunt. Donec sed tempus libero. Vestibulum pellentesque tempus sodales. Suspendisse eros risus, egestas nec porta et, pulvinar at lorem. Nulla a ante sed enim pretium vehicula ut ac eros. Nullam sollicitudin justo eu est sagittis, at vulputate mauris interdum. Sed non tellus interdum, placerat velit nec, pharetra magna."""
 
-
+//var DEBUG_LIKES = 0
 
 @Composable
 private fun MainUserView(challenge: Challenge) {
@@ -160,42 +160,68 @@ private fun BellowImageButtons(
 
         //Fetch if user liked the challenge and then display the button
         val isLiked: LazyRef<Boolean> = database.isUserLiked(user.uid, challenge.cid)
-        val isLikedState = remember { mutableStateOf(false) }
+        var isLikedState: Boolean //by remember { mutableStateOf(false) }
+        var numberLikes by remember { mutableStateOf(0) }
 
         //TODO remove challenge tags, refactor if-else
         FetchComponent(
             lazyRef = { isLiked },
         ) { liked ->
+            isLikedState = liked
 
-            isLikedState.value = liked
-            if (isLikedState.value) {
-                IconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .testTag("like_button"),
-                    onClick = {
+            //if (isLikedState.value) {
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .testTag(isLikedState.toString()),
+                onClick = {
+                    if (isLikedState) {
                         database.removeUserLike(
                             user.uid,
                             challenge.cid
                         )
-                        //Rerender the button
-                        isLikedState.value = !isLikedState.value
-                    }
-                ) {
-                    LabelledIcon(
-                        text = challenge.likes.toString(),
 
-                        painter = painterResource(R.drawable.challenge_liked),
-                        contentDescription = "Likes",
-                        tint = MaterialTheme.colors.primaryVariant,
-                        fontSize = fontSize,
-                        iconSize = iconSize,
-                        modifier = Modifier
-                            .testTag("like_count")
-                    )
+                        //DEBUG_LIKES -= 1
+                        //print("LIKED2")
+                        isLikedState = false
+
+                        //Rerender the button
+                            //isLikedState.value = false
+                    } else {
+                        database.insertUserLike(
+                            user.uid,
+                            challenge.cid
+                        )
+                        //DEBUG_LIKES += 1
+                        //print("LIKED2")
+                        isLikedState = true
+
+                           // isLikedState.value = true
+                    }
+                    //database.removeUserLike(
+                    //    user.uid,
+                    //    challenge.cid
+                    //)
+                    //DEBUG_LIKES -= 1
+                        //Rerender the button
+                    //isLikedState = !isLikedState
+                    numberLikes = challenge.likes
                 }
-            } else {
-                IconButton(
+            ) {
+                LabelledIcon(
+                    text = numberLikes.toString(),
+
+                    painter = painterResource(R.drawable.challenge_liked),
+                    contentDescription = "Likes",
+                    tint = MaterialTheme.colors.primaryVariant,
+                    fontSize = fontSize,
+                    iconSize = iconSize,
+                    modifier = Modifier
+                        .testTag("like_count")
+                )
+            }
+            //} else {
+            /*    IconButton(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .testTag("like_button"),
@@ -204,12 +230,13 @@ private fun BellowImageButtons(
                             user.uid,
                             challenge.cid
                         )
+                        DEBUG_LIKES += 1
 
-                        isLikedState.value = !isLikedState.value
+                        isLikedState.value = true
                     }
                 ) {
                     LabelledIcon(
-                        text = challenge.likes.toString(),
+                        text = DEBUG_LIKES.toString(),
                         painter = painterResource(R.drawable.challenge_not_liked),
                         contentDescription = "Likes",
                         tint = MaterialTheme.colors.primaryVariant,
@@ -220,7 +247,7 @@ private fun BellowImageButtons(
                             .testTag("like_count")
                     )
                 }
-            }
+            }*/
 
         }
 
