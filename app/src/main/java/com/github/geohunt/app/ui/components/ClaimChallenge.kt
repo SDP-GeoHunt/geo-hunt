@@ -90,13 +90,13 @@ fun SubmitClaimForm(
                 modifier = Modifier
                     .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
                     .fillMaxSize(),
-                contentDescription = "Photo just taken of the challenge"
+                contentDescription = "Photo just taken of the claim"
             )
 
             Spacer(Modifier.height(25.dp))
 
             LinkText(listOf(
-                LinkTextData("By creating a challenge, you agree to GeoHunt's "),
+                LinkTextData("By claiming a challenge, you agree to GeoHunt's "),
                 LinkTextData(
                     text = "Community Guidelines",
                     tag = "",
