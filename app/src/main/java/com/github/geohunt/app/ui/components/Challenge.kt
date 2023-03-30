@@ -14,14 +14,14 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -30,8 +30,10 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
+import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.DateFormatUtils
+import com.github.geohunt.app.utility.findActivity
 
 /**
  * Composable function that displays a challenge given as an argument
@@ -54,7 +56,7 @@ fun Challenge(challenge: Challenge) {
 
             ChallengeImage(thumbnail = challenge.thumbnail)
 
-            ClaimButton()
+            ClaimButton(challenge = challenge)
         }
 
         ChallengeInformation(challenge)
@@ -66,13 +68,22 @@ fun Challenge(challenge: Challenge) {
 }
 
 @Composable
-fun ClaimButton() {
-    Button(onClick = { submitPosition() }) {
+fun ClaimButton(challenge: Challenge) {
+    var showClaimForm by remember {
+        mutableStateOf(false)
+    }
+
+    Button(onClick = { showClaimForm = true }) {
         Row (verticalAlignment = Alignment.CenterVertically){
             Text(text = stringResource(id = R.string.challenge_claim))
             Icon(painter = painterResource(id = R.drawable.radar_icon),
                     contentDescription = "Radar icon of claim button")
         }
+    }
+
+    if (showClaimForm) {
+        ClaimChallenge(database = FirebaseDatabase(LocalContext.current.findActivity()),
+            challenge = challenge)
     }
 }
 
@@ -105,8 +116,8 @@ fun ChallengeInformation(challenge: Challenge) {
     val expirationDate = challenge.expirationDate
 
     Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp, 0.dp)) {
+        .fillMaxWidth()
+        .padding(5.dp, 0.dp)) {
 
         Text(text = stringResource(id = R.string.challenge_created_by, challenge.author.id))
 
@@ -124,18 +135,10 @@ fun ClaimPictures(claims: List<LazyRef<Claim>>) {
         items(claims) {claim ->
             //placeholder, will be replaced by images of claims made to the challenge
             Box(modifier = Modifier
-                    .border(BorderStroke(1.dp, Color.Red))
-                    .aspectRatio(1f)) {
+                .border(BorderStroke(1.dp, Color.Red))
+                .aspectRatio(1f)) {
                 Text(text = claim.id, color = Color.Red, textAlign = TextAlign.Center, modifier = Modifier.fillMaxSize())
             }
         }
     }
-}
-
-/**
- * Function called when the claim button is clicked
- */
-fun submitPosition() {
-    //Todo use utility function to get Localisation and create Claim
-    return
 }
