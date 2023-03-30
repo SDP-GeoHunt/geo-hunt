@@ -61,7 +61,8 @@ fun ChallengeImage(challenge: Challenge, modifier: Modifier) {
             Image(painter = BitmapPainter(resolvedThumbnail.asImageBitmap()),
                     contentDescription = "Challenge ${challenge.cid}",
                     modifier = Modifier.clip(RoundedCornerShape(20.dp)).fillMaxSize(),
-                    contentScale = ContentScale.FillBounds)
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center)
         }
     }
 }
