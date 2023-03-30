@@ -50,13 +50,18 @@ class DateFormatUtilsTest {
     }
 
     @Test
+    fun testGetElapsedTimeString7m() {
+        assertThat(fetch(7.minutes), equalTo("claimed 5 minutes ago"))
+    }
+
+    @Test
     fun testGetElapsedTimeString28m() {
         assertThat(fetch(28.minutes), equalTo("claimed 25 minutes ago"))
     }
 
     @Test
     fun testGetElapsedTimeString64m() {
-        assertThat(fetch(64.minutes), equalTo("claimed one hour ago"))
+        assertThat(fetch(64.minutes), equalTo("claimed 1 hour ago"))
     }
 
     @Test
@@ -66,7 +71,7 @@ class DateFormatUtilsTest {
 
     @Test
     fun testGetElapsedTimeString1d() {
-        assertThat(fetch(1.days), equalTo("claimed one day ago"))
+        assertThat(fetch(1.days), equalTo("claimed 1 day ago"))
     }
 
     @Test
@@ -76,7 +81,7 @@ class DateFormatUtilsTest {
 
     @Test
     fun testGetElapsedTimeString30d() {
-        assertThat(fetch(30.days), equalTo("claimed one month ago"))
+        assertThat(fetch(30.days), equalTo("claimed 1 month ago"))
     }
 
     @Test
@@ -86,7 +91,7 @@ class DateFormatUtilsTest {
 
     @Test
     fun testGetElapsedTimeString190d() {
-        assertThat(fetch(190.days), equalTo("claimed one year ago"))
+        assertThat(fetch(190.days), equalTo("claimed 1 year ago"))
     }
 
     @Test

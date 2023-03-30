@@ -19,19 +19,20 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.ui.theme.skeleton_loading_background
 
+/**
+ * Shows a grid of challenges
+ */
 @Composable
 fun ChallengeGrid(challenges: List<LazyRef<Challenge>>) {
     LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp)) {
         items(challenges) { challenge ->
-            run {
-                ChallengeItem(challenge = challenge)
-            }
+            ChallengeItem(challenge = challenge)
         }
     }
 }
 
 @Composable
-fun ChallengeItem(challenge: LazyRef<Challenge>) {
+private fun ChallengeItem(challenge: LazyRef<Challenge>) {
     val c = rememberLazyRef { challenge }
 
     if (c.value == null) {

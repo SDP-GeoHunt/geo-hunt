@@ -22,18 +22,27 @@ import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.findActivity
 
+/**
+ * The main profile page content.
+ *
+ * @param id The id of the user to be shown
+ */
 @Composable
 fun ProfilePage(id: String) {
     ProfilePage(user = FirebaseUserRef(id, FirebaseDatabase(LocalContext.current.findActivity())))
 }
 
+/**
+ * The main profile page content.
+ *
+ * @param user A lazy ref for the user
+ */
 @Composable
 fun ProfilePage(user: LazyRef<User>) {
     val lazyRefRemember = rememberLazyRef { user }
 
     Box(modifier = Modifier
-        .fillMaxSize()
-        .fillMaxWidth()) {
+        .fillMaxSize()) {
         if (lazyRefRemember.value == null) {
             Progress()
         } else {

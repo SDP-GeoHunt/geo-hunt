@@ -120,7 +120,7 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                ProfilePage(id = Authenticator.authInstance.get().user!!.uid)
+                ProfilePage(id = user.uid)
             }
         }
 

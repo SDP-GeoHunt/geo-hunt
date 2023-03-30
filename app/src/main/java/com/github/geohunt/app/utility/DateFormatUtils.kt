@@ -1,5 +1,8 @@
 package com.github.geohunt.app.utility
 
+import android.icu.text.RelativeDateTimeFormatter
+import android.icu.text.RelativeDateTimeFormatter.Direction
+import android.icu.text.RelativeDateTimeFormatter.RelativeUnit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.pluralStringResource
@@ -15,12 +18,6 @@ import java.time.temporal.ChronoUnit
  */
 object DateFormatUtils {
     private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-
-    @OptIn(ExperimentalComposeUiApi::class)
-    @Composable
-    private fun formatElapsedTime(id: Int, count: Long) : String {
-        return pluralStringResource(id = id, count = count.toInt(), formatArgs = arrayOf(count))
-    }
 
     /**
      * Formats given LocalDateTime into a string
@@ -42,21 +39,22 @@ object DateFormatUtils {
     @Composable
     fun getElapsedTimeString(dateTime: LocalDateTime, prefixStringId: Int) : String {
         val duration = Duration.between(dateTime, LocalDateTime.now())
+        val fmt = RelativeDateTimeFormatter.getInstance()
 
         val raw = when {
             duration.toDays() > 182 ->
-                formatElapsedTime(R.plurals.date_format_time_years_ago, (duration.toDays() + 182) / 365)
+                fmt.format((duration.toDays() + 182) / 365, Direction.LAST, RelativeUnit.YEARS)
             duration.toDays() > 29 ->
-                formatElapsedTime(R.plurals.date_format_time_months_ago, (duration.toDays() + 15) / 30)
+                fmt.format((duration.toDays() + 15) / 30, Direction.LAST, RelativeUnit.MONTHS)
             duration.toDays() > 0 ->
-                formatElapsedTime(R.plurals.date_format_time_days_ago, duration.toDays())
+                fmt.format(duration.toDays(), Direction.LAST, RelativeUnit.DAYS)
             duration.toHours() > 0 ->
-                formatElapsedTime(R.plurals.date_format_time_hours_ago, duration.toHours())
+                fmt.format(duration.toHours(), Direction.LAST, RelativeUnit.HOURS)
             duration.toMinutes() > 3 ->
-                formatElapsedTime(R.plurals.date_format_time_minutes_ago, (duration.toMinutes() / 5) * 5)
+                fmt.format((duration.toMinutes() / 5) * 5, Direction.LAST, RelativeUnit.MINUTES)
             else -> stringResource(id = R.string.just_now)
         }
-        return stringResource(id = prefixStringId, formatArgs = arrayOf(raw))
+        return stringResource(id = prefixStringId, (raw ?: "???"))
     }
 
     /**
@@ -87,4 +85,8 @@ object DateFormatUtils {
         }
     }
 
+}
+
+private fun RelativeDateTimeFormatter.format(quantity: Long, direction: Direction, timeUnit: RelativeUnit): String? {
+    return this.format(quantity.toDouble(), direction, timeUnit)
 }
