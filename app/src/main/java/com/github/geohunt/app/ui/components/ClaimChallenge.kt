@@ -78,7 +78,7 @@ fun SubmitClaimForm(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Text(text = "Submit Claim",
+            Text(text = "Submit a Claim",
                 color = MaterialTheme.colors.primary,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h1)
