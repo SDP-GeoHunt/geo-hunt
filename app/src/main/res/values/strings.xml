@@ -11,32 +11,7 @@
     <string name="challenge_time_remaining">Time remaining : %1$s </string>
 
     <!-- All string for formatting message like "published just now" -->
-    <plurals name="date_format_time_years_ago">
-        <item quantity="one">one year ago</item>
-        <item quantity="other">%d years ago</item>
-    </plurals>
-    <plurals name="date_format_time_months_ago">
-        <item quantity="one">one month ago</item>
-        <item quantity="other">%d months ago</item>
-    </plurals>
-    <plurals name="date_format_time_weeks_ago">
-        <item quantity="one">one week ago</item>
-        <item quantity="other">%d weeks ago</item>
-    </plurals>
-    <plurals name="date_format_time_days_ago">
-        <item quantity="one">one day ago</item>
-        <item quantity="other">%d days ago</item>
-    </plurals>
-    <plurals name="date_format_time_hours_ago">
-        <item quantity="one">one hour ago</item>
-        <item quantity="other">%d hours ago</item>
-    </plurals>
-    <plurals name="date_format_time_minutes_ago">
-        <item quantity="one">one minute ago</item>
-        <item quantity="other">%d minutes ago</item>
-    </plurals>
     <string name="just_now">just now</string>
-
     <string name="published_format">published %s</string>
     <string name="claimed_format">claimed %s</string>
 
