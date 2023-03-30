@@ -113,7 +113,7 @@ class FirebaseDatabase(activity: Activity) : Database {
      * If the user already exists, it will override the user. Use with caution.
      */
     override fun insertNewUser(user: User): Task<Void> {
-        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(),0)
+        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(),0.0)
 
         return dbUserRef.child(user.uid).setValue(userEntry)
     }
