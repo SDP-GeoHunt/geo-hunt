@@ -2,19 +2,15 @@ package com.github.geohunt.app.ui.components
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.widget.BaseExpandableListAdapter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.navigation.testing.TestNavHostController
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
 import com.github.geohunt.app.mocks.*
-import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.FirebaseEmulator
 import com.github.geohunt.app.model.database.api.Challenge
@@ -23,8 +19,6 @@ import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseChallenge
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
-import com.github.geohunt.app.ui.components.navigation.NavigationBar
-import com.github.geohunt.app.ui.components.navigation.NavigationController
 import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
@@ -36,7 +30,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class ChallengeViewTest {
@@ -241,7 +234,7 @@ class ChallengeViewTest {
             )
         }
 
-        // Test stuff once loaded
+        // Check if the button for liking is loaded
         composeTestRule.waitUntil(TIMEOUT_TIME_MS) {
             composeTestRule.onAllNodesWithContentDescription("Likes")
                 .fetchSemanticsNodes()
@@ -263,5 +256,80 @@ class ChallengeViewTest {
             .performClick()
             // Check if the number of likes has decreased to 0
             .assertTextEquals("0")
+    }
+
+    @Test
+    fun testClickingOnLikeButtonWithPreviousLikeRemovesLike(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        val author = MockUser(
+            displayName = "John wick",
+            score = 48723,
+            uid = "user-f425zez6z4ef6z15f4",
+        )
+
+        val challenge = FirebaseChallenge(
+            author = MockLazyRef("user-f425zez6z4ef6z15f4") {
+                Tasks.forResult(author)
+            },
+            claims = listOf(),
+            thumbnail = MockLazyRef("img-ze5f16zaef1465") {
+                Tasks.forResult(createTestBitmap(context))
+            },
+            correctLocation = Location(50.06638888888889, -5.714722222222222),
+            cid = "cid",
+            expirationDate = LocalDateTime.now().plusDays(1),
+            publishedDate = LocalDateTime.now(),
+            likes = 5001,
+        )
+
+        // Sets the composeTestRule content
+        composeTestRule.setContent {
+            database = FirebaseDatabase(LocalContext.current.findActivity())
+
+            // Add a like to the challenge
+            database.insertUserLike(author.uid, challenge.cid)
+
+            ChallengeView(
+                challenge = challenge,
+                user = author,
+                database  = database,
+                onButtonBack =  {},
+                displayImage = {},
+            )
+        }
+
+        // Check if the button for liking is loaded
+        composeTestRule.waitUntil(TIMEOUT_TIME_MS) {
+            composeTestRule.onAllNodesWithContentDescription("Likes")
+                .fetchSemanticsNodes()
+                .size == 1
+        }
+
+
+        // Check if the user has liked the challenge
+        database.isUserLiked(author.uid, challenge.cid).fetch().addOnSuccessListener {
+            assertThat(
+                it, equalTo(true)
+            )
+        }
+
+        // Find the button for liking and check if it exists
+        composeTestRule.onNodeWithContentDescription("Likes")
+            .assertExists()
+            // Check if the initial number of likes is 5001
+            .assertTextEquals("5001")
+            // Check if the button has a click action and perform click
+            .assertHasClickAction()
+            .performClick()
+            // Check if the number of likes has decreased to 5000
+            .assertTextEquals("5000")
+
+        // Check if the user has not liked the challenge
+        database.isUserLiked(author.uid, challenge.cid).fetch().addOnSuccessListener {
+            assertThat(
+                it, equalTo(false)
+            )
+        }
     }
 }
