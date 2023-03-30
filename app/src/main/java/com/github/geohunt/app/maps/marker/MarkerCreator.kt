@@ -43,7 +43,7 @@ fun DisplayMarkers() {
             title = challenge.title,
             snippet = challenge.expiryDate.toString(),
             icon = BitmapDescriptorFactory.defaultMarker(geoHuntRed.red)
-        ) { _ ->
+        ) {
             Box(
                 modifier = Modifier
                     .background(
