@@ -159,12 +159,16 @@ private fun BellowImageButtons(
         val iconSize = 22.dp
 
         //Fetch if user liked the challenge and then display the button
-        val isLiked = database.isUserLiked(user.uid, challenge.cid)
+        val isLiked: LazyRef<Boolean> = database.isUserLiked(user.uid, challenge.cid)
+        val isLikedState = remember { mutableStateOf(false) }
 
+        //TODO remove challenge tags, refactor if-else
         FetchComponent(
             lazyRef = { isLiked },
         ) { liked ->
-            if (liked) {
+
+            isLikedState.value = liked
+            if (isLikedState.value) {
                 IconButton(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -174,6 +178,8 @@ private fun BellowImageButtons(
                             user.uid,
                             challenge.cid
                         )
+                        //Rerender the button
+                        isLikedState.value = !isLikedState.value
                     }
                 ) {
                     LabelledIcon(
@@ -198,6 +204,8 @@ private fun BellowImageButtons(
                             user.uid,
                             challenge.cid
                         )
+
+                        isLikedState.value = !isLikedState.value
                     }
                 ) {
                     LabelledIcon(
@@ -208,6 +216,7 @@ private fun BellowImageButtons(
                         fontSize = fontSize,
                         iconSize = iconSize,
                         modifier = Modifier
+
                             .testTag("like_count")
                     )
                 }
