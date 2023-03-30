@@ -15,6 +15,7 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDateTime
@@ -23,10 +24,11 @@ class ActiveHuntsTest {
     @get:Rule
     val testRule = createComposeRule()
 
-    private fun setupComposable(challenges: List<LazyRef<Challenge>>) {
+    private val emptyCallback: () -> Unit = { }
+    private fun setupComposable(challenges: List<LazyRef<Challenge>>, callback: () -> Unit = emptyCallback) {
         testRule.setContent {
             GeoHuntTheme {
-                ActiveHunts(challenges = challenges)
+                ActiveHunts(challenges = challenges, emptyScreenCallback = callback)
             }
         }
     }
@@ -82,5 +84,20 @@ class ActiveHuntsTest {
                 .filter(hasContentDescription("Challenge ${dummyChallenge.cid}"))
                 //We use assertAny to make sure there is at least one node filling the condition
                 .assertAny(hasContentDescription("Challenge ${dummyChallenge.cid}"))
+    }
+
+    @Test
+    fun callbackIsCalledByButton() {
+        var clicked = false
+        val dummyCallback: () -> Unit = { clicked = true }
+        setupComposable(listOf(), dummyCallback)
+
+        testRule.onNodeWithText("Search nearby challenges", useUnmergedTree = true)
+                .onParent()
+                .assertHasClickAction()
+                .performClick()
+
+        Assert.assertTrue(clicked)
+
     }
 }

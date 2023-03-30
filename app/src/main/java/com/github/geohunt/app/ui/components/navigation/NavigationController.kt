@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -98,7 +99,17 @@ fun NavigationController(
             else {
                 val uid = user.uid
 
-                ActiveHunts(id = uid)
+                val emptyScreenCallback: () -> Unit = {
+                    navController.navigate(Route.Explore.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
+
+                ActiveHunts(id = uid, emptyScreenCallback = emptyScreenCallback)
             }
         }
 
