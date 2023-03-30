@@ -25,7 +25,7 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
-import com.github.geohunt.app.ui.components.ChallengeView
+import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.profile.ProfilePage

@@ -23,12 +23,12 @@ data class NotFoundUser(val id: String): Exception("User $id not found.")
 
 class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase) : BaseLazyRef<User>() {
     override fun fetchValue(): Task<User> {
-        return db.dbUserRef.child(id).get().thenMap { data ->
-            if (!data.exists()) {
+        return db.dbUserRef.child(id).get().thenMap {
+            if (!it.exists()) {
                 throw NotFoundUser(id)
             }
 
-            val entry = data.getValue(UserEntry::class.java)!!
+            val entry = it.getValue(UserEntry::class.java)!!
 
             FirebaseUser(
                 uid = entry.uid,

@@ -31,7 +31,7 @@ import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.ui.rememberLazyRef
-import com.github.geohunt.app.utility.DateFormatUtils
+import com.github.geohunt.app.i18n.DateFormatUtils
 
 /**
  * Composable function that displays a challenge given as an argument
