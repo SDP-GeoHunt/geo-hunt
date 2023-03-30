@@ -14,6 +14,8 @@ class FirebaseUser(
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
+    override val numberOfFollowers: Int,
+    override val follows: Map<String, Boolean>,
     override var score: Double
 ) : User {
 
@@ -36,6 +38,8 @@ class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase)
                 profilePicture = db.getProfilePicture(entry.uid),
                 challenges = entry.challenges.map { db.getChallengeRefById(it) },
                 hunts = entry.hunts.map { db.getChallengeRefById(it) },
+                numberOfFollowers = entry.numberOfFollowers,
+                follows = entry.follows.withDefault { false },
                 score = entry.score
             )
         }
@@ -47,5 +51,7 @@ internal data class UserEntry(
     var displayName: String? = null,
     var challenges: List<String> = listOf(),
     var hunts: List<String> = listOf(),
+    var numberOfFollowers: Int = 0,
+    var follows: Map<String, Boolean> = emptyMap(),
     var score: Double = 0.0
 )

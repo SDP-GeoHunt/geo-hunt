@@ -10,7 +10,6 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.utility.*
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
@@ -119,7 +118,7 @@ class FirebaseDatabase(activity: Activity) : Database {
      * If the user already exists, it will override the user. Use with caution.
      */
     override fun insertNewUser(user: User): Task<Void> {
-        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(),0.0)
+        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(),score = 0.0)
 
         return dbUserRef.child(user.uid).setValue(userEntry)
     }

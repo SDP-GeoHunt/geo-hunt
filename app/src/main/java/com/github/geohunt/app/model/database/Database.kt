@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.Singleton
 import com.google.android.gms.tasks.Task
@@ -61,6 +62,7 @@ interface Database {
      */
     suspend fun unfollow(follower: String, followee: String)
 
+    /**
      * Inserts a new user into the database
      */
     fun insertNewUser(user: User): Task<Void>
