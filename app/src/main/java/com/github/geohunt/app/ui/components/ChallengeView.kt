@@ -165,9 +165,6 @@ private fun BellowImageButtons(
             var isLiked = liked
 
             IconButton(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .testTag("Likes"),
                 onClick = {
                     if (isLiked) {
                         database.removeUserLike(
@@ -195,6 +192,9 @@ private fun BellowImageButtons(
                     contentDescription = "Likes",
                     fontSize = fontSize,
                     iconSize = iconSize,
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(end = 15.dp)
                 )
             }
         }
