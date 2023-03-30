@@ -2,7 +2,6 @@ package com.github.geohunt.app.model.database.api
 
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
-import com.google.android.gms.tasks.Task
 
 /**
  * Define the profile information of a user as stored in the database
@@ -22,5 +21,4 @@ interface User {
     val hunts: List<LazyRef<Challenge>>
 
     var score: Number
-
 }

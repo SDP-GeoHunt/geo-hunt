@@ -1,7 +1,6 @@
 package com.github.geohunt.app.mocks
 
 import android.graphics.Bitmap
-import android.os.AsyncTask
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
