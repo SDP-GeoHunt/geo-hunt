@@ -233,7 +233,7 @@ class ChallengeViewTest {
                 challenge = challenge,
                 user = author,
                 //database
-                database  = database, //object : BaseMockDatabase() {},
+                database  = database,
                 {},
                 displayImage = { iid ->
                     future.complete(iid)
@@ -254,16 +254,11 @@ class ChallengeViewTest {
             .performClick()
         //////////////////////////////
 
-        //composeTestRule.waitUntil(10000) {
-        //    composeTestRule.onAllNodesWithTag("like_button")
-        //        .fetchSemanticsNodes()
-        //        .size == 1
-        //}
+        //TODO refactor later
 
         // Check if the initial number of likes is 0
-        composeTestRule.onNodeWithTag("like_count")
+        composeTestRule.onNodeWithContentDescription("Likes")
             .assertTextEquals("0")
-        //onNodeWithText("0")
             .assertExists()
 
         // Perform click that will add the like
@@ -273,7 +268,7 @@ class ChallengeViewTest {
             .performClick()
 
         // Check if the number of likes has increased to 1
-        composeTestRule.onNodeWithTag("like_count")
+        composeTestRule.onNodeWithContentDescription("Likes")
             //.onNodeWithText("1")
             .assertTextEquals("1")
             .assertExists()
@@ -285,7 +280,8 @@ class ChallengeViewTest {
             .performClick()
 
         // Check if the number of likes has decreased to 0
-        composeTestRule.onNodeWithText("0")
+        composeTestRule.onNodeWithContentDescription("Likes")
+            .assertTextEquals("0")
             .assertExists()
 
         // Click on the like button
