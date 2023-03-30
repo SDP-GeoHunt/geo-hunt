@@ -91,7 +91,6 @@ class FirebaseDatabase(activity: Activity) : Database {
             claims = listOf(),
             location = location
         )
-        Log.i("CHALLENGE_ID:", challengeId)
 
         // Get the reference to the thumbnail Bitmap and set the value
         val thumbnailBitmap = getThumbnailRefById(challengeId)
