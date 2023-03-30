@@ -7,7 +7,7 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import coil.Coil
 import coil.ImageLoader
 import coil.request.CachePolicy
-import com.github.geohunt.app.mocks.MockLazyRef
+import com.github.geohunt.app.mocks.MockProfilePicture
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
@@ -42,10 +42,10 @@ class LeaderboardTest {
         return object : User {
             override var displayName: String? = names[pos]
             override val uid: String = pos.toString()
-            override val profilePicture: LazyRef<Bitmap> = MockLazyRef("1") { throw NotImplementedError() }
+            override val profilePicture: LazyRef<Bitmap> = MockProfilePicture
             override val challenges: List<LazyRef<Challenge>> = listOf()
             override val hunts: List<LazyRef<Challenge>> = listOf()
-            override var score: Number = 1500 - pos * 100
+            override var score: Double = 1500.0 - pos * 100
         }
     }
 

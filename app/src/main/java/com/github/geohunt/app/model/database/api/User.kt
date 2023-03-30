@@ -20,5 +20,5 @@ interface User {
 
     val hunts: List<LazyRef<Challenge>>
 
-    var score: Number
+    var score: Double
 }
