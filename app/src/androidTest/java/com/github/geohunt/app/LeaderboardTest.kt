@@ -45,6 +45,8 @@ class LeaderboardTest {
             override val profilePicture: LazyRef<Bitmap> = MockProfilePicture
             override val challenges: List<LazyRef<Challenge>> = listOf()
             override val hunts: List<LazyRef<Challenge>> = listOf()
+            override val numberOfFollowers: Int = 10
+            override val follows: Map<String, Boolean> = emptyMap()
             override var score: Double = 1500.0 - pos * 100
         }
     }

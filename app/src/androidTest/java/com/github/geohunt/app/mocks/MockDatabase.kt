@@ -26,6 +26,18 @@ abstract class BaseMockDatabase : Database {
         throw NotImplementedError()
     }
 
+    override fun getFollowersOf(uid: String): Task<Map<String, Boolean>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun follow(follower: String, followee: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun unfollow(follower: String, followee: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun insertNewUser(user: User): Task<Void> {
         TODO("Not yet implemented")
     }
