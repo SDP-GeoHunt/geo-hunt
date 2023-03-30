@@ -1,6 +1,8 @@
 package com.github.geohunt.app.ui.components.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.activity.ComponentActivity
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -18,6 +20,12 @@ import com.github.geohunt.app.maps.GoogleMapView
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.ui.components.profile.ProfilePage
+import com.github.geohunt.app.utility.findActivity
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -35,9 +43,16 @@ enum class Route(val titleStringId: Int, val route: String, val icon: Composable
 
 @Composable
 fun NavigationController(navController: NavHostController, modifier: Modifier = Modifier) {
+    val authenticator = Authenticator.authInstance.get()
+    val activity: ComponentActivity = LocalContext.current.findActivity() as ComponentActivity
+
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
-            Text("Home")
+            Button(onClick = {
+                authenticator.signOut(activity)
+            }) {
+                Text("Sign out")
+            }
         }
         composable(Route.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
@@ -54,8 +69,20 @@ fun NavigationController(navController: NavHostController, modifier: Modifier = 
         composable(Route.ActiveHunts.route) {
             Text("Active hunts")
         }
+
+        // Profile
         composable(Route.Profile.route) {
-            Text("Profile")
+            val user = Authenticator.authInstance.get().user
+
+            if (user == null) {
+                Text("You are not logged in. Weird :(")
+            } else {
+                ProfilePage(id = user.uid)
+            }
+        }
+
+        composable("${Route.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+            it.arguments?.getString("userId")?.let { it1 -> ProfilePage(id = it1) }
         }
 
     }

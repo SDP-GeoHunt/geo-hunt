@@ -2,7 +2,6 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
 import android.graphics.Bitmap
-import android.util.Log
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
@@ -10,16 +9,18 @@ import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.utility.*
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
+import com.github.geohunt.app.utility.queryAs
+import com.github.geohunt.app.utility.thenMap
+import com.github.geohunt.app.utility.toMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.tasks.await
 import java.io.File
+import java.lang.Integer.max
 import java.time.LocalDateTime
 
 class FirebaseDatabase(activity: Activity) : Database {
@@ -28,7 +29,9 @@ class FirebaseDatabase(activity: Activity) : Database {
     private val currentUser : String = "8b8b0392-ba8b-11ed-afa1-0242ac120002"
 
     // Database references
+    internal val dbUserRef = database.child("users")
     internal val dbChallengeRef = database.child("challenges")
+    internal val dbFollowersRef = database.child("followers")
 
     // Storage references
     internal val storageImagesRef = storage.child("images")
@@ -38,9 +41,7 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     // Create the object pool in order to save some memory
     private val userRefById = DataPool<String, FirebaseUserRef> {
-        FirebaseUserRef(
-            id = it
-        )
+        FirebaseUserRef(it, this)
     }
 
     private val challengeRefById = DataPool<String, FirebaseChallengeRef> {
@@ -112,6 +113,24 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
+     * Inserts a new user with empty information into the database.
+     * This does not take into consideration profile picture, etc.
+     * If the user already exists, it will override the user. Use with caution.
+     */
+    override fun insertNewUser(user: User): Task<Void> {
+        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(),score = 0.0)
+
+        return dbUserRef.child(user.uid).setValue(userEntry)
+    }
+
+    /**
+     * Returns a lazy ref for a user
+     */
+    override fun getUser(uid: String): LazyRef<User> {
+        return getUserRefById(uid)
+    }
+
+    /**
      * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
      * 
      * @param cid the challenge unique identifier
@@ -133,12 +152,75 @@ class FirebaseDatabase(activity: Activity) : Database {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
     }
 
+    internal fun getProfilePicture(uid: String): FirebaseBitmapRef {
+        return imageRefById.get(FirebaseBitmapRef.getImageIdFromUserId(uid))
+    }
+
     internal fun getClaimRefById(id: String) : LazyRef<Claim> {
         TODO()
     }
 
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         TODO()
+    }
+
+    override fun getFollowersOf(uid: String): Task<Map<String, Boolean>> {
+        return dbFollowersRef.child(uid)
+            .get()
+            .thenMap { snapshot ->
+                snapshot.toMap<Boolean>().withDefault { false }
+            }
+    }
+
+    /**
+     * Updates the database to (un)follow the given users.
+     *
+     * @note To ensure easier data querying, the data must be synchronized at 3 places in the database :
+     *       - In the follower's follow list, the followee should be added/removed,
+     *       - The followee's counter should be incremented/decremented,
+     *       - The follower should be added/removed to the followee's follower list.
+     */
+    private suspend fun doFollow(follower: String, followee: String, follow: Boolean = true) {
+        // TODO Writes are not made atomically and should be batched instead
+        //      See https://github.com/SDP-GeoHunt/geo-hunt/issues/88#issue-1647852411
+
+        val followerListRef = dbUserRef.child(follower).child("followList")
+        val counterRef = dbUserRef.child(followee).child("numberOfFollowers")
+        val follows = dbFollowersRef.child(followee)
+
+        val defaultMap = emptyMap<String, Boolean>().withDefault { false }
+        val followerList = followerListRef.queryAs<Map<String, Boolean>>() ?: defaultMap
+        val followedCounter = counterRef.queryAs<Int>() ?: 0
+        val followsPairs = follows.queryAs<Map<String, Boolean>>() ?: defaultMap
+
+        // Abort if the user already follows the followee
+        // or if the user tries to unfollow someone not followed
+        if ((follow && followerList[followee] == true)
+            || (!follow && followerList[followee] != true)) {
+            return
+        }
+
+        Tasks.whenAll(
+            // Update the follower's follow list
+            followerListRef.setValue(if (follow) (followerList + (followee to true)) else followerList - followee),
+
+            // Update the follow counter of the followee
+            counterRef.setValue(if (follow) followedCounter + 1 else max(followedCounter - 1, 0)),
+
+            // Update the follows relationship
+            follows.setValue(if (follow) followsPairs + (follower to true) else followsPairs - follower)
+        ).await()
+    }
+
+    /**
+     * Makes the first user with the given UID follow the second user.
+     */
+    override suspend fun follow(follower: String, followee: String) {
+        doFollow(follower, followee, follow = true)
+    }
+
+    override suspend fun unfollow(follower: String, followee: String) {
+        doFollow(follower, followee, follow = false)
     }
 }
 

@@ -20,5 +20,17 @@ interface User {
 
     val hunts: List<LazyRef<Challenge>>
 
-    var score: Number
+    /**
+     * The number of users that follow this user.
+     */
+    val numberOfFollowers: Int
+
+    /**
+     * For a given UID, returns true if and only if this user follows the user with the given UID.
+     *
+     * By default, a user follows nobody, hence it returns false on all keys.
+     */
+    val follows: Map<String, Boolean>
+
+    var score: Double
 }

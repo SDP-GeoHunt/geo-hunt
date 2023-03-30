@@ -5,14 +5,33 @@ import com.github.geohunt.app.utility.quantizeToLong
 import com.google.firebase.database.Exclude
 import java.nio.ByteBuffer
 import java.util.zip.CRC32
-import kotlin.math.absoluteValue
-import kotlin.math.roundToLong
+import java.lang.Math.toRadians
+import kotlin.math.*
 
 /**
  * Represent the location on earth using the latitude and longitude as double valued numbers
  */
 data class Location(var latitude: Double = 0.0,
                     var longitude: Double = 0.0) {
+    /**
+     * Computes the distance in kilometers to another Location
+     * Uses the haversine formula to perform the calculation (https://en.wikipedia.org/wiki/Haversine_formula)
+     * @param that Location to which we want to calculate the distance
+     */
+    fun distanceTo(that: Location): Double {
+        val lat1 = toRadians(this.latitude)
+        val lat2 = toRadians(that.latitude)
+        val dLat = toRadians(that.latitude - this.latitude)
+        val dLon = toRadians(that.longitude - this.longitude)
+
+        val a = sin(dLat / 2) * sin(dLat/2) +
+                (cos(lat1) * cos(lat2) * sin(dLon/2) * sin(dLon/2))
+
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return c * EARTH_MEAN_RADIUS
+    }
+
     /**
      * Convert the current location to the degrees-minutes-seconds more standardized notation
      */
@@ -53,13 +72,6 @@ data class Location(var latitude: Double = 0.0,
         return crc32.value.toString(16)
     }
 
-    companion object {
-        /**
-         * Length of the string representing the coarse hash
-         */
-        const val COARSE_HASH_SIZE = (2 * Long.SIZE_BYTES) / 2;
-    }
-
     @Exclude
     private fun getDMS(v: Double, positive: Char, negative: Char) : String {
         var value = v.absoluteValue
@@ -74,6 +86,17 @@ data class Location(var latitude: Double = 0.0,
         return "$degree° $minutes' ${String.format("%.2f", value)}\"${if (v > 0.0) positive else negative}"
     }
 
+    companion object {
+        /**
+         * Mean earth radius in kilometers, used to compute the distance between two Locations
+         */
+        private const val EARTH_MEAN_RADIUS = 6371
+        
+         /**
+         * Length of the string representing the coarse hash
+         */
+        const val COARSE_HASH_SIZE = (2 * Long.SIZE_BYTES) / 2
+    }
 }
 
 
