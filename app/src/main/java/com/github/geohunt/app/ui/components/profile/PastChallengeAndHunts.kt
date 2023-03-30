@@ -25,6 +25,9 @@ enum class ProfileTabs(val tabName: Int, val tabContent: ComposableFun) {
     PastHunts(R.string.hunts, { PastHuntsContent(it) })
 }
 
+/**
+ * Shows a tab view of two different tabs, for past challenges and past hunts
+ */
 @Composable
 fun PastChallengeAndHunts(user: User) {
     var currentTab by remember { mutableStateOf(ProfileTabs.PastChallenges) }
@@ -45,16 +48,25 @@ fun PastChallengeAndHunts(user: User) {
     }
 }
 
+/**
+ * A grid for showing past challenges
+ */
 @Composable
 fun PastChallengesContent(user: User) {
     MakeGrid(testTag = "past-challenges", challenges = user.challenges, whenEmptyText = stringResource(id = R.string.no_past_challenges))
 }
 
+/**
+ * A grid for showing past hunts
+ */
 @Composable
 fun PastHuntsContent(user: User) {
     MakeGrid(testTag = "past-hunts", challenges = user.hunts, whenEmptyText = stringResource(id = R.string.no_past_hunts))
 }
 
+/**
+ * A more general grid used to display challenges
+ */
 @Composable
 private fun MakeGrid(testTag: String, challenges: List<LazyRef<Challenge>>, whenEmptyText: String) {
     Box(modifier = Modifier.testTag(testTag)) {
