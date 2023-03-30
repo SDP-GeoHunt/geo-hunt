@@ -8,7 +8,7 @@ import com.github.geohunt.app.mocks.MockUser
 import org.junit.Rule
 import org.junit.Test
 
-class PastChallengesAndHunts {
+class PastChallengesAndHuntsTest {
     @get:Rule
     val testRule = createComposeRule()
 
