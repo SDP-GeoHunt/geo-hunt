@@ -76,7 +76,7 @@ fun NavigationController(
                 }
 
                 Button(onClick = {
-                    navController.navigate("challenge-view/98d755ad-NQfISf2o_QzWLjCpedB")
+                    navController.navigate("challenge-view/98d755ad-NRrhrThHEiOx3ph_VWP")
                 }) {
                     Text(text = "Open challenge view")
                 }

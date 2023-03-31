@@ -39,7 +39,7 @@ Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor vo
 fun ChallengeView(
     challenge: Challenge,
     onButtonBack: () -> Unit,
-    displayImage: (String) -> Unit
+    displayImage: (String) -> Unit,
 ) {
     val lazyState = rememberLazyListState()
     val transition = updateTransition(
