@@ -44,6 +44,14 @@ interface Database {
     fun getChallengeById(cid: String): LazyRef<Challenge>
 
     /**
+     * Retrieve a image with a given ID and return a [LazyRef] upon completion
+     *
+     * @param iid the image id, this may depend for image type
+     * @return A [LazyRef] linked to the result of the operation
+     */
+    fun getImageById(iid: String): LazyRef<Bitmap>
+
+    /**
      * Retrieve a list of challenges surrounding a particular location. Notice that the exact number of
      * challenges may depend on the fetched region
      *

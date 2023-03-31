@@ -36,8 +36,8 @@ class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase)
                 uid = entry.uid,
                 displayName = entry.displayName,
                 profilePicture = db.getProfilePicture(entry.uid),
-                challenges = entry.challenges.map { db.getChallengeRefById(it) },
-                hunts = entry.hunts.map { db.getChallengeRefById(it) },
+                challenges = entry.challenges.map { db.getChallengeById(it) },
+                hunts = entry.hunts.map { db.getChallengeById(it) },
                 numberOfFollowers = entry.numberOfFollowers,
                 follows = entry.follows.withDefault { false },
                 score = entry.score

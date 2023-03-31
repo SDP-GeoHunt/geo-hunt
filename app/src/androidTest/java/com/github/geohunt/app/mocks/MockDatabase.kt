@@ -23,6 +23,10 @@ abstract class BaseMockDatabase : Database {
         throw NotImplementedError()
     }
 
+    override fun getImageById(iid: String): LazyRef<Bitmap> {
+        TODO("Not yet implemented")
+    }
+
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         throw NotImplementedError()
     }

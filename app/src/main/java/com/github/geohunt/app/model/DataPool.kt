@@ -1,5 +1,7 @@
 package com.github.geohunt.app.model
 
+import android.util.Log
+
 /**
  * A DataPool is a container for instances of type T that can be retrieved using a key of type K.
  * If an instance with the given key already exists in the pool, it is returned. Otherwise, a new
@@ -26,5 +28,12 @@ class DataPool<K, T>(private val factory: (K) -> T) {
         val newInstance = factory(key)
         map[key] = newInstance
         return newInstance
+    }
+
+    fun register(key: K, value: T) {
+        if (map.containsKey(key)) {
+            Log.w("GeoHunt", "Register an object more than once in the DataPool with key $key")
+        }
+        map[key] = value
     }
 }

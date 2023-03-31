@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
-
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,12 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
+import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.rememberLazyRef
-import com.github.geohunt.app.utility.DateFormatUtils
 import com.github.geohunt.app.utility.findActivity
 
 /**
@@ -47,7 +46,7 @@ import com.github.geohunt.app.utility.findActivity
  * @param challenge The challenge to display
  */
 @Composable
-fun Challenge(challenge: Challenge) {
+fun Challenge(challenge: Challenge, fnClaimCallback: (String) -> Unit = {}) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column (horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()) {
@@ -56,7 +55,7 @@ fun Challenge(challenge: Challenge) {
 
             ChallengeImage(thumbnail = challenge.thumbnail)
 
-            ClaimButton(challenge = challenge)
+            ClaimButton(challenge = challenge, fnClaimCallback)
         }
 
         ChallengeInformation(challenge)
@@ -68,22 +67,13 @@ fun Challenge(challenge: Challenge) {
 }
 
 @Composable
-fun ClaimButton(challenge: Challenge) {
-    var showClaimForm by remember {
-        mutableStateOf(false)
-    }
-
-    Button(onClick = { showClaimForm = true }) {
+fun ClaimButton(challenge: Challenge, fnClaimCallback: (String) -> Unit) {
+    Button(onClick = { fnClaimCallback(challenge.cid) }) {
         Row (verticalAlignment = Alignment.CenterVertically){
             Text(text = stringResource(id = R.string.challenge_claim))
             Icon(painter = painterResource(id = R.drawable.radar_icon),
                     contentDescription = "Radar icon of claim button")
         }
-    }
-
-    if (showClaimForm) {
-        ClaimChallenge(database = FirebaseDatabase(LocalContext.current.findActivity()),
-            challenge = challenge)
     }
 }
 

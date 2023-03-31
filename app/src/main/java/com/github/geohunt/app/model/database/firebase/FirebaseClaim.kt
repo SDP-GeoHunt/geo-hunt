@@ -17,7 +17,12 @@ data class FirebaseClaim(
     override val user: LazyRef<User>,
     override val time: LocalDateTime,
     override val location: Location,
-) : Claim
+) : Claim {
+    override val image: LazyRef<Bitmap>
+        get() = TODO("Not yet implemented")
+    override val distance: Long
+        get() = TODO("Not yet implemented")
+}
 
 class FirebaseClaimRef(
     override val id: String,
@@ -40,7 +45,7 @@ class FirebaseClaimRef(
                     id = id,
                     user = database.getUserRefById(claimEntry.user!!),
                     time = DateUtils.localFromUtcIso8601(claimEntry.time!!),
-                    challenge = database.getChallengeRefById(claimEntry.challenge?.cid!!),
+                    challenge = database.getChallengeById(claimEntry.challenge?.cid!!),
                     location =  claimEntry.location!!,
                 )
             }
@@ -55,5 +60,6 @@ internal data class ClaimEntry(
     var user: String? = null,
     var time: String? = null,
     var challenge: Challenge? = null,
-    var location: Location? = null
+    var location: Location? = null,
+    val distance: Long? = null,
 )

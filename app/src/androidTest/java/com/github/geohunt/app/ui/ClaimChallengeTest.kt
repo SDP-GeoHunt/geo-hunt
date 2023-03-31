@@ -142,7 +142,9 @@ class ClaimChallengeTest {
                     user = MockLazyRef<User>("uid") {  TODO() },
                     challenge = MockLazyRef<Challenge>("cid") { TODO() },
                     location = location,
-                    time = LocalDateTime.now()
+                    time = LocalDateTime.now(),
+                    image = MockLazyRef("iid") { TODO() },
+                    distance = 5
                 )
                 futureClaim.complete(claim)
                 return taskClaimCompletionSource.task
