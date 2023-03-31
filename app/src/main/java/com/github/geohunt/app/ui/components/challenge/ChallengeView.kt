@@ -5,6 +5,7 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -46,7 +47,6 @@ fun ChallengeView(
         remember { derivedStateOf { lazyState.firstVisibleItemIndex != 0 } },
         label = "Image size transition"
     )
-
     val imageAspectRatio by transition.animateFloat(label = "Animate image size ratio") { isScrolling ->
         if (isScrolling.value) 1.8f else 1.0f
     }
@@ -73,31 +73,41 @@ fun ChallengeView(
 
             HorizontalDivider(padding = 2.dp)
 
-            LazyColumn(
-                state = lazyState,
-                modifier = Modifier.fillMaxHeight()
-            ) {
-                item {
-                    Spacer(modifier = Modifier.height(1.dp))
-                }
-
-                item {
-                    MainUserView(challenge = challenge)
-                    HorizontalDivider(padding = 2.dp)
-                }
-
-                item {
-                    ShowChallengeDescription(lorumIpsum)
-                }
-
-                items(challenge.claims.size) { index: Int ->
-                    ClaimCard(claimRef = challenge.claims[index], displayImage = displayImage)
-                }
-            }
+            LazyClaimList(lazyState, challenge, displayImage)
         }
 
         // Go back button (for navigation)
         GoBackBtn(onButtonBack)
+    }
+}
+
+@Composable
+private fun LazyClaimList(
+    lazyState: LazyListState,
+    challenge: Challenge,
+    displayImage: (String) -> Unit
+) {
+
+    LazyColumn(
+        state = lazyState,
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        item {
+            Spacer(modifier = Modifier.height(1.dp))
+        }
+
+        item {
+            MainUserView(challenge = challenge)
+            HorizontalDivider(padding = 2.dp)
+        }
+
+        item {
+            ShowChallengeDescription(lorumIpsum)
+        }
+
+        items(challenge.claims.size) { index: Int ->
+            ClaimCard(claimRef = challenge.claims[index], displayImage = displayImage)
+        }
     }
 }
 
