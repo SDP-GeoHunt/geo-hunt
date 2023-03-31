@@ -11,27 +11,42 @@ import com.github.geohunt.app.model.database.api.User
 class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
     private val user: FirebaseUser = firebaseUser
 
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
     override var displayName: String?
         get() = user.displayName
         set(value) {
             user.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(value).build())
         }
 
-    private val db = Database.databaseFactory.get()
-
     override val uid get() = user.uid
-    override val profilePicture: LazyRef<Bitmap>
-        get() = TODO("Not yet implemented (need database)")
 
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
+    override val profilePicture: LazyRef<Bitmap>
+        get() = throw java.lang.UnsupportedOperationException()
+
+
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
     override val challenges: List<LazyRef<Challenge>>
-        get() = TODO("Not yet implemented (need database)")
+        get() = throw java.lang.UnsupportedOperationException()
+
+
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
     override val hunts: List<LazyRef<Challenge>>
-        get() = TODO("Not yet implemented (need database)")
+        get() = throw java.lang.UnsupportedOperationException()
+
+
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
     override val numberOfFollowers: Int
-        get() = TODO("Not yet implemented (need database)")
+        get() = throw java.lang.UnsupportedOperationException()
+
+
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
     override val follows: Map<String, Boolean>
-        get() = TODO("Not yet implemented (need database)")
+        get() = throw java.lang.UnsupportedOperationException()
+
+
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
     override var score: Double
-        get() = TODO("Not yet implemented (need database)")
-        set(value) {}
+        get() = throw java.lang.UnsupportedOperationException()
+        set(value) { throw java.lang.UnsupportedOperationException() }
 }
