@@ -20,6 +20,11 @@ class ChallengeTest {
     val testRule = createComposeRule()
 
     @Before
+    fun setup() {
+        FirebaseEmulator.init()
+    }
+
+    @Before
     fun setupComposable() {
         FirebaseEmulator.init()
         testRule.setContent {

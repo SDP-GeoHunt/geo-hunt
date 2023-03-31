@@ -57,71 +57,76 @@ fun ClaimCard(claimRef: LazyRef<Claim>, displayImage: (String) -> Unit) {
                     }
                 }
 
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp, vertical = 2.dp)
-                        .height(39.dp)
-                ) {
-                    FetchComponent(lazyRef = { claim.user }) { user ->
-                        AsyncImage(
-                            contentDescription = "User",
-                            modifier = Modifier
-                                .size(35.dp)
-                                .clip(CircleShape)
-                        ) {
-                            user.profilePicture
-                        }
+                UserView(claim)
+            }
+        }
+    }
+}
 
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Text(
-                                text = user.name,
-                                fontSize = 16.sp
-                            )
+@Composable
+private fun UserView(claim: Claim) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 20.dp, vertical = 2.dp)
+            .height(39.dp)
+    ) {
+        FetchComponent(lazyRef = { claim.user }) { user ->
+            AsyncImage(
+                contentDescription = "User",
+                modifier = Modifier
+                    .size(35.dp)
+                    .clip(CircleShape)
+            ) {
+                user.profilePicture
+            }
 
-                            Row {
-                                Text(
-                                    text = DateFormatUtils.getElapsedTimeString(
-                                        claim.time,
-                                        R.string.claimed_format
-                                    ) + " · ",
-                                    fontSize = 11.sp,
-                                    modifier = Modifier.padding(start = 10.dp),
-                                    color = MaterialTheme.colors.primary
-                                )
+            Spacer(modifier = Modifier.width(10.dp))
+            Column {
+                Text(
+                    text = user.name,
+                    fontSize = 16.sp
+                )
 
-                                LabelledIcon(
-                                    text = claim.distance.toSuffixedString() + "m",
-                                    painter = painterResource(id = R.drawable.ruler_measure),
-                                    contentDescription = "Distance",
-                                    fontColor = MaterialTheme.colors.primary,
-                                    fontSize = 11.sp,
-                                    iconSize = 11.dp
-                                )
-                            }
-                        }
+                Row {
+                    Text(
+                        text = DateFormatUtils.getElapsedTimeString(
+                            claim.time,
+                            R.string.claimed_format
+                        ) + " · ",
+                        fontSize = 11.sp,
+                        modifier = Modifier.padding(start = 10.dp),
+                        color = MaterialTheme.colors.primary
+                    )
 
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Column(
-                            modifier = Modifier.padding(horizontal = 20.dp)
-                        ) {
-                            Text(
-                                text = "+300",
-                                fontSize = 16.sp,
-                                color = Color(R.color.md_theme_light_tertiary)
-                            )
-
-                            LabelledIcon(
-                                text = user.score.toInt().toSuffixedString(),
-                                painter = painterResource(id = R.drawable.cards_diamond),
-                                contentDescription = "Total points",
-                                fontSize = 13.sp,
-                                iconSize = 13.dp
-                            )
-                        }
-                    }
+                    LabelledIcon(
+                        text = claim.distance.toSuffixedString() + "m",
+                        painter = painterResource(id = R.drawable.ruler_measure),
+                        contentDescription = "Distance",
+                        fontColor = MaterialTheme.colors.primary,
+                        fontSize = 11.sp,
+                        iconSize = 11.dp
+                    )
                 }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Column(
+                modifier = Modifier.padding(horizontal = 20.dp)
+            ) {
+                Text(
+                    text = "+300",
+                    fontSize = 16.sp,
+                    color = Color(R.color.md_theme_light_tertiary)
+                )
+
+                LabelledIcon(
+                    text = user.score.toInt().toSuffixedString(),
+                    painter = painterResource(id = R.drawable.cards_diamond),
+                    contentDescription = "Total points",
+                    fontSize = 13.sp,
+                    iconSize = 13.dp
+                )
             }
         }
     }

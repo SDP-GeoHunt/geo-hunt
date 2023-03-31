@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -27,11 +26,11 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.maps.GoogleMapView
 import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
-import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.utility.findActivity
@@ -77,7 +76,7 @@ fun NavigationController(
                 }
 
                 Button(onClick = {
-                    navController.navigate("challenge-view/98d755ad-NQfISf2o_QzWLjCpedB")
+                    navController.navigate("challenge-view/98d755ad-NRrhrThHEiOx3ph_VWP")
                 }) {
                     Text(text = "Open challenge view")
                 }
@@ -105,26 +104,7 @@ fun NavigationController(
             )
         }
         composable(Route.ActiveHunts.route) {
-            val user = Authenticator.authInstance.get().user
-
-            if(user == null) {
-                Text("Something went terribly wrong :/")
-            }
-            else {
-                val uid = user.uid
-
-                val emptyScreenCallback: () -> Unit = {
-                    navController.navigate(Route.Explore.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }
-
-                ActiveHunts(id = uid, emptyScreenCallback = emptyScreenCallback)
-            }
+            Text("Active hunts")
         }
 
         // Profile
