@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components.challengeview
+package com.github.geohunt.app.ui.components.challenge
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,8 +22,8 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.LabelledIcon
-import com.github.geohunt.app.utility.DateFormatUtils
-import com.github.geohunt.app.utility.toSuffixedString
+import com.github.geohunt.app.i18n.DateFormatUtils
+import com.github.geohunt.app.i18n.toSuffixedString
 
 @Composable
 fun ClaimCard(claimRef: LazyRef<Claim>, displayImage: (String) -> Unit) {
@@ -91,7 +91,7 @@ fun ClaimCard(claimRef: LazyRef<Claim>, displayImage: (String) -> Unit) {
                                 )
 
                                 LabelledIcon(
-                                    text = claim.distance.toInt().toSuffixedString() + "m",
+                                    text = claim.distance.toSuffixedString() + "m",
                                     painter = painterResource(id = R.drawable.ruler_measure),
                                     contentDescription = "Distance",
                                     fontColor = MaterialTheme.colors.primary,

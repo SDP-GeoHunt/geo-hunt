@@ -21,14 +21,14 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
-import java.time.LocalDateTime
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.ui.theme.geoHuntRed
-import com.github.geohunt.app.utility.DateFormatUtils
+import java.time.LocalDateTime
 
 /**
  * The preview of a challenge, contains basic information about the challenge

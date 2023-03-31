@@ -14,7 +14,9 @@ class FirebaseUser(
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
-    override var score: Number  
+    override val numberOfFollowers: Int,
+    override val follows: Map<String, Boolean>,
+    override var score: Double
 ) : User {
 
 }
@@ -23,12 +25,12 @@ data class NotFoundUser(val id: String): Exception("User $id not found.")
 
 class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase) : BaseLazyRef<User>() {
     override fun fetchValue(): Task<User> {
-        return db.dbUserRef.child(id).get().thenMap { data ->
-            if (!data.exists()) {
+        return db.dbUserRef.child(id).get().thenMap {
+            if (!it.exists()) {
                 throw NotFoundUser(id)
             }
 
-            val entry = data.getValue(UserEntry::class.java)!!
+            val entry = it.getValue(UserEntry::class.java)!!
 
             FirebaseUser(
                 uid = entry.uid,
@@ -36,6 +38,8 @@ class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase)
                 profilePicture = db.getProfilePicture(entry.uid),
                 challenges = entry.challenges.map { db.getChallengeById(it) },
                 hunts = entry.hunts.map { db.getChallengeById(it) },
+                numberOfFollowers = entry.numberOfFollowers,
+                follows = entry.follows.withDefault { false },
                 score = entry.score
             )
         }
@@ -47,5 +51,7 @@ internal data class UserEntry(
     var displayName: String? = null,
     var challenges: List<String> = listOf(),
     var hunts: List<String> = listOf(),
-    var score: Int = 0
+    var numberOfFollowers: Int = 0,
+    var follows: Map<String, Boolean> = emptyMap(),
+    var score: Double = 0.0
 )

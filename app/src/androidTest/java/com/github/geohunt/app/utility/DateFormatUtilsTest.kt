@@ -3,6 +3,7 @@ package com.github.geohunt.app.utility
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import com.github.geohunt.app.R
+import com.github.geohunt.app.i18n.DateFormatUtils
 import org.hamcrest.Matchers.equalTo
 import org.junit.Rule
 import org.junit.Test

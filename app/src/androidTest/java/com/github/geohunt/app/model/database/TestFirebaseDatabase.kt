@@ -93,6 +93,6 @@ class TestFirebaseDatabase {
         val get = cf.get()
         assert(get.uid == "1")
         assert(get.displayName == "Debug user")
-        assert(get.score == 123)
+        assert(get.score == 123.0)
     }
 }

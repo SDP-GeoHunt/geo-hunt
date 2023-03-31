@@ -2,25 +2,20 @@ package com.github.geohunt.app.ui.components
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.widget.BaseExpandableListAdapter
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.navigation.testing.TestNavHostController
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
 import com.github.geohunt.app.mocks.*
-import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.components.navigation.NavigationBar
-import com.github.geohunt.app.ui.components.navigation.NavigationController
+import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -29,7 +24,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class ChallengeViewTest {
@@ -49,13 +43,13 @@ class ChallengeViewTest {
 
         val author = MockUser(
             displayName = "John wick",
-            score = 48723,
+            score = 48723.0,
             profilePicture = InstantLazyRef("izufiozef", profilePicture)
         )
 
         val author2 = MockUser(
             displayName = "John Williams",
-            score = 1248,
+            score = 1248.0,
             profilePicture = InstantLazyRef("izufiozef", profilePicture)
         )
 
@@ -136,7 +130,7 @@ class ChallengeViewTest {
 
         val author = MockUser(
             displayName = "John wick",
-            score = 48723
+            score = 48723.0
         )
 
         val challenge = MockChallenge(

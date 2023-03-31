@@ -1,11 +1,7 @@
-package com.github.geohunt.app.utility
+package com.github.geohunt.app.i18n
 
 import android.icu.text.RelativeDateTimeFormatter
-import android.icu.text.RelativeDateTimeFormatter.Direction
-import android.icu.text.RelativeDateTimeFormatter.RelativeUnit
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.R
 import java.time.Duration
@@ -43,15 +39,30 @@ object DateFormatUtils {
 
         val raw = when {
             duration.toDays() > 182 ->
-                fmt.format((duration.toDays() + 182) / 365, Direction.LAST, RelativeUnit.YEARS)
+                fmt.format((duration.toDays() + 182) / 365,
+                    RelativeDateTimeFormatter.Direction.LAST,
+                    RelativeDateTimeFormatter.RelativeUnit.YEARS
+                )
             duration.toDays() > 29 ->
-                fmt.format((duration.toDays() + 15) / 30, Direction.LAST, RelativeUnit.MONTHS)
+                fmt.format((duration.toDays() + 15) / 30,
+                    RelativeDateTimeFormatter.Direction.LAST,
+                    RelativeDateTimeFormatter.RelativeUnit.MONTHS
+                )
             duration.toDays() > 0 ->
-                fmt.format(duration.toDays(), Direction.LAST, RelativeUnit.DAYS)
+                fmt.format(duration.toDays(),
+                    RelativeDateTimeFormatter.Direction.LAST,
+                    RelativeDateTimeFormatter.RelativeUnit.DAYS
+                )
             duration.toHours() > 0 ->
-                fmt.format(duration.toHours(), Direction.LAST, RelativeUnit.HOURS)
+                fmt.format(duration.toHours(),
+                    RelativeDateTimeFormatter.Direction.LAST,
+                    RelativeDateTimeFormatter.RelativeUnit.HOURS
+                )
             duration.toMinutes() > 3 ->
-                fmt.format((duration.toMinutes() / 5) * 5, Direction.LAST, RelativeUnit.MINUTES)
+                fmt.format((duration.toMinutes() / 5) * 5,
+                    RelativeDateTimeFormatter.Direction.LAST,
+                    RelativeDateTimeFormatter.RelativeUnit.MINUTES
+                )
             else -> stringResource(id = R.string.just_now)
         }
         return stringResource(id = prefixStringId, (raw ?: "???"))
@@ -84,9 +95,8 @@ object DateFormatUtils {
             }
         }
     }
-
 }
 
-private fun RelativeDateTimeFormatter.format(quantity: Long, direction: Direction, timeUnit: RelativeUnit): String? {
+private fun RelativeDateTimeFormatter.format(quantity: Long, direction: RelativeDateTimeFormatter.Direction, timeUnit: RelativeDateTimeFormatter.RelativeUnit): String? {
     return this.format(quantity.toDouble(), direction, timeUnit)
 }

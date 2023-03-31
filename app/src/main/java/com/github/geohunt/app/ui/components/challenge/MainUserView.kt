@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components.challengeview
+package com.github.geohunt.app.ui.components.challenge
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,8 +20,8 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.LabelledIcon
 import com.github.geohunt.app.ui.components.user.ProfileIcon
-import com.github.geohunt.app.utility.DateFormatUtils
-import com.github.geohunt.app.utility.toSuffixedString
+import com.github.geohunt.app.i18n.DateFormatUtils
+import com.github.geohunt.app.i18n.toSuffixedString
 
 @Composable
 internal fun MainUserView(challenge: Challenge) {

@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components.challengeview
+package com.github.geohunt.app.ui.components.challenge
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,55 +17,35 @@ import com.github.geohunt.app.ui.components.LabelledIcon
 
 @Composable
 internal fun BellowImageButtons(challenge: Challenge) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(15.dp, 5.dp)
-    ) {
+    Row(modifier = Modifier.fillMaxWidth().padding(15.dp, 5.dp)) {
         val fontSize = 18.sp
         val iconSize = 22.dp
 
         LabelledIcon(
             text = "42",
             painter = painterResource(R.drawable.likes),
-            contentDescription = "Likes",
-            fontSize = fontSize,
-            iconSize = iconSize
-        )
+            contentDescription = "Likes", fontSize = fontSize, iconSize = iconSize)
 
-        Spacer(
-            modifier = Modifier
-                .width(18.dp)
-                .weight(0.2f)
-        )
+        Spacer(modifier = Modifier.width(18.dp).weight(0.2f))
 
         LabelledIcon(
             text = challenge.claims.size.toString(),
             painter = painterResource(R.drawable.target_arrow),
-            contentDescription = "Claims",
-            fontSize = fontSize,
-            iconSize = iconSize
-        )
+            contentDescription = "Claims", fontSize = fontSize, iconSize = iconSize)
 
-        Spacer(
-            modifier = Modifier
-                .width(18.dp)
-                .weight(0.2f)
-        )
+        Spacer(modifier = Modifier.width(18.dp).weight(0.2f))
 
         LabelledIcon(
             text = "+25",
             painter = painterResource(R.drawable.cards_diamond),
             tint = Color(R.color.md_theme_light_tertiary),
-            contentDescription = "Points",
-            fontSize = fontSize,
-            iconSize = iconSize
+            contentDescription = "Scores", fontSize = fontSize, iconSize = iconSize
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
         Button(
-            modifier = Modifier
-                .size(80.dp, 28.dp)
-                .align(Alignment.CenterVertically),
+            modifier = Modifier.size(80.dp, 28.dp).align(Alignment.CenterVertically),
             contentPadding = PaddingValues(2.dp, 2.dp),
             shape = RoundedCornerShape(12.dp),
             onClick = { /*TODO*/ })

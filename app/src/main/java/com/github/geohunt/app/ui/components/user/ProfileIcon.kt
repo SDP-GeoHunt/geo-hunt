@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.components.AsyncImage
 
 /**
  * Creates a round profile icon of the given size.
@@ -23,6 +22,20 @@ import com.github.geohunt.app.ui.components.AsyncImage
  */
 @Composable
 fun ProfileIcon(user: User, modifier: Modifier = Modifier, size: Dp = 60.dp) {
+//    val profilePicture = rememberLazyRef { user.profilePicture }
+//
+//    AsyncImage(
+//        model = ImageRequest.Builder(LocalContext.current)
+//            .data(profilePicture.value)
+//            .crossfade(true)
+//            .build(),
+//        contentDescription = "${user.name} profile picture",
+//        contentScale = ContentScale.Crop,
+//        modifier = modifier
+//            .aspectRatio(1f)
+//            .padding(8.dp)
+//            .clip(CircleShape)
+//    )
 //    AsyncImage(
 //        contentDescription = "${user.name} profile picture",
 //        modifier = modifier.size(size)

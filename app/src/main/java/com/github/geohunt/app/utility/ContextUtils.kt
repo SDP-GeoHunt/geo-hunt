@@ -3,6 +3,9 @@ package com.github.geohunt.app.utility
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Searches up the context hierarchy to find the [Activity] associated with this [Context].
@@ -17,4 +20,14 @@ fun Context.findActivity() : Activity {
         context = context.baseContext
     }
     throw IllegalStateException("Context.findActivity should be called in the context of an Activity")
+}
+
+fun Context.createImageFile(): File {
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    return File.createTempFile(
+        imageFileName, /* prefix */
+        ".jpg", /* suffix */
+        externalCacheDir /* directory */
+    )
 }

@@ -3,10 +3,11 @@ package com.github.geohunt.app.model.database
 import android.app.Activity
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.Singleton
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
@@ -27,6 +28,12 @@ interface Database {
         location: Location,
         expirationDate: LocalDateTime? = null
     ): Task<Challenge>
+
+    fun submitClaim(
+        thumbnail: Bitmap,
+        challenge: Challenge,
+        location: Location,
+    ): Task<Claim>
 
     /**
      * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
@@ -51,6 +58,24 @@ interface Database {
      * @param location the location where we should search for challenges
      */
     fun getNearbyChallenge(location: Location): Task<List<Challenge>>
+
+    /**
+     * Returns the followers of the user with the given user id.
+     *
+     * @param uid The user ID.
+     * @return A map where keys that are mapped to true indicates that it is a follower.
+     */
+    fun getFollowersOf(uid: String): Task<Map<String, Boolean>>
+
+    /**
+     * Makes the first user with the given uid follow the second user.
+     */
+    suspend fun follow(follower: String, followee: String)
+
+    /**
+     * Makes the first user with the given uid unfollow the second user.
+     */
+    suspend fun unfollow(follower: String, followee: String)
 
     /**
      * Inserts a new user into the database

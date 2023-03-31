@@ -1,40 +1,42 @@
-package com.github.geohunt.app
+package com.github.geohunt.app.maps
 
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.rule.GrantPermissionRule
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiSelector
-import org.hamcrest.CoreMatchers.notNullValue
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class GoogleMapsActivityTest {
-    @get:Rule
-    val composeTestRule = createAndroidComposeRule<GoogleMapsActivity>()
+class GoogleMapViewTest {
+    private val epflCoordinates = LatLng(46.519585, 6.5684919)
 
     @get:Rule
-    val permissionRuleFineLocation: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val permissionRuleCoarseLocation: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
-
-    @Test
-    fun testMapDisplayed() {
-        onView(withId(R.id.map_container_view)).check(matches(isDisplayed()))
+    @Before
+    fun setup() {
+        composeTestRule.setContent {
+            GoogleMapView(
+                Modifier.testTag("Maps"),
+                cameraPositionState = CameraPositionState(CameraPosition(epflCoordinates, 15f, 0f, 0f)),
+            )
+        }
     }
 
     @Test
-    fun testMapIsNotNull() {
-        onView(withId(R.id.map_container_view)).check(matches(notNullValue()))
+    fun testMapIsDisplayed() {
+        composeTestRule.onNodeWithTag("Maps").assertExists()
     }
 
     @Test
