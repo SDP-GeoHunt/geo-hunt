@@ -74,6 +74,12 @@ interface Database {
      */
     fun isUserLiked(uid: String, cid: String): LazyRef<Boolean>
 
+    /**
+     * Returns a list of challenges that the user with the given user ID has liked
+     */
+    fun getLikesOf(uid: String): LazyRef<List<Challenge>>
+
+
     companion object {
 
         /**
