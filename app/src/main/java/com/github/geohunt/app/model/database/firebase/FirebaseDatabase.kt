@@ -29,7 +29,6 @@ class FirebaseDatabase(activity: Activity) : Database {
     // Database references
     internal val dbChallengeRef = database.child("challenges")
     internal val dbUserRef = database.child("users")
-    internal val dbLikesRef = database.child("likes")
 
     // Storage references
     internal val storageImagesRef = storage.child("images")
@@ -180,48 +179,26 @@ class FirebaseDatabase(activity: Activity) : Database {
             .thenMap { it.toImmutableList() }
     }
 
-    override fun getLikesOf(uid: String): LazyRef<List<Challenge>> {
-        return object : BaseLazyRef<List<Challenge>>() {
-            override fun fetchValue(): Task<List<Challenge>> {
-                return dbLikesRef.child(uid)
-                    .get()
-                    .thenMap {
-                        val xs = it.children.map { child ->
-                            val cid = child.key!!
-                            val challenge = child.buildChallenge(this@FirebaseDatabase, cid)
-                            challengeRefById.register(
-                                cid,
-                                FirebaseChallengeRef(cid, this@FirebaseDatabase, challenge)
-                            )
-                            challenge
-                        }
-                        xs
-                    }
-            }
-            override val id: String = uid
-        }
-    }
-
     override fun insertUserLike(uid: String, cid: String): Task<Void> {
-        //Add the challenge to the user's liked challenges
-        return dbLikesRef.child(uid).child(cid).setValue(true)
+        //Add the information of user liking the challenge to the database
+        return dbChallengeRef.child(cid).child(uid).child("likes").setValue(true)
     }
 
     override fun removeUserLike(uid: String, cid: String): Task<Void> {
         //Remove the challenge from the user's liked challenges
-        return dbLikesRef.child(uid).child(cid).removeValue()
+        return dbChallengeRef.child(cid).child(uid).child("likes").setValue(false)
     }
 
     override fun isUserLiked(uid: String, cid: String): LazyRef<Boolean> {
         //Check if the challenge is in the user's liked challenges, return false if the challenge is not present
         return object : BaseLazyRef<Boolean>() {
             override fun fetchValue(): Task<Boolean> {
-                return dbLikesRef.child(uid).child(cid).get()
+                return dbChallengeRef.child(cid).child(uid).child("likes").get()
                     .thenMap {
-                        it.exists()
+                        it.value as Boolean
                     }
             }
-            override val id: String = uid + cid
+            override val id: String = cid
         }
     }
 }

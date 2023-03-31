@@ -39,10 +39,6 @@ abstract class BaseMockDatabase : Database {
         TODO("Not yet implemented")
     }
 
-    override fun getLikesOf(uid: String): LazyRef<List<Challenge>> {
-        TODO("Not yet implemented")
-    }
-
     override fun insertUserLike(uid: String, cid: String): Task<Void> {
         //TODO("Not yet implemented")
         return Tasks.forResult(null)

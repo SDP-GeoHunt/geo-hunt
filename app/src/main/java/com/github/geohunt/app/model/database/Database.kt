@@ -60,11 +60,6 @@ interface Database {
     fun getUser(uid: String): LazyRef<User>
 
     /**
-     * Returns a list of challenges that the user with the given user ID has liked
-     */
-    fun getLikesOf(uid: String): LazyRef<List<Challenge>>
-
-    /**
      * Inserts a new like for the chosen challenge for a given user
      */
     fun insertUserLike(uid: String, cid: String): Task<Void>
