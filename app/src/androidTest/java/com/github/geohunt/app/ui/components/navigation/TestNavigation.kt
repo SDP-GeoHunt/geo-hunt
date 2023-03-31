@@ -1,4 +1,4 @@
-package com.github.geohunt.app.components.navigation
+package com.github.geohunt.app.ui.components.navigation
 
 import android.Manifest
 import androidx.compose.ui.platform.LocalContext
@@ -65,6 +65,7 @@ class TestNavigation {
 
             val node = composeTestRule.onNode(hasTestTag("navbtn-" + route.route))
             node.performClick()
+            composeTestRule.waitForIdle()
             assert(navController.currentBackStackEntry?.destination?.route == route.route)
         }
     }
