@@ -1,6 +1,8 @@
 package com.github.geohunt.app.ui.components
+import androidx.compose.runtime.Composable
 
 import android.Manifest
+import android.R.style
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -27,6 +29,7 @@ import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.sensor.rememberLocationRequestState
 import com.github.geohunt.app.sensor.rememberPermissionsState
 import com.github.geohunt.app.ui.theme.Typography
@@ -37,10 +40,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun CreateChallengeForm(
+fun SubmitClaimForm(
     bitmap: Bitmap,
     database: Database,
-    onChallengeCreated: (Challenge) -> Unit,
+    challenge: Challenge,
+    onClaimSubmitted: (Claim) -> Unit,
     onFailure: (Throwable) -> Unit
 ) {
     val context = LocalContext.current
@@ -74,7 +78,7 @@ fun CreateChallengeForm(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Text(text = "Create new Challenge",
+            Text(text = "Submit a Claim",
                 color = MaterialTheme.colors.primary,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h1)
@@ -86,13 +90,13 @@ fun CreateChallengeForm(
                 modifier = Modifier
                     .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
                     .fillMaxSize(),
-                contentDescription = "Photo just taken of the challenge"
+                contentDescription = "Photo just taken of the claim"
             )
 
             Spacer(Modifier.height(25.dp))
 
             LinkText(listOf(
-                LinkTextData("By creating a challenge, you agree to GeoHunt's "),
+                LinkTextData("By claiming a challenge, you agree to GeoHunt's "),
                 LinkTextData(
                     text = "Community Guidelines",
                     tag = "",
@@ -107,27 +111,28 @@ fun CreateChallengeForm(
 
             Button(
                 onClick = {
-                          database.createChallenge(
-                              thumbnail = bitmap,
-                              location = locationRequest.lastLocation.value!!,
-                              expirationDate = null
-                          ).toCompletableFuture(activity)
-                              .thenApply(onChallengeCreated)
-                              .thenApply {  }
-                              .exceptionally(onFailure)
+                    database.submitClaim(
+                        thumbnail = bitmap,
+                        challenge = challenge,
+                        location = locationRequest.lastLocation.value!!,
+                    ).toCompletableFuture(activity)
+                        .thenApply(onClaimSubmitted)
+                        .thenApply {  }
+                        .exceptionally(onFailure)
                 },
                 enabled = (locationRequest.lastLocation.value != null)
             ) {
-                Text("Create challenge")
+                Text("Submit Claim")
             }
         }
     }
 }
 
 @Composable
-fun CreateNewChallenge(
+fun ClaimChallenge(
     database: Database,
-    onChallengeCreated: (Challenge) -> Unit = {},
+    challenge: Challenge,
+    onClaimSubmitted: (Claim) -> Unit = {},
     onFailure: (Throwable) -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -165,7 +170,7 @@ fun CreateNewChallenge(
     }
 
     if (bitmapResult.value != null) {
-        CreateChallengeForm(bitmapResult.value!!, database, onChallengeCreated, onFailure)
+        SubmitClaimForm(bitmapResult.value!!, database, challenge, onClaimSubmitted, onFailure)
     } else {
         LaunchedEffect(null) {
             permissions.requestPermissions()

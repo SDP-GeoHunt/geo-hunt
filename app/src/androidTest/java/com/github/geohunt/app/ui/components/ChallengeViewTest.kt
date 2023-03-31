@@ -43,13 +43,13 @@ class ChallengeViewTest {
 
         val author = MockUser(
             displayName = "John wick",
-            score = 48723,
+            score = 48723.0,
             profilePicture = InstantLazyRef("izufiozef", profilePicture)
         )
 
         val author2 = MockUser(
             displayName = "John Williams",
-            score = 1248,
+            score = 1248.0,
             profilePicture = InstantLazyRef("izufiozef", profilePicture)
         )
 
@@ -130,7 +130,7 @@ class ChallengeViewTest {
 
         val author = MockUser(
             displayName = "John wick",
-            score = 48723
+            score = 48723.0
         )
 
         val challenge = MockChallenge(
