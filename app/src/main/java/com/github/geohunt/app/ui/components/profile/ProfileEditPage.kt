@@ -132,7 +132,6 @@ private fun ProfilePictureChanger(user: User, editedUser: MutableState<EditedUse
 
     // Load current profile picture
     currentProfilePicture.value?.let {
-        println("fetched profile picture")
         editedUser.value = editedUser.value.copy(profilePicture = it)
     }
 
