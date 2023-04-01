@@ -106,7 +106,7 @@ class FirebaseDatabase(activity: Activity) : Database {
         return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
             FirebaseChallenge(
                 cid = challengeId,
-                author = getUserRefById(currentUser),
+                author = getUserById(currentUser),
                 thumbnail = thumbnailBitmap,
                 publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!),
                 expirationDate = expirationDate,
@@ -147,9 +147,9 @@ class FirebaseDatabase(activity: Activity) : Database {
         return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
             FirebaseClaim(
                 id = claimId,
-                user = getUserRefById(currentUser),
+                user = getUserById(currentUser),
                 time = localFromUtcIso8601(claimEntry.time!!),
-                challenge = getChallengeRefById(challenge.cid),
+                challenge = getChallengeById(challenge.cid),
                 location = location
             )
         }
@@ -161,21 +161,16 @@ class FirebaseDatabase(activity: Activity) : Database {
      * If the user already exists, it will override the user. Use with caution.
      */
     override fun insertNewUser(user: User): Task<Void> {
-        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(),score = 0.0)
+        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(), score = 0)
 
         return dbUserRef.child(user.uid).setValue(userEntry)
     }
 
     /**
-     * Returns a lazy ref for a user
-     */
-    override fun getUser(uid: String): LazyRef<User> {
-        return getUserRefById(uid)
-    }
-
-    /**
-     * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
-     * 
+     * Retrieve a challenge with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * fetching the returned [LazyRef]
+     *
      * @param cid the challenge unique identifier
      * @return A [LazyRef] linked to the result of the operation
      */
@@ -183,18 +178,31 @@ class FirebaseDatabase(activity: Activity) : Database {
         return challengeRefById.get(cid)
     }
 
+    /**
+     * Retrieve an image with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * fetching the returned [LazyRef]
+     *
+     * @param iid the image id, this may depend for image type
+     * @return A [LazyRef] linked to the result of the operation
+     */
     override fun getImageById(iid: String): LazyRef<Bitmap> {
         return imageRefById.get(iid)
     }
 
-    @Deprecated("Should user getChallengeById instead")
-    internal fun getChallengeRefById(cid: String): FirebaseChallengeRef {
-        return challengeRefById.get(cid)
-    }
-
-    internal fun getUserRefById(uid: String): FirebaseUserRef {
+    /**
+     * Retrieve an image with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * fetching the returned [LazyRef]
+     *
+     * @param iid the image id, this may depend for image type
+     * @return A [LazyRef] linked to the result of the operation
+     */
+    override fun getUserById(uid: String): LazyRef<User> {
         return userRefById.get(uid)
     }
+
+
 
     internal fun getThumbnailRefById(cid: String) : FirebaseBitmapRef {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
@@ -204,10 +212,17 @@ class FirebaseDatabase(activity: Activity) : Database {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromUserId(uid))
     }
 
+    @Deprecated("all getFooRefById should be replaced by getFooById")
     internal fun getClaimRefById(id: String) : LazyRef<Claim> {
         TODO()
     }
 
+    /**
+     * Get a list of nearby challenges to a specific location
+     *
+     * @param location the location we are interested in
+     * @return [Task] a task completed once the operation succeeded (or failed successfully)
+     */
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         val listOfQuadrant = listOf("3cc359ec")
 

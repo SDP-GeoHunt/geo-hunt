@@ -9,12 +9,12 @@ import java.time.LocalDateTime
  */
 interface Claim {
     /**
-     * Unique identifier of this specific claim
+     * String that uniquely identify this claim within the database
      */
     val id: String
 
     /**
-     * Reference to the challenge claimed by this current claim
+     * Reference to the challenge claimed by this instance
      */
     val challenge: LazyRef<Challenge>
 
@@ -33,6 +33,9 @@ interface Claim {
      */
     val time: LocalDateTime
 
+    /**
+     * Distance between the actual location and the submitted one
+     */
     val distance : Long
 
     /**

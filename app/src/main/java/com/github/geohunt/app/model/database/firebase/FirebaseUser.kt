@@ -5,32 +5,38 @@ import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.UserNotFoundException
 import com.github.geohunt.app.utility.thenMap
 import com.google.android.gms.tasks.Task
 
+/**
+ * Internal implementation of User in the context of Firebase backend
+ */
 class FirebaseUser(
     override val uid: String,
-    override var displayName: String?,
+    override val displayName: String?,
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
     override val numberOfFollowers: Int,
-    override val follows: Map<String, Boolean>,
-    override var score: Double
+    override val follows: List<LazyRef<User>>,
+    override var score: Long
 ) : User {
 
 }
 
-data class NotFoundUser(val id: String): Exception("User $id not found.")
-
-class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase) : BaseLazyRef<User>() {
+/**
+ * Internal implementation of the LazyRef for the firebase user
+ */
+internal class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase) :
+    BaseLazyRef<User>() {
     override fun fetchValue(): Task<User> {
-        return db.dbUserRef.child(id).get().thenMap {
-            if (!it.exists()) {
-                throw NotFoundUser(id)
+        return db.dbUserRef.child(id).get().thenMap { dataSnapshot ->
+            if (!dataSnapshot.exists()) {
+                throw UserNotFoundException(id)
             }
 
-            val entry = it.getValue(UserEntry::class.java)!!
+            val entry = dataSnapshot.getValue(UserEntry::class.java)!!
 
             FirebaseUser(
                 uid = entry.uid,
@@ -39,13 +45,17 @@ class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase)
                 challenges = entry.challenges.map { db.getChallengeById(it) },
                 hunts = entry.hunts.map { db.getChallengeById(it) },
                 numberOfFollowers = entry.numberOfFollowers,
-                follows = entry.follows.withDefault { false },
+                follows = entry.follows.toList().filter { it.second }
+                    .map { (id, _) -> db.getUserById(id) },
                 score = entry.score
             )
         }
     }
 }
 
+/**
+ * Raw user entry has stored in the database
+ */
 internal data class UserEntry(
     var uid: String = "",
     var displayName: String? = null,
@@ -53,5 +63,5 @@ internal data class UserEntry(
     var hunts: List<String> = listOf(),
     var numberOfFollowers: Int = 0,
     var follows: Map<String, Boolean> = emptyMap(),
-    var score: Double = 0.0
+    var score: Long = 0
 )

@@ -36,7 +36,9 @@ interface Database {
     ): Task<Claim>
 
     /**
-     * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
+     * Retrieve a challenge with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * fetching the returned [LazyRef]
      * 
      * @param cid the challenge unique identifier
      * @return A [LazyRef] linked to the result of the operation
@@ -44,7 +46,9 @@ interface Database {
     fun getChallengeById(cid: String): LazyRef<Challenge>
 
     /**
-     * Retrieve a image with a given ID and return a [LazyRef] upon completion
+     * Retrieve an image with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * fetching the returned [LazyRef]
      *
      * @param iid the image id, this may depend for image type
      * @return A [LazyRef] linked to the result of the operation
@@ -52,10 +56,18 @@ interface Database {
     fun getImageById(iid: String): LazyRef<Bitmap>
 
     /**
-     * Retrieve a list of challenges surrounding a particular location. Notice that the exact number of
-     * challenges may depend on the fetched region
+     * Retrieve a user with a specific ID and return the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * fetching the returned [LazyRef]
+     */
+    fun getUserById(uid: String): LazyRef<User>
+
+
+    /**
+     * Get a list of nearby challenges to a specific location
      *
-     * @param location the location where we should search for challenges
+     * @param location the location we are interested in
+     * @return [Task] a task completed once the operation succeeded (or failed successfully)
      */
     fun getNearbyChallenge(location: Location): Task<List<Challenge>>
 
@@ -79,10 +91,10 @@ interface Database {
 
     /**
      * Inserts a new user into the database
+     *
+     * @param user the user to be inserted into the database
      */
     fun insertNewUser(user: User): Task<Void>
-
-    fun getUser(uid: String): LazyRef<User>
 
     companion object {
 
