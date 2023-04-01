@@ -74,6 +74,11 @@ interface Database {
      */
     fun insertNewUser(user: User): Task<Void>
 
+    /**
+     * Updates user with the according data
+     */
+    fun updateUser(user: User, newProfilePicture: Bitmap? = null): Task<Void?>
+
     fun getUser(uid: String): LazyRef<User>
 
     companion object {

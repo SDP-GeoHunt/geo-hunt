@@ -172,6 +172,33 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
+     * Updates the user with all the data
+     */
+    override fun updateUser(user: User, newProfilePicture: Bitmap?): Task<Void?> {
+        val userEntry = UserEntry(
+            user.uid,
+            user.displayName,
+            user.challenges.map { it.id },
+            user.hunts.map { it.id },
+            user.numberOfFollowers,
+            user.follows,
+            user.score)
+
+        val uploadProfilePicture: Task<Nothing?> = if (newProfilePicture != null) {
+            val ppRef = getProfilePicture(user.uid)
+            ppRef.value = newProfilePicture
+            ppRef.saveToLocalStorageThenSubmit().thenMap { null }
+        } else {
+            Tasks.forResult(null)
+        }
+
+        return Tasks.whenAll(
+            dbUserRef.child(user.uid).setValue(userEntry),
+            uploadProfilePicture
+        ).thenMap { return@thenMap null; }
+    }
+
+    /**
      * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
      * 
      * @param cid the challenge unique identifier

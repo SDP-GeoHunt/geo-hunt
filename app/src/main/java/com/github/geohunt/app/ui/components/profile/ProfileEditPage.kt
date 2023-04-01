@@ -30,11 +30,21 @@ import com.github.geohunt.app.ui.components.button.FlatLongButton
 import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.findActivity
+import com.github.geohunt.app.utility.thenMap
 
 data class EditedUser(
     var displayName: String,
-    var profilePicture: Bitmap?
+    var profilePicture: Bitmap?,
+    var isProfilePictureNew: Boolean = false
 ) {
+    /**
+     * Apply all updates except profile picture
+     */
+    fun applyUpdates(user: User): User {
+        user.displayName = this.displayName
+        return user
+    }
+
     companion object {
         fun fromUser(user: User): EditedUser {
             return EditedUser(user.name, null)
@@ -55,7 +65,7 @@ fun ProfileEditPage(onBackButton: () -> Any) {
         topBar = {
             TopBarWithBackButton(
                 onBack = { onBackButton() },
-                title = stringResource(id = R.string.settings)
+                title = stringResource(id = R.string.edit_profile)
             )
         }
     ) { pad ->
@@ -75,17 +85,31 @@ fun ProfileEditPage(onBackButton: () -> Any) {
 @Composable
 private fun SettingsPageContent(user: User) {
     val editedUser = remember { mutableStateOf(EditedUser.fromUser(user)) }
+    val db = Database.databaseFactory.get()(LocalContext.current.findActivity())
+    var isSaving by remember { mutableStateOf(false) }
 
     fun save() {
-        // TODO
+        isSaving = true
+        val newUser = editedUser.value
+        db.updateUser(newUser.applyUpdates(user), if (newUser.isProfilePictureNew) newUser.profilePicture else null)
+            .thenMap {
+                isSaving = false
+            }
     }
 
     Column {
         ProfilePictureChanger(user, editedUser)
 
         DisplayNameChanger(user, editedUser)
-        
-        FlatLongButton(icon = Icons.Default.Save, text = stringResource(R.string.save), onClick = { save() })
+
+        if (isSaving) {
+            CircularProgressIndicator()
+        } else {
+            FlatLongButton(
+                icon = Icons.Default.Save,
+                text = stringResource(R.string.save),
+                onClick = { save() })
+        }
     }
 }
 
@@ -104,9 +128,11 @@ private fun DisplayNameChanger(user: User, editedUser: MutableState<EditedUser>)
 
 @Composable
 private fun ProfilePictureChanger(user: User, editedUser: MutableState<EditedUser>) {
-    val currentProfilePicture = remember { user.profilePicture }
+    val currentProfilePicture = rememberLazyRef { user.profilePicture }
 
+    // Load current profile picture
     currentProfilePicture.value?.let {
+        println("fetched profile picture")
         editedUser.value = editedUser.value.copy(profilePicture = it)
     }
 
@@ -114,7 +140,10 @@ private fun ProfilePictureChanger(user: User, editedUser: MutableState<EditedUse
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { it?.let {
-            editedUser.value = editedUser.value.copy(profilePicture = uriToBitMap(ctx, it))
+            editedUser.value = editedUser.value.copy(
+                profilePicture = uriToBitMap(ctx, it),
+                isProfilePictureNew = true
+            )
         } } )
 
     fun launchImagePicker() {
