@@ -8,13 +8,17 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
 import com.github.geohunt.app.mocks.InstantLazyRef
+import com.github.geohunt.app.mocks.MockNavController
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.components.navigation.Route
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
@@ -24,11 +28,13 @@ class ActiveHuntsTest {
     @get:Rule
     val testRule = createComposeRule()
 
-    private val emptyCallback: () -> Unit = { }
-    private fun setupComposable(challenges: List<LazyRef<Challenge>>, callback: () -> Unit = emptyCallback) {
+    private val controller = MockNavController()
+
+    private fun setupComposable(challenges: List<LazyRef<Challenge>>) {
+        controller.reset()
         testRule.setContent {
             GeoHuntTheme {
-                ActiveHunts(challenges = challenges, emptyScreenCallback = callback)
+                ActiveHunts(challenges = challenges, controller)
             }
         }
     }
@@ -88,16 +94,13 @@ class ActiveHuntsTest {
 
     @Test
     fun callbackIsCalledByButton() {
-        var clicked = false
-        val dummyCallback: () -> Unit = { clicked = true }
-        setupComposable(listOf(), dummyCallback)
+        setupComposable(listOf())
 
         testRule.onNodeWithText("Search nearby challenges", useUnmergedTree = true)
                 .onParent()
                 .assertHasClickAction()
                 .performClick()
 
-        Assert.assertTrue(clicked)
-
+        assertThat(controller.getAndResetRoute(), equalTo(Route.Explore.route))
     }
 }

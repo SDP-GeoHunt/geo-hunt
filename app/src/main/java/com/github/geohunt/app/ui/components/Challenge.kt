@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +30,10 @@ import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
+import com.github.geohunt.app.ui.controller.NavController
+import com.github.geohunt.app.ui.controller.claim
+import com.github.geohunt.app.ui.controller.explore
+import com.github.geohunt.app.ui.controller.viewImage
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.findActivity
 
@@ -46,7 +49,7 @@ import com.github.geohunt.app.utility.findActivity
  * @param challenge The challenge to display
  */
 @Composable
-fun Challenge(challenge: Challenge, fnClaimCallback: (String) -> Unit = {}) {
+fun Challenge(challenge: Challenge, controller: NavController) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column (horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()) {
@@ -55,7 +58,7 @@ fun Challenge(challenge: Challenge, fnClaimCallback: (String) -> Unit = {}) {
 
             ChallengeImage(thumbnail = challenge.thumbnail)
 
-            ClaimButton(challenge = challenge, fnClaimCallback)
+            ClaimButton(challenge = challenge, controller)
         }
 
         ChallengeInformation(challenge)
@@ -67,8 +70,8 @@ fun Challenge(challenge: Challenge, fnClaimCallback: (String) -> Unit = {}) {
 }
 
 @Composable
-fun ClaimButton(challenge: Challenge, fnClaimCallback: (String) -> Unit) {
-    Button(onClick = { fnClaimCallback(challenge.cid) }) {
+fun ClaimButton(challenge: Challenge, navController: NavController) {
+    Button(onClick = { navController.claim(challenge.cid) }) {
         Row (verticalAlignment = Alignment.CenterVertically){
             Text(text = stringResource(id = R.string.challenge_claim))
             Icon(painter = painterResource(id = R.drawable.radar_icon),

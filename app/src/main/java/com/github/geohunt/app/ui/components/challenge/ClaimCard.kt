@@ -24,9 +24,14 @@ import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.LabelledIcon
 import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.i18n.toSuffixedString
+import com.github.geohunt.app.ui.controller.NavController
+import com.github.geohunt.app.ui.controller.viewImage
 
 @Composable
-fun ClaimCard(claimRef: LazyRef<Claim>, displayImage: (String) -> Unit) {
+fun ClaimCard(
+    claimRef: LazyRef<Claim>,
+    navController: NavController
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -49,7 +54,7 @@ fun ClaimCard(claimRef: LazyRef<Claim>, displayImage: (String) -> Unit) {
                             .fillMaxHeight()
                             .align(Alignment.Center)
                             .clickable {
-                                displayImage(claim.image.id)
+                                navController.viewImage(claim.image.id)
                             },
                         contentDescription = "claimed image"
                     ) {
@@ -115,7 +120,7 @@ private fun UserView(claim: Claim) {
                 modifier = Modifier.padding(horizontal = 20.dp)
             ) {
                 Text(
-                    text = "+300",
+                    text = "+${claim.awardedPoints.toSuffixedString()}",
                     fontSize = 16.sp,
                     color = Color(R.color.md_theme_light_tertiary)
                 )

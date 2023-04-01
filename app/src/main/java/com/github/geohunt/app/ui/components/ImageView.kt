@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
+import com.github.geohunt.app.ui.controller.NavController
 
 /**
  * A composable function that displays a zoomable image view with an option to go back to the
@@ -26,10 +27,10 @@ import com.github.geohunt.app.ui.FetchComponent
  *
  * @param database The database containing the image to be displayed.
  * @param iid The ID of the image to be displayed.
- * @param fnGoBackCallback A callback function to be executed when the "Go Back" button is clicked.
+ * @param navController the navigation controller to be used
  */
 @Composable
-fun ZoomableImageView(database: Database, iid: String, fnGoBackCallback: () -> Unit)
+fun ZoomableImageView(database: Database, iid: String, navController: NavController)
 {
     val image = database.getImageById(iid)
 
@@ -47,6 +48,6 @@ fun ZoomableImageView(database: Database, iid: String, fnGoBackCallback: () -> U
             }
         }
 
-        GoBackBtn(fnGoBackCallback)
+        GoBackBtn(navController)
     }
 }

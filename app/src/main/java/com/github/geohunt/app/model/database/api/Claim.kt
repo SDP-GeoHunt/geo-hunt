@@ -39,6 +39,11 @@ interface Claim {
     val distance : Long
 
     /**
+     * Number of points awarded for this specific claim
+     */
+    val awardedPoints : Long
+
+    /**
      * Location at which the user claimed the challenge. This is used to compute the score the user
      * obtained from the challenge
      */

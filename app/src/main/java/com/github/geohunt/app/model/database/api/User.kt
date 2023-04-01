@@ -1,7 +1,9 @@
 package com.github.geohunt.app.model.database.api
 
 import android.graphics.Bitmap
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.Database
 
 /**
  * Define the profile information of a user as stored in the database

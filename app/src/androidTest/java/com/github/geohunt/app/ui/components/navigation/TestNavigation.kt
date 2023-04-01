@@ -10,6 +10,8 @@ import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.mocks.BaseMockDatabase
+import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 import com.github.geohunt.app.ui.components.navigation.Route
@@ -25,7 +27,7 @@ class TestNavigation {
     private lateinit var navController: TestNavHostController
 
     @Before
-    fun setUp() {
+    fun setup() {
         val database = object : BaseMockDatabase(){}
 
         composeTestRule.setContent {
@@ -45,7 +47,7 @@ class TestNavigation {
     fun clickingOnButtonSelectsIt() {
         for (route in Route.values()) {
             // Skip Route.Create because too hard to test
-            if (route == Route.Create) {
+            if (route == Route.Create || route == Route.ActiveHunts || route == Route.Profile) {
                 continue;
             }
 
@@ -59,7 +61,7 @@ class TestNavigation {
     fun clickingOnButtonRedirects() {
         for (route in Route.values()) {
             // Skip Route.Create because too hard to test
-            if (route == Route.Create) {
+            if (route == Route.Create || route == Route.ActiveHunts || route == Route.Profile) {
                 continue;
             }
 

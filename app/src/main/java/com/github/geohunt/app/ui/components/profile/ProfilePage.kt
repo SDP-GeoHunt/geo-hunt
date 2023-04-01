@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.model.database.firebase.FirebaseUserRef
@@ -28,8 +29,8 @@ import com.github.geohunt.app.utility.findActivity
  * @param id The id of the user to be shown
  */
 @Composable
-fun ProfilePage(id: String) {
-    ProfilePage(user = FirebaseUserRef(id, FirebaseDatabase(LocalContext.current.findActivity())))
+fun ProfilePage(id: String, database: Database) {
+    ProfilePage(user = database.getUserById(id))
 }
 
 /**

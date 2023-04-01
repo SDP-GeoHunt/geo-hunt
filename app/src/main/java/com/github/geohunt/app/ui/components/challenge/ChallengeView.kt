@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.GoBackBtn
+import com.github.geohunt.app.ui.controller.NavController
+import com.github.geohunt.app.ui.controller.viewImage
 import com.github.geohunt.app.ui.homescreen.HorizontalDivider
 
 private const val lorumIpsum =
@@ -31,16 +33,12 @@ Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor vo
  * such as previous claims and the author to the user.
  *
  * @param challenge the challenge to be displayed to the user
- * @param onButtonBack called whenever the user press the "go back" button on the interface
- * @param displayImage called whenever the user wishes to see an image in more details (by pressing
- *                     on it). This should redirect the navigation to the image view with the provided
- *                     iid
+ * @param navController the navigation controller to be used
  */
 @Composable
 fun ChallengeView(
     challenge: Challenge,
-    onButtonBack: () -> Unit,
-    displayImage: (String) -> Unit,
+    navController: NavController
 ) {
     val lazyState = rememberLazyListState()
     val transition = updateTransition(
@@ -59,7 +57,7 @@ fun ChallengeView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        displayImage(challenge.thumbnail.id)
+                        navController.viewImage(challenge.thumbnail.id)
                     }
                     .aspectRatio(imageAspectRatio, false),
                 contentScale = ContentScale.Crop
@@ -73,11 +71,11 @@ fun ChallengeView(
 
             HorizontalDivider(padding = 2.dp)
 
-            LazyClaimList(lazyState, challenge, displayImage)
+            LazyClaimList(lazyState, challenge, navController)
         }
 
         // Go back button (for navigation)
-        GoBackBtn(onButtonBack)
+        GoBackBtn(navController)
     }
 }
 
@@ -85,7 +83,7 @@ fun ChallengeView(
 private fun LazyClaimList(
     lazyState: LazyListState,
     challenge: Challenge,
-    displayImage: (String) -> Unit
+    navController: NavController
 ) {
 
     LazyColumn(
@@ -106,7 +104,7 @@ private fun LazyClaimList(
         }
 
         items(challenge.claims.size) { index: Int ->
-            ClaimCard(claimRef = challenge.claims[index], displayImage = displayImage)
+            ClaimCard(claimRef = challenge.claims[index], navController = navController)
         }
     }
 }

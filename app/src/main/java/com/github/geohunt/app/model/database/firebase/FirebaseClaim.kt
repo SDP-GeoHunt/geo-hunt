@@ -25,6 +25,8 @@ data class FirebaseClaim(
         get() = TODO("Not yet implemented")
     override val distance: Long
         get() = TODO("Not yet implemented")
+    override val awardedPoints: Long
+        get() = TODO("Not yet implemented")
 }
 
 /**
