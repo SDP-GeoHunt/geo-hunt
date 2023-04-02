@@ -44,7 +44,8 @@ enum class Route(val titleStringId: Int, val route: String, val icon: Composable
 }
 
 enum class HiddenRoutes(val route: String) {
-    EditProfile("settings/profile")
+    EditProfile("settings/profile"),
+    Leaderboard("leaderboard")
 }
 
 @Composable
@@ -94,7 +95,6 @@ fun NavigationController(navController: NavHostController, modifier: Modifier = 
                 onBackButton = { navController.popBackStack() }
             )
         }
-
     }
 }
 

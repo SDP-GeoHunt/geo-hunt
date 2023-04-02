@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Leaderboard
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.runtime.*
@@ -50,7 +51,12 @@ fun ProfilePage(id: String, openProfileEdit: OptionalCallback = null, onLogout: 
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ProfilePage(user: LazyRef<User>, openProfileEdit: OptionalCallback = null, onLogout: OptionalCallback = null) {
+fun ProfilePage(
+    user: LazyRef<User>,
+    openProfileEdit: OptionalCallback = null,
+    openLeaderboard: OptionalCallback = null,
+    onLogout: OptionalCallback = null
+) {
     val lazyRefRemember = rememberLazyRef { user }
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
@@ -66,9 +72,9 @@ fun ProfilePage(user: LazyRef<User>, openProfileEdit: OptionalCallback = null, o
                 drawerState = drawerState,
                 drawerContent = {
                     if (isMoreOptionsAvailable)
-                        SettingsDrawerContent(openProfileEdit, onLogout, {
+                        SettingsDrawerContent(openProfileEdit, openLeaderboard, onLogout) {
                             coroutineScope.async { drawerState.close() }
-                        })
+                        }
                 }
             ) {
                 ProfilePageContent(lazyRefRemember.value!!, isMoreOptionsAvailable) {
@@ -115,7 +121,12 @@ private fun ProfilePageContent(user: User, showSettingsBtn: Boolean = false, onS
 }
 
 @Composable
-private fun SettingsDrawerContent(openProfileEdit: OptionalCallback, onLogout: OptionalCallback, close: () -> Any) {
+private fun SettingsDrawerContent(
+    openProfileEdit: OptionalCallback,
+    openLeaderboard: OptionalCallback,
+    onLogout: OptionalCallback,
+    close: () -> Any
+) {
     var isSureToLogOff by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -124,6 +135,14 @@ private fun SettingsDrawerContent(openProfileEdit: OptionalCallback, onLogout: O
                 icon = Icons.Default.Edit,
                 text = stringResource(id = R.string.edit_profile),
                 onClick = { close(); openProfileEdit() },
+            )
+        }
+        
+        if (openLeaderboard != null) {
+            FlatLongButton(
+                icon = Icons.Default.Leaderboard,
+                text = stringResource(R.string.leaderboard),
+                onClick = { close(); openLeaderboard(); }
             )
         }
 

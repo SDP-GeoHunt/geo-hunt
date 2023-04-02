@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui
+package com.github.geohunt.app.ui.components.leaderboard
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -6,10 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.components.leaderboard.LeaderboardList
-import com.github.geohunt.app.ui.components.leaderboard.LeaderboardListItem
-import com.github.geohunt.app.ui.components.leaderboard.LeaderboardPodiumItem
-import com.github.geohunt.app.ui.components.leaderboard.LeaderboardTitleBar
 
 /**
  * Creates the leaderboard view.

@@ -132,6 +132,8 @@ private fun ProfilePictureChanger(user: User, editedUser: MutableState<EditedUse
 
     // Load current profile picture
     currentProfilePicture.value?.let {
+        println("got it"); // TODO: If I remove this, it is not updated.
+        // is there an issue with races?
         editedUser.value = editedUser.value.copy(profilePicture = it)
     }
 
