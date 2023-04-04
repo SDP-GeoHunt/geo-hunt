@@ -9,4 +9,5 @@ import android.content.Intent
 fun Activity.replaceActivity(i: Intent) {
     i.flags = i.flags or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_TASK_ON_HOME
     startActivity(i)
+    finish()
 }
