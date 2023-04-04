@@ -46,7 +46,7 @@ fun FlatLongButton(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(icon, null)
+                Icon(icon, text)
                 Spacer(Modifier.width(16.dp))
                 Text(
                     text = text

@@ -53,4 +53,8 @@ abstract class BaseMockDatabase : Database {
     override fun getUser(uid: String): LazyRef<User> {
         TODO("Not yet implemented")
     }
+
+    override fun updateUser(user: User, newProfilePicture: Bitmap?): Task<Void?> {
+        TODO("Not yet implemented")
+    }
 }
