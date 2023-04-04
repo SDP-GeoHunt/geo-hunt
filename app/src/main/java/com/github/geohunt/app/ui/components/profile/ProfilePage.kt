@@ -3,9 +3,6 @@ package com.github.geohunt.app.ui.components.profile
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Leaderboard
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,7 +17,6 @@ import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.model.database.firebase.FirebaseUserRef
-import com.github.geohunt.app.ui.components.button.FlatLongButton
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.findActivity
@@ -72,7 +68,7 @@ fun ProfilePage(
                 drawerState = drawerState,
                 drawerContent = {
                     if (isMoreOptionsAvailable)
-                        SettingsDrawerContent(openProfileEdit, openLeaderboard, onLogout) {
+                        SettingsDrawer(openProfileEdit, openLeaderboard, onLogout) {
                             coroutineScope.async { drawerState.close() }
                         }
                 }
@@ -117,45 +113,6 @@ private fun ProfilePageContent(user: User, showSettingsBtn: Boolean = false, onS
         }
 
         PastChallengeAndHunts(user)
-    }
-}
-
-@Composable
-private fun SettingsDrawerContent(
-    openProfileEdit: OptionalCallback,
-    openLeaderboard: OptionalCallback,
-    onLogout: OptionalCallback,
-    close: () -> Any
-) {
-    var isSureToLogOff by remember { mutableStateOf(false) }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        if (openProfileEdit != null) {
-            FlatLongButton(
-                icon = Icons.Default.Edit,
-                text = stringResource(id = R.string.edit_profile),
-                onClick = { close(); openProfileEdit() },
-            )
-        }
-        
-        if (openLeaderboard != null) {
-            FlatLongButton(
-                icon = Icons.Default.Leaderboard,
-                text = stringResource(R.string.leaderboard),
-                onClick = { close(); openLeaderboard(); }
-            )
-        }
-
-        if (onLogout != null) {
-            FlatLongButton(
-                icon = Icons.Default.Logout,
-                text = stringResource(if (isSureToLogOff) R.string.log_out_confirmation else R.string.log_out),
-                textColor = MaterialTheme.colors.error,
-                onClick = {
-                    if (isSureToLogOff) onLogout() else isSureToLogOff = true
-                }
-            )
-        }
     }
 }
 
