@@ -43,7 +43,7 @@ interface User {
     val hunts: List<LazyRef<Challenge>>
 
     /**
-     * Number of followers this user have
+     * Number of followers this user has
      */
     val numberOfFollowers: Int
 
