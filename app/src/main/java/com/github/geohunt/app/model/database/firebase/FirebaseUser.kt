@@ -14,7 +14,8 @@ class FirebaseUser(
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
-    override var score: Number
+    override var score: Number,
+    override var likes: List<LazyRef<Challenge>>
 ) : User {
 }
 
@@ -35,7 +36,8 @@ class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase)
                 profilePicture = db.getProfilePicture(entry.uid),
                 challenges = entry.challenges.map { db.getChallengeById(it) },
                 hunts = entry.hunts.map { db.getChallengeById(it) },
-                score = entry.score
+                score = entry.score,
+                likes = entry.likes.map { db.getChallengeById(it) },
             )
         }
     }
@@ -47,4 +49,5 @@ internal data class UserEntry(
     var challenges: List<String> = listOf(),
     var hunts: List<String> = listOf(),
     var score: Int = 0,
+    var likes: List<String> = listOf()
 )

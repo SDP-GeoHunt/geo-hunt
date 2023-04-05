@@ -45,15 +45,14 @@ interface Challenge
      * but the author
      */
     val correctLocation: Location
-    
+
     /**
      * A list of reference to all of the claims from users
      */
     val claims: List<LazyRef<Claim>>
 
     /**
-     * The number of likes this challenge has received
+     * A list of references to all of the likes from users
      */
-    var likes: Int
+    val likes: List<LazyRef<User>>
 }
-

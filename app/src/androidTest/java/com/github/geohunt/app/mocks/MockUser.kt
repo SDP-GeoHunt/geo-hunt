@@ -11,5 +11,6 @@ class MockUser(
     override val profilePicture: LazyRef<Bitmap> = MockLazyRef("1") { TODO() },
     override val challenges: List<LazyRef<Challenge>> = emptyList(),
     override val hunts: List<LazyRef<Challenge>> = emptyList(),
-    override var score: Number = 1
+    override var score: Number = 1,
+    override var likes: List<LazyRef<Challenge>> = emptyList()
 ) : User

@@ -30,7 +30,7 @@ interface Database {
 
     /**
      * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
-     * 
+     *
      * @param cid the challenge unique identifier
      * @return A [LazyRef] linked to the result of the operation
      */
@@ -74,18 +74,13 @@ interface Database {
      */
     fun isUserLiked(uid: String, cid: String): LazyRef<Boolean>
 
-    /**
-     * Returns a list of challenges that the user with the given user ID has liked
-     */
-    fun getLikesOf(uid: String): LazyRef<List<Challenge>>
-
 
     companion object {
 
         /**
          * A Singleton instance of a factory function that creates a  Database instance
          * for a given Android Activity. This factory method is used by [createDatabaseHandle]
-         * 
+         *
          * @param Activity the Android Activity class for which a Database instance will be created
          * @return a Database instance created using the FirebaseDatabase constructor
          */
@@ -105,5 +100,3 @@ interface Database {
         }
     }
 }
-
-
