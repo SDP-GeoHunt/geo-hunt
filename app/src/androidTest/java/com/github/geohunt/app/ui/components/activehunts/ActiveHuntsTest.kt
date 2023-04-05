@@ -8,7 +8,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
 import com.github.geohunt.app.mocks.InstantLazyRef
-import com.github.geohunt.app.mocks.MockNavController
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
@@ -19,7 +18,6 @@ import com.github.geohunt.app.ui.components.navigation.Route
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDateTime
@@ -28,13 +26,13 @@ class ActiveHuntsTest {
     @get:Rule
     val testRule = createComposeRule()
 
-    private val controller = MockNavController()
+    var exploreCallbackCalled = false
 
     private fun setupComposable(challenges: List<LazyRef<Challenge>>) {
-        controller.reset()
+        exploreCallbackCalled = false
         testRule.setContent {
             GeoHuntTheme {
-                ActiveHunts(challenges = challenges, controller)
+                ActiveHunts(challenges = challenges) { exploreCallbackCalled = true }
             }
         }
     }
@@ -101,6 +99,6 @@ class ActiveHuntsTest {
                 .assertHasClickAction()
                 .performClick()
 
-        assertThat(controller.getAndResetRoute(), equalTo(Route.Explore.route))
+        assertThat(exploreCallbackCalled, equalTo(true))
     }
 }

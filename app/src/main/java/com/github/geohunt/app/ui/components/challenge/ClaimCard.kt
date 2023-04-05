@@ -17,20 +17,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
+import com.github.geohunt.app.i18n.DateFormatUtils
+import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.LabelledIcon
-import com.github.geohunt.app.i18n.DateFormatUtils
-import com.github.geohunt.app.i18n.toSuffixedString
-import com.github.geohunt.app.ui.controller.NavController
-import com.github.geohunt.app.ui.controller.viewImage
 
 @Composable
 fun ClaimCard(
     claimRef: LazyRef<Claim>,
-    navController: NavController
+    fnViewImageCallback: (String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -54,7 +52,7 @@ fun ClaimCard(
                             .fillMaxHeight()
                             .align(Alignment.Center)
                             .clickable {
-                                navController.viewImage(claim.image.id)
+                                fnViewImageCallback(claim.image.id)
                             },
                         contentDescription = "claimed image"
                     ) {

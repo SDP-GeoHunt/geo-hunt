@@ -14,7 +14,6 @@ import androidx.compose.material.icons.sharp.Home
 import androidx.compose.material.icons.sharp.Person
 import androidx.compose.material.icons.sharp.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,16 +26,13 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.maps.GoogleMapView
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
-import com.github.geohunt.app.ui.components.activehunts.TitleText
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.profile.ProfilePage
-import com.github.geohunt.app.ui.controller.NativeNavControllerAdapter
 import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -69,7 +65,6 @@ fun NavigationController(
     val context = LocalContext.current
     val authenticator = Authenticator.authInstance.get()
     val activity: ComponentActivity = LocalContext.current.findActivity() as ComponentActivity
-    val controller = remember(navController) { NativeNavControllerAdapter(navController) }
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
@@ -114,7 +109,9 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                ActiveHunts(id = user.uid, database, controller)
+                ActiveHunts(id = user.uid, database) {
+                    navController.navigate(Route.Explore.route)
+                }
             }
         }
 
@@ -142,7 +139,9 @@ fun NavigationController(
             arguments = listOf(navArgument("imageId") { type = NavType.StringType })
         ) { backStackEntry ->
             val iid = backStackEntry.arguments?.getString("imageId")!!
-            ZoomableImageView(database = database, iid = iid, navController = controller)
+            ZoomableImageView(database = database, iid = iid) {
+                navController.popBackStack()
+            }
         }
 
         // Open the view for a certain challenge
@@ -157,7 +156,9 @@ fun NavigationController(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ChallengeView(it, controller)
+                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") }) {
+                        navController.popBackStack()
+                    }
                 }
             }
         }

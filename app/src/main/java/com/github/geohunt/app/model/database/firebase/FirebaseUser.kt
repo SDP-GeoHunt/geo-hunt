@@ -45,8 +45,7 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
                 challenges = entry.challenges.map { db.getChallengeById(it) },
                 hunts = entry.hunts.map { db.getChallengeById(it) },
                 numberOfFollowers = entry.numberOfFollowers,
-                follows = entry.follows.toList().filter { it.second }
-                    .map { (id, _) -> db.getUserById(id) },
+                follows = entry.follows.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
                 score = entry.score
             )
         }

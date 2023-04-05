@@ -46,7 +46,7 @@ internal class FirebaseClaimRef(
             .child(coarseHash).child(elementId).get()
             .thenMap {
                 if (!it.exists()) {
-                    throw RuntimeException("The claim with $id was not find in the database")
+                    throw RuntimeException("Claim $id was not found in the database")
                 }
 
                 val claimEntry = it.getValue(ClaimEntry::class.java)!!

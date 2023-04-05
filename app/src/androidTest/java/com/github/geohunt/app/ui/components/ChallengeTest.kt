@@ -4,7 +4,6 @@ import androidx.compose.material.Text
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.github.geohunt.app.mocks.MockNavController
 import com.github.geohunt.app.model.database.FirebaseEmulator
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.rememberLazyRef
@@ -20,12 +19,9 @@ class ChallengeTest {
     @get:Rule
     val testRule = createComposeRule()
 
-    private val controller = MockNavController()
-
     @Before
     fun setup() {
         FirebaseEmulator.init()
-        controller.reset()
     }
 
     @Before
@@ -41,7 +37,7 @@ class ChallengeTest {
                 Text("Finished")
 
                 GeoHuntTheme {
-                    Challenge(challenge = challenge.value!!, controller)
+                    Challenge(challenge = challenge.value!!, {})
                 }
             }
 

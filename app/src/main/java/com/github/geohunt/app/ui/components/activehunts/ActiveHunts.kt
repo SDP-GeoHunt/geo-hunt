@@ -21,31 +21,29 @@ import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
-import com.github.geohunt.app.ui.controller.NavController
-import com.github.geohunt.app.ui.controller.explore
 import com.github.geohunt.app.ui.theme.Lobster
 import com.github.geohunt.app.ui.theme.geoHuntRed
 
 /**
  * Utility function to show the hunts of a user taking only the id of the user
  * @param id the uid of the user which active hunts we want to display
- * @param navController the navigation controller to be used for this composable
+ * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHunts(id: String, database: Database, navController: NavController) {
-    ActiveHunts(user = database.getUserById(id), navController)
+fun ActiveHunts(id: String, database: Database, fnExploreCallback: () -> Unit) {
+    ActiveHunts(user = database.getUserById(id), fnExploreCallback)
 }
 
 /**
  * Utility function to show the hunts of a user which is currently getting fetched from the database
  * @param user the LazyRef instance of the user
- * @param navController the navigation controller to be used for this composable
+ * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHunts(user: LazyRef<User>, navController: NavController) {
+fun ActiveHunts(user: LazyRef<User>, fnExploreCallback: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         FetchComponent(lazyRef = { user }, modifier = Modifier.align(Alignment.Center)) {resolvedUser ->
-            ActiveHunts(challenges = resolvedUser.challenges, navController)
+            ActiveHunts(challenges = resolvedUser.challenges, fnExploreCallback)
         }
     }
 }
@@ -54,10 +52,10 @@ fun ActiveHunts(user: LazyRef<User>, navController: NavController) {
  * A screen that shows all the active hunts of a user
  * The hunts are displayed on a horizontal scrollable list
  * @param challenges the challenges the screen has to display
- * @param navController the navigation controller to be used for this composable
+ * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHunts(challenges: List<LazyRef<Challenge>>, navController: NavController) {
+fun ActiveHunts(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> Unit) {
     Column(modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)){
@@ -65,7 +63,7 @@ fun ActiveHunts(challenges: List<LazyRef<Challenge>>, navController: NavControll
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        ActiveHuntsList(challenges = challenges, navController)
+        ActiveHuntsList(challenges = challenges, fnExploreCallback)
     }
 }
 
@@ -96,15 +94,17 @@ fun TitleText() {
  * The list of active hunts
  * Creates a scrollable list of challenges using the given list
  * If the list is empty, shows EmptyChallengeScreen
+ *
  * @param challenges the challenges to display
+ * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>, navController: NavController) {
+fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> Unit) {
     //wrapper Box
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if(challenges.isEmpty()) {
             EmptyChallengesScreen() {
-                navController.explore()
+                fnExploreCallback()
             }
         }
         else {

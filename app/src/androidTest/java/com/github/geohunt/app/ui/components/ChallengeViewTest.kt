@@ -40,7 +40,8 @@ class ChallengeViewTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val profilePicture = createTestBitmap(context)
         var challenge2 : Challenge? = null
-        val controller = MockNavController()
+        var route = ""
+
 
         val author = MockUser(
             displayName = "John wick",
@@ -86,7 +87,9 @@ class ChallengeViewTest {
 
         // Sets the composeTestRule content
         composeTestRule.setContent {
-            ChallengeView(challenge = challenge, controller)
+            ChallengeView(challenge = challenge, { route = it }) {
+                route = "../"
+            }
         }
 
         // Test stuff once loaded
@@ -100,7 +103,7 @@ class ChallengeViewTest {
         composeTestRule.onNodeWithContentDescription("Challenge Image")
             .assertIsDisplayed()
             .performClick()
-        assertThat(controller.getAndResetRoute(), equalTo("image-view/img-ze5f16zaef1465"))
+        assertThat(route, equalTo("img-ze5f16zaef1465"))
 
         composeTestRule.onNodeWithText("John wick")
             .performScrollTo()

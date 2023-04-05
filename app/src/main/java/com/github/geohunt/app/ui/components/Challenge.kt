@@ -13,7 +13,8 @@ import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,13 +30,7 @@ import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
-import com.github.geohunt.app.ui.controller.NavController
-import com.github.geohunt.app.ui.controller.claim
-import com.github.geohunt.app.ui.controller.explore
-import com.github.geohunt.app.ui.controller.viewImage
 import com.github.geohunt.app.ui.rememberLazyRef
-import com.github.geohunt.app.utility.findActivity
 
 /**
  * Composable function that displays a challenge given as an argument
@@ -49,7 +44,7 @@ import com.github.geohunt.app.utility.findActivity
  * @param challenge The challenge to display
  */
 @Composable
-fun Challenge(challenge: Challenge, controller: NavController) {
+fun Challenge(challenge: Challenge, fnClaimCallback: (String) -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column (horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()) {
@@ -58,7 +53,7 @@ fun Challenge(challenge: Challenge, controller: NavController) {
 
             ChallengeImage(thumbnail = challenge.thumbnail)
 
-            ClaimButton(challenge = challenge, controller)
+            ClaimButton(challenge = challenge, fnClaimCallback)
         }
 
         ChallengeInformation(challenge)
@@ -70,8 +65,8 @@ fun Challenge(challenge: Challenge, controller: NavController) {
 }
 
 @Composable
-fun ClaimButton(challenge: Challenge, navController: NavController) {
-    Button(onClick = { navController.claim(challenge.cid) }) {
+fun ClaimButton(challenge: Challenge, fnClaimCallback: (String) -> Unit) {
+    Button(onClick = { fnClaimCallback(challenge.cid) }) {
         Row (verticalAlignment = Alignment.CenterVertically){
             Text(text = stringResource(id = R.string.challenge_claim))
             Icon(painter = painterResource(id = R.drawable.radar_icon),

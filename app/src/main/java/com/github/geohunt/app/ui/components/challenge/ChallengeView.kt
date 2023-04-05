@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,8 +20,6 @@ import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.GoBackBtn
-import com.github.geohunt.app.ui.controller.NavController
-import com.github.geohunt.app.ui.controller.viewImage
 import com.github.geohunt.app.ui.homescreen.HorizontalDivider
 
 private const val lorumIpsum =
@@ -33,12 +33,14 @@ Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor vo
  * such as previous claims and the author to the user.
  *
  * @param challenge the challenge to be displayed to the user
- * @param navController the navigation controller to be used
+ * @param fnViewImageCallback function called in order to open the view for a specific image
+ * @param fnGoBackBtn function called when user presses the go back button
  */
 @Composable
 fun ChallengeView(
     challenge: Challenge,
-    navController: NavController
+    fnViewImageCallback: (String) -> Unit,
+    fnGoBackBtn: () -> Unit
 ) {
     val lazyState = rememberLazyListState()
     val transition = updateTransition(
@@ -57,7 +59,7 @@ fun ChallengeView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navController.viewImage(challenge.thumbnail.id)
+                        fnViewImageCallback(challenge.thumbnail.id)
                     }
                     .aspectRatio(imageAspectRatio, false),
                 contentScale = ContentScale.Crop
@@ -71,11 +73,11 @@ fun ChallengeView(
 
             HorizontalDivider(padding = 2.dp)
 
-            LazyClaimList(lazyState, challenge, navController)
+            LazyClaimList(lazyState, challenge, fnViewImageCallback)
         }
 
         // Go back button (for navigation)
-        GoBackBtn(navController)
+        GoBackBtn(fnGoBackBtn)
     }
 }
 
@@ -83,7 +85,7 @@ fun ChallengeView(
 private fun LazyClaimList(
     lazyState: LazyListState,
     challenge: Challenge,
-    navController: NavController
+    fnViewImageCallback: (String) -> Unit
 ) {
 
     LazyColumn(
@@ -104,7 +106,7 @@ private fun LazyClaimList(
         }
 
         items(challenge.claims.size) { index: Int ->
-            ClaimCard(claimRef = challenge.claims[index], navController = navController)
+            ClaimCard(claimRef = challenge.claims[index], fnViewImageCallback)
         }
     }
 }

@@ -13,17 +13,16 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.controller.NavController
 
 /**
  * Display a button for going back (should be displayed in the top left corner)
  *
- * @param navController The navigation controller to be used
+ * @param fnGoBackCallback Function called whenever the user press this button
  * @param tint optionally the color of the button
  */
 @Composable
 fun GoBackBtn(
-    navController: NavController,
+    fnGoBackCallback: () -> Unit,
     tint: Color = Color.Unspecified
 ) {
     val color =
@@ -35,7 +34,7 @@ fun GoBackBtn(
             .size(48.dp)
             .padding(10.dp)
             .testTag("btn-go-back"),
-        onClick = navController::goBack) {
+        onClick = fnGoBackCallback) {
         Icon(
             Icons.Rounded.ArrowBack,
             contentDescription = "Go back",
