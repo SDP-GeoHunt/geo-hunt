@@ -46,6 +46,7 @@ class LeaderboardTest {
             override val challenges: List<LazyRef<Challenge>> = listOf()
             override val hunts: List<LazyRef<Challenge>> = listOf()
             override var score: Number = 1500 - pos * 100
+            override var likes: List<LazyRef<Challenge>> = listOf()
         }
     }
 
