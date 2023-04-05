@@ -25,7 +25,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.authentication.Authenticator
-import com.github.geohunt.app.ui.components.profile.ProfileEditPage
+import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.replaceActivity
