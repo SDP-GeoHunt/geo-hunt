@@ -22,5 +22,8 @@ interface User {
 
     var score: Number
 
+    /**
+     * The list of challenges liked by this user
+     */
     var likes: List<LazyRef<Challenge>>
 }

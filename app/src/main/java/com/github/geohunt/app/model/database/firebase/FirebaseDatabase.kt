@@ -184,6 +184,8 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     /**
      * Returns a list of users that liked a given challenge
+     * @param cid the challenge id
+     * @return a list of users that liked the challenge
      */
     internal fun getLikeRefById(cid: String): LazyRef<User> {
         return object : BaseLazyRef<User>() {
@@ -199,6 +201,12 @@ class FirebaseDatabase(activity: Activity) : Database {
         }
     }
 
+    /**
+     * Insert a like for a user into the Firebase
+     * @param uid the user id
+     * @param cid the challenge id
+     * @return a task that will complete when the like is inserted
+     */
     override fun insertUserLike(uid: String, cid: String): Task<Void> {
         //Add the challenge to the user's liked challenges
         return Tasks.whenAll(
@@ -207,6 +215,12 @@ class FirebaseDatabase(activity: Activity) : Database {
         )
     }
 
+    /**
+     * Remove a like for a user from the Firebase
+     * @param uid the user id
+     * @param cid the challenge id
+     * @return a task that will complete when the like is removed
+     */
     override fun removeUserLike(uid: String, cid: String): Task<Void> {
         //Remove the challenge from the user's liked challenges
         return Tasks.whenAll(
@@ -215,6 +229,12 @@ class FirebaseDatabase(activity: Activity) : Database {
         )
     }
 
+    /**
+     * Check if a user likes a specific challenge
+     * @param uid the user id
+     * @param cid the challenge id
+     * @return a task that will complete with a boolean indicating if the user likes the challenge
+     */
     override fun isUserLiked(uid: String, cid: String): LazyRef<Boolean> {
         //Check if the challenge is in the user's liked challenges, return false if the challenge is not present
         return object : BaseLazyRef<Boolean>() {

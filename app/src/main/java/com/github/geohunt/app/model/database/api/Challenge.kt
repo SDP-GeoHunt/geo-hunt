@@ -56,5 +56,8 @@ interface Challenge
      */
     val likes: List<LazyRef<User>>
 
+    /**
+     * The number of likes for this challenge
+     */
     var nbLikes: Int
 }
