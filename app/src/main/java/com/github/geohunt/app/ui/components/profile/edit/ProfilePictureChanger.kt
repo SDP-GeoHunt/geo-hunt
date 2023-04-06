@@ -48,14 +48,15 @@ fun ProfilePictureChanger(
             editedUser.value = editedUser.value.copy(profilePicture = it)
     }
 
+    // Image picker
+    val imagePick = profilePictureProvider {
+        editedUser.value = editedUser.value.setProfilePicture(it)
+    }
+
 
     Row(modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        val imagePick = profilePictureProvider {
-            editedUser.value = editedUser.value.setProfilePicture(it)
-        }
-
         // TODO: change
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)

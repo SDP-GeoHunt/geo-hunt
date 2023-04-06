@@ -23,9 +23,7 @@ data class EditedUser(
      * Sets the profile picture
      */
     fun setProfilePicture(profilePicture: Bitmap): EditedUser {
-        this.profilePicture = profilePicture
-        this.isProfilePictureNew = true
-        return this
+        return copy(profilePicture = profilePicture, isProfilePictureNew = true)
     }
 
     companion object {
