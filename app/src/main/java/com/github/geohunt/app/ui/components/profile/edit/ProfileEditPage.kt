@@ -80,16 +80,3 @@ private fun SettingsPageContent(user: User) {
         }
     }
 }
-
-@Composable
-private fun DisplayNameChanger(editedUser: MutableState<EditedUser>) {
-    Row {
-       TextField(
-           modifier = Modifier.fillMaxWidth(),
-           value = editedUser.value.displayName,
-           onValueChange = { editedUser.value = editedUser.value.copy(displayName = it) },
-           label = { Text(stringResource(id = R.string.display_name)) },
-           singleLine = true
-       )
-    }
-}
