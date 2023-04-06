@@ -54,6 +54,7 @@
     <string name="log_out_confirmation">Are you sure to log out?</string>
 
     <string name="save">Save</string>
+    <string name="saving">Saving…</string>
 
     <string name="leaderboard">Leaderboard</string>
 </resources>

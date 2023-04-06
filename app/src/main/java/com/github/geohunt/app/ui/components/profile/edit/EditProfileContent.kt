@@ -1,0 +1,60 @@
+package com.github.geohunt.app.ui.components.profile.edit
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Pending
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.components.button.FlatLongButton
+import com.github.geohunt.app.utility.findActivity
+import com.github.geohunt.app.utility.thenMap
+import com.github.geohunt.app.R
+
+@Composable
+fun EditProfileContent(user: User) {
+    instrumentableEditProfileContent(user = user)
+}
+
+@Composable
+@NoLiveLiterals
+fun instrumentableEditProfileContent(user: User): MutableState<EditedUser> {
+    val editedUser = remember { mutableStateOf(EditedUser.fromUser(user)) }
+    val db = Database.databaseFactory.get()(LocalContext.current.findActivity())
+    var isSaving by remember { mutableStateOf(false) }
+
+    fun save() {
+        isSaving = true
+        val newUser = editedUser.value
+        db.updateUser(newUser.applyUpdates(user), if (newUser.isProfilePictureNew) newUser.profilePicture else null)
+            .thenMap {
+                isSaving = false
+            }
+    }
+
+    Column {
+        ProfilePictureChanger(user, editedUser) { profilePictureProvider(it) }
+
+        DisplayNameChanger(editedUser)
+
+        if (isSaving) {
+            FlatLongButton(
+                icon = Icons.Default.Pending,
+                modifier = Modifier.testTag("wait-btn"),
+                text = stringResource(id = R.string.saving), onClick = { })
+        } else {
+            FlatLongButton(
+                icon = Icons.Default.Save,
+                modifier = Modifier.testTag("save-btn"),
+                text = stringResource(R.string.save),
+                onClick = { save() })
+        }
+    }
+    
+    return editedUser
+}
