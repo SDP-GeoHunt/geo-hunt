@@ -16,7 +16,8 @@ class MockChallenge(
     override val thumbnail: LazyRef<Bitmap> = MockLazyRef("1") { TODO() },
     override val correctLocation: Location = Location(.0, .0),
     override val claims: List<LazyRef<Claim>> = listOf(),
-    override var likes: List<LazyRef<User>> = listOf()
+    override var likes: List<LazyRef<User>> = listOf(),
+    override var nbLikes: Int = 0
 ) : Challenge {
 
     override val coarseLocation: Location

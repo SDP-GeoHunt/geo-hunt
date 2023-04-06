@@ -55,4 +55,6 @@ interface Challenge
      * A list of references to all of the likes from users
      */
     val likes: List<LazyRef<User>>
+
+    var nbLikes: Int
 }

@@ -107,7 +107,8 @@ class FirebaseDatabase(activity: Activity) : Database {
                 expirationDate = expirationDate,
                 correctLocation = location,
                 claims = listOf(),
-                likes = listOf()
+                likes = listOf(),
+                nbLikes = 0
             )
         }
     }
@@ -195,12 +196,6 @@ class FirebaseDatabase(activity: Activity) : Database {
 
             override val id: String
                 get() = cid
-        }
-    }
-
-    override fun getChallengeLikesCount(cid: String): Task<Long> {
-        return dbChallengeRef.child(cid).child("likes").get().thenMap {
-            it.childrenCount
         }
     }
 

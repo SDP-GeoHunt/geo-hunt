@@ -226,6 +226,7 @@ class ChallengeViewTest {
             expirationDate = LocalDateTime.now().plusDays(1),
             publishedDate = LocalDateTime.now(),
             likes = listOf(),
+            nbLikes = 0,
         )
 
         // Sets the composeTestRule content
@@ -294,6 +295,7 @@ class ChallengeViewTest {
             expirationDate = LocalDateTime.now().plusDays(1),
             publishedDate = LocalDateTime.now(),
             likes = listOf(),
+            nbLikes = 5001,
         )
 
         // Sets the composeTestRule content

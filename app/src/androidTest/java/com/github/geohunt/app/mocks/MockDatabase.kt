@@ -58,8 +58,4 @@ abstract class BaseMockDatabase : Database {
             override fun fetch(): Task<Boolean> = Tasks.forResult(false)
         }
     }
-
-    override fun getChallengeLikesCount(cid: String): Task<Long> {
-        TODO("Not yet implemented")
-    }
 }

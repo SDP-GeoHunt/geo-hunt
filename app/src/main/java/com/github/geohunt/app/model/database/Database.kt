@@ -74,8 +74,6 @@ interface Database {
      */
     fun isUserLiked(uid: String, cid: String): LazyRef<Boolean>
 
-    fun getChallengeLikesCount(cid: String): Task<Long>
-
 
     companion object {
 
