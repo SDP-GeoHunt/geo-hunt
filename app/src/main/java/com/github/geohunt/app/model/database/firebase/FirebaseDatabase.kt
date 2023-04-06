@@ -17,6 +17,7 @@ import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import kotlinx.coroutines.tasks.await
 import okhttp3.internal.toImmutableList
 import java.io.File
 import java.time.LocalDateTime
@@ -178,6 +179,29 @@ class FirebaseDatabase(activity: Activity) : Database {
 
         return Tasks.whenAllSuccess<Challenge>(xs)
             .thenMap { it.toImmutableList() }
+    }
+
+    /**
+     * Returns a list of users that liked a given challenge
+     */
+    internal fun getLikeRefById(cid: String): LazyRef<User> {
+        return object : BaseLazyRef<User>() {
+            override fun fetchValue(): Task<User> {
+                return dbChallengeRef.child(cid).child("likes").get().thenMap {
+                    val uid = it.key!!
+                    getUserRefById(uid).fetch().result
+                }
+            }
+
+            override val id: String
+                get() = cid
+        }
+    }
+
+    override fun getChallengeLikesCount(cid: String): Task<Long> {
+        return dbChallengeRef.child(cid).child("likes").get().thenMap {
+            it.childrenCount
+        }
     }
 
     override fun insertUserLike(uid: String, cid: String): Task<Void> {

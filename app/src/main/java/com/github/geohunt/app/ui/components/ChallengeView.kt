@@ -157,7 +157,7 @@ private fun BellowImageButtons(
         val iconSize = 22.dp
 
         val hasUserLikedChallenge: LazyRef<Boolean> = database.isUserLiked(user.uid, challenge.cid)
-        var numberOfLikes by remember { mutableStateOf(challenge.likes.size) }
+        var numberOfLikes by remember { mutableStateOf(0L ) }
 
         FetchComponent(
             lazyRef = { hasUserLikedChallenge },
@@ -167,7 +167,6 @@ private fun BellowImageButtons(
             IconButton(
                 onClick = {
                     if (isLiked) {
-
                         database.removeUserLike(
                             user.uid,
                             challenge.cid
@@ -182,7 +181,7 @@ private fun BellowImageButtons(
                         isLiked = true
                     }
 
-                    numberOfLikes = challenge.likes.size
+                    numberOfLikes = database.getChallengeLikesCount(challenge.cid).result!!
                 }
             ) {
                 LabelledIcon(

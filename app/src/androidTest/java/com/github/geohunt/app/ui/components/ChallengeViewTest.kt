@@ -19,6 +19,7 @@ import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseChallenge
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
+import com.github.geohunt.app.model.database.firebase.FirebaseUser
 import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
@@ -200,10 +201,16 @@ class ChallengeViewTest {
     fun testLikingButtonWorksProperly() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-        val author = MockUser(
+        val author = FirebaseUser(
             displayName = "John wick",
             score = 48723,
             uid = "user-f425zez6z4ef6z15f4",
+            hunts = listOf(),
+            likes = listOf(),
+            profilePicture = MockLazyRef("img-ze5f16zaef1465") {
+                Tasks.forResult(createTestBitmap(context))
+            },
+            challenges = listOf(),
         )
 
         val challenge = FirebaseChallenge(
@@ -262,10 +269,16 @@ class ChallengeViewTest {
     fun testClickingOnLikeButtonWithPreviousLikeRemovesLike(){
         val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-        val author = MockUser(
+        val author = FirebaseUser(
             displayName = "John wick",
             score = 48723,
             uid = "user-f425zez6z4ef6z15f4",
+            hunts = listOf(),
+            likes = listOf(),
+            profilePicture = MockLazyRef("img-ze5f16zaef1465") {
+                Tasks.forResult(createTestBitmap(context))
+            },
+            challenges = listOf(),
         )
 
         val challenge = FirebaseChallenge(

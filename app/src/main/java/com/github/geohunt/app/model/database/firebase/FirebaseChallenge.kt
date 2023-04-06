@@ -65,7 +65,7 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate!!),
         correctLocation =  challengeEntry.location!!,
         claims = (challengeEntry.claims ?: listOf()).map(database::getClaimRefById),
-        likes = (challengeEntry.likes ?: listOf()).map(database::getUserRefById),
+        likes = (challengeEntry.likes ?: listOf()).map(database::getLikeRefById)
     )
 }
 
