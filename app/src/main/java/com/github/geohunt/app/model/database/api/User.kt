@@ -56,7 +56,6 @@ interface User {
      * Current score of the user
      */
     val score: Long
-}
 
     /**
      * The list of challenges liked by this user

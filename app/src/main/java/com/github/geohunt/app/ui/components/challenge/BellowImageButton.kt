@@ -3,28 +3,36 @@ package com.github.geohunt.app.ui.components.challenge
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.LabelledIcon
 
 @Composable
-internal fun BellowImageButtons(challenge: Challenge) {
+internal fun BellowImageButtons(challenge: Challenge, database: Database, user: User) {
     Row(modifier = Modifier.fillMaxWidth().padding(15.dp, 5.dp)) {
         val fontSize = 18.sp
         val iconSize = 22.dp
 
-        LabelledIcon(
-            text = "42",
-            painter = painterResource(R.drawable.likes),
-            contentDescription = "Likes", fontSize = fontSize, iconSize = iconSize)
+        LikeButton(challenge = challenge,
+            database = database,
+            user = user,
+            fontSize = fontSize,
+            iconSize = iconSize)
 
         Spacer(modifier = Modifier.width(18.dp).weight(0.2f))
 
@@ -53,6 +61,52 @@ internal fun BellowImageButtons(challenge: Challenge) {
             Text(
                 text = "Join",
                 fontSize = 17.sp
+            )
+        }
+    }
+}
+
+@Composable
+internal fun LikeButton(challenge: Challenge, database: Database, user: User, fontSize: TextUnit, iconSize: Dp) {
+    val hasUserLikedChallenge: LazyRef<Boolean> = database.isUserLiked(user.uid, challenge.cid)
+    var numberOfLikes by remember { mutableStateOf(challenge.nbLikes ) }
+
+    FetchComponent(
+        lazyRef = { hasUserLikedChallenge },
+    ) { liked ->
+        var isLiked = liked
+
+        IconButton(
+            onClick = {
+                if (isLiked) {
+                    database.removeUserLike(
+                        user.uid,
+                        challenge.cid
+                    )
+                    challenge.nbLikes -= 1
+                    isLiked = false
+
+                } else {
+                    database.insertUserLike(
+                        user.uid,
+                        challenge.cid
+                    )
+                    isLiked = true
+                    challenge.nbLikes += 1
+                }
+
+                numberOfLikes = challenge.nbLikes
+            }
+        ) {
+            LabelledIcon(
+                text = numberOfLikes.toString(),
+                painter = if (isLiked) painterResource(R.drawable.challenge_liked) else painterResource(R.drawable.challenge_not_liked),
+                contentDescription = "Likes",
+                fontSize = fontSize,
+                iconSize = iconSize,
+                modifier = Modifier
+                    //           .align(Alignment.CenterVertically)
+                    .padding(end = 15.dp)
             )
         }
     }

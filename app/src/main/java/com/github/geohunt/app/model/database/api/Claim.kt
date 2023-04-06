@@ -33,8 +33,6 @@ interface Claim {
      */
     val time: LocalDateTime
 
-    val distance : Long
-
     /**
      * Distance between the actual location expressed in meter and the submitted one.
      */

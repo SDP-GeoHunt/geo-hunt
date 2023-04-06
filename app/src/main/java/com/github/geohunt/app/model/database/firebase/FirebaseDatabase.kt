@@ -301,7 +301,6 @@ class FirebaseDatabase(activity: Activity) : Database {
     override suspend fun unfollow(follower: String, followee: String) {
         doFollow(follower, followee, follow = false)
     }
-}
 
     /**
      * Returns a list of users that liked a given challenge
@@ -313,7 +312,7 @@ class FirebaseDatabase(activity: Activity) : Database {
             override fun fetchValue(): Task<User> {
                 return dbChallengeRef.child(cid).child("likes").get().thenMap {
                     val uid = it.key!!
-                    getUserRefById(uid).fetch().result
+                    getUserById(uid).fetch().result
                 }
             }
 
