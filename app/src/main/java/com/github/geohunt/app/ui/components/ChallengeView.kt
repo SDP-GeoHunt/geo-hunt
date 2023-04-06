@@ -179,7 +179,6 @@ private fun BellowImageButtons(
                             user.uid,
                             challenge.cid
                         )
-
                         isLiked = true
                     }
 

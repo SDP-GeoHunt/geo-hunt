@@ -182,31 +182,17 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     override fun insertUserLike(uid: String, cid: String): Task<Void> {
         //Add the challenge to the user's liked challenges
-
         return Tasks.whenAll(
-            dbUserRef.child(uid).child("likes").push().setValue(cid),
-            dbChallengeRef.child(cid).child("likes").push().setValue(uid)
+            dbUserRef.child(uid).child("likes").child(cid).setValue(true),
+            dbChallengeRef.child(cid).child("likes").child(uid).setValue(true)
         )
     }
 
     override fun removeUserLike(uid: String, cid: String): Task<Void> {
         //Remove the challenge from the user's liked challenges
         return Tasks.whenAll(
-            dbChallengeRef.child(cid).child("likes").equalTo(uid).get()
-                .thenMap { snapshot ->
-                    val key = snapshot.children.firstOrNull()?.key
-                    if (key != null) {
-                        dbChallengeRef.child(cid).child("likes").child(key).removeValue()
-                    }
-                }
-                .continueWithTask {
-                    dbUserRef.child(uid).child("likes").equalTo(cid).get().thenMap { snapshot ->
-                        val key = snapshot.children.firstOrNull()?.key
-                        if (key != null) {
-                            dbUserRef.child(uid).child("likes").child(key).removeValue()
-                        }
-                    }
-                }
+            dbChallengeRef.child(cid).child("likes").child(uid).removeValue(),
+            dbUserRef.child(uid).child("likes").child(cid).removeValue()
         )
     }
 
@@ -214,10 +200,8 @@ class FirebaseDatabase(activity: Activity) : Database {
         //Check if the challenge is in the user's liked challenges, return false if the challenge is not present
         return object : BaseLazyRef<Boolean>() {
             override fun fetchValue(): Task<Boolean> {
-                return dbChallengeRef.child(cid).child("likes").equalTo(uid).get()
-                    .thenMap { snapshot ->
-                        snapshot.children.firstOrNull() != null
-                    }
+                return dbUserRef.child(uid).child("likes").child(cid).get()
+                    .thenMap { it.value as Boolean? ?: false }
             }
             override val id: String = uid + cid
         }
