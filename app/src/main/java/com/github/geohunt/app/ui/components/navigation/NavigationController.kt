@@ -26,11 +26,11 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.maps.GoogleMapView
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
+import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.utility.findActivity
@@ -104,7 +104,15 @@ fun NavigationController(
             )
         }
         composable(Route.ActiveHunts.route) {
-            Text("Active hunts")
+            val user = Authenticator.authInstance.get().user
+
+            if (user == null) {
+                Text("You are not logged in. Weird :(")
+            } else {
+                ActiveHunts(id = user.uid, database) {
+                    navController.navigate(Route.Explore.route)
+                }
+            }
         }
 
         // Profile
@@ -114,7 +122,7 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                ProfilePage(id = user.uid)
+                ProfilePage(id = user.uid, database)
             }
         }
 
@@ -122,7 +130,7 @@ fun NavigationController(
             "${Route.Profile.route}/{userId}",
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
         ) {
-            it.arguments?.getString("userId")?.let { it1 -> ProfilePage(id = it1) }
+            it.arguments?.getString("userId")?.let { it1 -> ProfilePage(id = it1, database) }
         }
 
         // View image
@@ -142,21 +150,20 @@ fun NavigationController(
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
         ) { backStackEntry ->
             val cid = backStackEntry.arguments?.getString("challengeId")!!
+
             Box(modifier = Modifier.fillMaxSize()) {
                 FetchComponent(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ChallengeView(it,
-                        onButtonBack = navController::popBackStack,
-                        displayImage = { iid ->
-                            navController.navigate("image-view/$iid")
-                        }
-                    )
+                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") }) {
+                        navController.popBackStack()
+                    }
                 }
             }
         }
 
+        // Open claim view for a given challenge
         composable(
             "claim-challenge/{challengeId}",
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })

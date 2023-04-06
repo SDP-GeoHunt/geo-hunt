@@ -17,14 +17,14 @@ import com.github.geohunt.app.R
 /**
  * Display a button for going back (should be displayed in the top left corner)
  *
- * @param fnGoBackCallback Callback called whenever the user press on the button
+ * @param fnGoBackCallback Function called whenever the user press this button
+ * @param tint optionally the color of the button
  */
 @Composable
 fun GoBackBtn(
     fnGoBackCallback: () -> Unit,
     tint: Color = Color.Unspecified
-)
-{
+) {
     val color =
         if (tint == Color.Unspecified) colorResource(id = R.color.md_theme_light_onBackground)
         else tint

@@ -40,16 +40,18 @@ class ChallengeViewTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val profilePicture = createTestBitmap(context)
         var challenge2 : Challenge? = null
+        var route = ""
+
 
         val author = MockUser(
             displayName = "John wick",
-            score = 48723.0,
+            score = 48723,
             profilePicture = InstantLazyRef("izufiozef", profilePicture)
         )
 
         val author2 = MockUser(
             displayName = "John Williams",
-            score = 1248.0,
+            score = 1248,
             profilePicture = InstantLazyRef("izufiozef", profilePicture)
         )
 
@@ -66,6 +68,8 @@ class ChallengeViewTest {
                 get() = LocalDateTime.now()
             override val distance: Long
                 get() = 62
+            override val awardedPoints: Long
+                get() = 100
             override val location: Location
                 get() = Location()
         }
@@ -83,7 +87,9 @@ class ChallengeViewTest {
 
         // Sets the composeTestRule content
         composeTestRule.setContent {
-            ChallengeView(challenge = challenge, onButtonBack = {}, {})
+            ChallengeView(challenge = challenge, { route = it }) {
+                route = "../"
+            }
         }
 
         // Test stuff once loaded
@@ -94,6 +100,10 @@ class ChallengeViewTest {
         }
 
         // Ensure click on challenge view image redirect to corresponding page
+        composeTestRule.onNodeWithContentDescription("Challenge Image")
+            .assertIsDisplayed()
+            .performClick()
+        assertThat(route, equalTo("img-ze5f16zaef1465"))
 
         composeTestRule.onNodeWithText("John wick")
             .performScrollTo()
@@ -122,47 +132,4 @@ class ChallengeViewTest {
             .assertExists()
     }
 
-    @Test
-    fun testChallengeViewDisplayChallengeProperly()
-    {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val future = CompletableFuture<String>()
-
-        val author = MockUser(
-            displayName = "John wick",
-            score = 48723.0
-        )
-
-        val challenge = MockChallenge(
-            author = MockLazyRef("user-f425zez6z4ef6z15f4") {
-                Tasks.forResult(author)
-            },
-            thumbnail = MockLazyRef("img-ze5f16zaef1465") {
-                Tasks.forResult(createTestBitmap(context))
-            }
-        )
-
-        // Sets the composeTestRule content
-        composeTestRule.setContent {
-            ChallengeView(challenge = challenge, {},
-                displayImage = { iid ->
-                    future.complete(iid)
-                })
-        }
-
-        // Test stuff once loaded
-        composeTestRule.waitUntil(2000) {
-            composeTestRule.onAllNodesWithContentDescription("Challenge Image")
-                .fetchSemanticsNodes()
-                .size == 1
-        }
-
-        // Ensure click on challenge view image redirect to corresponding page
-        composeTestRule.onNodeWithContentDescription("Challenge Image")
-            .assertHasClickAction()
-            .performClick()
-
-        assertThat(future.join(),
-            equalTo("img-ze5f16zaef1465"))
-    }
 }

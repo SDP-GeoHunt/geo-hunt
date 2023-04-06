@@ -42,22 +42,22 @@ class TestFirebaseDatabase {
 
     @Test
     fun testFirebaseDatabaseUserHasUniqueReference() {
-        val u1 = database.getUserRefById("id-unique")
-        val u2 = database.getUserRefById("id-unique-2")
+        val u1 = database.getUserById("id-unique")
+        val u2 = database.getUserById("id-unique-2")
 
         assertThat(u1, not(sameInstance(u2)))
-        assertThat(database.getUserRefById("id-unique"), sameInstance(u1))
-        assertThat(database.getUserRefById("id-unique-2"), sameInstance(u2))
+        assertThat(database.getUserById("id-unique"), sameInstance(u1))
+        assertThat(database.getUserById("id-unique-2"), sameInstance(u2))
     }
 
     @Test
     fun testFirebaseDatabaseChallengeHasUniqueReference() {
-        val c1 = database.getChallengeRefById("id-unique")
-        val c2 = database.getChallengeRefById("id-unique-2")
+        val c1 = database.getChallengeById("id-unique")
+        val c2 = database.getChallengeById("id-unique-2")
 
         assertThat(c1, not(sameInstance(c2)))
-        assertThat(database.getChallengeRefById("id-unique"), sameInstance(c1))
-        assertThat(database.getChallengeRefById("id-unique-2"), sameInstance(c2))
+        assertThat(database.getChallengeById("id-unique"), sameInstance(c1))
+        assertThat(database.getChallengeById("id-unique-2"), sameInstance(c2))
     }
 
     @Test
@@ -85,14 +85,14 @@ class TestFirebaseDatabase {
     @Test
     fun databaseRetrievesCorrectlyUsers() {
         val cf = CompletableFuture<User>()
-        database.getUserRefById("1").fetch().addOnCompleteListener {
+        database.getUserById("1").fetch().addOnCompleteListener {
             cf.complete(it.result)
         }.addOnFailureListener {
             cf.completeExceptionally(it)
         }
         val get = cf.get()
-        assert(get.uid == "1")
-        assert(get.displayName == "Debug user")
-        assert(get.score == 123.0)
+        assertThat(get.uid, equalTo("1"))
+        assertThat(get.displayName, equalTo("Debug user"))
+        assertThat(get.score, equalTo(123))
     }
 }

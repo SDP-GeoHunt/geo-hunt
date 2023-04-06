@@ -15,5 +15,6 @@ class MockClaim(
     override val time: LocalDateTime,
     override val location: Location,
     override val image: LazyRef<Bitmap>,
-    override val distance: Long
+    override val distance: Long,
+    override val awardedPoints: Long
 ) : Claim
