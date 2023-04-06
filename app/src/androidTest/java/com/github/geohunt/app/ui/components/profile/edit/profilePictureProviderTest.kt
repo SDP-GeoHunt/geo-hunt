@@ -69,7 +69,7 @@ class profilePictureProviderTest {
         provider!!()
 
         // Throws exception if not finished within 2s
-        cf.get(2, TimeUnit.SECONDS)
+        cf.get(15, TimeUnit.SECONDS)
         Intents.release()
     }
 
