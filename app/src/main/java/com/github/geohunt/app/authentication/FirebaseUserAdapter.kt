@@ -27,7 +27,11 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
         get() = TODO("Not yet implemented (need database)")
     override val hunts: List<LazyRef<Challenge>>
         get() = TODO("Not yet implemented (need database)")
-    override var score: Number
+    override val numberOfFollowers: Int
+        get() = TODO("Not yet implemented (need database)")
+    override val follows: List<LazyRef<User>>
+        get() = TODO("Not yet implemented")
+    override var score: Long
         get() = TODO("Not yet implemented (need database)")
         set(value) {}
     override var likes: List<LazyRef<Challenge>>

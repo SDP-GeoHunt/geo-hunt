@@ -3,6 +3,7 @@ package com.github.geohunt.app.ui.components.navigation
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -23,13 +24,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.maps.GoogleMapView
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
-import com.github.geohunt.app.ui.components.ChallengeView
+import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
+import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
+import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.utility.findActivity
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -61,19 +68,27 @@ fun NavigationController(
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
-            Button(onClick = {
-                authenticator.signOut(activity)
-            }) {
-                Text("Sign out")
+            Column {
+                Button(onClick = {
+                    authenticator.signOut(activity)
+                }) {
+                    Text("Sign out")
+                }
+
+                Button(onClick = {
+                    navController.navigate("challenge-view/98d755ad-NRrhrThHEiOx3ph_VWP")
+                }) {
+                    Text(text = "Open challenge view")
+                }
             }
         }
         composable(Route.Explore.route) {
-            // Text("Explore")
-            Button(onClick = {
-                    navController.navigate("challenge-view/98d755ad-NQfISf2o_QzWLjCpedB")
-            }) {
-                Text(text = "Open challenge view")
-            }
+            val epflCoordinates = LatLng(46.519585, 6.5684919)
+            val epflCameraPositionState = CameraPositionState(CameraPosition(epflCoordinates, 15f, 0f, 0f))
+            GoogleMapView(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = epflCameraPositionState
+            )
         }
         composable(Route.Create.route) {
             CreateNewChallenge(
@@ -89,7 +104,15 @@ fun NavigationController(
             )
         }
         composable(Route.ActiveHunts.route) {
-            Text("Active hunts")
+            val user = Authenticator.authInstance.get().user
+
+            if (user == null) {
+                Text("You are not logged in. Weird :(")
+            } else {
+                ActiveHunts(id = user.uid, database) {
+                    navController.navigate(Route.Explore.route)
+                }
+            }
         }
 
         // Profile
@@ -99,7 +122,7 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                ProfilePage(id = Authenticator.authInstance.get().user!!.uid)
+                ProfilePage(id = user.uid, database)
             }
         }
 
@@ -107,7 +130,7 @@ fun NavigationController(
             "${Route.Profile.route}/{userId}",
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
         ) {
-            it.arguments?.getString("userId")?.let { it1 -> ProfilePage(id = it1) }
+            it.arguments?.getString("userId")?.let { it1 -> ProfilePage(id = it1, database) }
         }
 
         // View image
@@ -127,19 +150,32 @@ fun NavigationController(
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
         ) { backStackEntry ->
             val cid = backStackEntry.arguments?.getString("challengeId")!!
+
             Box(modifier = Modifier.fillMaxSize()) {
                 FetchComponent(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ChallengeView(it,
-                        database = database,
-                        user = Authenticator.authInstance.get().user!!,
-                        onButtonBack = navController::popBackStack,
-                        displayImage = { iid ->
-                            navController.navigate("image-view/$iid")
-                        }
-                    )
+                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") }) {
+                        navController.popBackStack()
+                    }
+                }
+            }
+        }
+
+        // Open claim view for a given challenge
+        composable(
+            "claim-challenge/{challengeId}",
+            arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val cid = backStackEntry.arguments?.getString("challengeId")!!
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                FetchComponent(
+                    lazyRef = { database.getChallengeById(cid) },
+                    modifier = Modifier.align(Alignment.Center),
+                ) {
+                    ClaimChallenge(database = database, challenge = it)
                 }
             }
         }

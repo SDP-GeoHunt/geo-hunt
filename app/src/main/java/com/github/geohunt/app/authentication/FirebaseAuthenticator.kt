@@ -10,7 +10,7 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.Database
 import java.util.concurrent.CompletableFuture
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.model.database.firebase.NotFoundUser
+import com.github.geohunt.app.model.database.api.UserNotFoundException
 
 /**
  * Implements the Authenticator for Firebase.
@@ -65,10 +65,10 @@ class FirebaseAuthenticator(
         val db = Database.databaseFactory.get()(activity)
         user?.let {user ->
             // Check if user is not found.
-            db.getUser(user.uid).fetch().addOnFailureListener {
+            db.getUserById(user.uid).fetch().addOnFailureListener {
                 when(it) {
                     // If so, create it
-                    is NotFoundUser -> db.insertNewUser(user)
+                    is UserNotFoundException -> db.insertNewUser(user)
                         .addOnCompleteListener { completableFuture.complete(user) }
                         .addOnFailureListener { completableFuture.completeExceptionally(it) }
                     else -> throw IllegalStateException("Unexpected response when fetching user $it")

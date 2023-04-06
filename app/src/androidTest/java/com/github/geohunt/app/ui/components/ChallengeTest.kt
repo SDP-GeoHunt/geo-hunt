@@ -1,34 +1,28 @@
 package com.github.geohunt.app.ui.components
 
-import android.util.Log
 import androidx.compose.material.Text
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.databinding.Observable
-import androidx.databinding.Observable.OnPropertyChangedCallback
-import com.github.geohunt.app.mocks.MockLazyRef
-import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.FirebaseEmulator
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.github.geohunt.app.utility.findActivity
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
-import java.util.concurrent.CompletableFuture
 
 class ChallengeTest {
     private lateinit var database: FirebaseDatabase
 
     @get:Rule
     val testRule = createComposeRule()
+
+    @Before
+    fun setup() {
+        FirebaseEmulator.init()
+    }
 
     @Before
     fun setupComposable() {
@@ -43,7 +37,7 @@ class ChallengeTest {
                 Text("Finished")
 
                 GeoHuntTheme {
-                    Challenge(challenge = challenge.value!!)
+                    Challenge(challenge = challenge.value!!, {})
                 }
             }
 

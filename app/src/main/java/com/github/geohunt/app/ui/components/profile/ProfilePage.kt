@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.model.database.firebase.FirebaseUserRef
@@ -22,18 +23,27 @@ import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.findActivity
 
+/**
+ * The main profile page content.
+ *
+ * @param id The id of the user to be shown
+ */
 @Composable
-fun ProfilePage(id: String) {
-    ProfilePage(user = FirebaseUserRef(id, FirebaseDatabase(LocalContext.current.findActivity())))
+fun ProfilePage(id: String, database: Database) {
+    ProfilePage(user = database.getUserById(id))
 }
 
+/**
+ * The main profile page content.
+ *
+ * @param user A lazy ref for the user
+ */
 @Composable
 fun ProfilePage(user: LazyRef<User>) {
     val lazyRefRemember = rememberLazyRef { user }
 
     Box(modifier = Modifier
-        .fillMaxSize()
-        .fillMaxWidth()) {
+        .fillMaxSize()) {
         if (lazyRefRemember.value == null) {
             Progress()
         } else {
@@ -47,33 +57,39 @@ fun ProfilePage(user: LazyRef<User>) {
 private fun ProfilePageContent(user: User) {
     Column {
         Row {
-            ProfileIcon(user = user, modifier = Modifier.width(124.dp).aspectRatio(1f))
+            ProfileIcon(user = user, modifier = Modifier
+                .width(124.dp)
+                .aspectRatio(1f))
 
             Column(modifier = Modifier.padding(0.dp, 12.dp)) {
                 Text(user.displayName ?: user.uid)
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)) {
-                    BigNumberWithText(
-                        title = user.challenges.size.toString(),
-                        subtitle = stringResource(id = R.string.profile_number_of_posts_subtitle)
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    BigNumberWithText(
-                        title = user.hunts.size.toString(),
-                        subtitle = stringResource(id = R.string.profile_number_of_hunts_subtitle)
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    BigNumberWithText(
-                        title = user.score.toString(),
-                        subtitle = stringResource(id = R.string.profile_score_subtitle)
-                    )
-                }
+                UserNumberDetails(user)
             }
         }
 
         PastChallengeAndHunts(user)
+    }
+}
+
+private data class BigNumberContent(val title: String, val subtitleId: Int)
+@Composable
+private fun UserNumberDetails(user: User) {
+    val numbers = listOf(
+        BigNumberContent(user.challenges.size.toString(), R.string.profile_number_of_posts_subtitle),
+        BigNumberContent(user.hunts.size.toString(), R.string.profile_number_of_hunts_subtitle),
+        BigNumberContent(user.score.toString(), R.string.profile_score_subtitle),
+    )
+
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween) {
+
+        for(n in numbers) {
+            BigNumberWithText(title = n.title, subtitle = stringResource(n.subtitleId))
+        }
+
     }
 }
 

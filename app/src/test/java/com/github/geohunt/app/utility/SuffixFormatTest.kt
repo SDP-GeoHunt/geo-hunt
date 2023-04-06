@@ -1,5 +1,6 @@
 package com.github.geohunt.app.utility
 
+import com.github.geohunt.app.i18n.toSuffixedString
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.Assert

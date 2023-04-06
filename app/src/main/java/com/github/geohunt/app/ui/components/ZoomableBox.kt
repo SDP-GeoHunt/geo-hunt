@@ -11,6 +11,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 
+/**
+ * A composable function that provides a zoomable box with a customizable scale range.
+ *
+ * @param modifier The modifier to be applied to this composable.
+ * @param minScale The minimum scale allowed for the box. Default is 1.0f.
+ * @param maxScale The maximum scale allowed for the box. Default is 10.0f.
+ * @param content The composable content of the zoomable box.
+ */
 @Composable
 fun ZoomableBox(
     modifier: Modifier = Modifier,
@@ -33,9 +41,9 @@ fun ZoomableBox(
 
                 val maxX = (size.width * (scale - 1)) / 2
                 val minX = -maxX
-                offsetX = maxOf(minX, minOf(maxX, offsetX + pan.x))
                 val maxY = (size.height * (scale - 1)) / 2
                 val minY = -maxY
+                offsetX = maxOf(minX, minOf(maxX, offsetX + pan.x))
                 offsetY = maxOf(minY, minOf(maxY, offsetY + pan.y))
             }
         }

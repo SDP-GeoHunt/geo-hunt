@@ -4,11 +4,15 @@ import android.content.res.Resources.NotFoundException
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.*
+import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.Claim
+import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.utility.*
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseReference
 import java.time.LocalDateTime
 
 data class FirebaseChallenge(
@@ -45,6 +49,7 @@ class FirebaseChallengeRef(
                 }
         }
     }
+
 }
 
 internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String) : FirebaseChallenge
@@ -60,7 +65,7 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
     // Finally create the challenge object
     return FirebaseChallenge(
         cid = cid,
-        author = database.getUserRefById(challengeEntry.authorId!!),
+        author = database.getUserById(challengeEntry.authorId!!),
         thumbnail = database.getThumbnailRefById(cid),
         publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate!!),

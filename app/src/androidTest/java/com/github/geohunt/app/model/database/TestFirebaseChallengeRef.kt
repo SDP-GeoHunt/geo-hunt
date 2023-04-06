@@ -42,7 +42,7 @@ class TestFirebaseChallengeRef {
             database = FirebaseDatabase(LocalContext.current.findActivity())
         }
 
-        val challengeRef = database.getChallengeRefById("163f921c-NQWln8MlqnVhArUIdwE")
+        val challengeRef = database.getChallengeById("163f921c-NQWln8MlqnVhArUIdwE")
         assertThat(challengeRef.id, equalTo("163f921c-NQWln8MlqnVhArUIdwE"))
 
         val challenge = challengeRef.fetch().await()

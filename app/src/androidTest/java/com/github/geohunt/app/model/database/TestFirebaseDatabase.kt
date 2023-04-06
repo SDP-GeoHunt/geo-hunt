@@ -9,11 +9,9 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.findActivity
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.After
@@ -44,22 +42,22 @@ class TestFirebaseDatabase {
 
     @Test
     fun testFirebaseDatabaseUserHasUniqueReference() {
-        val u1 = database.getUserRefById("id-unique")
-        val u2 = database.getUserRefById("id-unique-2")
+        val u1 = database.getUserById("id-unique")
+        val u2 = database.getUserById("id-unique-2")
 
         assertThat(u1, not(sameInstance(u2)))
-        assertThat(database.getUserRefById("id-unique"), sameInstance(u1))
-        assertThat(database.getUserRefById("id-unique-2"), sameInstance(u2))
+        assertThat(database.getUserById("id-unique"), sameInstance(u1))
+        assertThat(database.getUserById("id-unique-2"), sameInstance(u2))
     }
 
     @Test
     fun testFirebaseDatabaseChallengeHasUniqueReference() {
-        val c1 = database.getChallengeRefById("id-unique")
-        val c2 = database.getChallengeRefById("id-unique-2")
+        val c1 = database.getChallengeById("id-unique")
+        val c2 = database.getChallengeById("id-unique-2")
 
         assertThat(c1, not(sameInstance(c2)))
-        assertThat(database.getChallengeRefById("id-unique"), sameInstance(c1))
-        assertThat(database.getChallengeRefById("id-unique-2"), sameInstance(c2))
+        assertThat(database.getChallengeById("id-unique"), sameInstance(c1))
+        assertThat(database.getChallengeById("id-unique-2"), sameInstance(c2))
     }
 
     @Test
@@ -82,5 +80,19 @@ class TestFirebaseDatabase {
 
     private fun createTestBitmap(context: Context) : Bitmap {
         return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
+    }
+
+    @Test
+    fun databaseRetrievesCorrectlyUsers() {
+        val cf = CompletableFuture<User>()
+        database.getUserById("1").fetch().addOnCompleteListener {
+            cf.complete(it.result)
+        }.addOnFailureListener {
+            cf.completeExceptionally(it)
+        }
+        val get = cf.get()
+        assertThat(get.uid, equalTo("1"))
+        assertThat(get.displayName, equalTo("Debug user"))
+        assertThat(get.score, equalTo(123))
     }
 }

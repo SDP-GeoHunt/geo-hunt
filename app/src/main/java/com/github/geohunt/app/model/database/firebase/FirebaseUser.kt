@@ -5,30 +5,39 @@ import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.UserNotFoundException
 import com.github.geohunt.app.utility.thenMap
 import com.google.android.gms.tasks.Task
 
+/**
+ * Internal implementation of User in the context of Firebase backend
+ */
 class FirebaseUser(
     override val uid: String,
-    override var displayName: String?,
+    override val displayName: String?,
     override val profilePicture: LazyRef<Bitmap>,
     override val challenges: List<LazyRef<Challenge>>,
     override val hunts: List<LazyRef<Challenge>>,
-    override var score: Number,
+    override val numberOfFollowers: Int,
+    override val follows: List<LazyRef<User>>,
+    override var score: Long,
     override var likes: List<LazyRef<Challenge>>
 ) : User {
+
 }
 
-data class NotFoundUser(val id: String): Exception("User $id not found.")
-
-class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase) : BaseLazyRef<User>() {
+/**
+ * Internal implementation of the LazyRef for the firebase user
+ */
+internal class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase) :
+    BaseLazyRef<User>() {
     override fun fetchValue(): Task<User> {
-        return db.dbUserRef.child(id).get().thenMap { data ->
-            if (!data.exists()) {
-                throw NotFoundUser(id)
+        return db.dbUserRef.child(id).get().thenMap { dataSnapshot ->
+            if (!dataSnapshot.exists()) {
+                throw UserNotFoundException(id)
             }
 
-            val entry = data.getValue(UserEntry::class.java)!!
+            val entry = dataSnapshot.getValue(UserEntry::class.java)!!
 
             FirebaseUser(
                 uid = entry.uid,
@@ -36,18 +45,25 @@ class FirebaseUserRef(override val id: String, private val db: FirebaseDatabase)
                 profilePicture = db.getProfilePicture(entry.uid),
                 challenges = entry.challenges.map { db.getChallengeById(it) },
                 hunts = entry.hunts.map { db.getChallengeById(it) },
+                numberOfFollowers = entry.numberOfFollowers,
+                follows = entry.follows.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
                 score = entry.score,
                 likes = entry.likes.map { db.getChallengeById(it) },
-            )
+                )
         }
     }
 }
 
+/**
+ * Raw user entry has stored in the database
+ */
 internal data class UserEntry(
     var uid: String = "",
     var displayName: String? = null,
     var challenges: List<String> = listOf(),
     var hunts: List<String> = listOf(),
-    var score: Int = 0,
+    var numberOfFollowers: Int = 0,
+    var follows: Map<String, Boolean> = emptyMap(),
+    var score: Long = 0,
     var likes: List<String> = listOf()
 )

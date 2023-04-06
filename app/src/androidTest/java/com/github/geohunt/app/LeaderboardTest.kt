@@ -7,7 +7,8 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import coil.Coil
 import coil.ImageLoader
 import coil.request.CachePolicy
-import com.github.geohunt.app.mocks.MockLazyRef
+import com.github.geohunt.app.i18n.toSuffixedString
+import com.github.geohunt.app.mocks.MockProfilePicture
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
@@ -42,10 +43,12 @@ class LeaderboardTest {
         return object : User {
             override var displayName: String? = names[pos]
             override val uid: String = pos.toString()
-            override val profilePicture: LazyRef<Bitmap> = MockLazyRef("1") { throw NotImplementedError() }
+            override val profilePicture: LazyRef<Bitmap> = MockProfilePicture
             override val challenges: List<LazyRef<Challenge>> = listOf()
             override val hunts: List<LazyRef<Challenge>> = listOf()
-            override var score: Number = 1500 - pos * 100
+            override val numberOfFollowers: Int = 10
+            override val follows: List<LazyRef<User>> = emptyList()
+            override var score: Long = (1500 - pos * 100).toLong()
             override var likes: List<LazyRef<Challenge>> = listOf()
         }
     }
@@ -117,7 +120,7 @@ class LeaderboardTest {
 
             // Check that the score is printed once
             siblings
-                .filter(hasText("${user.score} pts"))
+                .filter(hasText("${user.score.toSuffixedString()} pts"))
                 .assertCountEquals(1)
         }
     }
@@ -136,6 +139,6 @@ class LeaderboardTest {
 
         you.assertIsDisplayed()
         you.onSiblings().filterToOne(hasTextExactly((youIndex + 1).toString())).assertIsDisplayed()
-        you.onSiblings().filterToOne(hasTextExactly("${mockUsers[youIndex].score} pts")).assertIsDisplayed()
+        you.onSiblings().filterToOne(hasTextExactly("${mockUsers[youIndex].score.toSuffixedString()} pts")).assertIsDisplayed()
     }
 }

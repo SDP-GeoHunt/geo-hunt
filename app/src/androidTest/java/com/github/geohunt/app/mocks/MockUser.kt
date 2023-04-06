@@ -8,9 +8,11 @@ import com.github.geohunt.app.model.database.api.User
 class MockUser(
     override var displayName: String? = null,
     override val uid: String = "1",
-    override val profilePicture: LazyRef<Bitmap> = MockLazyRef("1") { TODO() },
+    override val profilePicture: LazyRef<Bitmap> = MockProfilePicture,
     override val challenges: List<LazyRef<Challenge>> = emptyList(),
     override val hunts: List<LazyRef<Challenge>> = emptyList(),
-    override var score: Number = 1,
+    override val numberOfFollowers: Int = 0,
+    override val follows: List<LazyRef<User>> = emptyList(),
+    override var score: Long = 1,
     override var likes: List<LazyRef<Challenge>> = emptyList()
 ) : User

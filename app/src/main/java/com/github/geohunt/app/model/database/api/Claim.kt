@@ -9,12 +9,12 @@ import java.time.LocalDateTime
  */
 interface Claim {
     /**
-     * Unique identifier of this specific claim
+     * String that uniquely identify this claim within the database
      */
     val id: String
 
     /**
-     * Reference to the challenge claimed by this current claim
+     * Reference to the challenge claimed by this instance
      */
     val challenge: LazyRef<Challenge>
 
@@ -34,6 +34,16 @@ interface Claim {
     val time: LocalDateTime
 
     val distance : Long
+
+    /**
+     * Distance between the actual location expressed in meter and the submitted one.
+     */
+    val distance : Long
+
+    /**
+     * Number of points awarded for this specific claim
+     */
+    val awardedPoints : Long
 
     /**
      * Location at which the user claimed the challenge. This is used to compute the score the user
