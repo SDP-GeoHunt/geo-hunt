@@ -16,7 +16,8 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
-import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers.*
 import org.junit.Rule
 import org.junit.Test
 import java.io.File
@@ -26,6 +27,12 @@ import java.util.concurrent.TimeUnit
 class profilePictureProviderTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
+
+    private val pickImageIntentMatcher: Matcher<Intent> =
+            anyOf(
+                hasAction(MediaStore.ACTION_PICK_IMAGES),
+                hasAction(Intent.ACTION_OPEN_DOCUMENT)
+            )
 
     @Test
     fun triggersCorrectIntentWhenCalled() {
@@ -37,9 +44,7 @@ class profilePictureProviderTest {
         assert(provider != null)
         provider!!()
         intended(
-            allOf(
-                hasAction("android.provider.action.PICK_IMAGES")
-            )
+            pickImageIntentMatcher
         )
         Intents.release()
     }
@@ -60,17 +65,20 @@ class profilePictureProviderTest {
 
         Intents.init()
         intending(
-            allOf(
-                hasAction("android.provider.action.PICK_IMAGES")
-            )
+            pickImageIntentMatcher
         ).respondWith(result)
 
         assert(provider != null)
         provider!!()
 
-        // Throws exception if not finished within 2s
-        cf.get(15, TimeUnit.SECONDS)
-        Intents.release()
+        // Throws exception if not finished within 15s
+        try {
+            cf.get(15, TimeUnit.SECONDS)
+        } catch(e: Exception) {
+            throw e
+        } finally {
+            Intents.release()
+        }
     }
 
     @Test
@@ -89,9 +97,7 @@ class profilePictureProviderTest {
 
         Intents.init()
         intending(
-            allOf(
-                hasAction("android.provider.action.PICK_IMAGES")
-            )
+            pickImageIntentMatcher
         ).respondWith(result)
 
         assert(provider != null)
