@@ -24,8 +24,8 @@ fun SettingsDrawer(
 ) {
     var isSureToLogOff by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        if (openProfileEdit != null) {
+    Column(modifier = Modifier.fillMaxWidth().testTag("settings-drawer")) {
+        openProfileEdit?.let { openProfileEdit ->
             FlatLongButton(
                 icon = Icons.Default.Edit,
                 text = stringResource(id = R.string.edit_profile),
@@ -34,7 +34,7 @@ fun SettingsDrawer(
             )
         }
 
-        if (openLeaderboard != null) {
+        openLeaderboard?.let { openLeaderboard ->
             FlatLongButton(
                 icon = Icons.Default.Leaderboard,
                 text = stringResource(R.string.leaderboard),
@@ -43,7 +43,7 @@ fun SettingsDrawer(
             )
         }
 
-        if (onLogout != null) {
+        onLogout?.let { onLogout ->
             FlatLongButton(
                 icon = Icons.Default.Logout,
                 text = stringResource(if (isSureToLogOff) R.string.log_out_confirmation else R.string.log_out),

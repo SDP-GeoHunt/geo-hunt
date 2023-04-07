@@ -32,11 +32,17 @@ typealias OptionalCallback = (() -> Any)?
  * @param onLogout A callback triggered when the user wants to sign out
  */
 @Composable
-fun ProfilePage(id: String, openProfileEdit: OptionalCallback = null, onLogout: OptionalCallback = null) {
+fun ProfilePage(
+    id: String,
+    openProfileEdit: OptionalCallback = null,
+    onLogout: OptionalCallback = null,
+    openLeaderboard: OptionalCallback = null
+) {
     ProfilePage(
         user = FirebaseUserRef(id, FirebaseDatabase(LocalContext.current.findActivity())),
         openProfileEdit = openProfileEdit,
-        onLogout = onLogout
+        onLogout = onLogout,
+        openLeaderboard = openLeaderboard
     )
 }
 
@@ -57,7 +63,7 @@ fun ProfilePage(
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
-    val isMoreOptionsAvailable = openProfileEdit != null || onLogout != null
+    val isMoreOptionsAvailable = openProfileEdit != null || onLogout != null || openLeaderboard != null
 
     Box(modifier = Modifier
         .fillMaxSize()) {
@@ -99,7 +105,7 @@ private fun ProfilePageContent(user: User, showSettingsBtn: Boolean = false, onS
                     Spacer(Modifier.weight(1f))
 
                     if (showSettingsBtn) {
-                        IconButton(onClick = { onSettingsClick() }) {
+                        IconButton(onClick = { onSettingsClick() }, modifier = Modifier.testTag("profile-settings-btn")) {
                             Icon(
                                 Icons.Sharp.Settings,
                                 contentDescription = stringResource(id = R.string.settings)

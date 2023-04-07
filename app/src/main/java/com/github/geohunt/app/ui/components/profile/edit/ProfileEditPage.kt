@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
@@ -36,7 +37,7 @@ fun ProfileEditPage(onBackButton: () -> Any) {
                 .padding(pad)
                 .padding(16.dp)) {
             if (user.value == null) {
-                Text("Loading") // TODO: replace
+                CircularProgressIndicator(modifier = Modifier.fillMaxWidth().testTag("progress"))
             } else {
                 EditProfileContent(user.value!!)
             }
