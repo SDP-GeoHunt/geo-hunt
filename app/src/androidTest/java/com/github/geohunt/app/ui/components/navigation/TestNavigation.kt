@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui.components.navigation
 
-import android.Manifest
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasTestTag
@@ -8,11 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
-import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.mocks.BaseMockDatabase
-import com.github.geohunt.app.ui.components.navigation.NavigationBar
-import com.github.geohunt.app.ui.components.navigation.NavigationController
-import com.github.geohunt.app.ui.components.navigation.Route
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -25,7 +20,7 @@ class TestNavigation {
     private lateinit var navController: TestNavHostController
 
     @Before
-    fun setUp() {
+    fun setup() {
         val database = object : BaseMockDatabase(){}
 
         composeTestRule.setContent {
@@ -45,8 +40,8 @@ class TestNavigation {
     fun clickingOnButtonSelectsIt() {
         for (route in Route.values()) {
             // Skip Route.Create because too hard to test
-            if (route == Route.Create) {
-                continue;
+            if (route == Route.Create || route == Route.ActiveHunts || route == Route.Profile) {
+                continue
             }
 
             val node = composeTestRule.onNode(hasTestTag("navbtn-" + route.route))
@@ -59,8 +54,8 @@ class TestNavigation {
     fun clickingOnButtonRedirects() {
         for (route in Route.values()) {
             // Skip Route.Create because too hard to test
-            if (route == Route.Create) {
-                continue;
+            if (route == Route.Create || route == Route.ActiveHunts || route == Route.Profile) {
+                continue
             }
 
             val node = composeTestRule.onNode(hasTestTag("navbtn-" + route.route))

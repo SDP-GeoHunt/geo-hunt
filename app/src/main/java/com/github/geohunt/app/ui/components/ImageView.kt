@@ -2,11 +2,8 @@ package com.github.geohunt.app.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,7 +12,6 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
@@ -26,7 +22,7 @@ import com.github.geohunt.app.ui.FetchComponent
  *
  * @param database The database containing the image to be displayed.
  * @param iid The ID of the image to be displayed.
- * @param fnGoBackCallback A callback function to be executed when the "Go Back" button is clicked.
+ * @param fnGoBackCallback function called whenever the user presses on the go-back arrow
  */
 @Composable
 fun ZoomableImageView(database: Database, iid: String, fnGoBackCallback: () -> Unit)

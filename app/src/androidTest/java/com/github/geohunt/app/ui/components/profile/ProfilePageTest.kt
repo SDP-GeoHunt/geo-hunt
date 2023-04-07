@@ -35,9 +35,9 @@ class ProfilePageTest {
     @Test
     fun showsScore() {
         testRule.setContent {
-            ProfilePage(user = InstantLazyRef("1", MockUser(score = 2321.0)))
+            ProfilePage(user = InstantLazyRef("1", MockUser(score = 2321)))
         }
-        testRule.onNodeWithText("2321.0").assertExists()
+        testRule.onNodeWithText("2321").assertExists()
     }
 
     @Test

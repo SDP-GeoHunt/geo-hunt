@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.github.geohunt.app.i18n.toSuffixedString
 
 /**
  * Draws the score of the user on the leaderboard
@@ -13,9 +14,9 @@ import androidx.compose.ui.unit.sp
  * @param color The color of the text.
  */
 @Composable
-fun LeaderboardScore(score: Double, color: Color = Color.Black) {
+fun LeaderboardScore(score: Long, color: Color = Color.Black) {
     Text(
-        "$score pts",
+        "${score.toSuffixedString()} pts",
         fontSize = 16.sp,
         fontWeight = FontWeight.Light,
         color = color

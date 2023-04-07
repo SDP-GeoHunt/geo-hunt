@@ -2,7 +2,6 @@ package com.github.geohunt.app.authentication
 
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -41,12 +40,12 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
 
 
     @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
-    override val follows: Map<String, Boolean>
+    override val follows: List<LazyRef<User>>
         get() = throw java.lang.UnsupportedOperationException()
 
 
     @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
-    override var score: Double
+    override var score: Long
         get() = throw java.lang.UnsupportedOperationException()
         set(value) { throw java.lang.UnsupportedOperationException() }
 }

@@ -11,6 +11,9 @@ import com.google.firebase.storage.UploadTask.TaskSnapshot
 import kotlinx.coroutines.tasks.asTask
 import java.io.File
 
+/**
+ * Internal implementation for firebase for any image
+ */
 internal class FirebaseBitmapRef(
     override val id: String, private val database: FirebaseDatabase
 ) : BaseLazyRef<Bitmap>() {
@@ -77,6 +80,12 @@ internal class FirebaseBitmapRef(
             return "challenges-$cid.png"
         }
 
+        /**
+         * Returns the image ID for a profile picture of a certain user ID.
+         *
+         * @param uid The ID of the user considered by this method
+         * @return The image ID for this user
+         */
         internal fun getImageIdFromUserId(uid: String): String {
             return "user-$uid.png"
         }

@@ -15,6 +15,7 @@ import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.button.FlatLongButton
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.database.api.EditedUser
 
 @Composable
 fun EditProfileContent(user: User) {
@@ -32,7 +33,7 @@ fun instrumentableEditProfileContent(user: User): MutableState<EditedUser> {
     fun save() {
         isSaving = true
         val newUser = editedUser.value
-        db.updateUser(newUser.applyUpdates(user), if (newUser.isProfilePictureNew) newUser.profilePicture else null)
+        db.updateUser(newUser)
             .addOnCompleteListener { isSaving = false }
             .addOnFailureListener {
                 Toast.makeText(ctx, "Error while updating profile.", Toast.LENGTH_LONG).show()

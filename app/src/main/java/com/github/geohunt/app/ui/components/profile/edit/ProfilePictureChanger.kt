@@ -21,6 +21,7 @@ import coil.request.ImageRequest
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.database.api.EditedUser
 
 typealias ProfilePictureProviderType = @Composable () (((Bitmap) -> Unit)) -> (() -> Unit)
 

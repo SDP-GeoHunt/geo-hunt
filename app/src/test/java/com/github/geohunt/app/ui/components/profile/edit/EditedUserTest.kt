@@ -1,16 +1,15 @@
 package com.github.geohunt.app.ui.components.profile.edit
 
 import com.github.geohunt.app.mocks.MockUser
+import com.github.geohunt.app.model.database.api.EditedUser
 import org.junit.Test
 
 class EditedUserTest {
 
     @Test
-    fun appliesProperlyNameChanges() {
+    fun properlyTakesNameFromUser() {
         val user = MockUser(displayName = "hello")
         val editedUser = EditedUser.fromUser(user)
-        editedUser.displayName = "ok"
-        val newUser = editedUser.applyUpdates(user)
-        assert(newUser.displayName == "ok")
+        assert(editedUser.displayName == "hello")
     }
 }

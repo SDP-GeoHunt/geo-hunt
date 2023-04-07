@@ -2,15 +2,11 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
 import android.graphics.Bitmap
-import androidx.compose.ui.platform.LocalContext
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
@@ -106,7 +102,7 @@ class FirebaseDatabase(activity: Activity) : Database {
         return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
             FirebaseChallenge(
                 cid = challengeId,
-                author = getUserRefById(currentUser),
+                author = getUserById(currentUser),
                 thumbnail = thumbnailBitmap,
                 publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!),
                 expirationDate = expirationDate,
@@ -147,9 +143,9 @@ class FirebaseDatabase(activity: Activity) : Database {
         return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
             FirebaseClaim(
                 id = claimId,
-                user = getUserRefById(currentUser),
+                user = getUserById(currentUser),
                 time = localFromUtcIso8601(claimEntry.time!!),
-                challenge = getChallengeRefById(challenge.cid),
+                challenge = getChallengeById(challenge.cid),
                 location = location
             )
         }
@@ -161,34 +157,64 @@ class FirebaseDatabase(activity: Activity) : Database {
      * If the user already exists, it will override the user. Use with caution.
      */
     override fun insertNewUser(user: User): Task<Void> {
-        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(),score = 0.0)
+        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(), score = 0)
 
         return dbUserRef.child(user.uid).setValue(userEntry)
     }
 
     /**
-     * Returns a lazy ref for a user
+     * Retrieve a challenge with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * fetching the returned [LazyRef]
+     *
+     * @param cid the challenge unique identifier
+     * @return A [LazyRef] linked to the result of the operation
      */
-    override fun getUser(uid: String): LazyRef<User> {
-        return getUserRefById(uid)
+    override fun getChallengeById(cid: String): LazyRef<Challenge> {
+        return challengeRefById.get(cid)
+    }
+
+    /**
+     * Retrieve an image with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * fetching the returned [LazyRef]
+     *
+     * @param iid the image id, this may depend for image type
+     * @return A [LazyRef] linked to the result of the operation
+     */
+    override fun getImageById(iid: String): LazyRef<Bitmap> {
+        return imageRefById.get(iid)
+    }
+
+    /**
+     * Retrieve an image with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * fetching the returned [LazyRef]
+     *
+     * @param iid the image id, this may depend for image type
+     * @return A [LazyRef] linked to the result of the operation
+     */
+    override fun getUserById(uid: String): LazyRef<User> {
+        return userRefById.get(uid)
     }
 
     /**
      * Updates the user with all the data
      */
-    override fun updateUser(user: User, newProfilePicture: Bitmap?): Task<Void?> {
+    override fun updateUser(editedUser: EditedUser): Task<Void?> {
+        val user = editedUser.user
         val userEntry = UserEntry(
             user.uid,
-            user.displayName,
+            editedUser.displayName,
             user.challenges.map { it.id },
             user.hunts.map { it.id },
             user.numberOfFollowers,
-            user.follows,
+            user.follows.associate { it.id to true },
             user.score)
 
-        val uploadProfilePicture: Task<Nothing?> = if (newProfilePicture != null) {
+        val uploadProfilePicture: Task<Nothing?> = if (editedUser.isProfilePictureNew) {
             val ppRef = getProfilePicture(user.uid)
-            ppRef.value = newProfilePicture
+            ppRef.value = editedUser.profilePicture
             ppRef.saveToLocalStorageThenSubmit().thenMap { null }
         } else {
             Tasks.forResult(null)
@@ -200,28 +226,6 @@ class FirebaseDatabase(activity: Activity) : Database {
         ).thenMap { return@thenMap null; }
     }
 
-    /**
-     * Retrieve a challenge with a given ID and return a [LazyRef] upon completion
-     * 
-     * @param cid the challenge unique identifier
-     * @return A [LazyRef] linked to the result of the operation
-     */
-    override fun getChallengeById(cid: String): LazyRef<Challenge> {
-        return challengeRefById.get(cid)
-    }
-
-    override fun getImageById(iid: String): LazyRef<Bitmap> {
-        return imageRefById.get(iid)
-    }
-
-    @Deprecated("Should user getChallengeById instead")
-    internal fun getChallengeRefById(cid: String): FirebaseChallengeRef {
-        return challengeRefById.get(cid)
-    }
-
-    internal fun getUserRefById(uid: String): FirebaseUserRef {
-        return userRefById.get(uid)
-    }
 
     internal fun getThumbnailRefById(cid: String) : FirebaseBitmapRef {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
@@ -231,10 +235,17 @@ class FirebaseDatabase(activity: Activity) : Database {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromUserId(uid))
     }
 
+    @Deprecated("all getFooRefById should be replaced by getFooById")
     internal fun getClaimRefById(id: String) : LazyRef<Claim> {
         TODO()
     }
 
+    /**
+     * Get a list of nearby challenges to a specific location
+     *
+     * @param location the location we are interested in
+     * @return [Task] a task completed once the operation succeeded (or failed successfully)
+     */
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         val listOfQuadrant = listOf("3cc359ec")
 
@@ -310,5 +321,4 @@ class FirebaseDatabase(activity: Activity) : Database {
         doFollow(follower, followee, follow = false)
     }
 }
-
 

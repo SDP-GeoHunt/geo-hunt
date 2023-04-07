@@ -7,19 +7,16 @@ import androidx.compose.material.icons.sharp.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
-import com.github.geohunt.app.model.database.firebase.FirebaseUserRef
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.rememberLazyRef
-import com.github.geohunt.app.utility.findActivity
 import kotlinx.coroutines.async
 
 typealias OptionalCallback = (() -> Any)?
@@ -34,12 +31,13 @@ typealias OptionalCallback = (() -> Any)?
 @Composable
 fun ProfilePage(
     id: String,
+    database: Database,
     openProfileEdit: OptionalCallback = null,
     onLogout: OptionalCallback = null,
     openLeaderboard: OptionalCallback = null
 ) {
     ProfilePage(
-        user = FirebaseUserRef(id, FirebaseDatabase(LocalContext.current.findActivity())),
+        user = database.getUserById(id),
         openProfileEdit = openProfileEdit,
         onLogout = onLogout,
         openLeaderboard = openLeaderboard

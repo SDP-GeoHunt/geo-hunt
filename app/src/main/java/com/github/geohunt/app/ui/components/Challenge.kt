@@ -13,14 +13,14 @@ import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -30,9 +30,7 @@ import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.rememberLazyRef
-import com.github.geohunt.app.utility.findActivity
 
 /**
  * Composable function that displays a challenge given as an argument
@@ -46,7 +44,7 @@ import com.github.geohunt.app.utility.findActivity
  * @param challenge The challenge to display
  */
 @Composable
-fun Challenge(challenge: Challenge, fnClaimCallback: (String) -> Unit = {}) {
+fun Challenge(challenge: Challenge, fnClaimCallback: (String) -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column (horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()) {

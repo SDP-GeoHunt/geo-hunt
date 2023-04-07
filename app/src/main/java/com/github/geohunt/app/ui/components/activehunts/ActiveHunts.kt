@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -18,35 +17,33 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
-import com.github.geohunt.app.model.database.firebase.FirebaseUserRef
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.theme.Lobster
 import com.github.geohunt.app.ui.theme.geoHuntRed
-import com.github.geohunt.app.utility.findActivity
 
 /**
  * Utility function to show the hunts of a user taking only the id of the user
  * @param id the uid of the user which active hunts we want to display
+ * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHunts(id: String, emptyScreenCallback: () -> Unit) {
-    ActiveHunts(user = FirebaseUserRef(id, FirebaseDatabase(LocalContext.current.findActivity())),
-                emptyScreenCallback = emptyScreenCallback)
+fun ActiveHunts(id: String, database: Database, fnExploreCallback: () -> Unit) {
+    ActiveHunts(user = database.getUserById(id), fnExploreCallback)
 }
 
 /**
  * Utility function to show the hunts of a user which is currently getting fetched from the database
  * @param user the LazyRef instance of the user
+ * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHunts(user: LazyRef<User>, emptyScreenCallback: () -> Unit) {
+fun ActiveHunts(user: LazyRef<User>, fnExploreCallback: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         FetchComponent(lazyRef = { user }, modifier = Modifier.align(Alignment.Center)) {resolvedUser ->
-            ActiveHunts(challenges = resolvedUser.challenges,
-                        emptyScreenCallback = emptyScreenCallback)
+            ActiveHunts(challenges = resolvedUser.challenges, fnExploreCallback)
         }
     }
 }
@@ -55,9 +52,10 @@ fun ActiveHunts(user: LazyRef<User>, emptyScreenCallback: () -> Unit) {
  * A screen that shows all the active hunts of a user
  * The hunts are displayed on a horizontal scrollable list
  * @param challenges the challenges the screen has to display
+ * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHunts(challenges: List<LazyRef<Challenge>>, emptyScreenCallback: () -> Unit) {
+fun ActiveHunts(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> Unit) {
     Column(modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)){
@@ -65,8 +63,7 @@ fun ActiveHunts(challenges: List<LazyRef<Challenge>>, emptyScreenCallback: () ->
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        ActiveHuntsList(challenges = challenges,
-                        emptyScreenCallback = emptyScreenCallback)
+        ActiveHuntsList(challenges = challenges, fnExploreCallback)
     }
 }
 
@@ -97,14 +94,18 @@ fun TitleText() {
  * The list of active hunts
  * Creates a scrollable list of challenges using the given list
  * If the list is empty, shows EmptyChallengeScreen
+ *
  * @param challenges the challenges to display
+ * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>, emptyScreenCallback: () -> Unit) {
+fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> Unit) {
     //wrapper Box
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if(challenges.isEmpty()) {
-            EmptyChallengesScreen(emptyScreenCallback)
+            EmptyChallengesScreen() {
+                fnExploreCallback()
+            }
         }
         else {
             LazyRow(modifier = Modifier.testTag("challenge_row"),

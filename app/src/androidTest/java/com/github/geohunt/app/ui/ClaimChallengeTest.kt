@@ -144,7 +144,8 @@ class ClaimChallengeTest {
                     location = location,
                     time = LocalDateTime.now(),
                     image = MockLazyRef("iid") { TODO() },
-                    distance = 5
+                    distance = 5,
+                    awardedPoints = 10
                 )
                 futureClaim.complete(claim)
                 return taskClaimCompletionSource.task

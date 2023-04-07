@@ -28,7 +28,7 @@ class ProfileEditPageTest {
     @Test
     fun showsLoadingIfNotAvailableYet() {
         val mockDb = object: BaseMockDatabase() {
-            override fun getUser(uid: String): LazyRef<User> {
+            override fun getUserById(uid: String): LazyRef<User> {
                 return InstantLazyRef("1", null)
             }
         }
@@ -43,7 +43,7 @@ class ProfileEditPageTest {
     @Test
     fun doesNotShowLoadingIfAvailable() {
         val mockDb = object: BaseMockDatabase() {
-            override fun getUser(uid: String): LazyRef<User> {
+            override fun getUserById(uid: String): LazyRef<User> {
                 return InstantLazyRef("1", MockUser(uid = "1"))
             }
         }

@@ -3,10 +3,7 @@ package com.github.geohunt.app.mocks
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
 
@@ -54,11 +51,11 @@ abstract class BaseMockDatabase : Database {
         TODO("Not yet implemented")
     }
 
-    override fun getUser(uid: String): LazyRef<User> {
+    override fun getUserById(uid: String): LazyRef<User> {
         TODO("Not yet implemented")
     }
 
-    override fun updateUser(user: User, newProfilePicture: Bitmap?): Task<Void?> {
+    override fun updateUser(user: EditedUser): Task<Void?> {
         TODO("Not yet implemented")
     }
 }

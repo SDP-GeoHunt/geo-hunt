@@ -37,7 +37,7 @@ class ChallengeTest {
                 Text("Finished")
 
                 GeoHuntTheme {
-                    Challenge(challenge = challenge.value!!)
+                    Challenge(challenge = challenge.value!!, {})
                 }
             }
 

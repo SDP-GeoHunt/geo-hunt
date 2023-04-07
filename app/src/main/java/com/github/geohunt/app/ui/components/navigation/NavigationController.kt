@@ -2,9 +2,9 @@ package com.github.geohunt.app.ui.components.navigation
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -17,25 +17,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.maps.GoogleMapView
-import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
+import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
-import androidx.navigation.NavType
 import com.github.geohunt.app.LoginActivity
-import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.utility.replaceActivity
 
@@ -80,7 +81,6 @@ fun NavigationController(
             GoogleMapView(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = epflCameraPositionState
-
             )
         }
         composable(Route.Create.route) {
@@ -98,7 +98,15 @@ fun NavigationController(
         }
 
         composable(Route.ActiveHunts.route) {
-            Text("Active hunts")
+            val user = Authenticator.authInstance.get().user
+
+            if (user == null) {
+                Text("You are not logged in. Weird :(")
+            } else {
+                ActiveHunts(id = user.uid, database) {
+                    navController.navigate(Route.Explore.route)
+                }
+            }
         }
 
         // Profile
@@ -111,14 +119,14 @@ fun NavigationController(
                 ProfilePage(
                     id = user.uid,
                     openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
-                    onLogout = { logout(authenticator, activity) }
+                    onLogout = { logout(authenticator, activity) },
+                    database = database
                 )
             }
         }
 
-
         composable("${Route.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
-            it.arguments?.getString("userId")?.let { userId -> ProfilePage(id = userId) }
+            it.arguments?.getString("userId")?.let { userId -> ProfilePage(id = userId, database = database) }
         }
 
         composable(HiddenRoutes.EditProfile.route) {
@@ -126,7 +134,6 @@ fun NavigationController(
                 onBackButton = { navController.popBackStack() }
             )
         }
-
 
         // View image
         composable(
@@ -145,21 +152,20 @@ fun NavigationController(
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
         ) { backStackEntry ->
             val cid = backStackEntry.arguments?.getString("challengeId")!!
+
             Box(modifier = Modifier.fillMaxSize()) {
                 FetchComponent(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ChallengeView(it,
-                        onButtonBack = navController::popBackStack,
-                        displayImage = { iid ->
-                            navController.navigate("image-view/$iid")
-                        }
-                    )
+                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") }) {
+                        navController.popBackStack()
+                    }
                 }
             }
         }
 
+        // Open claim view for a given challenge
         composable(
             "claim-challenge/{challengeId}",
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })

@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.github.geohunt.app.mocks.MockLazyRef
 import com.github.geohunt.app.mocks.MockUser
+import com.github.geohunt.app.model.database.api.EditedUser
 import com.google.android.gms.tasks.Tasks
 import org.junit.Rule
 import org.junit.Test

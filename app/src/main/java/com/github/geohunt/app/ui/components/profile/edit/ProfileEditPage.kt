@@ -21,7 +21,7 @@ fun ProfileEditPage(onBackButton: () -> Any) {
     val uid = Authenticator.authInstance.get().user!!.uid
     val act = LocalContext.current.findActivity()
     val user = rememberLazyRef {
-        Database.databaseFactory.get()(act).getUser(uid)
+        Database.databaseFactory.get()(act).getUserById(uid)
     }
 
     Scaffold(

@@ -7,30 +7,52 @@ import com.github.geohunt.app.model.LazyRef
  * Define the profile information of a user as stored in the database
  */
 interface User {
+    /**
+     * A string that uniquely identify this specific user in the database
+     */
     val uid: String
 
-    var displayName: String?
+    /**
+     * Name to be displayed to the user if non null, notice that users should
+     * prefer using [name] to [displayName]
+     */
+    val displayName: String?
 
+    /**
+     * Name of the user, a more general approaches than [displayName] because handle
+     * the case where the user did not specify his own name
+     */
     val name: String
-        get() = displayName ?: ("@" + uid)
+        get() = displayName ?: "@$uid"
 
+    /**
+     * Holds a lazy-reference to a profile picture that can be loaded on a need-to-know basis
+     */
     val profilePicture: LazyRef<Bitmap>
 
+    /**
+     * List of challenges the user had published
+     */
     val challenges: List<LazyRef<Challenge>>
 
+    /**
+     * List of hunts the user had published
+     */
     val hunts: List<LazyRef<Challenge>>
 
     /**
-     * The number of users that follow this user.
+     * Number of followers this user has
      */
     val numberOfFollowers: Int
 
     /**
-     * For a given UID, returns true if and only if this user follows the user with the given UID.
-     *
-     * By default, a user follows nobody, hence it returns false on all keys.
+     * List of all of the user that the current user is following,
      */
-    val follows: Map<String, Boolean>
+    val follows: List<LazyRef<User>>
 
-    var score: Double
+    /**
+     * Current score of the user
+     */
+    val score: Long
 }
+

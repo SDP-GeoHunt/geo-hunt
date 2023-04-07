@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui.components.profile.edit
 
-import android.graphics.Bitmap
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -8,7 +7,7 @@ import androidx.compose.ui.test.performClick
 import com.github.geohunt.app.mocks.BaseMockDatabase
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.EditedUser
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import org.junit.Rule
@@ -17,7 +16,7 @@ import java.lang.Exception
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
-class EditProfileContent {
+class EditProfileContentTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -25,9 +24,8 @@ class EditProfileContent {
     fun changingNameCorrectlyUpdatesDatabase() {
         val cf = CompletableFuture<Void?>()
         val mockDb = object: BaseMockDatabase() {
-            override fun updateUser(user: User, newProfilePicture: Bitmap?): Task<Void?> {
+            override fun updateUser(user: EditedUser): Task<Void?> {
                 assert(user.displayName == "new display name")
-                assert(newProfilePicture == null)
                 cf.complete(null)
                 return Tasks.forResult(null)
             }
@@ -53,7 +51,7 @@ class EditProfileContent {
     fun gracefullyHandlesSavingExceptions() {
         val cf = CompletableFuture<Void?>()
         val mockDb = object: BaseMockDatabase() {
-            override fun updateUser(user: User, newProfilePicture: Bitmap?): Task<Void?> {
+            override fun updateUser(user: EditedUser): Task<Void?> {
                 cf.complete(null)
                 return Tasks.forException(Exception("Ok"))
             }

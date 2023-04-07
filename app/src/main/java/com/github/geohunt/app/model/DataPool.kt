@@ -30,6 +30,13 @@ class DataPool<K, T>(private val factory: (K) -> T) {
         return newInstance
     }
 
+    /**
+     * Register a specific key/value pair in the database. Notice that this function may overwrite
+     * the entry if the key is already present in the current instance
+     *
+     * @param key the key to be registered in the [DataPool]
+     * @param value the associated value to be register in the [DataPool]
+     */
     fun register(key: K, value: T) {
         if (map.containsKey(key)) {
             Log.w("GeoHunt", "Register an object more than once in the DataPool with key $key")
