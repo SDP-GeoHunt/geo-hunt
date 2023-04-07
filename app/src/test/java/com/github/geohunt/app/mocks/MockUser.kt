@@ -12,6 +12,6 @@ class MockUser(
     override val challenges: List<LazyRef<Challenge>> = emptyList(),
     override val hunts: List<LazyRef<Challenge>> = emptyList(),
     override val numberOfFollowers: Int = 0,
-    override val follows: Map<String, Boolean> = emptyMap<String, Boolean>().withDefault { false },
-    override var score: Double = 1.0
+    override val follows: List<LazyRef<User>> = listOf(),
+    override var score: Long = 1
 ) : User
