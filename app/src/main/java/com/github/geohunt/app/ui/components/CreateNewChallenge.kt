@@ -43,6 +43,7 @@ fun CreateChallengeForm(
     onChallengeCreated: (Challenge) -> Unit,
     onFailure: (Throwable) -> Unit
 ) {
+    var currentlySubmitting by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val activity = context.findActivity()
     val bitmapPainter = remember { BitmapPainter(bitmap.asImageBitmap()) }
@@ -105,20 +106,26 @@ fun CreateChallengeForm(
 
             Spacer(Modifier.height(15.dp))
 
-            Button(
-                onClick = {
-                          database.createChallenge(
-                              thumbnail = bitmap,
-                              location = locationRequest.lastLocation.value!!,
-                              expirationDate = null
-                          ).toCompletableFuture(activity)
-                              .thenApply(onChallengeCreated)
-                              .thenApply {  }
-                              .exceptionally(onFailure)
-                },
-                enabled = (locationRequest.lastLocation.value != null)
-            ) {
-                Text("Create challenge")
+            if (currentlySubmitting) {
+                CircularProgressIndicator()
+            }
+            else {
+                Button(
+                    onClick = {
+                        currentlySubmitting = true
+                        database.createChallenge(
+                            thumbnail = bitmap,
+                            location = locationRequest.lastLocation.value!!,
+                            expirationDate = null
+                        ).toCompletableFuture(activity)
+                            .thenApply(onChallengeCreated)
+                            .thenApply { }
+                            .exceptionally(onFailure)
+                    },
+                    enabled = (locationRequest.lastLocation.value != null) && !currentlySubmitting
+                ) {
+                    Text("Create challenge")
+                }
             }
         }
     }

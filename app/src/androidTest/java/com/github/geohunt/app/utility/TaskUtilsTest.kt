@@ -5,7 +5,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Test
 
-class TestTaskUtils {
+class TaskUtilsTest {
     @Test
     fun testTaskThenDoOnSucceededTask() {
         var called = 0

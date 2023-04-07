@@ -1,5 +1,6 @@
 package com.github.geohunt.app.utility
 
+import com.github.geohunt.app.i18n.DateFormatUtils
 import org.junit.Assert.*
 
 import org.junit.Test
