@@ -56,5 +56,11 @@ interface User {
      * Current score of the user
      */
     val score: Long
+
+    /**
+     * Check whether or not the current user is the special Point-Of-Interest user. For more details
+     * refer to [Database.getPOIUserID]
+     */
+    val isPOIUser : Boolean
 }
 

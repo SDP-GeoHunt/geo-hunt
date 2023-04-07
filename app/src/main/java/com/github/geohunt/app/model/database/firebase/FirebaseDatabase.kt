@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import androidx.compose.ui.platform.LocalContext
 import com.github.geohunt.app.R
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
@@ -19,6 +20,7 @@ import com.github.geohunt.app.utility.thenMap
 import com.github.geohunt.app.utility.toMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.maps.android.compose.Polygon
 import okhttp3.internal.toImmutableList
 import kotlinx.coroutines.tasks.await
 import java.io.File
@@ -28,7 +30,8 @@ import java.time.LocalDateTime
 class FirebaseDatabase(activity: Activity) : Database {
     private val database = FirebaseSingletons.database.get()
     private val storage = FirebaseSingletons.storage.get()
-    private val currentUser : String = "8b8b0392-ba8b-11ed-afa1-0242ac120002"
+    private val currentUser : String
+        get() = Authenticator.authInstance.get().user!!.uid
 
     // Database references
     internal val dbUserRef = database.child("users")
@@ -76,7 +79,8 @@ class FirebaseDatabase(activity: Activity) : Database {
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
-        expirationDate: LocalDateTime?
+        expirationDate: LocalDateTime?,
+        description: String?
     ): Task<Challenge> {
         // Requirements
         require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
@@ -111,7 +115,8 @@ class FirebaseDatabase(activity: Activity) : Database {
                 publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!),
                 expirationDate = expirationDate,
                 correctLocation = location,
-                claims = listOf()
+                claims = listOf(),
+                description = description
             )
         }
     }
@@ -167,6 +172,16 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
+     * Point-Of-Interest user is a special user that does not have any information within the database
+     *
+     * It represent the user attach to any "public" challenge such as Point-Of-Interest. This design
+     * choices was made to have a location where we can fetch easily "all" point of interest
+     */
+    override fun getPOIUserID(): String {
+        return "0000000000000000000000000000"
+    }
+
+    /**
      * Retrieve a challenge with a given ID and the corresponding [LazyRef]. Notice that this operation
      * won't fail if the given element does not exists in the database. The failure will happend upon
      * fetching the returned [LazyRef]
@@ -195,14 +210,20 @@ class FirebaseDatabase(activity: Activity) : Database {
      * won't fail if the given element does not exists in the database. The failure will happend upon
      * fetching the returned [LazyRef]
      *
-     * @param iid the image id, this may depend for image type
+     * @param uid the image id, this may depend for image type
      * @return A [LazyRef] linked to the result of the operation
      */
     override fun getUserById(uid: String): LazyRef<User> {
-        return userRefById.get(uid)
+        return if (uid == getPOIUserID()) {
+            FirebasePOIUserRef(uid)
+        } else {
+            userRefById.get(uid)
+        }
     }
 
-
+    override fun getClaimById(cid: String): LazyRef<Claim> {
+        TODO()
+    }
 
     internal fun getThumbnailRefById(cid: String) : FirebaseBitmapRef {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))

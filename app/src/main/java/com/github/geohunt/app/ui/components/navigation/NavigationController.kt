@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.navigation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
@@ -76,7 +77,7 @@ fun NavigationController(
                 }
 
                 Button(onClick = {
-                    navController.navigate("challenge-view/98d755ad-NRrhrThHEiOx3ph_VWP")
+                    navController.navigate("challenge-view/16a51054-NSQ2lJtR1UZ5cIgtZFo")
                 }) {
                     Text(text = "Open challenge view")
                 }
@@ -99,6 +100,7 @@ fun NavigationController(
                 },
                 onFailure = {
                     Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Fail to create challenge: $it")
                     navController.popBackStack()
                 }
             )

@@ -101,8 +101,10 @@ private fun LazyClaimList(
             HorizontalDivider(padding = 2.dp)
         }
 
-        item {
-            ShowChallengeDescription(lorumIpsum)
+        challenge.description?.apply {
+            item {
+                ShowChallengeDescription(this@apply)
+            }
         }
 
         items(challenge.claims.size) { index: Int ->

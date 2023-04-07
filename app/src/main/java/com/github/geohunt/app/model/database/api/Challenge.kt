@@ -51,5 +51,10 @@ interface Challenge
      */
     val claims: List<LazyRef<Claim>>
 
+    /**
+     * Provides a description for the current challenge, notice that in order to not break
+     * back-compatibility with the database this entry is nullable (no description provided)
+     */
+    val description: String?
 }
 
