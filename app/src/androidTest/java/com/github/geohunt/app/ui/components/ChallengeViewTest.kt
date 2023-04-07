@@ -31,7 +31,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)
 class ChallengeViewTest {

@@ -100,13 +100,12 @@ internal fun LikeButton(challenge: Challenge, database: Database, user: User, fo
         ) {
             LabelledIcon(
                 text = numberOfLikes.toString(),
-                painter = if (isLiked) painterResource(R.drawable.challenge_liked) else painterResource(R.drawable.challenge_not_liked),
+                painter = painterResource(R.drawable.challenge_like),
+                tint = if (isLiked) Color.Yellow else Color.Black,
                 contentDescription = "Likes",
                 fontSize = fontSize,
                 iconSize = iconSize,
-                modifier = Modifier
-                    //           .align(Alignment.CenterVertically)
-                    .padding(end = 15.dp)
+                modifier = Modifier.padding(end = 15.dp)
             )
         }
     }

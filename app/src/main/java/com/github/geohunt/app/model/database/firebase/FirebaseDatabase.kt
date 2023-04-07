@@ -2,7 +2,6 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
 import android.graphics.Bitmap
-import androidx.compose.ui.platform.LocalContext
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.DataPool
@@ -359,8 +358,9 @@ class FirebaseDatabase(activity: Activity) : Database {
         //Check if the challenge is in the user's liked challenges, return false if the challenge is not present
         return object : BaseLazyRef<Boolean>() {
             override fun fetchValue(): Task<Boolean> {
-                return dbUserRef.child(uid).child("likes").child(cid).get()
-                    .thenMap { it.value as Boolean? ?: false }
+                return dbUserRef.child(uid).child("likes").child(cid).get().thenMap {
+                    it.exists()
+                }
             }
             override val id: String = uid + cid
         }

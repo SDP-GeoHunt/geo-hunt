@@ -2,8 +2,6 @@ package com.github.geohunt.app.ui.components
 import androidx.compose.runtime.Composable
 
 import android.Manifest
-import android.R.style
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -35,9 +33,6 @@ import com.github.geohunt.app.sensor.rememberPermissionsState
 import com.github.geohunt.app.ui.theme.Typography
 import com.github.geohunt.app.utility.*
 import kotlinx.coroutines.tasks.asTask
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun SubmitClaimForm(
