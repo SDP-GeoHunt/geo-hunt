@@ -48,6 +48,8 @@ class ChallengePreviewTest {
             get() = TODO("Not yet implemented")
         override val claims: List<LazyRef<Claim>>
             get() = TODO("Not yet implemented")
+        override val description: String?
+            get() = null
     }
 
     @Before

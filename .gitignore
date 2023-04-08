@@ -18,4 +18,7 @@
 local.properties
 database-debug.log
 ui-debug.log
-
+google-search-key.txt
+*.bin
+*adminsdk*
+bin/
