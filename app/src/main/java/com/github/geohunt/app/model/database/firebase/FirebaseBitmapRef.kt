@@ -86,8 +86,8 @@ internal class FirebaseBitmapRef(
          * @param uid The ID of the user considered by this method
          * @return The image ID for this user
          */
-        internal fun getImageIdFromUserId(uid: String): String {
-            return "user-$uid.png"
+        internal fun getProfilePictureId(uid: String, hash: String): String {
+            return "user-$uid-$hash.png"
         }
     }
 }

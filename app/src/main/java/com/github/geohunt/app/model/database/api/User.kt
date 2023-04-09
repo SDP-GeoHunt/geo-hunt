@@ -28,7 +28,11 @@ interface User {
     /**
      * Holds a lazy-reference to a profile picture that can be loaded on a need-to-know basis
      */
-    val profilePicture: LazyRef<Bitmap>
+    val profilePicture: LazyRef<Bitmap>?
+    /**
+     * Hash of the profile picture
+     */
+    val profilePictureHash: Int?
 
     /**
      * List of challenges the user had published

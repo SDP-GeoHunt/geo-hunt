@@ -6,7 +6,7 @@ import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.BaseMockDatabase
 import com.github.geohunt.app.mocks.InstantLazyRef
 import com.github.geohunt.app.mocks.MockUser
-import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.LoginActivityTest
@@ -28,7 +28,7 @@ class ProfileEditPageTest {
     @Test
     fun showsLoadingIfNotAvailableYet() {
         val mockDb = object: BaseMockDatabase() {
-            override fun getUserById(uid: String): LazyRef<User> {
+            override fun getUserById(uid: String): LiveLazyRef<User> {
                 return InstantLazyRef("1", null)
             }
         }
@@ -43,7 +43,7 @@ class ProfileEditPageTest {
     @Test
     fun doesNotShowLoadingIfAvailable() {
         val mockDb = object: BaseMockDatabase() {
-            override fun getUserById(uid: String): LazyRef<User> {
+            override fun getUserById(uid: String): LiveLazyRef<User> {
                 return InstantLazyRef("1", MockUser(uid = "1"))
             }
         }

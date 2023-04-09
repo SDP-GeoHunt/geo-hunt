@@ -8,14 +8,13 @@ import android.graphics.Bitmap
 data class EditedUser(
     val user: User,
     var displayName: String,
-    var profilePicture: Bitmap? = null,
-    var isProfilePictureNew: Boolean = false
+    var profilePicture: Bitmap? = null
 ) {
     /**
      * Sets the profile picture
      */
     fun setProfilePicture(profilePicture: Bitmap): EditedUser {
-        return copy(profilePicture = profilePicture, isProfilePictureNew = true)
+        return copy(profilePicture = profilePicture)
     }
 
     companion object {

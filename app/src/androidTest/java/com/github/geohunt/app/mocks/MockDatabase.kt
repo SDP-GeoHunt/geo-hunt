@@ -2,6 +2,7 @@ package com.github.geohunt.app.mocks
 
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.*
 import com.google.android.gms.tasks.Task
@@ -51,7 +52,7 @@ abstract class BaseMockDatabase : Database {
         TODO("Not yet implemented")
     }
 
-    override fun getUserById(uid: String): LazyRef<User> {
+    override fun getUserById(uid: String): LiveLazyRef<User> {
         TODO("Not yet implemented")
     }
 

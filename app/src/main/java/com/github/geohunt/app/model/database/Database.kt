@@ -3,6 +3,7 @@ package com.github.geohunt.app.model.database
 import android.app.Activity
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.Singleton
@@ -57,7 +58,7 @@ interface Database {
      * won't fail if the given element does not exists in the database. The failure will happend upon
      * fetching the returned [LazyRef]
      */
-    fun getUserById(uid: String): LazyRef<User>
+    fun getUserById(uid: String): LiveLazyRef<User>
 
 
     /**

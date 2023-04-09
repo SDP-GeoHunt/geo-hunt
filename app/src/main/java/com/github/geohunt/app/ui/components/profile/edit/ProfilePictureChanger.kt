@@ -2,7 +2,6 @@ package com.github.geohunt.app.ui.components.profile.edit
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -10,18 +9,13 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.api.EditedUser
+import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 typealias ProfilePictureProviderType = @Composable () (((Bitmap) -> Unit)) -> (() -> Unit)
 
@@ -40,15 +34,6 @@ fun ProfilePictureChanger(
     editedUser: MutableState<EditedUser>,
     profilePictureProvider: ProfilePictureProviderType
 ) {
-    val currentProfilePicture = rememberLazyRef { user.profilePicture }
-
-    // Load current profile picture
-    currentProfilePicture.value?.let {
-        if (!editedUser.value.isProfilePictureNew)
-        // is there an issue with races?
-            editedUser.value = editedUser.value.copy(profilePicture = it)
-    }
-
     // Image picker
     val imagePick = profilePictureProvider {
         editedUser.value = editedUser.value.setProfilePicture(it)
@@ -58,20 +43,16 @@ fun ProfilePictureChanger(
     Row(modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        // TODO: change
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(editedUser.value.profilePicture)
-                .crossfade(true)
-                .build(),
-            contentDescription = "${user.name} profile picture",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .width(124.dp)
-                .aspectRatio(1f)
-                .padding(8.dp)
-                .clip(CircleShape)
-        )
+        val chosenPicture = editedUser.value.profilePicture
+
+        if (chosenPicture == null) {
+            // The user did not chose its profile picture, so we shows the default
+            ProfileIcon(user, modifier = Modifier.size(128.dp))
+        } else {
+            // The user chose a profile picture, so we show it to him
+            ProfileIcon(chosenPicture, user.name, modifier = Modifier.size(128.dp))
+        }
+
         IconButton(
             onClick = { imagePick() },
             modifier = Modifier.testTag("edit-pick-image")

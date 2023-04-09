@@ -23,6 +23,10 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
     override val profilePicture: LazyRef<Bitmap>
         get() = throw java.lang.UnsupportedOperationException()
 
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
+    override val profilePictureHash: Int
+        get() = throw java.lang.UnsupportedOperationException()
+
 
     @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
     override val challenges: List<LazyRef<Challenge>>

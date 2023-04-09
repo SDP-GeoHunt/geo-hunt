@@ -9,6 +9,7 @@ class MockUser(
     override var displayName: String? = null,
     override val uid: String = "1",
     override val profilePicture: LazyRef<Bitmap> = MockProfilePicture,
+    override val profilePictureHash: Int? = 1,
     override val challenges: List<LazyRef<Challenge>> = emptyList(),
     override val hunts: List<LazyRef<Challenge>> = emptyList(),
     override val numberOfFollowers: Int = 0,

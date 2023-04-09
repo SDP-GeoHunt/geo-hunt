@@ -12,11 +12,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.user.ProfileIcon
-import com.github.geohunt.app.ui.rememberLazyRef
+import com.github.geohunt.app.ui.rememberLiveLazyRef
 import kotlinx.coroutines.async
 
 typealias OptionalCallback = (() -> Any)?
@@ -52,16 +52,17 @@ fun ProfilePage(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProfilePage(
-    user: LazyRef<User>,
+    user: LiveLazyRef<User>,
     openProfileEdit: OptionalCallback = null,
     openLeaderboard: OptionalCallback = null,
     onLogout: OptionalCallback = null
 ) {
-    val lazyRefRemember = rememberLazyRef { user }
+    val lazyRefRemember = rememberLiveLazyRef { user }
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
     val isMoreOptionsAvailable = openProfileEdit != null || onLogout != null || openLeaderboard != null
+
 
     Box(modifier = Modifier
         .fillMaxSize()) {

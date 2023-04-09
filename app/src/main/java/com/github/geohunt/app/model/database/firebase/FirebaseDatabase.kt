@@ -5,8 +5,10 @@ import android.graphics.Bitmap
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.*
+import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
@@ -187,14 +189,14 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
-     * Retrieve an image with a given ID and the corresponding [LazyRef]. Notice that this operation
-     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * Retrieve an user with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happen upon
      * fetching the returned [LazyRef]
      *
      * @param iid the image id, this may depend for image type
      * @return A [LazyRef] linked to the result of the operation
      */
-    override fun getUserById(uid: String): LazyRef<User> {
+    override fun getUserById(uid: String): LiveLazyRef<User> {
         return userRefById.get(uid)
     }
 
@@ -210,15 +212,23 @@ class FirebaseDatabase(activity: Activity) : Database {
             user.hunts.map { it.id },
             user.numberOfFollowers,
             user.follows.associate { it.id to true },
-            user.score)
+            user.score,
+            user.profilePictureHash
+        )
 
-        val uploadProfilePicture: Task<Nothing?> = if (editedUser.isProfilePictureNew) {
-            val ppRef = getProfilePicture(user.uid)
-            ppRef.value = editedUser.profilePicture
-            ppRef.saveToLocalStorageThenSubmit().thenMap { null }
-        } else {
-            Tasks.forResult(null)
-        }
+        val uploadProfilePicture: Task<Nothing?> =
+            if (editedUser.profilePicture != null) {
+                val hash = BitmapUtils.hash(editedUser.profilePicture!!)
+                val ppRef = getProfilePicture(user.uid, hash)
+                ppRef.value = editedUser.profilePicture
+
+                // update user entry accordingly
+                userEntry.profilePictureHash = hash
+
+                ppRef.saveToLocalStorageThenSubmit().thenMap { null }
+            } else {
+                Tasks.forResult(null)
+            }
 
         return Tasks.whenAll(
             dbUserRef.child(user.uid).setValue(userEntry),
@@ -231,8 +241,8 @@ class FirebaseDatabase(activity: Activity) : Database {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
     }
 
-    internal fun getProfilePicture(uid: String): FirebaseBitmapRef {
-        return imageRefById.get(FirebaseBitmapRef.getImageIdFromUserId(uid))
+    internal fun getProfilePicture(uid: String, hash: Int): FirebaseBitmapRef {
+        return imageRefById.get(FirebaseBitmapRef.getProfilePictureId(uid, hash.toString()))
     }
 
     @Deprecated("all getFooRefById should be replaced by getFooById")
