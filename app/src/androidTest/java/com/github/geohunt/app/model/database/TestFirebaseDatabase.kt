@@ -8,6 +8,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
+import com.github.geohunt.app.mocks.MockUser
+import com.github.geohunt.app.model.database.api.EditedUser
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
@@ -94,5 +96,42 @@ class TestFirebaseDatabase {
         assertThat(get.uid, equalTo("1"))
         assertThat(get.displayName, equalTo("Debug user"))
         assertThat(get.score, equalTo(123))
+    }
+
+    @Test
+    fun insertsAndCanUpdateCorrectlyUsers() {
+        // The reason why the following test is combined is to enforce
+        // order (and also so that it does not collide with other tests.)
+        val user = MockUser(uid = "11", displayName = "Debug user")
+        assertInsertNewUserCorrectly(user)
+        assertUpdatesUserCorrectly(user)
+    }
+
+    private fun assertInsertNewUserCorrectly(user: User) {
+        val cf = CompletableFuture<Void?>()
+        database.insertNewUser(user).addOnCompleteListener {
+            database.getUserById(user.uid).fetch().addOnCompleteListener {
+                assertThat(it.result.uid, equalTo(user.uid))
+                assertThat(it.result.displayName, equalTo(user.displayName))
+                cf.complete(null)
+            }
+        }
+        cf.get(15, TimeUnit.SECONDS)
+    }
+
+    private fun assertUpdatesUserCorrectly(user: User) {
+        val editedUser = EditedUser.fromUser(user)
+        val cf = CompletableFuture<User>()
+        val userRef = database.getUserById(user.uid)
+        val changeListener = userRef.addListener {
+            cf.complete(it)
+        }
+
+        editedUser.displayName = "New display name"
+        database.updateUser(editedUser).addOnCompleteListener {}
+
+        val newUser = cf.get(2, TimeUnit.SECONDS)
+        assert(newUser.displayName == "New display name")
+        changeListener.stop()
     }
 }
