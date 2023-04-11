@@ -8,9 +8,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
+import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
+import com.github.geohunt.app.ui.LoginActivityTest
 import com.github.geohunt.app.utility.findActivity
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
@@ -32,6 +35,7 @@ class TestFirebaseDatabase {
     @Before
     fun setup() {
         FirebaseEmulator.init()
+        Authenticator.authInstance.set(LoginActivityTest.MockAuthenticator(MockUser("hello")))
         composeTestRule.setContent {
             database = FirebaseDatabase(LocalContext.current.findActivity())
         }
