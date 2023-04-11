@@ -20,8 +20,12 @@ abstract class BaseMockDatabase : Database {
         throw NotImplementedError()
     }
 
+    override fun getClaimById(cid: String): LazyRef<Claim> {
+        TODO("Not yet implemented")
+    }
+
     override fun getChallengeById(cid: String): LazyRef<Challenge> {
-        throw NotImplementedError()
+        TODO("Not yet implemented")
     }
 
     override fun getImageById(iid: String): LazyRef<Bitmap> {
@@ -29,7 +33,11 @@ abstract class BaseMockDatabase : Database {
     }
 
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
-        throw NotImplementedError()
+        TODO("Not yet implemented")
+    }
+
+    override fun getPOIUserID(): String {
+        TODO("Not yet implemented")
     }
     
     override fun submitClaim(

@@ -34,6 +34,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.Description
 import org.junit.runner.RunWith
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
@@ -121,7 +122,8 @@ class CreateChallengeViewTest {
             override fun createChallenge(
                 thumbnail: Bitmap,
                 location: Location,
-                expirationDate: LocalDateTime?
+                expirationDate: LocalDateTime?,
+                description: String?
             ): Task<Challenge> {
                 val challenge = MockChallenge(
                     cid = "cid",
@@ -130,7 +132,8 @@ class CreateChallengeViewTest {
                     expirationDate = expirationDate,
                     thumbnail = MockLazyRef("iid") { TODO() },
                     correctLocation = location,
-                    claims = listOf()
+                    claims = listOf(),
+                    description = description
                 )
                 futureChallenge.complete(challenge)
                 return taskChallengeCompletionSource.task

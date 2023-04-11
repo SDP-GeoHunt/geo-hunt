@@ -9,6 +9,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
+import com.github.geohunt.app.Strings
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
@@ -34,12 +35,10 @@ class ChallengeViewTest {
         return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
     }
 
-    @Test
-    fun testChallengeViewDisplayUserProperly()
+    private fun testChallengeView(hasDescription: Boolean)
     {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val profilePicture = createTestBitmap(context)
-        var challenge2 : Challenge? = null
         var route = ""
 
 
@@ -81,9 +80,9 @@ class ChallengeViewTest {
             thumbnail = MockLazyRef("img-ze5f16zaef1465") {
                 Tasks.forResult(createTestBitmap(context))
             },
-            claims = listOf(InstantLazyRef("claim", claim))
+            claims = listOf(InstantLazyRef("claim", claim)),
+            description = Strings.LORUM_IPSUM.takeIf { hasDescription }
         )
-        challenge2 = challenge
 
         // Sets the composeTestRule content
         composeTestRule.setContent {
@@ -130,6 +129,33 @@ class ChallengeViewTest {
         composeTestRule.onNodeWithText("62m")
             .performScrollTo()
             .assertExists()
+
+        // assert description is displayed (upon clicking more)
+        if (hasDescription) {
+            composeTestRule.onNodeWithTag("description-more-btn")
+                .performScrollTo()
+                .assertIsDisplayed()
+                .assert(hasText("more..."))
+                .performClick()
+
+            composeTestRule.onNodeWithText(Strings.LORUM_IPSUM)
+                .assertIsDisplayed()
+        } else {
+            composeTestRule.onNodeWithTag("description-more-btn")
+                .assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun testChallengeViewWithDescription()
+    {
+        testChallengeView(true)
+    }
+
+    @Test
+    fun testChallengeViewWithoutDescription()
+    {
+        testChallengeView(false)
     }
 
 }
