@@ -1,23 +1,22 @@
-import sys
-import requests
 from PIL import Image, ImageOps
+from lxml import html
+from datetime import datetime, timezone
+from firebase_admin import credentials, db, storage, initialize_app
 import xml.etree.ElementTree as ET
+import requests 
 import re
+import sys
 import zlib
 import pickle
-from lxml import html
 import base64
 import os
 import tqdm
 import time
-from datetime import datetime, timezone
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
-from firebase_admin import storage
 
+# The id of the user under which all challenges scrapped here will be registered
 POI_AUTHOR_ID = '0000000000000000000000000000'
 
+# Utilities for save/restoring variable to file and caching them
 def pickle_load(filename):
     with open(filename, 'rb') as file:
         return  pickle.load(file)
@@ -34,16 +33,40 @@ def pickle_cache(filename, callback):
         pickle_store(filename, data)
         return data
 
+# Special exception whenever a request is not successful (status_code != 400)
 class RequestException(Exception):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)  
 
+# Convert the degree-minutes-second representation back to degree
 def dms2dd(degrees, minutes, seconds, direction):
-    dd = float(degrees) + float(minutes)/60 + float(seconds)/(60*60);
+    dd = float(degrees) + float(minutes)/60 + float(seconds)/(60*60)
     if direction == 'E' or direction == 'S':
         dd *= -1
     return dd
 
+# Convert degree to degree-minute-second string presentation
+def dd2dms(deg, direction = 'lat'):
+    d = int(deg)
+    md = abs(deg - d) * 60
+    m = int(md)
+    sd = (md - m) * 60
+    sd = int(sd * 10) / 10
+
+    if direction == 'long':
+        return f"{abs(d)}° {m}' {sd}''{'S' if d < 0 else 'N'}"
+    else:
+        return f"{abs(d)}° {m}' {sd}''{'W' if d < 0 else 'E'}"
+
+# Parse a degree-minute-second formatted location back to degree latitude, longitude 2-tuple
+def parse_dms(dms):
+    parts = re.split('[^\d\w]+', dms)
+    lat = dms2dd(parts[0], parts[1], parts[2], parts[3]) 
+    long = dms2dd(parts[4], parts[5], parts[6], parts[7]) 
+    return (lat, long)
+
+# Download an image at a given url in a given file, if the script detect that
+# The given url is instead an HTML page, will download the first image contained within body
 def download_image(url, file_name, depth = 0):
     print(f'Downloading {url}...')
     time.sleep(1)
@@ -80,25 +103,9 @@ def download_image(url, file_name, depth = 0):
         print('Image Couldn\'t be retrieved')
         raise Exception(f'Image download Failure: {url}: {res.status_code}')
 
-def dd2dms(deg, direction = 'lat'):
-    d = int(deg)
-    md = abs(deg - d) * 60
-    m = int(md)
-    sd = (md - m) * 60
-    sd = int(sd * 10) / 10
-
-    if direction == 'long':
-        return f"{abs(d)}° {m}' {sd}''{'S' if d < 0 else 'N'}"
-    else:
-        return f"{abs(d)}° {m}' {sd}''{'W' if d < 0 else 'E'}"
-    return [d, m, sd]
-
-def parse_dms(dms):
-    parts = re.split('[^\d\w]+', dms)
-    lat = dms2dd(parts[0], parts[1], parts[2], parts[3]) 
-    long = dms2dd(parts[4], parts[5], parts[6], parts[7]) 
-    return (lat, long)
-
+# Perform a request to the open-street-map API (overpass-api) for all nodes in a certain
+# Bounding box region that can be a POI (Point-Of-Interest). Check the query to see
+# How such points are defined
 def osm_map_dd(top, left, bottom, right):
     filename = f'bin/overpass-{left}-{bottom}-{right}-{top}.bin'
 
@@ -140,6 +147,9 @@ def osm_map_dd(top, left, bottom, right):
     
     return pickle_cache(filename, callback)
 
+# Perform a recursive request to the open-street-map API (overpass-api) for all nodes 
+# in a certain bounding box. Notice that if a call fail due to too many object being
+# Fetch this method will subdivide the region in 4 smaller one and retry the same operation
 def recursive_open_map_dd(callback, top, left, bottom, right, bar_updater=None):
     bar = None
     area = abs(top - bottom) * abs(left - right)
@@ -161,7 +171,6 @@ def recursive_open_map_dd(callback, top, left, bottom, right, bar_updater=None):
             
             if ('lon' in node.attrib) and ('lat' in node.attrib):
                 callback(dict(list(d.items()) + [('lon', node.attrib['lon']), ('lat', node.attrib['lat'])]))
-            # callback(d)
 
         bar_updater(area)
 
@@ -179,6 +188,7 @@ def recursive_open_map_dd(callback, top, left, bottom, right, bar_updater=None):
     if bar:
         bar.close()
 
+# Compute the geo-hash has done in the database for a given latitude-longitude
 def geoHash(lat, long):
     lat = round(lat * 10.0) 
     long = round(long * 10.0) 
@@ -186,37 +196,44 @@ def geoHash(lat, long):
     bytes = lat.to_bytes(8, 'big') + long.to_bytes(8, 'big')
     return hex(zlib.crc32(bytes) & 0xffffffff)[2:]
 
+# Main function that fetches all POI in a certain bounding-box and register
+# them to the database. The fifth argument should be the path to the json
+# file containing the admin-credential for firebase. PAY ATTENTION TO NOT
+# PUSH THIS FILE TO THE VERSION CONTROL REPOSITORY BECAUSE THESE PERMISSIONS
+# ENABLE ANYONE TO ACCESS EVERYTHING IN THE DATABASE
 def main(top, left, bottom, right, path_to_auth_json):
     all_nodes = []
     def filter_callback(attributes):
         all_nodes.append(attributes)
 
+    # Retrieving POI on the specified region
     print('Retrieving POI on the specified region...')
-    # re = recursive_open_map_dd(filter_callback, 46.640754211058486, 6.168730785259433, 46.21213660751927, 6.981897941479555)
     re = recursive_open_map_dd(filter_callback, top, left, bottom, right)
 
+    # Ask confirmation of the user
     print('There are {} entries in the database'.format(len(all_nodes)))
     r = input('Are you sure you want to continue (pushing all of these to geohunt) [Y/n] : ')
     if r.upper() != 'Y':
         print('Cancelling')
         return
 
+    # Connecting to firebase and setting up authentification as admin
     print('Connecting to firebase')
-
-    # Fetch the service account key JSON file contents
     cred = credentials.Certificate(path_to_auth_json)
 
     # Initialize the app with a service account, granting admin privileges
-    firebase_admin.initialize_app(cred, {
+    initialize_app(cred, {
         'databaseURL': 'https://geohunt-1-default-rtdb.europe-west1.firebasedatabase.app/',
         'storageBucket': 'geohunt-1.appspot.com'
     })
 
     bucket = storage.bucket()
     
-    # For each node register it as a challenge with POI user id
+    # For each node, download the corresponding image and 
+    # try registering it to firebase
     for poi in all_nodes:
         try:
+            # Compute the geo-hash for the current challenge
             print(f'Adding poi: {poi["name"]}')
             latitude = float(poi['lat'])
             longitude = float(poi['lon'])
@@ -228,11 +245,15 @@ def main(top, left, bottom, right, path_to_auth_json):
             new_path = base_path + '.jpeg'
             download_image(poi['image'], file_path)
 
+            # Image re-formatting does two things:
+            #  - resize it if bigger than the biggest pixel density supported (1024 * 1024)
+            #  - convert the format to a JPEG
             img = Image.open(file_path)
             if img.width * img.height > 1024 * 1024:
                 img = ImageOps.contain(img, (1024,1024))
             img.save(new_path)
 
+            # Push the challenge metadata to the realtime database
             new_ref = db.reference(f'challenges/{hash}').push()
             challengeId = hash + new_ref.key
 
@@ -249,15 +270,19 @@ def main(top, left, bottom, right, path_to_auth_json):
                 'publishedDate': utc_dt
             })
 
-            # Upload the image
+            # Upload the image to firebase storage
             blob = bucket.blob(f'images/challenges-{challengeId}.jpeg')
             blob.upload_from_filename(new_path)
-        except KeyboardInterrupt as e:
-            print('Interrupted')
-            return
-        except Exception as e:
-            print('Exception: {} was thrown. Skipping poi {}'.format(e, poi['name']))
 
+        except KeyboardInterrupt as e:
+            print('Process was interrupted')
+            return
+
+        except Exception as e:
+            print('Exception: {} was thrown.\nSkipping poi {}'.format(e, poi['name']))
+
+# Main entry point for this script using argument provided when running the script
+# These are <top-bbox> <left-bbox> <bottom-bbox> <right-bbox> <path-to-auth-file>
 if __name__ == '__main__':
     if len(sys.argv) != 6:
         print(f'Incorrect usage: should be python {sys.argv[0]} <top-bbox> <left-bbox> <bottom-bbox> <right-bbox> <path-to-auth-file>')
@@ -268,3 +293,4 @@ if __name__ == '__main__':
 
     os.makedirs('bin', exist_ok=True)
     main(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]), sys.argv[5])
+
