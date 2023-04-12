@@ -1,6 +1,6 @@
 package com.github.geohunt.app
 
-object Strings {
+object ConstantStrings {
     const val LORUM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc bibendum " +
             "enim non iaculis malesuada. Praesent non accumsan eros. Ut ut eros dolor. Interdum et " +
             "malesuada fames ac ante ipsum primis in faucibus. Phasellus scelerisque eros nec porta " +
@@ -18,4 +18,6 @@ object Strings {
             "at lorem. Nulla a ante sed enim pretium vehicula ut ac eros. Nullam sollicitudin justo " +
             "eu est sagittis, at vulputate mauris interdum. Sed non tellus interdum, placerat velit nec," +
             " pharetra magna."
+
+    const val UUID_0 = "45f4f3e2-c0ab-4b41-babd-7f2fe48c56ea"
 }

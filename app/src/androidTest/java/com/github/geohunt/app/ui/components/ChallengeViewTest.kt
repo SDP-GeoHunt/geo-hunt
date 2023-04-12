@@ -9,7 +9,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
-import com.github.geohunt.app.Strings
+import com.github.geohunt.app.ConstantStrings
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
@@ -24,7 +24,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)
 class ChallengeViewTest {
@@ -81,7 +80,7 @@ class ChallengeViewTest {
                 Tasks.forResult(createTestBitmap(context))
             },
             claims = listOf(InstantLazyRef("claim", claim)),
-            description = Strings.LORUM_IPSUM.takeIf { hasDescription }
+            description = ConstantStrings.LORUM_IPSUM.takeIf { hasDescription }
         )
 
         // Sets the composeTestRule content
@@ -138,7 +137,7 @@ class ChallengeViewTest {
                 .assert(hasText("more..."))
                 .performClick()
 
-            composeTestRule.onNodeWithText(Strings.LORUM_IPSUM)
+            composeTestRule.onNodeWithText(ConstantStrings.LORUM_IPSUM)
                 .assertIsDisplayed()
         } else {
             composeTestRule.onNodeWithTag("description-more-btn")
