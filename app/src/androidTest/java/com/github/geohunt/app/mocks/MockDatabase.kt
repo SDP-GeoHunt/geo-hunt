@@ -3,10 +3,7 @@ package com.github.geohunt.app.mocks
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
 
@@ -38,15 +35,11 @@ abstract class BaseMockDatabase : Database {
     ): Task<Claim> {
         throw NotImplementedError()
 }
-    override fun getFollowersOf(uid: String): Task<Map<String, Boolean>> {
+    override fun getFollowersOf(uid: String): Task<List<LazyRef<User>>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun follow(follower: String, followee: String) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun unfollow(follower: String, followee: String) {
+    override fun <R> loggedAs(uid: String, callback: LoggedUserContext.() -> R): R {
         TODO("Not yet implemented")
     }
 

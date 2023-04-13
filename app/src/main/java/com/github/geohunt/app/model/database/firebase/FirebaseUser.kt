@@ -39,13 +39,13 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
             val entry = dataSnapshot.getValue(UserEntry::class.java)!!
 
             FirebaseUser(
-                uid = entry.uid,
+                uid = id,
                 displayName = entry.displayName,
-                profilePicture = db.getProfilePicture(entry.uid),
+                profilePicture = db.getProfilePicture(id),
                 challenges = entry.challenges.map { db.getChallengeById(it) },
                 hunts = entry.hunts.map { db.getChallengeById(it) },
                 numberOfFollowers = entry.numberOfFollowers,
-                follows = entry.follows.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
+                follows = entry.followList.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
                 score = entry.score
             )
         }
@@ -56,11 +56,10 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
  * Raw user entry has stored in the database
  */
 internal data class UserEntry(
-    var uid: String = "",
     var displayName: String? = null,
     var challenges: List<String> = listOf(),
     var hunts: List<String> = listOf(),
     var numberOfFollowers: Int = 0,
-    var follows: Map<String, Boolean> = emptyMap(),
+    var followList: Map<String, Boolean> = emptyMap(),
     var score: Long = 0
 )

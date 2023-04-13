@@ -21,6 +21,8 @@ inline fun <reified T> DataSnapshot.toMap(): Map<String, T>
     return map
 }
 
+inline fun <reified T> DataSnapshot.convertTo() : T? = this.getValue<T>()
+
 /**
  * Queries this [Query], awaits the result and casts it to the given type.
  *

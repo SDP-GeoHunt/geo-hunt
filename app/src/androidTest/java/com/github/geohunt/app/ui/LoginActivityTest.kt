@@ -15,6 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.mocks.MockAuthenticator
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.database.api.User
 import org.hamcrest.Matchers.*
@@ -71,18 +72,5 @@ class LoginActivityTest {
             hasExtra("login", any(Any::class.java))))
         Intents.release()
         assert(cf.isDone)
-    }
-
-    class MockAuthenticator(override val user: User?,
-                            val authenticateCb: (a: ComponentActivity) -> CompletableFuture<User> = {
-                                CompletableFuture.completedFuture(null)
-                            }) : Authenticator {
-        override fun authenticate(activity: ComponentActivity): CompletableFuture<User> {
-            return authenticateCb(activity)
-        }
-
-        override fun signOut(activity: ComponentActivity): CompletableFuture<Void> {
-            TODO("Not yet implemented")
-        }
     }
 }

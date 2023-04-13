@@ -7,10 +7,7 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
@@ -161,7 +158,7 @@ class FirebaseDatabase(activity: Activity) : Database {
      * If the user already exists, it will override the user. Use with caution.
      */
     override fun insertNewUser(user: User): Task<Void> {
-        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(), score = 0)
+        val userEntry = UserEntry(user.displayName, listOf(), listOf(), score = 0)
 
         return dbUserRef.child(user.uid).setValue(userEntry)
     }
@@ -239,63 +236,17 @@ class FirebaseDatabase(activity: Activity) : Database {
             .thenMap { it.toImmutableList() }
     }
 
-    override fun getFollowersOf(uid: String): Task<Map<String, Boolean>> {
+    override fun getFollowersOf(uid: String): Task<List<LazyRef<User>>> {
         return dbFollowersRef.child(uid)
             .get()
             .thenMap { snapshot ->
-                snapshot.toMap<Boolean>().withDefault { false }
+                snapshot.toMap<Boolean>()
+                    .mapNotNull { (id, doesFollow) -> getUserById(id).takeIf { doesFollow } }
             }
     }
 
-    /**
-     * Updates the database to (un)follow the given users.
-     *
-     * @note To ensure easier data querying, the data must be synchronized at 3 places in the database :
-     *       - In the follower's follow list, the followee should be added/removed,
-     *       - The followee's counter should be incremented/decremented,
-     *       - The follower should be added/removed to the followee's follower list.
-     */
-    private suspend fun doFollow(follower: String, followee: String, follow: Boolean = true) {
-        // TODO Writes are not made atomically and should be batched instead
-        //      See https://github.com/SDP-GeoHunt/geo-hunt/issues/88#issue-1647852411
-
-        val followerListRef = dbUserRef.child(follower).child("followList")
-        val counterRef = dbUserRef.child(followee).child("numberOfFollowers")
-        val follows = dbFollowersRef.child(followee)
-
-        val defaultMap = emptyMap<String, Boolean>().withDefault { false }
-        val followerList = followerListRef.queryAs<Map<String, Boolean>>() ?: defaultMap
-        val followedCounter = counterRef.queryAs<Int>() ?: 0
-        val followsPairs = follows.queryAs<Map<String, Boolean>>() ?: defaultMap
-
-        // Abort if the user already follows the followee
-        // or if the user tries to unfollow someone not followed
-        if ((follow && followerList[followee] == true)
-            || (!follow && followerList[followee] != true)) {
-            return
-        }
-
-        Tasks.whenAll(
-            // Update the follower's follow list
-            followerListRef.setValue(if (follow) (followerList + (followee to true)) else followerList - followee),
-
-            // Update the follow counter of the followee
-            counterRef.setValue(if (follow) followedCounter + 1 else max(followedCounter - 1, 0)),
-
-            // Update the follows relationship
-            follows.setValue(if (follow) followsPairs + (follower to true) else followsPairs - follower)
-        ).await()
-    }
-
-    /**
-     * Makes the first user with the given UID follow the second user.
-     */
-    override suspend fun follow(follower: String, followee: String) {
-        doFollow(follower, followee, follow = true)
-    }
-
-    override suspend fun unfollow(follower: String, followee: String) {
-        doFollow(follower, followee, follow = false)
+    override fun <R> loggedAs(uid: String, callback: LoggedUserContext.() -> R): R {
+        return withContext(FirebaseLoggedUserContext(this, getUserById(uid)), callback)
     }
 }
 

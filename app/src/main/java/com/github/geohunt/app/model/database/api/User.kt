@@ -48,7 +48,7 @@ interface User {
     val numberOfFollowers: Int
 
     /**
-     * List of all of the user that the current user is following,
+     * List of all users that the current user is following,
      */
     val follows: List<LazyRef<User>>
 

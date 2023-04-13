@@ -2,11 +2,9 @@ package com.github.geohunt.app.model.database
 
 import android.app.Activity
 import android.graphics.Bitmap
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.Singleton
 import com.google.android.gms.tasks.Task
@@ -29,6 +27,14 @@ interface Database {
         expirationDate: LocalDateTime? = null
     ): Task<Challenge>
 
+    /**
+     * Submit a claim on a certain challenge
+     *
+     * @param thumbnail the thumbnail of the challenge
+     * @param challenge the challenge we are submitting to
+     * @param location the location we are at when submitting the challenge (what's going to
+     * be used to compute the score)
+     */
     fun submitClaim(
         thumbnail: Bitmap,
         challenge: Challenge,
@@ -39,7 +45,7 @@ interface Database {
      * Retrieve a challenge with a given ID and the corresponding [LazyRef]. Notice that this operation
      * won't fail if the given element does not exists in the database. The failure will happend upon
      * fetching the returned [LazyRef]
-     * 
+     *
      * @param cid the challenge unique identifier
      * @return A [LazyRef] linked to the result of the operation
      */
@@ -77,17 +83,33 @@ interface Database {
      * @param uid The user ID.
      * @return A map where keys that are mapped to true indicates that it is a follower.
      */
-    fun getFollowersOf(uid: String): Task<Map<String, Boolean>>
+    fun getFollowersOf(uid: String): Task<List<LazyRef<User>>>
 
     /**
-     * Makes the first user with the given uid follow the second user.
+     * Creates a LoggedUserContext instance linked to the current database instance
+     * for a given user ID. This function allows you to execute a code block with
+     * the LoggedUserContext context, which add contextual tools for logged users (follow/unfollow).
+     *
+     * @param uid The user ID of the logged-in user.
+     * @param callback The code block to execute with the LoggedUserContext instance.
+     * @return The result of executing the code block.
+     * @see LoggedUserContext
      */
-    suspend fun follow(follower: String, followee: String)
+    fun <R> loggedAs(uid: String, callback: LoggedUserContext.() -> R) : R
 
     /**
-     * Makes the first user with the given uid unfollow the second user.
+     * Same as the above [logged], but uses the [Authenticator] instance to retrieve the currently
+     * logged user
+     *
+     * @param callback The code block to execute with the LoggedUserContext instance.
+     * @return The result of executing the code block.
+     * @see LoggedUserContext
      */
-    suspend fun unfollow(follower: String, followee: String)
+    fun <R> logged(callback: LoggedUserContext.() -> R) : R {
+        val user = Authenticator.authInstance.get().user
+            ?: throw IllegalStateException("Cannot use loggedAs method because no user currently logged user")
+        return loggedAs(user.uid, callback)
+    }
 
     /**
      * Inserts a new user into the database
@@ -101,7 +123,7 @@ interface Database {
         /**
          * A Singleton instance of a factory function that creates a  Database instance
          * for a given Android Activity. This factory method is used by [createDatabaseHandle]
-         * 
+         *
          * @param Activity the Android Activity class for which a Database instance will be created
          * @return a Database instance created using the FirebaseDatabase constructor
          */
@@ -116,7 +138,7 @@ interface Database {
          * @param activity the Android Activity for which a Database instance will be created or retrieved
          * @return a `Database` instance created or retrieved using the `databaseFactory` Singleton instance
          */
-        fun createDatabaseHandle(activity: Activity) : Database {
+        fun createDatabaseHandle(activity: Activity): Database {
             return databaseFactory.get()(activity)
         }
     }
