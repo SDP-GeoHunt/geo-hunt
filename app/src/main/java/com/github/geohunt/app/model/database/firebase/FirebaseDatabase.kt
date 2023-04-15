@@ -2,7 +2,6 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
 import android.graphics.Bitmap
-import androidx.compose.ui.platform.LocalContext
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
@@ -76,7 +75,8 @@ class FirebaseDatabase(activity: Activity) : Database {
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
-        expirationDate: LocalDateTime?
+        expirationDate: LocalDateTime?,
+        difficulty : Challenge.Difficulty
     ): Task<Challenge> {
         // Requirements
         require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
@@ -91,7 +91,8 @@ class FirebaseDatabase(activity: Activity) : Database {
             publishedDate = utcIso8601Now(),
             expirationDate = utcIso8601FromLocalNullable(expirationDate),
             claims = listOf(),
-            location = location
+            location = location,
+            difficulty = difficulty
         )
 
         // Get the reference to the thumbnail Bitmap and set the value
@@ -111,7 +112,8 @@ class FirebaseDatabase(activity: Activity) : Database {
                 publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!),
                 expirationDate = expirationDate,
                 correctLocation = location,
-                claims = listOf()
+                claims = listOf(),
+                difficulty = difficulty
             )
         }
     }
@@ -191,11 +193,11 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
-     * Retrieve an image with a given ID and the corresponding [LazyRef]. Notice that this operation
-     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * Retrieve an User with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happen upon
      * fetching the returned [LazyRef]
      *
-     * @param iid the image id, this may depend for image type
+     * @param uid the user id
      * @return A [LazyRef] linked to the result of the operation
      */
     override fun getUserById(uid: String): LazyRef<User> {
