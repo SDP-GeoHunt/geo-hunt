@@ -1,5 +1,7 @@
 package com.github.geohunt.app.model.points
 
+import com.github.geohunt.app.model.database.api.Challenge.Difficulty
+import com.github.geohunt.app.model.database.api.Challenge.Difficulty.*
 import com.github.geohunt.app.model.database.api.Location
 
 /**
@@ -17,6 +19,14 @@ interface PointCalculator {
     fun computePoints(l1: Location, l2: Location): Double
 
     companion object {
+        fun fromDifficulty(difficulty: Difficulty): PointCalculator {
+            return when (difficulty) {
+                EASY -> GaussianPointCalculator(0.20)
+                MEDIUM -> GaussianPointCalculator(0.15)
+                HARD -> GaussianPointCalculator(0.10)
+            }
+        }
+
         /**
          * The least amount of points possible.
          * Note that the function used can't be negative so negative MIN_POINTS value

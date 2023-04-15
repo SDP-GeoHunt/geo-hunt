@@ -51,5 +51,19 @@ interface Challenge
      */
     val claims: List<LazyRef<Claim>>
 
+    /**
+     * The challenge's difficulty, affects the way points are computed on submitted guesses
+     */
+    val difficulty: Difficulty
+
+    /**
+     * The various difficulties a challenge can have,
+     * can be converted to a PointCalculator using PointCalculator.fromDifficulty
+     */
+    enum class Difficulty {
+        EASY,
+        MEDIUM,
+        HARD
+    }
 }
 
