@@ -17,7 +17,6 @@ import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.database.api.User
-import okhttp3.internal.wait
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Rule

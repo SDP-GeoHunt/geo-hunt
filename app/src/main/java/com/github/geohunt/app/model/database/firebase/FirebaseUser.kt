@@ -39,7 +39,7 @@ internal class FirebasePOIUserRef(override val id: String) :
             uid = id,
             displayName = null,
             profilePicture = InvalidLazyRef(RuntimeException("Cannot fetch profile picture for POI User")),
-            challenges = listOf(), //TODO: Implement challenges list-of as a LazyRef of list not the other way around
+            challenges = listOf(),
             hunts = listOf(),
             numberOfFollowers = 0,
             follows = listOf(),

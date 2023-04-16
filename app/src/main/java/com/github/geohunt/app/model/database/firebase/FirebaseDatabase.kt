@@ -178,7 +178,7 @@ class FirebaseDatabase(activity: Activity) : Database {
      * choices was made to have a location where we can fetch easily "all" point of interest
      */
     override fun getPOIUserID(): String {
-        return "0000000000000000000000000000"
+        return "0"
     }
 
     /**

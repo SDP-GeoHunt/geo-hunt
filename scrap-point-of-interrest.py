@@ -14,7 +14,7 @@ import tqdm
 import time
 
 # The id of the user under which all challenges scrapped here will be registered
-POI_AUTHOR_ID = '0000000000000000000000000000'
+POI_AUTHOR_ID = '0'
 
 # Utilities for save/restoring variable to file and caching them
 def pickle_load(filename):
