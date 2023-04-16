@@ -139,7 +139,6 @@ class ClaimChallengeTest {
         val future = CompletableFuture<Claim>()
         val resultingPhoto = createTestBitmap(context)
         val futureLocation = CompletableFuture<Location>()
-        val futureClaim = CompletableFuture<Claim>()
         var counter = 0
 
         val locationRequestStateFactory = @Composable {

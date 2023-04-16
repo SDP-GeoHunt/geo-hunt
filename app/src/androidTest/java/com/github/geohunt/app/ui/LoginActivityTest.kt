@@ -1,8 +1,8 @@
 package com.github.geohunt.app.ui
 
-import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.launchActivity
@@ -17,7 +17,6 @@ import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.MockAuthenticator
 import com.github.geohunt.app.mocks.MockUser
-import com.github.geohunt.app.model.database.api.User
 import org.hamcrest.Matchers.*
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +25,7 @@ import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)
 class LoginActivityTest {
-    @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+    @get:Rule val composeTestRule = createComposeRule()
 
     @Test
     fun opensHomeActivityWhenLoggedIn() {
