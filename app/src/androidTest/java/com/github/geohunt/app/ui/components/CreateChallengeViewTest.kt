@@ -19,13 +19,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
-import com.github.geohunt.app.mocks.BaseMockDatabase
-import com.github.geohunt.app.mocks.MockChallenge
-import com.github.geohunt.app.mocks.MockLazyRef
+import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.database.api.LoggedUserContext
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.sensor.LocationRequestState
+import com.github.geohunt.app.ui.Logged
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import org.hamcrest.Matchers.equalTo
@@ -51,9 +52,21 @@ class CreateChallengeViewTest {
 
     private val mockedLocation = Location(13.412471480006737, 103.86698070815994)
 
+    private lateinit var mockedUserContext : LoggedUserContext
+
     @Before
     fun setup() {
         Intents.init()
+
+        mockedUserContext = object : MockLoggedUserContext() {
+            override fun createChallenge(
+                thumbnail: Bitmap,
+                location: Location,
+                expirationDate: LocalDateTime?
+            ): Task<Challenge> {
+                return super.createChallenge(thumbnail, location, expirationDate)
+            }
+        }
     }
 
     @After
@@ -78,12 +91,14 @@ class CreateChallengeViewTest {
 
     @Test
     fun testCreateChallengeLaunchIntent() {
+        val mockDatabase = object : BaseMockDatabase() {}
         composeTestRule.setContent {
-            CreateNewChallenge(
-                database = object : BaseMockDatabase() {},
-                onChallengeCreated = {},
-                onFailure = {}
-            )
+            mockDatabase.Logged {
+                CreateNewChallenge(
+                    onChallengeCreated = {},
+                    onFailure = {}
+                )
+            }
         }
 
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
@@ -118,34 +133,40 @@ class CreateChallengeViewTest {
         }
 
         val mockDatabase = object: BaseMockDatabase() {
-            override fun createChallenge(
-                thumbnail: Bitmap,
-                location: Location,
-                expirationDate: LocalDateTime?
-            ): Task<Challenge> {
-                val challenge = MockChallenge(
-                    cid = "cid",
-                    author = MockLazyRef<User>("uid") { TODO() },
-                    publishedDate = LocalDateTime.now(),
-                    expirationDate = expirationDate,
-                    thumbnail = MockLazyRef("iid") { TODO() },
-                    correctLocation = location,
-                    claims = listOf()
-                )
-                futureChallenge.complete(challenge)
-                return taskChallengeCompletionSource.task
+            override fun getLoggedContext(): LoggedUserContext {
+                return object : MockLoggedUserContext() {
+                    override fun createChallenge(
+                        thumbnail: Bitmap,
+                        location: Location,
+                        expirationDate: LocalDateTime?
+                    ): Task<Challenge> {
+                        val challenge = MockChallenge(
+                            cid = "cid",
+                            author = MockLazyRef<User>("uid") { TODO() },
+                            publishedDate = LocalDateTime.now(),
+                            expirationDate = expirationDate,
+                            thumbnail = MockLazyRef("iid") { TODO() },
+                            correctLocation = location,
+                            claims = listOf()
+                        )
+                        futureChallenge.complete(challenge)
+                        return taskChallengeCompletionSource.task
+                    }
+                }
             }
+
         }
 
         LocationRequestState.defaultFactory.mocked(locationRequestStateFactory).use {
             // Start the application
             composeTestRule.setContent {
-                CreateChallengeForm(
-                    bitmap = resultingPhoto,
-                    database = mockDatabase,
-                    onChallengeCreated = future::complete,
-                    onFailure = future::completeExceptionally
-                )
+                mockDatabase.Logged {
+                    CreateChallengeForm(
+                        bitmap = resultingPhoto,
+                        onChallengeCreated = future::complete,
+                        onFailure = future::completeExceptionally
+                    )
+                }
             }
 
             composeTestRule.onNodeWithText("Create challenge")

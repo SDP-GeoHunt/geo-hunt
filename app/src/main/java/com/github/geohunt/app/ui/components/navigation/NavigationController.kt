@@ -170,7 +170,7 @@ fun NavigationController(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ClaimChallenge(database = database, challenge = it)
+                    ClaimChallenge(challenge = it)
                 }
             }
         }

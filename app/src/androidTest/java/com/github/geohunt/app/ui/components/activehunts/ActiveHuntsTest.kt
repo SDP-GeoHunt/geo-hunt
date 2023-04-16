@@ -7,17 +7,20 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.InstantLazyRef
+import com.github.geohunt.app.mocks.MockAuthenticator
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.FirebaseEmulator
+import com.github.geohunt.app.model.database.api.*
+import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.components.navigation.Route
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDateTime
@@ -29,6 +32,7 @@ class ActiveHuntsTest {
     var exploreCallbackCalled = false
 
     private fun setupComposable(challenges: List<LazyRef<Challenge>>) {
+        FirebaseEmulator.init()
         exploreCallbackCalled = false
         testRule.setContent {
             GeoHuntTheme {
@@ -40,14 +44,12 @@ class ActiveHuntsTest {
     @Test
     fun titleTextIsDisplayed() {
         setupComposable(listOf())
-
         testRule.onNodeWithText("Active hunts").assertIsDisplayed()
     }
 
     @Test
     fun textIsDisplayedOnEmptyChallengeList() {
         setupComposable(listOf())
-
         testRule.onNodeWithText("No challenges yet", substring = true).assertIsDisplayed()
         testRule.onNodeWithText("Search", substring = true, useUnmergedTree = true).assertIsDisplayed()
     }
@@ -69,6 +71,8 @@ class ActiveHuntsTest {
             get() = TODO("Not yet implemented")
         override val claims: List<LazyRef<Claim>>
             get() = TODO("Not yet implemented")
+        override val numberOfActiveHunters: Int
+            get() = 0
     }
 
     private val challengeId = "dummy"
@@ -77,6 +81,7 @@ class ActiveHuntsTest {
     private fun createTestBitmap(): Bitmap {
         return ContextCompat.getDrawable(context, R.drawable.eiffel)?.toBitmap()!!
     }
+
     @Test
     fun atLeastOneChallengesIsDisplayed() {
         val challenge: LazyRef<Challenge> = InstantLazyRef("dummyRef", dummyChallenge)
