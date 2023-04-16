@@ -42,7 +42,7 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
                 uid = id,
                 displayName = entry.displayName,
                 profilePicture = db.getProfilePicture(id),
-                challenges = entry.challenges.map { db.getChallengeById(it) },
+                challenges = entry.challenges.mapNotNull { (id, exists) -> db.getChallengeById(id).takeIf { exists } },
                 activeHunts = entry.activeHunts.mapNotNull { (id, exists) -> db.getChallengeById(id).takeIf { exists } },
                 numberOfFollowers = entry.numberOfFollowers,
                 followList = entry.followList.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
@@ -57,7 +57,7 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
  */
 internal data class UserEntry(
     var displayName: String? = null,
-    var challenges: List<String> = listOf(),
+    var challenges: Map<String, Boolean> = mapOf<String, Boolean>().withDefault { false },
     var activeHunts: Map<String, Boolean> = mapOf<String, Boolean>().withDefault { false },
     var numberOfFollowers: Int = 0,
     var followList: Map<String, Boolean> = emptyMap(),

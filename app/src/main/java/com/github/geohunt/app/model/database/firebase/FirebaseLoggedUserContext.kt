@@ -187,9 +187,12 @@ internal class FirebaseLoggedUserContext(
         // Create both jobs (update database, update storage)
         val submitToDatabaseTask = dbChallengeRef.setValue(challengeEntry)
         val submitToStorageTask = thumbnailBitmap.saveToLocalStorageThenSubmit()
+        val pushChallengeToUserTask = database.dbUserRef.child(loggedUserRef.id)
+            .child("challenges")
+            .child(challengeId).setValue(true)
 
         // Finally make the completable task that succeed if both task succeeded
-        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
+        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask, pushChallengeToUserTask).thenMap {
             FirebaseChallenge(
                 cid = challengeId,
                 author = loggedUserRef,
@@ -202,15 +205,15 @@ internal class FirebaseLoggedUserContext(
         }
     }
 
-        override fun Challenge.submitClaim(thumbnail: Bitmap, location: Location): Task<Claim> {
-            require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
+    override fun Challenge.submitClaim(thumbnail: Bitmap, location: Location): Task<Claim> {
+        require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
 
-            // State variable
-            val dbClaimRef = database.dbClaimRef.child(cid).push()
-            val claimId = cid + "!!" + dbClaimRef.key!!
+        // State variable
+        val dbClaimRef = database.dbClaimRef.child(cid).push()
+        val claimId = cid + "!!" + dbClaimRef.key!!
 
-            val claimEntry = ClaimEntry(
-                user = loggedUserRef.id,
+        val claimEntry = ClaimEntry(
+            user = loggedUserRef.id,
             cid = cid,
             time = DateUtils.utcIso8601Now(),
             location = location
