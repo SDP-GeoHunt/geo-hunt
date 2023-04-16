@@ -306,18 +306,11 @@ class FirebaseDatabase(activity: Activity) : Database {
      * @param cid the challenge id
      * @return a list of users that liked the challenge
      */
-    internal fun getLikeRefById(cid: String): LazyRef<User> {
-        return object : BaseLazyRef<User>() {
-            override fun fetchValue(): Task<User> {
-                return dbChallengeRef.child(cid).child("likes").get().thenMap {
-                    val uid = it.key!!
-                    getUserById(uid).fetch().result
-                }
+    internal fun getLikesOf(cid: String): Task<Map<String, Boolean>> {
+        return dbChallengeRef.child(cid).child("likes").get()
+            .thenMap { snapshot ->
+                snapshot.toMap<Boolean>().withDefault { false }
             }
-
-            override val id: String
-                get() = cid
-        }
     }
 
     /**

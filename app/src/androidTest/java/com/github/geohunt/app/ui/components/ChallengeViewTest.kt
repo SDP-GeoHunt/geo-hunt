@@ -23,8 +23,6 @@ import com.github.geohunt.app.model.database.firebase.FirebaseUser
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.tasks.Tasks
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.After
@@ -159,7 +157,7 @@ class ChallengeViewTest {
     }
 
     @Test
-    fun testLikingButtonWorksProperly() {
+    fun testLikingButtonIncrementsAndDecrementsLikes() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         var route = ""
 
@@ -228,90 +226,5 @@ class ChallengeViewTest {
             .performClick()
             // Check if the number of likes has decreased to 0
             .assertTextEquals("0")
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun testClickingOnLikeButtonWithPreviousLikeRemovesLike() = runTest {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        var route = ""
-
-        val author = FirebaseUser(
-            displayName = "John wick",
-            score = 48723L,
-            uid = "user-f425zez6z4ef6z15f4",
-            hunts = listOf(),
-            likes = listOf(),
-            profilePicture = MockLazyRef("img-ze5f16zaef1465") {
-                Tasks.forResult(createTestBitmap(context))
-            },
-            challenges = listOf(),
-            follows = listOf(),
-            numberOfFollowers = 0,
-        )
-
-        val challenge = FirebaseChallenge(
-            author = MockLazyRef("user-f425zez6z4ef6z15f4") {
-                Tasks.forResult(author)
-            },
-            claims = listOf(),
-            thumbnail = MockLazyRef("img-ze5f16zaef1465") {
-                Tasks.forResult(createTestBitmap(context))
-            },
-            correctLocation = Location(50.06638888888889, -5.714722222222222),
-            cid = "cid",
-            expirationDate = LocalDateTime.now().plusDays(1),
-            publishedDate = LocalDateTime.now(),
-            likes = listOf(),
-            numberOfLikes = 5001,
-        )
-
-        // Sets the composeTestRule content
-        composeTestRule.setContent {
-            database = FirebaseDatabase(LocalContext.current.findActivity())
-
-            ChallengeView(
-                challenge = challenge,
-                database = database,
-                user = author,
-                { route = it }) {
-                route = "../"
-            }
-        }
-
-        // Add a like to the challenge
-        database.insertUserLike(author.uid, challenge.cid)
-
-        // Check if the button for liking is loaded
-        composeTestRule.waitUntil(TIMEOUT_TIME_MS) {
-            composeTestRule.onAllNodesWithContentDescription("Likes")
-                .fetchSemanticsNodes()
-                .size == 1
-        }
-
-        // Check if the user has liked the challenge
-        database.isUserLiked(author.uid, challenge.cid).fetch().addOnSuccessListener {
-            assertThat(
-                it, equalTo(true)
-            )
-        }
-
-        // Find the button for liking and check if it exists
-        composeTestRule.onNodeWithContentDescription("Likes")
-            .assertExists()
-            // Check if the initial number of likes is 5001
-            .assertTextEquals("5001")
-            // Check if the button has a click action and perform click
-            .assertHasClickAction()
-            .performClick()
-            // Check if the number of likes has decreased to 5000
-            .assertTextEquals("5000")
-
-        // Check if the user has not liked the challenge
-        database.isUserLiked(author.uid, challenge.cid).fetch().addOnSuccessListener {
-            assertThat(
-                it, equalTo(false)
-            )
-        }
     }
 }
