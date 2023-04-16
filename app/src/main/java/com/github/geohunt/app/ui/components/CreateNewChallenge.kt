@@ -1,7 +1,6 @@
 package com.github.geohunt.app.ui.components
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -25,21 +24,19 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.Database
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.LoggedUserContext
 import com.github.geohunt.app.sensor.rememberLocationRequestState
 import com.github.geohunt.app.sensor.rememberPermissionsState
 import com.github.geohunt.app.ui.theme.Typography
 import com.github.geohunt.app.utility.*
 import kotlinx.coroutines.tasks.asTask
-import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun CreateChallengeForm(
+fun LoggedUserContext.CreateChallengeForm(
     bitmap: Bitmap,
-    database: Database,
     onChallengeCreated: (Challenge) -> Unit,
     onFailure: (Throwable) -> Unit
 ) {
@@ -113,11 +110,8 @@ fun CreateChallengeForm(
                 Button(
                     onClick = {
                         currentlySubmitting = true
-                        database.createChallenge(
-                            thumbnail = bitmap,
-                            location = locationRequest.lastLocation.value!!,
-                            expirationDate = null
-                        ).toCompletableFuture(activity)
+                        createChallenge(bitmap, locationRequest.lastLocation.value!!, expirationDate = null)
+                            .toCompletableFuture(activity)
                             .thenApply(onChallengeCreated)
                             .thenApply { }
                             .exceptionally(onFailure)
@@ -132,8 +126,7 @@ fun CreateChallengeForm(
 }
 
 @Composable
-fun CreateNewChallenge(
-    database: Database,
+fun LoggedUserContext.CreateNewChallenge(
     onChallengeCreated: (Challenge) -> Unit = {},
     onFailure: (Throwable) -> Unit = {}
 ) {
@@ -172,7 +165,7 @@ fun CreateNewChallenge(
     }
 
     if (bitmapResult.value != null) {
-        CreateChallengeForm(bitmapResult.value!!, database, onChallengeCreated, onFailure)
+        CreateChallengeForm(bitmapResult.value!!, onChallengeCreated, onFailure)
     } else {
         LaunchedEffect(null) {
             permissions.requestPermissions()

@@ -2,8 +2,6 @@ package com.github.geohunt.app.ui.components
 import androidx.compose.runtime.Composable
 
 import android.Manifest
-import android.R.style
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -27,22 +25,19 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
+import com.github.geohunt.app.model.database.api.LoggedUserContext
 import com.github.geohunt.app.sensor.rememberLocationRequestState
 import com.github.geohunt.app.sensor.rememberPermissionsState
 import com.github.geohunt.app.ui.theme.Typography
 import com.github.geohunt.app.utility.*
 import kotlinx.coroutines.tasks.asTask
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
-fun SubmitClaimForm(
+fun LoggedUserContext.SubmitClaimForm(
     bitmap: Bitmap,
-    database: Database,
     challenge: Challenge,
     onClaimSubmitted: (Claim) -> Unit,
     onFailure: (Throwable) -> Unit
@@ -111,11 +106,8 @@ fun SubmitClaimForm(
 
             Button(
                 onClick = {
-                    database.submitClaim(
-                        thumbnail = bitmap,
-                        challenge = challenge,
-                        location = locationRequest.lastLocation.value!!,
-                    ).toCompletableFuture(activity)
+                    challenge.submitClaim(thumbnail = bitmap, location = locationRequest.lastLocation.value!!)
+                        .toCompletableFuture(activity)
                         .thenApply(onClaimSubmitted)
                         .thenApply {  }
                         .exceptionally(onFailure)
@@ -129,8 +121,7 @@ fun SubmitClaimForm(
 }
 
 @Composable
-fun ClaimChallenge(
-    database: Database,
+fun LoggedUserContext.ClaimChallenge(
     challenge: Challenge,
     onClaimSubmitted: (Claim) -> Unit = {},
     onFailure: (Throwable) -> Unit = {}
@@ -170,7 +161,7 @@ fun ClaimChallenge(
     }
 
     if (bitmapResult.value != null) {
-        SubmitClaimForm(bitmapResult.value!!, database, challenge, onClaimSubmitted, onFailure)
+        SubmitClaimForm(bitmapResult.value!!, challenge, onClaimSubmitted, onFailure)
     } else {
         LaunchedEffect(null) {
             permissions.requestPermissions()

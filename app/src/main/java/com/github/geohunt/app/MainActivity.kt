@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.Dp
 import androidx.navigation.compose.rememberNavController
-import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.Database
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 import com.github.geohunt.app.ui.theme.GeoHuntTheme

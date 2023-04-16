@@ -23,6 +23,7 @@ data class FirebaseChallenge(
     override val expirationDate: LocalDateTime?,
     override val correctLocation: Location,
     override val claims: List<LazyRef<Claim>>,
+    override val numberOfActiveHunters: Int = 0,
 ) : Challenge {
     override val coarseLocation: Location
         get() = correctLocation.getCoarseLocation()
@@ -35,19 +36,23 @@ class FirebaseChallengeRef(
 ) : BaseLazyRef<Challenge>() {
 
     override fun fetchValue(): Task<Challenge> {
-        val coarseHash = id.substring(0, Location.COARSE_HASH_SIZE)
-        val elementId = id.substring(Location.COARSE_HASH_SIZE)
         return if (challenge != null) {
             Tasks.forResult(challenge)
         } else {
             database.dbChallengeRef
-                .child(coarseHash).child(elementId).get()
+                .getChallengeFromId(id).get()
                 .thenMap {
                     it.buildChallenge(database, id)
                 }
         }
     }
 
+}
+
+internal fun DatabaseReference.getChallengeFromId(cid: String) : DatabaseReference
+{
+    return child(cid.substring(0, Location.COARSE_HASH_SIZE))
+        .child(cid.substring(Location.COARSE_HASH_SIZE))
 }
 
 internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String) : FirebaseChallenge
@@ -68,7 +73,8 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
         publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate!!),
         correctLocation =  challengeEntry.location!!,
-        claims = (challengeEntry.claims ?: listOf()).map(database::getClaimRefById)
+        claims = (challengeEntry.claims ?: listOf()).map(database::getClaimRefById),
+        numberOfActiveHunters = challengeEntry.numberOfActiveHunters
     )
 }
 
@@ -80,5 +86,6 @@ internal data class ChallengeEntry(
     var publishedDate: String? = null,
     var expirationDate: String? = null,
     var claims: List<String>? = null,
-    var location: Location? = null
+    var location: Location? = null,
+    val numberOfActiveHunters: Int = 0
 )

@@ -7,7 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.Database
 import java.util.concurrent.CompletableFuture
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.api.UserNotFoundException

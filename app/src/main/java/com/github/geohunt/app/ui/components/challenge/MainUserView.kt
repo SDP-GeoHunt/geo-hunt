@@ -22,9 +22,14 @@ import com.github.geohunt.app.ui.components.LabelledIcon
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.i18n.toSuffixedString
+import com.github.geohunt.app.model.database.api.LoggedUserContext
+import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.rememberLazyRef
 
 @Composable
-internal fun MainUserView(challenge: Challenge) {
+internal fun LoggedUserContext.MainUserView(challenge: Challenge) {
+    val isSelf = challenge.author.isLoggedUser
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -36,6 +41,7 @@ internal fun MainUserView(challenge: Challenge) {
             lazyRef = { challenge.author },
             modifier = Modifier.align(Alignment.Center)
         ) { author ->
+
             Row {
                 ProfileIcon(
                     user = author,
@@ -93,27 +99,25 @@ internal fun MainUserView(challenge: Challenge) {
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Button(
-                            modifier = Modifier
-                                .size(63.dp, 24.dp)
-                                .align(Alignment.CenterVertically),
-                            contentPadding = PaddingValues(2.dp, 2.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            onClick = { /*TODO*/ })
-                        {
-                            Text(text = "Follow", fontSize = 11.sp)
-                        }
-
-                        IconButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .testTag("btn-notification"),
-                            onClick = { /*TODO*/ }
-                        ) {
-                            Icon(
-                                Icons.Rounded.Notifications,
-                                contentDescription = "Notification bell"
+                        if (!isSelf) {
+                            FollowButton(
+                                author = author,
+                                modifier = Modifier
+                                    .size(63.dp, 24.dp)
+                                    .align(Alignment.CenterVertically),
                             )
+
+                            IconButton(
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                                    .testTag("btn-notification"),
+                                onClick = { /*TODO*/ }
+                            ) {
+                                Icon(
+                                    Icons.Rounded.Notifications,
+                                    contentDescription = "Notification bell"
+                                )
+                            }
                         }
                     }
                 }
@@ -122,3 +126,32 @@ internal fun MainUserView(challenge: Challenge) {
     }
 }
 
+@Composable
+internal fun LoggedUserContext.FollowButton(author: User, modifier: Modifier = Modifier) {
+    val doesFollow = rememberLazyRef {
+        author.doesFollow
+    }
+
+    Button(
+        modifier = modifier,
+        contentPadding = PaddingValues(2.dp, 2.dp),
+        shape = RoundedCornerShape(12.dp),
+        enabled = doesFollow.value != null,
+        onClick = {
+            if (author.doesFollow.value != null) {
+                if (author.doesFollow.value!!) {
+                    author.unfollow()
+                } else {
+                    author.follow()
+                }
+            }
+        })
+    {
+        FetchComponent(lazyRef = { author.doesFollow }) { doesFollow ->
+            Text(
+                text = if (doesFollow) "Unfollow" else "Follow",
+                fontSize = 10.sp
+            )
+        }
+    }
+}

@@ -8,20 +8,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NoLiveLiterals
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.Database
+import com.github.geohunt.app.model.database.api.LoggedUserContext
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
-import com.github.geohunt.app.model.database.firebase.FirebaseUserRef
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.rememberLazyRef
-import com.github.geohunt.app.utility.findActivity
+
+@Composable
+fun LoggedUserContext.ProfilePage() {
+    ProfilePage(loggedUserRef)
+}
 
 /**
  * The main profile page content.
@@ -77,7 +79,7 @@ private data class BigNumberContent(val title: String, val subtitleId: Int)
 private fun UserNumberDetails(user: User) {
     val numbers = listOf(
         BigNumberContent(user.challenges.size.toString(), R.string.profile_number_of_posts_subtitle),
-        BigNumberContent(user.hunts.size.toString(), R.string.profile_number_of_hunts_subtitle),
+        BigNumberContent(user.activeHunts.size.toString(), R.string.profile_number_of_hunts_subtitle),
         BigNumberContent(user.score.toString(), R.string.profile_score_subtitle),
     )
 

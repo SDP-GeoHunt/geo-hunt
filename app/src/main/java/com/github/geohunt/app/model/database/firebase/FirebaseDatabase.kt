@@ -2,30 +2,21 @@ package com.github.geohunt.app.model.database.firebase
 
 import android.app.Activity
 import android.graphics.Bitmap
-import androidx.compose.ui.platform.LocalContext
-import com.github.geohunt.app.R
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.Database
 import com.github.geohunt.app.model.database.api.*
-import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
-import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
-import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
-import com.github.geohunt.app.utility.queryAs
 import com.github.geohunt.app.utility.thenMap
 import com.github.geohunt.app.utility.toMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import okhttp3.internal.toImmutableList
-import kotlinx.coroutines.tasks.await
 import java.io.File
-import java.lang.Integer.max
-import java.time.LocalDateTime
 
 class FirebaseDatabase(activity: Activity) : Database {
     private val database = FirebaseSingletons.database.get()
     private val storage = FirebaseSingletons.storage.get()
-    private val currentUser : String = "8b8b0392-ba8b-11ed-afa1-0242ac120002"
 
     // Database references
     internal val dbUserRef = database.child("users")
@@ -53,102 +44,13 @@ class FirebaseDatabase(activity: Activity) : Database {
         FirebaseBitmapRef(it, this)
     }
 
+    private val loggedUserContextByUserId = DataPool<String, FirebaseLoggedUserContext> { uid ->
+        FirebaseLoggedUserContext(this, getUserById(uid))
+    }
+
     init {
         if (!localImageFolder.exists()) {
             localImageFolder.mkdirs()
-        }
-    }
-
-    /**
-     * Creates a new Challenge and stores it to the Firebase Database and Storage.
-     * Notice that the given bitmap should not have more pixel than
-     * [R.integer.maximum_number_of_pixel_per_photo] otherwise this function will throw
-     * an [IllegalArgumentException]
-     *
-     * @param thumbnail the thumbnail of the challenge
-     * @param location the location of the challenge
-     * @param expirationDate the expiration date of the challenge, can be null
-     * @return a Task that will complete with the created Challenge
-     */
-    override fun createChallenge(
-        thumbnail: Bitmap,
-        location: Location,
-        expirationDate: LocalDateTime?
-    ): Task<Challenge> {
-        // Requirements
-        require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
-
-        // State variable
-        val coarseHash = location.getCoarseHash()
-        val dbChallengeRef = dbChallengeRef.child(coarseHash).push()
-        val challengeId = coarseHash + dbChallengeRef.key!!
-
-        val challengeEntry = ChallengeEntry(
-            authorId = currentUser,
-            publishedDate = utcIso8601Now(),
-            expirationDate = utcIso8601FromLocalNullable(expirationDate),
-            claims = listOf(),
-            location = location
-        )
-
-        // Get the reference to the thumbnail Bitmap and set the value
-        val thumbnailBitmap = getThumbnailRefById(challengeId)
-        thumbnailBitmap.value = thumbnail
-
-        // Create both jobs (update database, update storage)
-        val submitToDatabaseTask = dbChallengeRef.setValue(challengeEntry)
-        val submitToStorageTask = thumbnailBitmap.saveToLocalStorageThenSubmit()
-
-        // Finally make the completable task that succeed if both task succeeded
-        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
-            FirebaseChallenge(
-                cid = challengeId,
-                author = getUserById(currentUser),
-                thumbnail = thumbnailBitmap,
-                publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!),
-                expirationDate = expirationDate,
-                correctLocation = location,
-                claims = listOf()
-            )
-        }
-    }
-
-    override fun submitClaim(
-        thumbnail: Bitmap,
-        challenge: Challenge,
-        location: Location
-    ): Task<Claim> {
-        require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
-
-        // State variable
-        val coarseHash = location.getCoarseHash()
-        val dbClaimRef = dbClaimRef.child(coarseHash).push()
-        val claimId = coarseHash + dbClaimRef.key!!
-
-        val claimEntry = ClaimEntry(
-            user = currentUser,
-            challenge = challenge,
-            time = utcIso8601Now(),
-            location = location
-        )
-
-        // Get the reference to the thumbnail Bitmap and set the value
-        val thumbnailBitmap = getThumbnailRefById(claimId)
-        thumbnailBitmap.value = thumbnail
-
-        // Create both jobs (update database, update storage)
-        val submitToDatabaseTask = dbClaimRef.setValue(claimEntry)
-        val submitToStorageTask = thumbnailBitmap.saveToLocalStorageThenSubmit()
-
-        // Finally make the completable task that succeed if both task succeeded
-        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
-            FirebaseClaim(
-                id = claimId,
-                user = getUserById(currentUser),
-                time = localFromUtcIso8601(claimEntry.time!!),
-                challenge = getChallengeById(challenge.cid),
-                location = location
-            )
         }
     }
 
@@ -158,8 +60,7 @@ class FirebaseDatabase(activity: Activity) : Database {
      * If the user already exists, it will override the user. Use with caution.
      */
     override fun insertNewUser(user: User): Task<Void> {
-        val userEntry = UserEntry(user.displayName, listOf(), listOf(), score = 0)
-
+        val userEntry = UserEntry(user.displayName)
         return dbUserRef.child(user.uid).setValue(userEntry)
     }
 
@@ -245,8 +146,20 @@ class FirebaseDatabase(activity: Activity) : Database {
             }
     }
 
-    override fun <R> loggedAs(uid: String, callback: LoggedUserContext.() -> R): R {
-        return withContext(FirebaseLoggedUserContext(this, getUserById(uid)), callback)
+    /**
+     * Retrieve the [LoggedUserContext] specific to the currently logged user. This method
+     * uses internally [Authenticator] to retrieve the current user
+     *
+     * @throws IllegalStateException if there is no user currently logged
+     * @return LoggedUserContext corresponding with the currently logged user
+     * @see LoggedUserContext
+     * @see Authenticator
+     */
+    override fun getLoggedContext(): LoggedUserContext {
+        val user = Authenticator.authInstance.get().user
+            ?: throw IllegalStateException("Attempted to get the logged-context however no user currently logged")
+
+        return loggedUserContextByUserId.get(user.uid)
     }
 }
 

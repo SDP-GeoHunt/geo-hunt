@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.LoggedUserContext
 import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.GoBackBtn
 import com.github.geohunt.app.ui.homescreen.HorizontalDivider
@@ -37,7 +38,7 @@ Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor vo
  * @param fnGoBackBtn function called when user presses the go back button
  */
 @Composable
-fun ChallengeView(
+fun LoggedUserContext.ChallengeView(
     challenge: Challenge,
     fnViewImageCallback: (String) -> Unit,
     fnGoBackBtn: () -> Unit
@@ -82,7 +83,7 @@ fun ChallengeView(
 }
 
 @Composable
-private fun LazyClaimList(
+private fun LoggedUserContext.LazyClaimList(
     lazyState: LazyListState,
     challenge: Challenge,
     fnViewImageCallback: (String) -> Unit

@@ -2,7 +2,7 @@ package com.github.geohunt.app.authentication
 
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -25,11 +25,11 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
 
     override val challenges: List<LazyRef<Challenge>>
         get() = TODO("Not yet implemented (need database)")
-    override val hunts: List<LazyRef<Challenge>>
+    override val activeHunts: List<LazyRef<Challenge>>
         get() = TODO("Not yet implemented (need database)")
     override val numberOfFollowers: Int
         get() = TODO("Not yet implemented (need database)")
-    override val follows: List<LazyRef<User>>
+    override val followList: List<LazyRef<User>>
         get() = TODO("Not yet implemented")
     override var score: Long
         get() = TODO("Not yet implemented (need database)")

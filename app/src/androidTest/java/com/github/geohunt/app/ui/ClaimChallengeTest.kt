@@ -18,14 +18,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
-import com.github.geohunt.app.mocks.BaseMockDatabase
-import com.github.geohunt.app.mocks.MockChallenge
-import com.github.geohunt.app.mocks.MockClaim
-import com.github.geohunt.app.mocks.MockLazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.mocks.*
+import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.sensor.LocationRequestState
 import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.SubmitClaimForm
@@ -53,6 +48,10 @@ class ClaimChallengeTest {
     val grantLocationPermission : GrantPermissionRule = GrantPermissionRule.grant(permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION)
 
     private val mockedLocation = Location(13.412471480006737, 103.86698070815994)
+    private lateinit var closableResource: AutoCloseable
+    private lateinit var database: Database
+    private lateinit var futureClaim : CompletableFuture<Claim>
+    private lateinit var taskClaimCompletionSource : TaskCompletionSource<Claim>
 
     private val mockChallenge = MockChallenge(
         cid = "cid",
@@ -67,11 +66,39 @@ class ClaimChallengeTest {
     @Before
     fun setup() {
         Intents.init()
+        closableResource = Authenticator.authInstance.mocked(MockAuthenticator(MockConstant.Johny))
+        futureClaim = CompletableFuture()
+        taskClaimCompletionSource = TaskCompletionSource()
+
+        database = object: BaseMockDatabase() {
+            override fun getLoggedContext(): LoggedUserContext {
+                return object : MockLoggedUserContext() {
+                    override fun Challenge.submitClaim(
+                        thumbnail: Bitmap,
+                        location: Location
+                    ): Task<Claim> {
+                        val claim = MockClaim(
+                            id = "id",
+                            user = MockLazyRef<User>("uid") {  TODO() },
+                            challenge = MockLazyRef<Challenge>("cid") { TODO() },
+                            location = location,
+                            time = LocalDateTime.now(),
+                            image = MockLazyRef("iid") { TODO() },
+                            distance = 5,
+                            awardedPoints = 10
+                        )
+                        futureClaim.complete(claim)
+                        return taskClaimCompletionSource.task
+                    }
+                }
+            }
+        }
     }
 
     @After
     fun release() {
         Intents.release()
+        closableResource.close()
     }
 
     @Test
@@ -92,12 +119,13 @@ class ClaimChallengeTest {
     @Test
     fun testClaimChallengeLaunchIntent() {
         composeTestRule.setContent {
-            ClaimChallenge(
-                database = object : BaseMockDatabase() {},
-                challenge = mockChallenge,
-                onClaimSubmitted = {},
-                onFailure = {}
-            )
+            database.Logged {
+                ClaimChallenge(
+                    challenge = mockChallenge,
+                    onClaimSubmitted = {},
+                    onFailure = {}
+                )
+            }
         }
 
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
@@ -112,7 +140,6 @@ class ClaimChallengeTest {
         val resultingPhoto = createTestBitmap(context)
         val futureLocation = CompletableFuture<Location>()
         val futureClaim = CompletableFuture<Claim>()
-        val taskClaimCompletionSource = TaskCompletionSource<Claim>()
         var counter = 0
 
         val locationRequestStateFactory = @Composable {
@@ -131,37 +158,17 @@ class ClaimChallengeTest {
             }
         }
 
-        val mockDatabase = object: BaseMockDatabase() {
-            override fun submitClaim(
-                thumbnail: Bitmap,
-                challenge: Challenge,
-                location: Location
-            ): Task<Claim> {
-                val claim = MockClaim(
-                    id = "id",
-                    user = MockLazyRef<User>("uid") {  TODO() },
-                    challenge = MockLazyRef<Challenge>("cid") { TODO() },
-                    location = location,
-                    time = LocalDateTime.now(),
-                    image = MockLazyRef("iid") { TODO() },
-                    distance = 5,
-                    awardedPoints = 10
-                )
-                futureClaim.complete(claim)
-                return taskClaimCompletionSource.task
-            }
-        }
-
         LocationRequestState.defaultFactory.mocked(locationRequestStateFactory).use {
             // Start the application
             composeTestRule.setContent {
-                SubmitClaimForm(
-                    bitmap = resultingPhoto,
-                    database = mockDatabase,
-                    challenge = mockChallenge,
-                    onClaimSubmitted = future::complete,
-                    onFailure = future::completeExceptionally
-                )
+                database.Logged {
+                    SubmitClaimForm(
+                        bitmap = resultingPhoto,
+                        challenge = mockChallenge,
+                        onClaimSubmitted = future::complete,
+                        onFailure = future::completeExceptionally
+                    )
+                }
             }
 
             composeTestRule.onNodeWithText("Submit Claim")

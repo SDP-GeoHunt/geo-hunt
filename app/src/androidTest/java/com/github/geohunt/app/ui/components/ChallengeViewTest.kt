@@ -9,12 +9,14 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.Logged
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
@@ -35,13 +37,13 @@ class ChallengeViewTest {
     }
 
     @Test
-    fun testChallengeViewDisplayUserProperly()
-    {
+    fun testChallengeViewDisplayUserProperly() : Unit = Authenticator.authInstance.mocked(MockAuthenticator(MockConstant.Johny)).use {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val profilePicture = createTestBitmap(context)
-        var challenge2 : Challenge? = null
         var route = ""
+        val database = object : BaseMockDatabase() {
 
+        }
 
         val author = MockUser(
             displayName = "John wick",
@@ -83,12 +85,13 @@ class ChallengeViewTest {
             },
             claims = listOf(InstantLazyRef("claim", claim))
         )
-        challenge2 = challenge
 
         // Sets the composeTestRule content
         composeTestRule.setContent {
-            ChallengeView(challenge = challenge, { route = it }) {
-                route = "../"
+            database.Logged {
+                ChallengeView(challenge = challenge, { route = it }) {
+                    route = "../"
+                }
             }
         }
 

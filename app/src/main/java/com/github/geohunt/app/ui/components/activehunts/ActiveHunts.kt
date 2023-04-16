@@ -17,8 +17,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.LoggedUserContext
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.theme.Lobster
@@ -30,8 +30,8 @@ import com.github.geohunt.app.ui.theme.geoHuntRed
  * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHunts(id: String, database: Database, fnExploreCallback: () -> Unit) {
-    ActiveHunts(user = database.getUserById(id), fnExploreCallback)
+fun LoggedUserContext.ActiveHunts(fnExploreCallback: () -> Unit) {
+    ActiveHunts(user = loggedUserRef, fnExploreCallback)
 }
 
 /**
@@ -42,8 +42,8 @@ fun ActiveHunts(id: String, database: Database, fnExploreCallback: () -> Unit) {
 @Composable
 fun ActiveHunts(user: LazyRef<User>, fnExploreCallback: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
-        FetchComponent(lazyRef = { user }, modifier = Modifier.align(Alignment.Center)) {resolvedUser ->
-            ActiveHunts(challenges = resolvedUser.challenges, fnExploreCallback)
+        FetchComponent(lazyRef = { user }, modifier = Modifier.align(Alignment.Center)) { resolvedUser ->
+            ActiveHunts(challenges = resolvedUser.activeHunts, fnExploreCallback)
         }
     }
 }
@@ -100,7 +100,7 @@ fun TitleText() {
  */
 @Composable
 fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> Unit) {
-    //wrapper Box
+    // wrapper Box
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if(challenges.isEmpty()) {
             EmptyChallengesScreen() {

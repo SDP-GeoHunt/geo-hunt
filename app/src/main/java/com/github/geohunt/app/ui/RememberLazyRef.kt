@@ -42,6 +42,14 @@ fun <T> rememberLazyRef(lazyRef: () -> LazyRef<T>): MutableState<T?> {
     return value
 }
 
+@Composable
+fun <T, U> rememberLazyRef(default: U, lazyRef: () -> LazyRef<T>, fn: (T) -> U) : U {
+    val value = rememberLazyRef(lazyRef)
+    return remember(fn, value, value.value) {
+        if (value.value != null) fn(value.value!!) else default
+    }
+}
+
 /**
  * Composable function that creates a [MutableState] object that remembers a [LazyRef].
  * The lazy reference is initialized with the provided [lazyRef] function, and the value is fetched asynchronously

@@ -1,9 +1,7 @@
 package com.github.geohunt.app.model.database.api
 
 import android.graphics.Bitmap
-import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.Database
 
 /**
  * Define the profile information of a user as stored in the database
@@ -38,9 +36,9 @@ interface User {
     val challenges: List<LazyRef<Challenge>>
 
     /**
-     * List of hunts the user had published
+     * List of active hunts the user had published
      */
-    val hunts: List<LazyRef<Challenge>>
+    val activeHunts: List<LazyRef<Challenge>>
 
     /**
      * Number of followers this user has
@@ -50,7 +48,7 @@ interface User {
     /**
      * List of all users that the current user is following,
      */
-    val follows: List<LazyRef<User>>
+    val followList: List<LazyRef<User>>
 
     /**
      * Current score of the user

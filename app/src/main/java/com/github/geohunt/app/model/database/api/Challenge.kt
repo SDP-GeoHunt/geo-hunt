@@ -51,5 +51,9 @@ interface Challenge
      */
     val claims: List<LazyRef<Claim>>
 
+    /**
+     * Number of users having registered this challenge as an active hunts
+     */
+    val numberOfActiveHunters : Int
 }
 

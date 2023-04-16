@@ -61,7 +61,7 @@ fun PastChallengesContent(user: User) {
  */
 @Composable
 fun PastHuntsContent(user: User) {
-    MakeGrid(testTag = "past-hunts", challenges = user.hunts, whenEmptyText = stringResource(id = R.string.no_past_hunts))
+    MakeGrid(testTag = "past-hunts", challenges = user.activeHunts, whenEmptyText = stringResource(id = R.string.no_past_hunts))
 }
 
 /**

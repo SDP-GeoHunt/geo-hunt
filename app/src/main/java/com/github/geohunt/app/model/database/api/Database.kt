@@ -1,4 +1,4 @@
-package com.github.geohunt.app.model.database
+package com.github.geohunt.app.model.database.api
 
 import android.app.Activity
 import android.graphics.Bitmap
@@ -8,39 +8,11 @@ import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.Singleton
 import com.google.android.gms.tasks.Task
-import java.time.LocalDateTime
 
 /**
  * Interface representing the API used to communicate with the remote database and the application
  */
 interface Database {
-    /**
-     * Enables the current logged users to create a new challenge with the given parameters
-     *
-     * @param thumbnail the image that will be displayed with the challenge
-     * @param location the location where the user took the picture
-     * @param expirationDate the date at which the challenge will expire otherwise null
-     */
-    fun createChallenge(
-        thumbnail: Bitmap,
-        location: Location,
-        expirationDate: LocalDateTime? = null
-    ): Task<Challenge>
-
-    /**
-     * Submit a claim on a certain challenge
-     *
-     * @param thumbnail the thumbnail of the challenge
-     * @param challenge the challenge we are submitting to
-     * @param location the location we are at when submitting the challenge (what's going to
-     * be used to compute the score)
-     */
-    fun submitClaim(
-        thumbnail: Bitmap,
-        challenge: Challenge,
-        location: Location,
-    ): Task<Claim>
-
     /**
      * Retrieve a challenge with a given ID and the corresponding [LazyRef]. Notice that this operation
      * won't fail if the given element does not exists in the database. The failure will happend upon
@@ -87,29 +59,28 @@ interface Database {
 
     /**
      * Creates a LoggedUserContext instance linked to the current database instance
-     * for a given user ID. This function allows you to execute a code block with
-     * the LoggedUserContext context, which add contextual tools for logged users (follow/unfollow).
-     *
-     * @param uid The user ID of the logged-in user.
-     * @param callback The code block to execute with the LoggedUserContext instance.
-     * @return The result of executing the code block.
-     * @see LoggedUserContext
-     */
-    fun <R> loggedAs(uid: String, callback: LoggedUserContext.() -> R) : R
-
-    /**
-     * Same as the above [logged], but uses the [Authenticator] instance to retrieve the currently
-     * logged user
+     * for a given user ID. This function allows you to execute operations that are
+     * specific to logged user (e.g. follow/unfollow, like/unlike...). Notice that this
+     * function utilize [Authenticator] in the backend to get the currently logged user
      *
      * @param callback The code block to execute with the LoggedUserContext instance.
      * @return The result of executing the code block.
      * @see LoggedUserContext
      */
     fun <R> logged(callback: LoggedUserContext.() -> R) : R {
-        val user = Authenticator.authInstance.get().user
-            ?: throw IllegalStateException("Cannot use loggedAs method because no user currently logged user")
-        return loggedAs(user.uid, callback)
+        return getLoggedContext().withContext(callback)
     }
+
+    /**
+     * Retrieve the [LoggedUserContext] specific to the currently logged user. This method
+     * uses internally [Authenticator] to retrieve the current user
+     *
+     * @throws IllegalStateException if there is no user currently logged
+     * @return LoggedUserContext corresponding with the currently logged user
+     * @see LoggedUserContext
+     * @see Authenticator
+     */
+    fun getLoggedContext() : LoggedUserContext
 
     /**
      * Inserts a new user into the database

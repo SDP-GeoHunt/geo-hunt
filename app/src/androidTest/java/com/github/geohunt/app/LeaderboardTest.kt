@@ -45,9 +45,9 @@ class LeaderboardTest {
             override val uid: String = pos.toString()
             override val profilePicture: LazyRef<Bitmap> = MockProfilePicture
             override val challenges: List<LazyRef<Challenge>> = listOf()
-            override val hunts: List<LazyRef<Challenge>> = listOf()
+            override val activeHunts: List<LazyRef<Challenge>> = listOf()
             override val numberOfFollowers: Int = 10
-            override val follows: List<LazyRef<User>> = emptyList()
+            override val followList: List<LazyRef<User>> = emptyList()
             override var score: Long = (1500 - pos * 100).toLong()
         }
     }

@@ -73,7 +73,7 @@ class TestLoggedUserContext {
 
     @Test
     fun testLoggedUserMatchesLoggedUserRef() = database.logged {
-        assertThat(loggedUser.id, equalTo("2"))
+        assertThat(loggedUserRef.id, equalTo("2"))
     }
 
 }

@@ -14,6 +14,7 @@ import androidx.compose.material.icons.sharp.Home
 import androidx.compose.material.icons.sharp.Person
 import androidx.compose.material.icons.sharp.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,8 +26,9 @@ import androidx.navigation.navArgument
 import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.maps.GoogleMapView
-import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.Database
 import com.github.geohunt.app.ui.FetchComponent
+import com.github.geohunt.app.ui.Logged
 import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
@@ -61,7 +63,7 @@ fun NavigationController(
     navController: NavHostController,
     database: Database,
     modifier: Modifier = Modifier
-) {
+) = database.Logged {
     val context = LocalContext.current
     val authenticator = Authenticator.authInstance.get()
     val activity: ComponentActivity = LocalContext.current.findActivity() as ComponentActivity
@@ -84,7 +86,8 @@ fun NavigationController(
         }
         composable(Route.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
-            val epflCameraPositionState = CameraPositionState(CameraPosition(epflCoordinates, 15f, 0f, 0f))
+            val epflCameraPositionState =
+                CameraPositionState(CameraPosition(epflCoordinates, 15f, 0f, 0f))
             GoogleMapView(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = epflCameraPositionState
@@ -92,38 +95,29 @@ fun NavigationController(
         }
         composable(Route.Create.route) {
             CreateNewChallenge(
-                database = database,
                 onChallengeCreated = { challenge ->
                     navController.popBackStack()
                     navController.navigate("challenge-view/${challenge.cid}")
                 },
                 onFailure = {
-                    Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        "Something went wrong, failed to create challenge",
+                        Toast.LENGTH_LONG
+                    ).show()
                     navController.popBackStack()
                 }
             )
         }
         composable(Route.ActiveHunts.route) {
-            val user = Authenticator.authInstance.get().user
-
-            if (user == null) {
-                Text("You are not logged in. Weird :(")
-            } else {
-                ActiveHunts(id = user.uid, database) {
-                    navController.navigate(Route.Explore.route)
-                }
+            ActiveHunts {
+                navController.navigate(Route.Explore.route)
             }
         }
 
         // Profile
         composable(Route.Profile.route) {
-            val user = Authenticator.authInstance.get().user
-
-            if (user == null) {
-                Text("You are not logged in. Weird :(")
-            } else {
-                ProfilePage(id = user.uid, database)
-            }
+            ProfilePage()
         }
 
         composable(
@@ -156,7 +150,8 @@ fun NavigationController(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") }) {
+                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") })
+                    {
                         navController.popBackStack()
                     }
                 }
