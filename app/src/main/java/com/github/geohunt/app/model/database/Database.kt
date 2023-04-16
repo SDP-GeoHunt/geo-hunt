@@ -99,12 +99,12 @@ interface Database {
     /**
      * Inserts a new like for the chosen challenge for a given user
      */
-    fun insertUserLike(uid: String, cid: String): Task<Void>
+    suspend fun insertUserLike(uid: String, cid: String)
 
     /**
      * Removes a like for the chosen challenge for a given user
      */
-    fun removeUserLike(uid: String, cid: String): Task<Void>
+    suspend fun removeUserLike(uid: String, cid: String)
 
     /**
      * Returns true if the user with the given user ID has liked the challenge with the given challenge ID

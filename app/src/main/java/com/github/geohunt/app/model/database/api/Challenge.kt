@@ -59,5 +59,5 @@ interface Challenge
     /**
      * The number of likes for this challenge
      */
-    var nbLikes: Int
+    var numberOfLikes: Int
 }

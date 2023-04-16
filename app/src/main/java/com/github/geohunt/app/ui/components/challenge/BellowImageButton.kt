@@ -21,6 +21,7 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.LabelledIcon
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun BellowImageButtons(challenge: Challenge, database: Database, user: User) {
@@ -69,33 +70,38 @@ internal fun BellowImageButtons(challenge: Challenge, database: Database, user: 
 @Composable
 internal fun LikeButton(challenge: Challenge, database: Database, user: User, fontSize: TextUnit, iconSize: Dp) {
     val hasUserLikedChallenge: LazyRef<Boolean> = database.isUserLiked(user.uid, challenge.cid)
-    var numberOfLikes by remember { mutableStateOf(challenge.nbLikes ) }
+    var numberOfLikes by remember { mutableStateOf(challenge.numberOfLikes ) }
 
     FetchComponent(
         lazyRef = { hasUserLikedChallenge },
     ) { liked ->
         var isLiked = liked
+        val coroutineScope = rememberCoroutineScope()
 
         IconButton(
             onClick = {
                 if (isLiked) {
-                    database.removeUserLike(
-                        user.uid,
-                        challenge.cid
-                    )
-                    challenge.nbLikes -= 1
+                    coroutineScope.launch {
+                        database.removeUserLike(
+                            user.uid,
+                            challenge.cid
+                        )
+                    }
+                    challenge.numberOfLikes -= 1
                     isLiked = false
 
                 } else {
-                    database.insertUserLike(
-                        user.uid,
-                        challenge.cid
-                    )
+                    coroutineScope.launch {
+                        database.insertUserLike(
+                            user.uid,
+                            challenge.cid
+                        )
+                    }
+                    challenge.numberOfLikes += 1
                     isLiked = true
-                    challenge.nbLikes += 1
                 }
 
-                numberOfLikes = challenge.nbLikes
+                numberOfLikes = challenge.numberOfLikes
             }
         ) {
             LabelledIcon(

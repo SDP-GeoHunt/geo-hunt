@@ -23,6 +23,8 @@ import com.github.geohunt.app.model.database.firebase.FirebaseUser
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.tasks.Tasks
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.After
@@ -184,11 +186,11 @@ class ChallengeViewTest {
                 Tasks.forResult(createTestBitmap(context))
             },
             correctLocation = Location(50.06638888888889, -5.714722222222222),
-            cid = "cid",
+            cid = "test-cid",
             expirationDate = LocalDateTime.now().plusDays(1),
             publishedDate = LocalDateTime.now(),
             likes = listOf(),
-            nbLikes = 0,
+            numberOfLikes = 0,
         )
 
         // Sets the composeTestRule content
@@ -228,8 +230,9 @@ class ChallengeViewTest {
             .assertTextEquals("0")
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testClickingOnLikeButtonWithPreviousLikeRemovesLike(){
+    fun testClickingOnLikeButtonWithPreviousLikeRemovesLike() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         var route = ""
 
@@ -260,15 +263,12 @@ class ChallengeViewTest {
             expirationDate = LocalDateTime.now().plusDays(1),
             publishedDate = LocalDateTime.now(),
             likes = listOf(),
-            nbLikes = 5001,
+            numberOfLikes = 5001,
         )
 
         // Sets the composeTestRule content
         composeTestRule.setContent {
             database = FirebaseDatabase(LocalContext.current.findActivity())
-
-            // Add a like to the challenge
-            database.insertUserLike(author.uid, challenge.cid)
 
             ChallengeView(
                 challenge = challenge,
@@ -279,13 +279,15 @@ class ChallengeViewTest {
             }
         }
 
+        // Add a like to the challenge
+        database.insertUserLike(author.uid, challenge.cid)
+
         // Check if the button for liking is loaded
         composeTestRule.waitUntil(TIMEOUT_TIME_MS) {
             composeTestRule.onAllNodesWithContentDescription("Likes")
                 .fetchSemanticsNodes()
                 .size == 1
         }
-
 
         // Check if the user has liked the challenge
         database.isUserLiked(author.uid, challenge.cid).fetch().addOnSuccessListener {

@@ -17,7 +17,7 @@ class MockChallenge(
     override val correctLocation: Location = Location(.0, .0),
     override val claims: List<LazyRef<Claim>> = listOf(),
     override var likes: List<LazyRef<User>> = listOf(),
-    override var nbLikes: Int = 0
+    override var numberOfLikes: Int = 0
 ) : Challenge {
 
     override val coarseLocation: Location

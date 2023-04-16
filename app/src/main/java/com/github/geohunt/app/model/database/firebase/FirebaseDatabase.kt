@@ -92,7 +92,7 @@ class FirebaseDatabase(activity: Activity) : Database {
             expirationDate = utcIso8601FromLocalNullable(expirationDate),
             claims = listOf(),
             location = location,
-            likes = listOf(),
+            likes = mapOf(),
         )
 
         // Get the reference to the thumbnail Bitmap and set the value
@@ -114,7 +114,7 @@ class FirebaseDatabase(activity: Activity) : Database {
                 correctLocation = location,
                 claims = listOf(),
                 likes = listOf(),
-                nbLikes = 0
+                numberOfLikes = 0
             )
         }
     }
@@ -321,17 +321,53 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
+     * Function updating the firebase making user like/dislike a given challenge
+     *
+     * @note To ensure easier data querying, the data must be synchronized at 3 places in the database :
+     *      - In the user's like list, the challenge should be added/removed,
+     *      - The challenge's counter should be incremented/decremented,
+     *      - The user should be added/removed to the challenge's liker list.
+     */
+    private suspend fun doLike(uid: String, cid: String, like: Boolean = true) {
+        // TODO Writes are not made atomically and should be batched instead
+        //      See https://github.com/SDP-GeoHunt/geo-hunt/issues/88#issue-1647852411
+
+        val userLikesRef = dbUserRef.child(uid).child("likes")
+        val challengeLikesRef = dbChallengeRef.child(cid).child("likes")
+        val challengeLikesCounterRef = dbUserRef.child(cid).child("numberOfLikes")
+
+        val defaultMap = emptyMap<String, Boolean>().withDefault { false }
+        val userLikes = userLikesRef.queryAs<Map<String, Boolean>>() ?: defaultMap
+        val challengeLikesCounter = challengeLikesCounterRef.queryAs<Int>() ?: 0
+        val challengeLikes = challengeLikesRef.queryAs<Map<String, Boolean>>() ?: defaultMap
+
+        // Abort if the user already likes the challenge
+        // or if the user tries to unlike a challenge not liked
+        if ((like && userLikes[cid] == true)
+            || (!like && userLikes[cid] != true)) {
+            return
+        }
+
+        Tasks.whenAll(
+            // Update the user's likes list
+            userLikesRef.setValue(if (like) (userLikes + (cid to true)) else userLikes - cid),
+
+            // Update the likes counter of the challenge
+            challengeLikesCounterRef.setValue(if (like) challengeLikesCounter + 1 else max(challengeLikesCounter - 1, 0)),
+
+            // Update the challenge's likes list
+            challengeLikesRef.setValue(if (like) (challengeLikes + (uid to true)) else challengeLikes - uid)
+        ).await()
+    }
+
+    /**
      * Insert a like for a user into the Firebase
      * @param uid the user id
      * @param cid the challenge id
      * @return a task that will complete when the like is inserted
      */
-    override fun insertUserLike(uid: String, cid: String): Task<Void> {
-        //Add the challenge to the user's liked challenges
-        return Tasks.whenAll(
-            dbUserRef.child(uid).child("likes").child(cid).setValue(true),
-            dbChallengeRef.child(cid).child("likes").child(uid).setValue(true)
-        )
+    override suspend fun insertUserLike(uid: String, cid: String) {
+        doLike(uid, cid, like = true)
     }
 
     /**
@@ -340,12 +376,8 @@ class FirebaseDatabase(activity: Activity) : Database {
      * @param cid the challenge id
      * @return a task that will complete when the like is removed
      */
-    override fun removeUserLike(uid: String, cid: String): Task<Void> {
-        //Remove the challenge from the user's liked challenges
-        return Tasks.whenAll(
-            dbChallengeRef.child(cid).child("likes").child(uid).removeValue(),
-            dbUserRef.child(uid).child("likes").child(cid).removeValue()
-        )
+    override suspend fun removeUserLike(uid: String, cid: String) {
+        doLike(uid, cid, like = false)
     }
 
     /**
@@ -358,8 +390,8 @@ class FirebaseDatabase(activity: Activity) : Database {
         //Check if the challenge is in the user's liked challenges, return false if the challenge is not present
         return object : BaseLazyRef<Boolean>() {
             override fun fetchValue(): Task<Boolean> {
-                return dbUserRef.child(uid).child("likes").child(cid).get().thenMap {
-                    it.exists()
+                return dbUserRef.child(uid).child("likes").get().thenMap {
+                    it.child(cid).exists()
                 }
             }
             override val id: String = uid + cid

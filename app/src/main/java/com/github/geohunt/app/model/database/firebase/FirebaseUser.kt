@@ -48,7 +48,7 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
                 numberOfFollowers = entry.numberOfFollowers,
                 follows = entry.follows.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
                 score = entry.score,
-                likes = entry.likes.map { db.getChallengeById(it) },
+                likes = entry.likes.mapNotNull { (id, doesLike) -> db.getChallengeById(id).takeIf { doesLike } }
                 )
         }
     }
@@ -65,5 +65,5 @@ internal data class UserEntry(
     var numberOfFollowers: Int = 0,
     var follows: Map<String, Boolean> = emptyMap(),
     var score: Long = 0,
-    var likes: List<String> = listOf()
+    var likes: Map<String, Boolean> = emptyMap(),
 )
