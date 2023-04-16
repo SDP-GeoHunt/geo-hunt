@@ -181,7 +181,7 @@ internal class FirebaseLoggedUserContext(
         )
 
         // Get the reference to the thumbnail Bitmap and set the value
-        val thumbnailBitmap = database.getThumbnailRefById(challengeId)
+        val thumbnailBitmap = database.getChallengeThumbnailById(challengeId)
         thumbnailBitmap.value = thumbnail
 
         // Create both jobs (update database, update storage)
@@ -202,23 +202,22 @@ internal class FirebaseLoggedUserContext(
         }
     }
 
-    override fun Challenge.submitClaim(thumbnail: Bitmap, location: Location): Task<Claim> {
-        require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
+        override fun Challenge.submitClaim(thumbnail: Bitmap, location: Location): Task<Claim> {
+            require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
 
-        // State variable
-        val coarseHash = location.getCoarseHash()
-        val dbClaimRef = database.dbClaimRef.child(coarseHash).push()
-        val claimId = coarseHash + dbClaimRef.key!!
+            // State variable
+            val dbClaimRef = database.dbClaimRef.child(cid).push()
+            val claimId = cid + "!!" + dbClaimRef.key!!
 
-        val claimEntry = ClaimEntry(
-            user = loggedUserRef.id,
-            challenge = this,
+            val claimEntry = ClaimEntry(
+                user = loggedUserRef.id,
+            cid = cid,
             time = DateUtils.utcIso8601Now(),
             location = location
         )
 
         // Get the reference to the thumbnail Bitmap and set the value
-        val thumbnailBitmap = database.getThumbnailRefById(claimId)
+        val thumbnailBitmap = database.getClaimThumbnailById(claimId)
         thumbnailBitmap.value = thumbnail
 
         // Create both jobs (update database, update storage)

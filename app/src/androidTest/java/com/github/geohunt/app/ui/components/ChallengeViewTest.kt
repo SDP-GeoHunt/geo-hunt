@@ -89,8 +89,10 @@ class ChallengeViewTest {
         // Sets the composeTestRule content
         composeTestRule.setContent {
             database.Logged {
-                ChallengeView(challenge = challenge, { route = it }) {
+                ChallengeView(challenge = challenge, { route = it }, {
                     route = "../"
+                }) { cid ->
+                    route = "claim/$cid"
                 }
             }
         }

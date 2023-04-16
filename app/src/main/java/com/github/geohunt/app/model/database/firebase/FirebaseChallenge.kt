@@ -69,7 +69,7 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
     return FirebaseChallenge(
         cid = cid,
         author = database.getUserById(challengeEntry.authorId!!),
-        thumbnail = database.getThumbnailRefById(cid),
+        thumbnail = database.getChallengeThumbnailById(cid),
         publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate),
         correctLocation =  challengeEntry.location!!,

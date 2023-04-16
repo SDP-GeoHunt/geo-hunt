@@ -2,8 +2,7 @@ package com.github.geohunt.app.ui.components.challenge
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,7 +18,7 @@ import com.github.geohunt.app.ui.components.LabelledIcon
 import com.github.geohunt.app.ui.rememberLazyRef
 
 @Composable
-internal fun LoggedUserContext.BellowImageButtons(challenge: Challenge) {
+internal fun LoggedUserContext.BellowImageButtons(challenge: Challenge, fnClaimCallback: (String) -> Unit) {
     val doesUserFollowThisChallenge = rememberLazyRef(null, { loggedUserRef }) { user ->
         user.activeHunts.any { it.id == challenge.cid }
     }
@@ -57,26 +56,41 @@ internal fun LoggedUserContext.BellowImageButtons(challenge: Challenge) {
 
         Spacer(modifier = Modifier.weight(1f))
 
+        if (doesUserFollowThisChallenge == true) {
+            IconButton(onClick = { challenge.leaveHunt() },
+                modifier = Modifier.size(23.dp)
+                    .align(Alignment.CenterVertically)) {
+                Icon(painter = painterResource(id = R.drawable.disable_favorite_inactive_svgrepo_com),
+                     contentDescription = "Unfollow",
+                     tint = MaterialTheme.colors.primary)
+            }
+        }
+        else {
+            IconButton(onClick = { challenge.joinHunt() }, modifier = Modifier.size(23.dp)
+                .align(Alignment.CenterVertically)) {
+                Icon(painter = painterResource(id = R.drawable.star_svgrepo_com),
+                    contentDescription = "Follow",
+                    tint = MaterialTheme.colors.primary)
+            }
+        }
+
+        Spacer(modifier = Modifier
+            .width(18.dp)
+            .weight(0.2f))
+
         Button(
             modifier = Modifier
-                .size(80.dp, 28.dp)
+                .size(70.dp, 28.dp)
                 .align(Alignment.CenterVertically),
             contentPadding = PaddingValues(2.dp, 2.dp),
             shape = RoundedCornerShape(12.dp),
-            enabled = doesUserFollowThisChallenge != null,
-            onClick = {
-                if (doesUserFollowThisChallenge!!) {
-                    challenge.leaveHunt()
-                }
-                else {
-                    challenge.joinHunt()
-                }
-            })
+            onClick = { fnClaimCallback(challenge.cid) })
         {
             Text(
-                text = if (doesUserFollowThisChallenge == null) "???" else if(doesUserFollowThisChallenge) "Leave" else "Join",
-                fontSize = 17.sp
+                text = "Claim",
+                fontSize = 15.sp
             )
         }
+
     }
 }

@@ -39,22 +39,22 @@ internal class FirebaseClaimRef(
 
     override fun fetchValue(): Task<Claim> {
         // Retrieve the coarseHash and elementId
-        val coarseHash = id.substring(0, Location.COARSE_HASH_SIZE)
-        val elementId = id.substring(Location.COARSE_HASH_SIZE)
+        val cid = id.split("!!")[0]
+        val claimId = id.split("!!")[1]
 
         return database.dbClaimRef
-            .child(coarseHash).child(elementId).get()
-            .thenMap {
-                if (!it.exists()) {
+            .child(cid).child(claimId).get()
+            .thenMap { dataSnapshot ->
+                if (!dataSnapshot.exists()) {
                     throw RuntimeException("Claim $id was not found in the database")
                 }
 
-                val claimEntry = it.getValue(ClaimEntry::class.java)!!
+                val claimEntry = dataSnapshot.getValue(ClaimEntry::class.java)!!
                 FirebaseClaim(
                     id = id,
                     user = database.getUserById(claimEntry.user!!),
-                    time = DateUtils.localFromUtcIso8601(claimEntry.time!!),
-                    challenge = database.getChallengeById(claimEntry.challenge?.cid!!),
+                    time = DateUtils.localFromUtcIso8601(claimEntry.time),
+                    challenge = database.getChallengeById(claimEntry.cid!!),
                     location =  claimEntry.location!!,
                 )
             }
@@ -67,8 +67,8 @@ internal class FirebaseClaimRef(
  */
 internal data class ClaimEntry(
     var user: String? = null,
-    var time: String? = null,
-    var challenge: Challenge? = null,
+    var time: String = "null",
+    var cid: String? = null,
     var location: Location? = null,
     val distance: Long? = null,
 )

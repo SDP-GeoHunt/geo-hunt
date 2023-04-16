@@ -36,7 +36,7 @@ class ActiveHuntsTest {
         exploreCallbackCalled = false
         testRule.setContent {
             GeoHuntTheme {
-                ActiveHunts(challenges = challenges) { exploreCallbackCalled = true }
+                ActiveHunts(challenges = challenges, {}) { exploreCallbackCalled = true }
             }
         }
     }

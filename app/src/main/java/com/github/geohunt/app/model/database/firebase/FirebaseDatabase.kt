@@ -102,8 +102,12 @@ class FirebaseDatabase(activity: Activity) : Database {
 
 
 
-    internal fun getThumbnailRefById(cid: String) : FirebaseBitmapRef {
+    internal fun getChallengeThumbnailById(cid: String) : FirebaseBitmapRef {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
+    }
+
+    internal fun getClaimThumbnailById(claimId: String) : FirebaseBitmapRef {
+        return imageRefById.get(FirebaseBitmapRef.getImageIdFromClaimId(claimId))
     }
 
     internal fun getProfilePicture(uid: String): FirebaseBitmapRef {

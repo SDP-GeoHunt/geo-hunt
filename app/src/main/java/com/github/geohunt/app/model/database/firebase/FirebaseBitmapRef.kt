@@ -81,6 +81,16 @@ internal class FirebaseBitmapRef(
         }
 
         /**
+         * Returns the image ID corresponding to the given claim ID
+         *
+         * @param cid The id of the claim
+         * @return the corresponding image Id for this claim
+         */
+        internal fun getImageIdFromClaimId(cid: String): String {
+            return "claim-$cid.png"
+        }
+
+        /**
          * Returns the image ID for a profile picture of a certain user ID.
          *
          * @param uid The ID of the user considered by this method

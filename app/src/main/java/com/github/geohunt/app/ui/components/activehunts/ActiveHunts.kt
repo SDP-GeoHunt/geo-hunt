@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.activehunts
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -30,20 +31,21 @@ import com.github.geohunt.app.ui.theme.geoHuntRed
  * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun LoggedUserContext.ActiveHunts(fnExploreCallback: () -> Unit) {
-    ActiveHunts(user = loggedUserRef, fnExploreCallback)
+fun LoggedUserContext.ActiveHunts(fnExploreCallback: () -> Unit, fnViewChallengeCallback: (String) -> Unit = {}) {
+    ActiveHunts(user = loggedUserRef, fnExploreCallback, fnViewChallengeCallback)
 }
 
 /**
  * Utility function to show the hunts of a user which is currently getting fetched from the database
  * @param user the LazyRef instance of the user
  * @param fnExploreCallback function called to open the explore view in the navigation
+ * @param fnViewChallengeCallback function used to view a specific challenge in details
  */
 @Composable
-fun ActiveHunts(user: LazyRef<User>, fnExploreCallback: () -> Unit) {
+fun ActiveHunts(user: LazyRef<User>, fnExploreCallback: () -> Unit, fnViewChallengeCallback: (String) -> Unit = {}) {
     Box(modifier = Modifier.fillMaxSize()) {
         FetchComponent(lazyRef = { user }, modifier = Modifier.align(Alignment.Center)) { resolvedUser ->
-            ActiveHunts(challenges = resolvedUser.activeHunts, fnExploreCallback)
+            ActiveHunts(challenges = resolvedUser.activeHunts, fnExploreCallback, fnViewChallengeCallback)
         }
     }
 }
@@ -53,9 +55,10 @@ fun ActiveHunts(user: LazyRef<User>, fnExploreCallback: () -> Unit) {
  * The hunts are displayed on a horizontal scrollable list
  * @param challenges the challenges the screen has to display
  * @param fnExploreCallback function called to open the explore view in the navigation
+ * @param fnViewChallengeCallback function used to view a specific challenge in details
  */
 @Composable
-fun ActiveHunts(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> Unit) {
+fun ActiveHunts(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> Unit, fnViewChallengeCallback: (String) -> Unit = {}) {
     Column(modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)){
@@ -63,7 +66,7 @@ fun ActiveHunts(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> U
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        ActiveHuntsList(challenges = challenges, fnExploreCallback)
+        ActiveHuntsList(challenges = challenges, fnExploreCallback, fnViewChallengeCallback)
     }
 }
 
@@ -99,7 +102,7 @@ fun TitleText() {
  * @param fnExploreCallback function called to open the explore view in the navigation
  */
 @Composable
-fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> Unit) {
+fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () -> Unit, fnViewChallengeCallback: (String) -> Unit) {
     // wrapper Box
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if(challenges.isEmpty()) {
@@ -112,8 +115,10 @@ fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () 
                     contentPadding = PaddingValues(30.dp, 0.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(challenges) { challenge ->
-                    Box(modifier = Modifier.size(300.dp, 600.dp)) {
-                        ChallengePreview(challenge = challenge)
+                    Box(modifier = Modifier.size(300.dp, 600.dp)
+                        .clickable { fnViewChallengeCallback(challenge.id) })
+                    {
+                        ChallengePreview(challenge = challenge, fnViewChallengeCallback)
                     }
                 }
             }

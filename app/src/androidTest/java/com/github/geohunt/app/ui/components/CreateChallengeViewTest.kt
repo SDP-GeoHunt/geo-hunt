@@ -91,7 +91,11 @@ class CreateChallengeViewTest {
 
     @Test
     fun testCreateChallengeLaunchIntent() {
-        val mockDatabase = object : BaseMockDatabase() {}
+        val mockDatabase = object : BaseMockDatabase() {
+            override fun getLoggedContext(): LoggedUserContext {
+                return object : MockLoggedUserContext() {}
+            }
+        }
         composeTestRule.setContent {
             mockDatabase.Logged {
                 CreateNewChallenge(

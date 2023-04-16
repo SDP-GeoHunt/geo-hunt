@@ -44,6 +44,7 @@ fun LoggedUserContext.SubmitClaimForm(
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
+    var submitting by remember { mutableStateOf(false) }
     val bitmapPainter = remember { BitmapPainter(bitmap.asImageBitmap()) }
     val locationRequest = rememberLocationRequestState()
     val communityGuidelinesUrl = stringResource(R.string.community_guidelines_url)
@@ -106,13 +107,14 @@ fun LoggedUserContext.SubmitClaimForm(
 
             Button(
                 onClick = {
+                    submitting = true
                     challenge.submitClaim(thumbnail = bitmap, location = locationRequest.lastLocation.value!!)
                         .toCompletableFuture(activity)
                         .thenApply(onClaimSubmitted)
                         .thenApply {  }
                         .exceptionally(onFailure)
                 },
-                enabled = (locationRequest.lastLocation.value != null)
+                enabled = (locationRequest.lastLocation.value != null) && !submitting
             ) {
                 Text("Submit Claim")
             }

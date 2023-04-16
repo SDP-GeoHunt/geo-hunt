@@ -41,7 +41,8 @@ Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor vo
 fun LoggedUserContext.ChallengeView(
     challenge: Challenge,
     fnViewImageCallback: (String) -> Unit,
-    fnGoBackBtn: () -> Unit
+    fnGoBackBtn: () -> Unit,
+    fnClaimCallback: (String) -> Unit = {}
 ) {
     val lazyState = rememberLazyListState()
     val transition = updateTransition(
@@ -68,7 +69,7 @@ fun LoggedUserContext.ChallengeView(
                 challenge.thumbnail
             }
 
-            BellowImageButtons(challenge)
+            BellowImageButtons(challenge, fnClaimCallback)
 
             Spacer(Modifier.height(2.dp))
 

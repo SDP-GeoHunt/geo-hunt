@@ -110,8 +110,10 @@ fun NavigationController(
             )
         }
         composable(Route.ActiveHunts.route) {
-            ActiveHunts {
+            ActiveHunts({
                 navController.navigate(Route.Explore.route)
+            }) { cid ->
+                navController.navigate("challenge-view/$cid")
             }
         }
 
@@ -150,9 +152,10 @@ fun NavigationController(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") })
-                    {
-                        navController.popBackStack()
+                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") },
+                        navController::popBackStack)
+                    { cid ->
+                        navController.navigate("claim-challenge/$cid")
                     }
                 }
             }
@@ -168,9 +171,11 @@ fun NavigationController(
             Box(modifier = Modifier.fillMaxSize()) {
                 FetchComponent(
                     lazyRef = { database.getChallengeById(cid) },
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier.align(Alignment.Center)
                 ) {
-                    ClaimChallenge(challenge = it)
+                    ClaimChallenge(challenge = it, onClaimSubmitted = {
+                        navController.popBackStack()
+                    })
                 }
             }
         }

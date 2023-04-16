@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
@@ -57,7 +58,7 @@ internal fun LoggedUserContext.MainUserView(challenge: Challenge) {
                     Row {
                         Text(
                             text = author.name,
-                            fontSize = 27.sp,
+                            fontSize = 20.sp,
                             maxLines = 1,
                             textAlign = TextAlign.Left,
                             modifier = Modifier

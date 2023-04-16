@@ -56,7 +56,10 @@ class ChallengePreviewTest {
     fun setupComposable() {
         testRule.setContent {
             GeoHuntTheme {
-                ChallengePreview(challenge = InstantLazyRef(challengeId, dummyChallenge))
+                ChallengePreview(
+                    challenge = InstantLazyRef(challengeId, dummyChallenge),
+                    fnViewChallengeCallback = {}
+                )
             }
         }
     }

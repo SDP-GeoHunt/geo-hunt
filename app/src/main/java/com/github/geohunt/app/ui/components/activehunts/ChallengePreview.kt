@@ -35,7 +35,7 @@ import java.time.LocalDateTime
  * and the picture
  */
 @Composable
-fun ChallengePreview(challenge: LazyRef<Challenge>) {
+fun ChallengePreview(challenge: LazyRef<Challenge>, fnViewChallengeCallback: (String) -> Unit) {
     FetchComponent(lazyRef = { challenge }, modifier = Modifier.fillMaxSize()) { resolvedChallenge ->
         Column(modifier = Modifier.fillMaxSize()) {
             ChallengeImage(challenge = resolvedChallenge, modifier = Modifier.weight(0.85F))
