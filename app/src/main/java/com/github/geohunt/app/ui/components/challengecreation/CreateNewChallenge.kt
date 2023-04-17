@@ -57,7 +57,7 @@ fun CreateChallengeForm(
         Manifest.permission.ACCESS_FINE_LOCATION
     )
     val selectedDifficulty = remember { mutableStateOf(Challenge.Difficulty.MEDIUM) }
-    val selectedDate = remember { mutableStateOf(LocalDate.now()) }
+    val selectedDate: MutableState<LocalDate?> = remember { mutableStateOf(null) }
 
     LaunchedEffect(true) {
         locationPermission.requestPermissions()
