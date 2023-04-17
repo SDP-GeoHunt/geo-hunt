@@ -310,7 +310,7 @@ class FirebaseDatabase(activity: Activity) : Database {
         val coarseHash = cid.substring(0, Location.COARSE_HASH_SIZE)
         val elementId = cid.substring(Location.COARSE_HASH_SIZE)
 
-        return dbChallengeRef.child(coarseHash).child(elementId).child("likes").get()
+        return dbChallengeRef.child(coarseHash).child(elementId).child("likedBy").get()
             .thenMap { snapshot ->
                 snapshot.toMap<Boolean>().withDefault { false }
             }
@@ -332,7 +332,7 @@ class FirebaseDatabase(activity: Activity) : Database {
 
         val userLikesRef = dbUserRef.child(uid).child("likes")
         val challengeLikesRef = dbChallengeRef.child(coarseHash).child(elementId).child("likedBy")
-        val challengeLikesCounterRef = dbUserRef.child(coarseHash).child(elementId).child("numberOfLikes")
+        val challengeLikesCounterRef = dbChallengeRef.child(coarseHash).child(elementId).child("numberOfLikes")
 
         val defaultMap = emptyMap<String, Boolean>().withDefault { false }
         val userLikes = userLikesRef.queryAs<Map<String, Boolean>>() ?: defaultMap
@@ -370,6 +370,7 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     /**
      * Remove a like for a user from the Firebase
+     *
      * @param uid the user id
      * @param cid the challenge id
      * @return a task that will complete when the like is removed
@@ -380,6 +381,7 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     /**
      * Check if a user likes a specific challenge
+     *
      * @param uid the user id
      * @param cid the challenge id
      * @return a task that will complete with a boolean indicating if the user likes the challenge

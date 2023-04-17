@@ -2,6 +2,7 @@ package com.github.geohunt.app.model.database
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.thenMap
@@ -29,7 +30,13 @@ class TestFirebaseLike {
     private suspend fun getUserLikeList() =
         userRef.child("likes").get().thenMap { snapshot -> snapshot.toMap<Boolean>() }.await()
     private suspend fun getCounter() =
-        challengeRef.child("numberOfLikes").get().await().value as Long
+        challengeRef.database.getReference("challenges")
+            .child(challengeRef.key!!.substring(0, Location.COARSE_HASH_SIZE))
+            .child(challengeRef.key!!.substring(Location.COARSE_HASH_SIZE))
+            .child("numberOfLikes").get().thenMap {
+                    snapshot -> snapshot.value as Long
+            }.await()
+
     private suspend fun getChallengeLikeList() =
         database.getLikesOf(challengeRef.key!!).await()
 
@@ -44,10 +51,10 @@ class TestFirebaseLike {
             composeTestRule.awaitIdle()
 
             userRef = database.dbUserRef.push()
-            challengeRef = database.dbUserRef.push()
+            challengeRef = database.dbChallengeRef.push()
 
             val mockUser = mapOf("numberOfLikes" to 0, "likes" to emptyMap<String, Boolean>())
-            val mockChallenge = mapOf("likes" to emptyMap<String, Boolean>())
+            val mockChallenge = mapOf("numberOfLikes" to 0, "likedBy" to emptyMap<String, Boolean>())
 
             userRef.setValue(mockUser).await()
             challengeRef.setValue(mockChallenge).await()
