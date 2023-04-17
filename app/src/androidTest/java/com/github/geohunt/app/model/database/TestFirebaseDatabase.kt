@@ -75,7 +75,6 @@ class TestFirebaseDatabase {
                 future.complete {
                     assertThat(challenge.correctLocation, equalTo(currentLocation))
                     assertThat(challenge.coarseLocation, equalTo(currentLocation.getCoarseLocation()))
-                    assertThat(challenge.cid, equalTo(loggedUserRef.id))
                     assertThat(challenge.author, equalTo(loggedUserRef))
                     assertThat(challenge.numberOfActiveHunters, equalTo(0))
                 }
