@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.profile
 
+import android.graphics.Bitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.github.geohunt.app.mocks.InstantLazyRef
@@ -63,8 +64,12 @@ class PastChallengesAndHuntsTest {
 
     @Test
     fun doesNotShowEmptyMessageWhenNoPastHunts() {
+        val challenge = MockChallenge(
+            thumbnail = InstantLazyRef("iid", Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888))
+        )
+
         testRule.setContent {
-            PastChallengeAndHunts(user = MockUser(activeHunts = listOf(InstantLazyRef("1", MockChallenge()))))
+            PastChallengeAndHunts(user = MockUser(activeHunts = listOf(InstantLazyRef("1", challenge))))
         }
         testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastHunts.ordinal}").performClick()
         testRule.onNodeWithText("No past hunts", substring = true).assertDoesNotExist()
@@ -72,8 +77,11 @@ class PastChallengesAndHuntsTest {
 
     @Test
     fun doesNotShowEmptyMessageWhenNoPastChallenges() {
+        val challenge = MockChallenge(
+            thumbnail = InstantLazyRef("iid", Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888))
+        )
         testRule.setContent {
-            PastChallengeAndHunts(user = MockUser(challenges = listOf(InstantLazyRef("1", MockChallenge()))))
+            PastChallengeAndHunts(user = MockUser(challenges = listOf(InstantLazyRef("1", challenge))))
         }
         testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastChallenges.ordinal}").performClick()
         testRule.onNodeWithText("No challenges", substring = true).assertDoesNotExist()

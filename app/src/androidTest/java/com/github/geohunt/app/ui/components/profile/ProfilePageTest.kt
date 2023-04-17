@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.profile
 
+import android.graphics.Bitmap
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -66,10 +67,14 @@ class ProfilePageTest {
 
     @Test
     fun showsNumberOfChallenges() {
+        val challenge = MockChallenge(
+            thumbnail = InstantLazyRef("iid", Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888))
+        )
+
         val mockuser = MockUser(challenges = listOf(
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge())
+            wrapLazyChallenge(challenge),
+            wrapLazyChallenge(challenge),
+            wrapLazyChallenge(challenge)
         ))
         testRule.setContent {
             ProfilePage(user = InstantLazyRef("1", mockuser))

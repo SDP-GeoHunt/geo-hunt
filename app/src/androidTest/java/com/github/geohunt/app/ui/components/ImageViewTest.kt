@@ -19,6 +19,7 @@ import com.github.geohunt.app.mocks.BaseMockDatabase
 import com.github.geohunt.app.mocks.InstantLazyRef
 import com.github.geohunt.app.mocks.MockLazyRef
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.database.api.LoggedUserContext
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 import com.google.android.gms.tasks.Tasks
 import okhttp3.internal.wait

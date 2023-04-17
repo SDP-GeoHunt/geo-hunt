@@ -21,7 +21,7 @@ abstract class BaseMockDatabase : Database {
     }
 
     override fun getLoggedContext(): LoggedUserContext {
-        TODO("Not yet implemented")
+        return object : MockLoggedUserContext() {}
     }
 
     override fun getFollowersOf(uid: String): Task<List<LazyRef<User>>> {

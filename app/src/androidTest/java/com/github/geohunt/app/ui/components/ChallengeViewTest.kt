@@ -12,10 +12,7 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.ui.Logged
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.google.android.gms.tasks.Tasks
@@ -42,7 +39,15 @@ class ChallengeViewTest {
         val profilePicture = createTestBitmap(context)
         var route = ""
         val database = object : BaseMockDatabase() {
+            override fun getLoggedContext(): LoggedUserContext {
+                return object : MockLoggedUserContext() {
+                    override val User.doesFollow: LazyRef<Boolean>
+                        get() = InstantLazyRef("..", false)
 
+                    override val loggedUserRef: LazyRef<User>
+                        get() = InstantLazyRef("..", MockConstant.Johny)
+                }
+            }
         }
 
         val author = MockUser(

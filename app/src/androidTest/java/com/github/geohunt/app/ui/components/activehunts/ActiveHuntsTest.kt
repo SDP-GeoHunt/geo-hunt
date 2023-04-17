@@ -30,13 +30,17 @@ class ActiveHuntsTest {
     val testRule = createComposeRule()
 
     var exploreCallbackCalled = false
+    var imageViewCallbackCalled = false
 
     private fun setupComposable(challenges: List<LazyRef<Challenge>>) {
         FirebaseEmulator.init()
         exploreCallbackCalled = false
+        imageViewCallbackCalled = false
         testRule.setContent {
             GeoHuntTheme {
-                ActiveHunts(challenges = challenges, {}) { exploreCallbackCalled = true }
+                ActiveHunts(challenges = challenges, { exploreCallbackCalled = true }) {
+                    imageViewCallbackCalled = true
+                }
             }
         }
     }
@@ -93,6 +97,13 @@ class ActiveHuntsTest {
                 .filter(hasContentDescription("Challenge ${dummyChallenge.cid}"))
                 //We use assertAny to make sure there is at least one node filling the condition
                 .assertAny(hasContentDescription("Challenge ${dummyChallenge.cid}"))
+
+        testRule.onNodeWithTag("challenge_row")
+            .onChildren()
+            .filter(hasClickAction())
+            .onFirst()
+            .performClick()
+        assertThat(imageViewCallbackCalled, equalTo(true))
     }
 
     @Test
@@ -105,5 +116,6 @@ class ActiveHuntsTest {
                 .performClick()
 
         assertThat(exploreCallbackCalled, equalTo(true))
+        assertThat(imageViewCallbackCalled, equalTo(false))
     }
 }
