@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
+import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.ui.components.utils.ListDropdownMenu
 import com.github.geohunt.app.ui.theme.Lobster
@@ -25,12 +26,14 @@ import java.time.LocalDate
  * for now this includes :
  *  - Challenge difficulty
  *  - Challenge expiration date
+ * Takes mutable states of the arguments it has to select
  */
 @Composable
 fun ChallengeSettings(selectedDifficulty: MutableState<Challenge.Difficulty>, selectedDate: MutableState<LocalDate?>) {
     Column(modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp),
+            .height(120.dp)
+            .padding(horizontal = 10.dp),
             verticalArrangement = Arrangement.SpaceBetween) {
         DifficultySelect(selectedDifficulty)
 
@@ -41,7 +44,7 @@ fun ChallengeSettings(selectedDifficulty: MutableState<Challenge.Difficulty>, se
 @Composable
 fun DifficultySelect(selectedDifficulty: MutableState<Challenge.Difficulty>) {
     Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
         SettingsText(text = stringResource(id = R.string.challenge_settings_difficulty))
 
@@ -56,19 +59,19 @@ fun DifficultySelect(selectedDifficulty: MutableState<Challenge.Difficulty>) {
 @Composable
 fun DateSelect(selectedDate: MutableState<LocalDate?>) {
     val state = UseCaseState(
-            onDismissRequest = { selectedDate.value = null },
-            onCloseRequest = {}
+            embedded = false,
+            onDismissRequest = { selectedDate.value = null }
     )
     CalendarDialog(state = state,
             selection = CalendarSelection.Date { selectedDate.value = it },
             config = calendarConfig())
 
     Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
         SettingsText(text = stringResource(id = R.string.challenge_settings_date))
 
-        TextField(value = selectedDate.value?.toString() ?: stringResource(id = R.string.challenge_settings_date_never),
+        TextField(value = nullableDateToString(date = selectedDate.value),
                 onValueChange = {},
                 readOnly = true,
                 enabled = false,
@@ -76,11 +79,17 @@ fun DateSelect(selectedDate: MutableState<LocalDate?>) {
     }
 }
 
-fun calendarConfig(): CalendarConfig {
+private fun calendarConfig(): CalendarConfig {
     val now = LocalDate.now()
     return CalendarConfig(
             boundary = now .. now.plusMonths(2)
     )
+}
+
+@Composable
+private fun nullableDateToString(date: LocalDate?): String {
+    if(date == null) return stringResource(id = R.string.challenge_settings_date_never)
+    return DateFormatUtils.formatDate(date)
 }
 
 @Composable
