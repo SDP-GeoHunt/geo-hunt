@@ -12,9 +12,10 @@ import java.time.LocalDateTime
 
 abstract class BaseMockDatabase : Database {
     override fun createChallenge(
-        thumbnail: Bitmap,
-        location: Location,
-        expirationDate: LocalDateTime?
+            thumbnail: Bitmap,
+            location: Location,
+            expirationDate: LocalDateTime?,
+            difficulty: Challenge.Difficulty
     ): Task<Challenge> {
         throw NotImplementedError()
     }

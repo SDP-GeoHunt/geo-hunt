@@ -92,7 +92,7 @@ class FirebaseDatabase(activity: Activity) : Database {
             expirationDate = utcIso8601FromLocalNullable(expirationDate),
             claims = listOf(),
             location = location,
-            difficulty = difficulty
+            difficulty = difficulty.toString()
         )
 
         // Get the reference to the thumbnail Bitmap and set the value

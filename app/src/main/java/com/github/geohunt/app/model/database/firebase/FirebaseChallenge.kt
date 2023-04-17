@@ -69,7 +69,7 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate!!),
         correctLocation =  challengeEntry.location!!,
         claims = (challengeEntry.claims ?: listOf()).map(database::getClaimRefById),
-        difficulty = challengeEntry.difficulty!!
+        difficulty = Challenge.Difficulty.valueOf(challengeEntry.difficulty)
     )
 }
 
@@ -82,5 +82,5 @@ internal data class ChallengeEntry(
     var expirationDate: String? = null,
     var claims: List<String>? = null,
     var location: Location? = null,
-    var difficulty: Challenge.Difficulty? = null
+    var difficulty: String = "MEDIUM"
 )

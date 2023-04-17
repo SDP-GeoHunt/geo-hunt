@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
@@ -65,12 +66,14 @@ class TestFirebaseDatabase {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val bitmap = createTestBitmap(context)
         val future = CompletableFuture<() -> Unit>()
+        val difficulty = Challenge.Difficulty.MEDIUM
 
-        val challengeTask = database.createChallenge(bitmap, currentLocation, null)
+        val challengeTask = database.createChallenge(bitmap, currentLocation, null, difficulty)
             .addOnSuccessListener { challenge ->
                 future.complete {
                     assertThat(challenge.correctLocation, equalTo(currentLocation))
                     assertThat(challenge.coarseLocation, equalTo(currentLocation.getCoarseLocation()))
+                    assertThat(challenge.difficulty, equalTo(difficulty))
                 }
             }
             .addOnFailureListener(future::completeExceptionally)

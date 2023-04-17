@@ -26,6 +26,8 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.sensor.LocationRequestState
+import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeForm
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import org.hamcrest.Matchers.equalTo
@@ -121,7 +123,8 @@ class CreateChallengeViewTest {
             override fun createChallenge(
                 thumbnail: Bitmap,
                 location: Location,
-                expirationDate: LocalDateTime?
+                expirationDate: LocalDateTime?,
+                difficulty: Challenge.Difficulty
             ): Task<Challenge> {
                 val challenge = MockChallenge(
                     cid = "cid",
@@ -154,7 +157,7 @@ class CreateChallengeViewTest {
                 .assertIsNotEnabled()
 
             // Assert the request was launched
-            assertThat(counter, greaterThanOrEqualTo(1));
+            assertThat(counter, greaterThanOrEqualTo(1))
 
             // Resolve the future
             if (locationRequestFailed) {
