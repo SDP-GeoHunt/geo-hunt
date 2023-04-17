@@ -35,4 +35,8 @@ abstract class BaseMockDatabase : Database {
     override fun getUserById(uid: String): LazyRef<User> {
         TODO("Not yet implemented")
     }
+
+    override fun getClaimById(iid: String): LazyRef<Claim> {
+        TODO("Not yet implemented")
+    }
 }
