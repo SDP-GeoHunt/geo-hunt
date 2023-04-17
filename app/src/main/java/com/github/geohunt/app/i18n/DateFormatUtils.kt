@@ -23,7 +23,16 @@ object DateFormatUtils {
      * @param dateTime dateTime to format
      */
     fun formatDate(dateTime: LocalDateTime): String {
-        return dateFormatter.format(dateTime)
+        return formatDate(dateTime.toLocalDate())
+    }
+
+    /**
+     * Formats given LocalDate into a string
+     * Formats using the following pattern "day/month/year"
+     * @param date date to format
+     */
+    fun formatDate(date: LocalDate): String {
+        return dateFormatter.format(date)
     }
 
     /**
