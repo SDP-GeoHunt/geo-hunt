@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components
+package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest
 import android.content.Intent
@@ -28,6 +28,8 @@ import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.sensor.rememberLocationRequestState
 import com.github.geohunt.app.sensor.rememberPermissionsState
+import com.github.geohunt.app.ui.components.LinkText
+import com.github.geohunt.app.ui.components.LinkTextData
 import com.github.geohunt.app.ui.theme.Typography
 import com.github.geohunt.app.utility.*
 import kotlinx.coroutines.tasks.asTask
@@ -52,6 +54,7 @@ fun CreateChallengeForm(
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
+    val selectedDifficulty = remember { mutableStateOf(Challenge.Difficulty.MEDIUM) }
 
     LaunchedEffect(true) {
         locationPermission.requestPermissions()
@@ -81,10 +84,14 @@ fun CreateChallengeForm(
             Image(
                 painter = bitmapPainter,
                 modifier = Modifier
-                    .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
-                    .fillMaxSize(),
+                        .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
+                        .fillMaxSize(0.5f),
                 contentDescription = "Photo just taken of the challenge"
             )
+
+            Spacer(Modifier.height(25.dp))
+
+            ChallengeSettings(selectedDifficulty = selectedDifficulty)
 
             Spacer(Modifier.height(25.dp))
 
@@ -113,7 +120,7 @@ fun CreateChallengeForm(
                             thumbnail = bitmap,
                             location = locationRequest.lastLocation.value!!,
                             expirationDate = null,
-                            difficulty = Challenge.Difficulty.MEDIUM
+                            difficulty = selectedDifficulty.value
                         ).toCompletableFuture(activity)
                             .thenApply(onChallengeCreated)
                             .thenApply { }
