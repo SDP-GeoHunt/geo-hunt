@@ -39,24 +39,24 @@ class GoogleMapViewTest {
         composeTestRule.onNodeWithTag("Maps").assertExists()
     }
 
-//    @Test
-//    fun testMarkerClickOnEvent1WorksCorrectly() {
-//        val device: UiDevice = UiDevice.getInstance(getInstrumentation())
-//        val marker: UiObject = device.findObject(UiSelector().descriptionContains("Event 1"))
-//        marker.click()
-//    }
-//
-//    @Test
-//    fun testMarkerClickOnEvent2WorksCorrectly() {
-//        val device: UiDevice = UiDevice.getInstance(getInstrumentation())
-//        val marker: UiObject = device.findObject(UiSelector().descriptionContains("Event 2"))
-//        marker.click()
-//    }
-//
-//    @Test
-//    fun testMarkerClickOnEvent3WorksCorrectly() {
-//        val device: UiDevice = UiDevice.getInstance(getInstrumentation())
-//        val marker: UiObject = device.findObject(UiSelector().descriptionContains("Event 3"))
-//        marker.click()
-//    }
+    @Test
+    fun testMarkerClickOnEvent1WorksCorrectly() {
+        val device: UiDevice = UiDevice.getInstance(getInstrumentation())
+        val marker: UiObject = device.findObject(UiSelector().descriptionContains("Event 1"))
+        marker.click()
+    }
+
+    @Test
+    fun testMarkerClickOnEvent2WorksCorrectly() {
+        val device: UiDevice = UiDevice.getInstance(getInstrumentation())
+        val marker: UiObject = device.findObject(UiSelector().descriptionContains("Event 2"))
+        marker.click()
+    }
+
+    @Test
+    fun testMarkerClickOnEvent3WorksCorrectly() {
+        val device: UiDevice = UiDevice.getInstance(getInstrumentation())
+        val marker: UiObject = device.findObject(UiSelector().descriptionContains("Event 3"))
+        marker.click()
+    }
 }
