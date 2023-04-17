@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.R
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -94,6 +95,10 @@ object DateFormatUtils {
                 return "Less than 1 hour"
             }
         }
+    }
+
+    fun atEndOfDay(date: LocalDate?): LocalDateTime? {
+        return date?.atTime(23,59, 59)
     }
 }
 

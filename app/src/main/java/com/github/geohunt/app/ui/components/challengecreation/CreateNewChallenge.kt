@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
+import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.sensor.rememberLocationRequestState
@@ -33,6 +34,7 @@ import com.github.geohunt.app.ui.components.LinkTextData
 import com.github.geohunt.app.ui.theme.Typography
 import com.github.geohunt.app.utility.*
 import kotlinx.coroutines.tasks.asTask
+import java.time.LocalDate
 
 @Composable
 fun CreateChallengeForm(
@@ -55,6 +57,7 @@ fun CreateChallengeForm(
         Manifest.permission.ACCESS_FINE_LOCATION
     )
     val selectedDifficulty = remember { mutableStateOf(Challenge.Difficulty.MEDIUM) }
+    val selectedDate = remember { mutableStateOf(LocalDate.now()) }
 
     LaunchedEffect(true) {
         locationPermission.requestPermissions()
@@ -91,7 +94,7 @@ fun CreateChallengeForm(
 
             Spacer(Modifier.height(25.dp))
 
-            ChallengeSettings(selectedDifficulty = selectedDifficulty)
+            ChallengeSettings(selectedDifficulty = selectedDifficulty, selectedDate)
 
             Spacer(Modifier.height(25.dp))
 
@@ -119,7 +122,7 @@ fun CreateChallengeForm(
                         database.createChallenge(
                             thumbnail = bitmap,
                             location = locationRequest.lastLocation.value!!,
-                            expirationDate = null,
+                            expirationDate = DateFormatUtils.atEndOfDay(selectedDate.value),
                             difficulty = selectedDifficulty.value
                         ).toCompletableFuture(activity)
                             .thenApply(onChallengeCreated)
