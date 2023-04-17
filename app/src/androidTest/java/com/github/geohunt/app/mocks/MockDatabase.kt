@@ -67,7 +67,7 @@ abstract class BaseMockDatabase : Database {
         //TODO("Not yet implemented")
     }
 
-    override fun isUserLiked(uid: String, cid: String): LazyRef<Boolean> {
+    override fun doesUserLike(uid: String, cid: String): LazyRef<Boolean> {
         //Return a lazy ref with the value true
         return object : LazyRef<Boolean> {
             override val id = "1101"

@@ -307,7 +307,10 @@ class FirebaseDatabase(activity: Activity) : Database {
      * @return a list of users that liked the challenge
      */
     internal fun getLikesOf(cid: String): Task<Map<String, Boolean>> {
-        return dbChallengeRef.child(cid).child("likes").get()
+        val coarseHash = cid.substring(0, Location.COARSE_HASH_SIZE)
+        val elementId = cid.substring(Location.COARSE_HASH_SIZE)
+
+        return dbChallengeRef.child(coarseHash).child(elementId).child("likes").get()
             .thenMap { snapshot ->
                 snapshot.toMap<Boolean>().withDefault { false }
             }
@@ -324,10 +327,12 @@ class FirebaseDatabase(activity: Activity) : Database {
     private suspend fun doLike(uid: String, cid: String, like: Boolean = true) {
         // TODO Writes are not made atomically and should be batched instead
         //      See https://github.com/SDP-GeoHunt/geo-hunt/issues/88#issue-1647852411
+        val coarseHash = cid.substring(0, Location.COARSE_HASH_SIZE)
+        val elementId = cid.substring(Location.COARSE_HASH_SIZE)
 
         val userLikesRef = dbUserRef.child(uid).child("likes")
-        val challengeLikesRef = dbChallengeRef.child(cid).child("likes")
-        val challengeLikesCounterRef = dbUserRef.child(cid).child("numberOfLikes")
+        val challengeLikesRef = dbChallengeRef.child(coarseHash).child(elementId).child("likedBy")
+        val challengeLikesCounterRef = dbUserRef.child(coarseHash).child(elementId).child("numberOfLikes")
 
         val defaultMap = emptyMap<String, Boolean>().withDefault { false }
         val userLikes = userLikesRef.queryAs<Map<String, Boolean>>() ?: defaultMap
@@ -379,12 +384,12 @@ class FirebaseDatabase(activity: Activity) : Database {
      * @param cid the challenge id
      * @return a task that will complete with a boolean indicating if the user likes the challenge
      */
-    override fun isUserLiked(uid: String, cid: String): LazyRef<Boolean> {
+    override fun doesUserLike(uid: String, cid: String): LazyRef<Boolean> {
         //Check if the challenge is in the user's liked challenges, return false if the challenge is not present
         return object : BaseLazyRef<Boolean>() {
             override fun fetchValue(): Task<Boolean> {
                 return dbUserRef.child(uid).child("likes").get().thenMap {
-                    it.child(cid).exists()
+                    it.child(uid).getValue(Boolean::class.java) ?: false
                 }
             }
             override val id: String = uid + cid

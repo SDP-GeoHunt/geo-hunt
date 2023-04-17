@@ -69,7 +69,7 @@ internal fun BellowImageButtons(challenge: Challenge, database: Database, user: 
 
 @Composable
 internal fun LikeButton(challenge: Challenge, database: Database, user: User, fontSize: TextUnit, iconSize: Dp) {
-    val hasUserLikedChallenge: LazyRef<Boolean> = database.isUserLiked(user.uid, challenge.cid)
+    val hasUserLikedChallenge: LazyRef<Boolean> = database.doesUserLike(user.uid, challenge.cid)
     var numberOfLikes by remember { mutableStateOf(challenge.numberOfLikes ) }
 
     FetchComponent(
@@ -111,7 +111,6 @@ internal fun LikeButton(challenge: Challenge, database: Database, user: User, fo
                 contentDescription = "Likes",
                 fontSize = fontSize,
                 iconSize = iconSize,
-                modifier = Modifier.padding(end = 15.dp)
             )
         }
     }
