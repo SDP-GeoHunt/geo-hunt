@@ -40,6 +40,13 @@ interface Database {
      */
     fun getUserById(uid: String): LazyRef<User>
 
+    /**
+     * Retrieve a claim with a specific ID and return the corresponding [LazyRef]. Notice that this operaiton
+     * won't fail if the given element does not exists in the database. The failure will happen upon fetching
+     * the returned [LazyRef]
+     */
+    fun getClaimById(iid: String) : LazyRef<Claim>
+
 
     /**
      * Get a list of nearby challenges to a specific location

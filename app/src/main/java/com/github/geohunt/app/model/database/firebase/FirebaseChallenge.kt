@@ -40,7 +40,7 @@ class FirebaseChallengeRef(
             Tasks.forResult(challenge)
         } else {
             database.dbChallengeRef
-                .getChallengeFromId(id).get()
+                .getChallengeRefFromId(id).get()
                 .thenMap {
                     it.buildChallenge(database, id)
                 }
@@ -49,7 +49,7 @@ class FirebaseChallengeRef(
 
 }
 
-internal fun DatabaseReference.getChallengeFromId(cid: String) : DatabaseReference
+internal fun DatabaseReference.getChallengeRefFromId(cid: String) : DatabaseReference
 {
     return child(cid.substring(0, Location.COARSE_HASH_SIZE))
         .child(cid.substring(Location.COARSE_HASH_SIZE))
@@ -73,7 +73,7 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
         publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate),
         correctLocation =  challengeEntry.location!!,
-        claims = (challengeEntry.claims ?: listOf()).map(database::getClaimRefById),
+        claims = challengeEntry.claims.mapNotNull { (key, exists) -> database.getClaimById(key).takeIf { exists } },
         numberOfActiveHunters = challengeEntry.numberOfActiveHunters
     )
 }
@@ -85,7 +85,7 @@ internal data class ChallengeEntry(
     var authorId: String? = null,
     var publishedDate: String? = null,
     var expirationDate: String = "null",
-    var claims: List<String>? = null,
+    var claims: Map<String, Boolean> = mapOf<String, Boolean>().withDefault { false },
     var location: Location? = null,
     val numberOfActiveHunters: Int = 0
 )

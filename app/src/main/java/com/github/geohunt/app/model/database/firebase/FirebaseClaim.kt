@@ -1,6 +1,7 @@
 package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
@@ -20,13 +21,10 @@ data class FirebaseClaim(
     override val user: LazyRef<User>,
     override val time: LocalDateTime,
     override val location: Location,
+    override val image : LazyRef<Bitmap>,
+    override val distance: Long = 0,
+    override val awardedPoints: Long = 0,
 ) : Claim {
-    override val image: LazyRef<Bitmap>
-        get() = TODO("Not yet implemented")
-    override val distance: Long
-        get() = TODO("Not yet implemented")
-    override val awardedPoints: Long
-        get() = TODO("Not yet implemented")
 }
 
 /**
@@ -56,6 +54,9 @@ internal class FirebaseClaimRef(
                     time = DateUtils.localFromUtcIso8601(claimEntry.time),
                     challenge = database.getChallengeById(claimEntry.cid!!),
                     location =  claimEntry.location!!,
+                    image = database.getClaimThumbnailById(id),
+                    distance = claimEntry.distance,
+                    awardedPoints = claimEntry.awardedPoints
                 )
             }
     }
@@ -70,5 +71,6 @@ internal data class ClaimEntry(
     var time: String = "null",
     var cid: String? = null,
     var location: Location? = null,
-    val distance: Long? = null,
+    val distance: Long = 0,
+    val awardedPoints : Long = 0
 )

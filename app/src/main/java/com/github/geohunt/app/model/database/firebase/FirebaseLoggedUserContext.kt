@@ -124,7 +124,7 @@ internal class FirebaseLoggedUserContext(
         //      See https://github.com/SDP-GeoHunt/geo-hunt/issues/88#issue-1647852411
         val activeHuntsListRef = database.dbUserRef.child(uid).child("activeHunts")
         val followersNumberRef =
-            database.dbChallengeRef.getChallengeFromId(cid).child("numberOfActiveHunters")
+            database.dbChallengeRef.getChallengeRefFromId(cid).child("numberOfActiveHunters")
 
         val activeHuntsListTask = activeHuntsListRef.get()
         val followersNumberTask = followersNumberRef.get()
@@ -176,7 +176,7 @@ internal class FirebaseLoggedUserContext(
             authorId = loggedUserRef.id,
             publishedDate = DateUtils.utcIso8601Now(),
             expirationDate = DateUtils.utcIso8601FromLocalNullable(expirationDate),
-            claims = listOf(),
+            claims = mapOf(),
             location = location
         )
 
@@ -209,6 +209,7 @@ internal class FirebaseLoggedUserContext(
         require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
 
         // State variable
+        val dbChallengeRef = database.dbChallengeRef.getChallengeRefFromId(cid)
         val dbClaimRef = database.dbClaimRef.child(cid).push()
         val claimId = cid + "!!" + dbClaimRef.key!!
 
@@ -223,18 +224,20 @@ internal class FirebaseLoggedUserContext(
         val thumbnailBitmap = database.getClaimThumbnailById(claimId)
         thumbnailBitmap.value = thumbnail
 
-        // Create both jobs (update database, update storage)
+        // Create both jobs (update database, update storage, update claim list)
         val submitToDatabaseTask = dbClaimRef.setValue(claimEntry)
         val submitToStorageTask = thumbnailBitmap.saveToLocalStorageThenSubmit()
+        val pushChallengeListTask = dbChallengeRef.child("claims").child(claimId).setValue(true)
 
         // Finally make the completable task that succeed if both task succeeded
-        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask).thenMap {
+        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask, pushChallengeListTask).thenMap {
             FirebaseClaim(
                 id = claimId,
                 user = loggedUserRef,
                 time = DateUtils.localFromUtcIso8601(claimEntry.time!!),
                 challenge = database.getChallengeById(this.cid),
-                location = location
+                location = location,
+                image = thumbnailBitmap
             )
         }
     }

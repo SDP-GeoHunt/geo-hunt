@@ -44,6 +44,10 @@ class FirebaseDatabase(activity: Activity) : Database {
         FirebaseBitmapRef(it, this)
     }
 
+    private val claimRefById = DataPool<String, FirebaseClaimRef> {
+        FirebaseClaimRef(it, this)
+    }
+
     private val loggedUserContextByUserId = DataPool<String, FirebaseLoggedUserContext> { uid ->
         FirebaseLoggedUserContext(this, getUserById(uid))
     }
@@ -98,6 +102,10 @@ class FirebaseDatabase(activity: Activity) : Database {
      */
     override fun getUserById(uid: String): LazyRef<User> {
         return userRefById.get(uid)
+    }
+
+    override fun getClaimById(iid: String): LazyRef<Claim> {
+        return claimRefById.get(iid)
     }
 
 
