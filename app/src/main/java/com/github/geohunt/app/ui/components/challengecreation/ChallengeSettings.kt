@@ -27,6 +27,9 @@ import java.time.LocalDate
  *  - Challenge difficulty
  *  - Challenge expiration date
  * Takes mutable states of the arguments it has to select
+ * @param selectedDifficulty Mutable state of a challenge difficulty that can be modified by user interaction
+ * @param selectedDate Mutable state of a LocalDate that can be modified by user interaction.
+ *  Can be null representing that there is no expiration date
  */
 @Composable
 fun ChallengeSettings(selectedDifficulty: MutableState<Challenge.Difficulty>, selectedDate: MutableState<LocalDate?>) {

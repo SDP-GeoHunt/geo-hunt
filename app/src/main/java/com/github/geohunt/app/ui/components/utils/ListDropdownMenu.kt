@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.testTag
  * Creates a dropdown menu containing all the elements of elements.
  * Stores the selected value in the MutableState state to make it accessible to the caller.
  * @param state The mutableState that will be modified by the menu
- * @param elements The elements to chose from
+ * @param elements The elements the user can chose from
  * @param toString The function used to convert elements to strings that will be displayed
  */
 @OptIn(ExperimentalMaterialApi::class)
