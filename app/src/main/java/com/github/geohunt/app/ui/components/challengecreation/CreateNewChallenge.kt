@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.github.geohunt.app.BuildConfig
@@ -77,12 +76,12 @@ fun CreateChallengeForm(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Text(text = "Create new Challenge",
+            /*Text(text = "Create new Challenge",
                 color = MaterialTheme.colors.primary,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h1)
 
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(25.dp))*/
 
             Image(
                 painter = bitmapPainter,
@@ -92,11 +91,11 @@ fun CreateChallengeForm(
                 contentDescription = "Photo just taken of the challenge"
             )
 
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(15.dp))
 
             ChallengeSettings(selectedDifficulty = selectedDifficulty, selectedDate)
 
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(15.dp))
 
             LinkText(listOf(
                 LinkTextData("By creating a challenge, you agree to GeoHunt's "),
