@@ -82,7 +82,7 @@ fun DateSelect(selectedDate: MutableState<LocalDate?>) {
 private fun calendarConfig(): CalendarConfig {
     val now = LocalDate.now()
     return CalendarConfig(
-            boundary = now .. now.plusMonths(2)
+            boundary = now .. now.plusMonths(2) //Hardcoded value which might be replaced later
     )
 }
 
