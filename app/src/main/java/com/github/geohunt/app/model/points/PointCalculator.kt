@@ -19,6 +19,11 @@ interface PointCalculator {
     fun computePoints(l1: Location, l2: Location): Double
 
     companion object {
+
+        /**
+         * Converts a challenge difficulty to a predetermined PointCalculator
+         * @param difficulty the challenge difficulty to convert
+         */
         fun fromDifficulty(difficulty: Difficulty): PointCalculator {
             return when (difficulty) {
                 EASY -> GaussianPointCalculator(0.20)
