@@ -20,11 +20,8 @@ fun <T> ListDropdownMenu(state: MutableState<T>, elements: Collection<T>, toStri
     ExposedDropdownMenuBox(expanded = expanded,
             onExpandedChange = { expanded = !expanded },
             modifier = Modifier.testTag("dropdown_menu_box")) {
-        TextField(value = toString(state.value),
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.testTag("dropdown_menu_text_field"))
+
+        PreviewText(value = toString(state.value), expanded = expanded)
 
         ExposedDropdownMenu(
                 expanded = expanded,
@@ -40,4 +37,14 @@ fun <T> ListDropdownMenu(state: MutableState<T>, elements: Collection<T>, toStri
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun PreviewText(value: String, expanded: Boolean) {
+    TextField(value = value,
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier.testTag("dropdown_menu_text_field"))
 }
