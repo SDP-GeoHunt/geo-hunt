@@ -45,7 +45,7 @@ interface Challenge
      * but the author
      */
     val correctLocation: Location
-    
+
     /**
      * A list of reference to all of the claims from users
      */
@@ -65,5 +65,14 @@ interface Challenge
         MEDIUM,
         HARD
     }
-}
 
+    /**
+     * A list of references to all of the likes from users
+     */
+    val likes: List<LazyRef<User>>
+
+    /**
+     * The number of likes for this challenge
+     */
+    var numberOfLikes: Int
+}
