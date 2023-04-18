@@ -2,6 +2,8 @@ package com.github.geohunt.app.ui.components.utils
 
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 
 /**
  * Creates a dropdown menu containing all the elements of elements.
@@ -16,11 +18,13 @@ fun <T> ListDropdownMenu(state: MutableState<T>, elements: Collection<T>, toStri
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(expanded = expanded,
-            onExpandedChange = { expanded = !expanded }) {
+            onExpandedChange = { expanded = !expanded },
+            modifier = Modifier.testTag("dropdown_menu_box")) {
         TextField(value = toString(state.value),
                 onValueChange = {},
                 readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) })
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier.testTag("dropdown_menu_text_field"))
 
         ExposedDropdownMenu(
                 expanded = expanded,
@@ -30,7 +34,7 @@ fun <T> ListDropdownMenu(state: MutableState<T>, elements: Collection<T>, toStri
                 DropdownMenuItem(onClick = {
                     state.value = elem
                     expanded = false
-                }) {
+                }, modifier = Modifier.testTag("dropdown_menu_item_" + toString(elem))) {
                     Text(text = toString(elem))
                 }
             }
