@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components
+package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest.permission
 import android.content.Context
@@ -26,8 +26,6 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.sensor.LocationRequestState
-import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeForm
-import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import org.hamcrest.Matchers.equalTo
