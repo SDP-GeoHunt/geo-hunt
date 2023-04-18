@@ -22,6 +22,8 @@ data class FirebaseChallenge(
     override val expirationDate: LocalDateTime?,
     override val correctLocation: Location,
     override val claims: List<LazyRef<Claim>>,
+    override var likes: List<LazyRef<User>>,
+    override var numberOfLikes: Int,
 ) : Challenge {
     override val coarseLocation: Location
         get() = correctLocation.getCoarseLocation()
@@ -67,7 +69,9 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
         publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate!!),
         correctLocation =  challengeEntry.location!!,
-        claims = (challengeEntry.claims ?: listOf()).map(database::getClaimRefById)
+        claims = (challengeEntry.claims ?: listOf()).map(database::getClaimRefById),
+        likes = challengeEntry.likes.mapNotNull { (id, doesLike) -> database.getUserById(id).takeIf { doesLike } },
+        numberOfLikes = challengeEntry.numberOfLikes,
     )
 }
 
@@ -79,5 +83,7 @@ internal data class ChallengeEntry(
     var publishedDate: String? = null,
     var expirationDate: String? = null,
     var claims: List<String>? = null,
-    var location: Location? = null
+    var location: Location? = null,
+    var likes: Map<String, Boolean> = emptyMap(),
+    var numberOfLikes: Int = 0,
 )

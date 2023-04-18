@@ -17,7 +17,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.GoBackBtn
 import com.github.geohunt.app.ui.homescreen.HorizontalDivider
@@ -39,6 +41,8 @@ Praesent bibendum non dolor eu fringilla. Etiam ac lorem sit amet quam auctor vo
 @Composable
 fun ChallengeView(
     challenge: Challenge,
+    database: Database,
+    user: User,
     fnViewImageCallback: (String) -> Unit,
     fnGoBackBtn: () -> Unit
 ) {
@@ -67,7 +71,11 @@ fun ChallengeView(
                 challenge.thumbnail
             }
 
-            BellowImageButtons(challenge)
+            BellowImageButtons(
+                challenge = challenge,
+                user = user,
+                database = database
+            )
 
             Spacer(Modifier.height(2.dp))
 

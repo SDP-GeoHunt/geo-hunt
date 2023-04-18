@@ -25,7 +25,8 @@ class FirebaseUser(
     override val hunts: List<LazyRef<Challenge>>,
     override val numberOfFollowers: Int,
     override val follows: List<LazyRef<User>>,
-    override var score: Long
+    override var score: Long,
+    override var likes: List<LazyRef<Challenge>>
 ) : User {
 
 }
@@ -65,7 +66,8 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
             hunts = entry.hunts.map { db.getChallengeById(it) },
             numberOfFollowers = entry.numberOfFollowers,
             follows = entry.follows.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
-            score = entry.score
+            score = entry.score,
+            likes = entry.likes.mapNotNull { (id, doesLike) -> db.getChallengeById(id).takeIf { doesLike } }
         )
     }
 
@@ -93,5 +95,6 @@ internal data class UserEntry(
     var numberOfFollowers: Int = 0,
     var follows: Map<String, Boolean> = emptyMap(),
     var score: Long = 0,
-    var profilePictureHash: Int? = null
+    var profilePictureHash: Int? = null,
+    var likes: Map<String, Boolean> = emptyMap()
 )

@@ -50,6 +50,7 @@ class LeaderboardTest {
             override val numberOfFollowers: Int = 10
             override val follows: List<LazyRef<User>> = emptyList()
             override var score: Long = (1500 - pos * 100).toLong()
+            override var likes: List<LazyRef<Challenge>> = listOf()
         }
     }
 

@@ -3,6 +3,7 @@ package com.github.geohunt.app.model.database.firebase
 import android.app.Activity
 import android.graphics.Bitmap
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.LiveLazyRef
@@ -89,7 +90,8 @@ class FirebaseDatabase(activity: Activity) : Database {
             publishedDate = utcIso8601Now(),
             expirationDate = utcIso8601FromLocalNullable(expirationDate),
             claims = listOf(),
-            location = location
+            location = location,
+            likes = mapOf(),
         )
 
         // Get the reference to the thumbnail Bitmap and set the value
@@ -109,7 +111,9 @@ class FirebaseDatabase(activity: Activity) : Database {
                 publishedDate = localFromUtcIso8601(challengeEntry.publishedDate!!),
                 expirationDate = expirationDate,
                 correctLocation = location,
-                claims = listOf()
+                claims = listOf(),
+                likes = listOf(),
+                numberOfLikes = 0
             )
         }
     }
@@ -330,5 +334,101 @@ class FirebaseDatabase(activity: Activity) : Database {
     override suspend fun unfollow(follower: String, followee: String) {
         doFollow(follower, followee, follow = false)
     }
-}
 
+    /**
+     * Returns a list of users that liked a given challenge
+     * @param cid the challenge id
+     * @return a list of users that liked the challenge
+     */
+    internal fun getLikesOf(cid: String): Task<Map<String, Boolean>> {
+        val coarseHash = cid.substring(0, Location.COARSE_HASH_SIZE)
+        val elementId = cid.substring(Location.COARSE_HASH_SIZE)
+
+        return dbChallengeRef.child(coarseHash).child(elementId).child("likedBy").get()
+            .thenMap { snapshot ->
+                snapshot.toMap<Boolean>().withDefault { false }
+            }
+    }
+
+    /**
+     * Function updating the firebase making user like/dislike a given challenge
+     *
+     * @note To ensure easier data querying, the data must be synchronized at 3 places in the database :
+     *      - In the user's like list, the challenge should be added/removed,
+     *      - The challenge's counter should be incremented/decremented,
+     *      - The user should be added/removed to the challenge's liker list.
+     */
+    private suspend fun doLike(uid: String, cid: String, like: Boolean = true) {
+        // TODO Writes are not made atomically and should be batched instead
+        //      See https://github.com/SDP-GeoHunt/geo-hunt/issues/88#issue-1647852411
+        val coarseHash = cid.substring(0, Location.COARSE_HASH_SIZE)
+        val elementId = cid.substring(Location.COARSE_HASH_SIZE)
+
+        val userLikesRef = dbUserRef.child(uid).child("likes")
+        val challengeLikesRef = dbChallengeRef.child(coarseHash).child(elementId).child("likedBy")
+        val challengeLikesCounterRef = dbChallengeRef.child(coarseHash).child(elementId).child("numberOfLikes")
+
+        val defaultMap = emptyMap<String, Boolean>().withDefault { false }
+        val userLikes = userLikesRef.queryAs<Map<String, Boolean>>() ?: defaultMap
+        val challengeLikesCounter = challengeLikesCounterRef.queryAs<Int>() ?: 0
+        val challengeLikes = challengeLikesRef.queryAs<Map<String, Boolean>>() ?: defaultMap
+
+        // Abort if the user already likes the challenge
+        // or if the user tries to unlike a challenge not liked
+        if ((like && userLikes[cid] == true)
+            || (!like && userLikes[cid] != true)) {
+            return
+        }
+
+        Tasks.whenAll(
+            // Update the user's likes list
+            userLikesRef.setValue(if (like) (userLikes + (cid to true)) else userLikes - cid),
+
+            // Update the likes counter of the challenge
+            challengeLikesCounterRef.setValue(if (like) challengeLikesCounter + 1 else max(challengeLikesCounter - 1, 0)),
+
+            // Update the challenge's likes list
+            challengeLikesRef.setValue(if (like) (challengeLikes + (uid to true)) else challengeLikes - uid)
+        ).await()
+    }
+
+    /**
+     * Insert a like for a user into the Firebase
+     * @param uid the user id
+     * @param cid the challenge id
+     * @return a task that will complete when the like is inserted
+     */
+    override suspend fun insertUserLike(uid: String, cid: String) {
+        doLike(uid, cid, like = true)
+    }
+
+    /**
+     * Remove a like for a user from the Firebase
+     *
+     * @param uid the user id
+     * @param cid the challenge id
+     * @return a task that will complete when the like is removed
+     */
+    override suspend fun removeUserLike(uid: String, cid: String) {
+        doLike(uid, cid, like = false)
+    }
+
+    /**
+     * Check if a user likes a specific challenge
+     *
+     * @param uid the user id
+     * @param cid the challenge id
+     * @return a task that will complete with a boolean indicating if the user likes the challenge
+     */
+    override fun doesUserLike(uid: String, cid: String): LazyRef<Boolean> {
+        //Check if the challenge is in the user's liked challenges, return false if the challenge is not present
+        return object : BaseLazyRef<Boolean>() {
+            override fun fetchValue(): Task<Boolean> {
+                return dbUserRef.child(uid).child("likes").get().thenMap {
+                    it.child(uid).getValue(Boolean::class.java) ?: false
+                }
+            }
+            override val id: String = uid + cid
+        }
+    }
+}
