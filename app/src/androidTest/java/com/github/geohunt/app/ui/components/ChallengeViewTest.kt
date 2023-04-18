@@ -187,6 +187,7 @@ class ChallengeViewTest {
             cid = "test-cid",
             expirationDate = LocalDateTime.now().plusDays(1),
             publishedDate = LocalDateTime.now(),
+            difficulty = Challenge.Difficulty.MEDIUM,
             likes = listOf(),
             numberOfLikes = 0,
         )
