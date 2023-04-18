@@ -156,7 +156,10 @@ fun NavigationController(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") }) {
+                    ChallengeView(it,
+                        database = database,
+                        user = Authenticator.authInstance.get().user!!,
+                        { cid -> navController.navigate("image-view/$cid") }) {
                         navController.popBackStack()
                     }
                 }

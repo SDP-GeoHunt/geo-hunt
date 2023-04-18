@@ -39,7 +39,7 @@ class HomeScreenTest {
             .assertIsDisplayed()
         testRule.onAllNodesWithTag(R.drawable.mock_user.toString())
             .onFirst().assertIsDisplayed()
-        testRule.onAllNodesWithTag(R.drawable.likes.toString())
+        testRule.onAllNodesWithTag(R.drawable.challenge_like.toString())
             .onFirst().assertIsDisplayed()
         testRule.onAllNodesWithTag(R.drawable.mock_image_1.toString())
             .onFirst().assertIsDisplayed()
