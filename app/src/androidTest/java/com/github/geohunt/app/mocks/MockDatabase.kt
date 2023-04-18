@@ -8,6 +8,7 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import java.time.LocalDateTime
 
 abstract class BaseMockDatabase : Database {
@@ -30,7 +31,7 @@ abstract class BaseMockDatabase : Database {
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         throw NotImplementedError()
     }
-    
+
     override fun submitClaim(
         thumbnail: Bitmap,
         challenge: Challenge,
@@ -56,5 +57,23 @@ abstract class BaseMockDatabase : Database {
 
     override fun getUserById(uid: String): LazyRef<User> {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun insertUserLike(uid: String, cid: String) {
+        //TODO("Not yet implemented")
+    }
+
+    override suspend fun removeUserLike(uid: String, cid: String) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun doesUserLike(uid: String, cid: String): LazyRef<Boolean> {
+        //Return a lazy ref with the value true
+        return object : LazyRef<Boolean> {
+            override val id = "1101"
+            override val value = false
+
+            override fun fetch(): Task<Boolean> = Tasks.forResult(false)
+        }
     }
 }
