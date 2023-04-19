@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
  */
 class MainViewModel : ViewModel() {
     private val networkMonitor = NetworkMonitor(Firebase.database)
-    private var _isConnected = MutableStateFlow(true)
+    private val _isConnected = MutableStateFlow(true)
 
     /**
      * Returns true if the application is connected to the remote database.
