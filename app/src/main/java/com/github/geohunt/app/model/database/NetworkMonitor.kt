@@ -2,7 +2,9 @@ package com.github.geohunt.app.model.database
 
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.snapshots
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 /**
@@ -16,4 +18,5 @@ class NetworkMonitor(database: FirebaseDatabase) {
         database.getReference(".info/connected")
                .snapshots
                .map { it.getValue(Boolean::class.java) ?: false }
+               .flowOn(Dispatchers.IO)
 }
