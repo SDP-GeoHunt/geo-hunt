@@ -24,6 +24,7 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.ui.theme.geoHuntRed
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.compose.*
 import com.google.maps.android.compose.clustering.Clustering
 
@@ -34,20 +35,25 @@ fun MarkerClustering(items: List<Marker>) {
     var selectedMarker: Marker? by remember { mutableStateOf(null) }
 
     //var mark : Marker = null
-    val isMarkerClicked = remember {
-        mutableStateOf(false)
-    }
+    val isMarkerClicked = remember { mutableStateOf(false) }
+
     Clustering(
         items = items,
 
         //The content of the info window
-        onClusterItemClick = {
-            marker ->
+        onClusterItemClick = { marker ->
             selectedMarker = marker
-         //   mark = marker
+            //   mark = marker
             isMarkerClicked.value = true
+
             Log.d("TAG", "onClusterItemClick: $marker")
+
+            //marker.state.hideInfoWindow()
+            marker.state.showInfoWindow() //MAYBE ???
+
+
             true
+
         },
 
 
@@ -66,23 +72,134 @@ fun MarkerClustering(items: List<Marker>) {
                         fontWeight = FontWeight.Black,
                         textAlign = TextAlign.Center,
 
-                    )
+                        )
                 }
             }
 
         }
 
     )
+    MarkerInfoWindowContent(
+        state = selectedMarker?.state ?: MarkerState(),
+        onClick = {
+            Log.d("TAG", "YOOOOOO MAN Non-cluster marker clicked! $it")
+            true
+        },
+        title = "Fun fact",
+    ) { marker ->
+        Box(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
+                )
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                //The image displayed at the top of the info window
+                Image(
+                    painter = painterResource(id = R.drawable.radar_icon),
+                    contentDescription = "Radar Icon",
+                    modifier = Modifier
+                        .size(90.dp)
+                        .padding(10.dp)
+                )
 
-    if (isMarkerClicked.value) {
+                //The title of the marker
+                Text(
+                    text = "Fun fact",
+                    //text = marker.markerTitle,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(10.dp)
+                )
+
+                //The snippet of the marker
+                Text(
+                    text = "This is a fun fact",
+                    //text = marker.markerSnippet,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(10.dp)
+                )
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+    /*if (isMarkerClicked.value) {
+        selectedMarker?.let { marker ->
+            MarkerInfoWindow(
+                state = marker.state,
+                onClick = {
+                    Log.d("TAG", "YOOOOOO MAN Non-cluster marker clicked! $it")
+                    true
+                }
+            ) { marker ->
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
+                        )
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        //The image displayed at the top of the info window
+                        Image(
+                            painter = painterResource(id = R.drawable.radar_icon),
+                            contentDescription = "Radar Icon",
+                            modifier = Modifier
+                                .size(90.dp)
+                                .padding(10.dp)
+                        )
+
+                        //The title of the marker
+                        Text(
+                            text = "Fun fact",
+                            //text = marker.markerTitle,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(10.dp)
+                        )
+
+                        //The snippet of the marker
+                        Text(
+                            text = "This is a fun fact",
+                            //text = marker.markerSnippet,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }*/
+}
+
+/*    if (isMarkerClicked.value) {
         selectedMarker?.let { marker ->
             DisplayMarkerInformation(marker = marker)
         }
-    }
+    }*/
     //selectedMarker?.let {marker -> DisplayMarkerInformation(marker = marker)}
 
     //MarkerInfoWindow(
-     //   state = rememberMarkerState(position = LatLng(46.51881+0.1, 6.56779 + 0.1)),
+     //   s
+//   tate = rememberMarkerState(position = LatLng(46.51881+0.1, 6.56779 + 0.1)),
     //    onClick = {
     //        Log.d("TAG", "Non-cluster marker clicked! $it")
     //        true
@@ -226,4 +343,4 @@ fun MarkerClustering(items: List<Marker>) {
 
 
 
-}
+

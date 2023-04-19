@@ -3,6 +3,7 @@ package com.github.geohunt.app.maps.marker
 import android.graphics.Bitmap
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
+import com.google.maps.android.compose.MarkerState
 import java.time.LocalDateTime
 
 data class Marker(
@@ -11,7 +12,8 @@ data class Marker(
     val markerSnippet: String,
     val image: Bitmap,
     val expiryDate: LocalDateTime,
-) : ClusterItem {
+    val state : MarkerState = MarkerState(position = markerPosition),
+    ) : ClusterItem {
     override fun getPosition(): LatLng =
         markerPosition
 

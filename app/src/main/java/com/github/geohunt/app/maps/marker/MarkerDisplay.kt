@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.compose.MarkerInfoWindow
 import com.google.maps.android.compose.MarkerInfoWindowContent
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberMarkerState
 import java.time.LocalDateTime
 import java.time.Month
@@ -60,14 +61,14 @@ fun DisplayMarkers(markers: List<Marker>) {
 
 //TODO : change to display marker info only
 /**
- * Adds the data from the database to the map as markers
+ * Obsolete: Adds the data from the database to the map as markers
  */
 @Composable
 fun DisplayMarkerInformation(marker: Marker) {
-    MarkerInfoWindowContent(
+    MarkerInfoWindow(
         state = rememberMarkerState(position = marker.position),
         //state = rememberMarkerState(),
-       title = marker.title,
+        title = marker.title,
         snippet = marker.expiryDate.toString(),
         icon = BitmapDescriptorFactory.defaultMarker(geoHuntRed.red)
     ){
