@@ -3,7 +3,6 @@ package com.github.geohunt.app.maps
 import android.graphics.Bitmap
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.github.geohunt.app.maps.marker.DisplayMarkerInformation
 import com.github.geohunt.app.maps.marker.Marker
 import com.github.geohunt.app.maps.marker.MarkerClustering
 import com.google.android.gms.maps.model.CameraPosition
@@ -46,7 +45,7 @@ private val mockChallengeDatabase : List<Marker> = listOf<Marker>(
 
 @Composable
 fun createListOfMockMarkers(): List<Marker> {
-    val mockChallengeDatabase = mutableListOf<Marker>()
+    val mockChallengeDatabase = remember { mutableStateListOf<Marker>()}
 
         //remember { mutableStateListOf<Marker>() }
 
@@ -88,21 +87,8 @@ fun GoogleMapView(
             properties = mapProperties,
             uiSettings = uiSettings,
         ) {
-            val markers = mockChallengeDatabase
+            val markers = createListOfMockMarkers()
 
-            //for (marker in markers) {
-            //    DisplayMarkerInformation(marker = marker)
-            //}
-
-
-            //CreateListOfMockMarkers()
-
-            //Clustering(
-            //    items = markers
-            //)
-            // DisplayMarkers(markers = markers)
-
-            //for (marker in markers) { DisplayMarkerInformation(marker = marker) }
             MarkerClustering(items = markers)
 
 

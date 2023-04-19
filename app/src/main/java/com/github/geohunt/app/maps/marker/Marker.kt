@@ -21,13 +21,7 @@ data class Marker(
     val markerSnippet: String,
     val image: Bitmap,
     val expiryDate: LocalDateTime,
-    val state : MarkerState = MarkerState(position = markerPosition),
-    //val markerOptions: MarkerOptions = MarkerOptions()
-    //    .position(markerPosition)
-    //    .title(markerTitle)
-    //    .snippet(markerSnippet)
-    //    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-
+    val state : MarkerState = MarkerState(position = markerPosition)
     ) : ClusterItem {
     override fun getPosition(): LatLng =
         markerPosition

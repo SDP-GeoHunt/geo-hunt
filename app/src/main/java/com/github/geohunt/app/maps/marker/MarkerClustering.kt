@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -12,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -28,6 +31,7 @@ import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.compose.*
 import com.google.maps.android.compose.clustering.Clustering
 
+//TODO doc
 @Composable
 fun DisplayMarkerInfo(marker: Marker) {
     Box(
@@ -81,54 +85,38 @@ fun DisplayMarkerInfo(marker: Marker) {
 fun MarkerClustering(items: List<Marker>) {
     var selectedMarker: Marker? by remember { mutableStateOf(null) }
 
-    //var mark : Marker = null
     val isMarkerClicked = remember { mutableStateOf(false) }
 
     Clustering(
         items = items,
 
-        //The content of the info window
+        // When clicked, update the selected marker
+        // and set the markerClicked state to true
         onClusterItemClick = { marker ->
             selectedMarker = marker
-            //   mark = marker
             isMarkerClicked.value = true
-
-            Log.d("TAG", "onClusterItemClick: $marker")
-
-            marker.state.showInfoWindow()
-
-            //MarkerInfoWindowContent(marker = marker)
-            //marker.state.showInfoWindow() //MAYBE ???
 
             true
         },
 
+        // Render the non clustered markers
+        // and info window if the marker is clicked
         clusterItemContent = {marker ->
             if (isMarkerClicked.value) {
                 if (selectedMarker == marker) {
-                    selectedMarker?.let { selectedMarker ->
-                        DisplayMarkerInfo(marker = selectedMarker)
-                    }
-                }
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally){
-                    Spacer(modifier = Modifier.height(44.dp))
-
+                    DisplayMarkerInfo(marker = marker)
                 }
             }
-
             Image(
                 painter = painterResource(id = R.drawable.marker),
                 contentDescription = "Marker Icon",
                 modifier = Modifier
-                    .size(90.dp),
-                // .padding(top = 16.dp),
-
-                //contentScale = ContentScale.Crop
+                    .size(90.dp)
+                    .alpha(if (selectedMarker == marker) 0f else 1f)
             )
-
         },
 
+        // Render the clustered markers
         clusterContent = { cluster ->
             Surface(
                 modifier = Modifier.size(40.dp),
@@ -149,4 +137,12 @@ fun MarkerClustering(items: List<Marker>) {
             }
         }
     )
+}
+
+private fun determineClusterColor(clusterSize: Int): Color {
+    return when {
+        clusterSize < 10 -> Color.Green
+        clusterSize < 100 -> Color.Yellow
+        else -> Color.Red
+    }
 }
