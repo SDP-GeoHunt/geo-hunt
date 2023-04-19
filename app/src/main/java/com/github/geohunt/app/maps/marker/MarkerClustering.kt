@@ -28,6 +28,53 @@ import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.compose.*
 import com.google.maps.android.compose.clustering.Clustering
 
+@Composable
+fun DisplayMarkerInfo(marker: Marker) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = MaterialTheme.colorScheme.onPrimary,
+                shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
+            )
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            //The image displayed at the top of the info window
+            Image(
+                painter = painterResource(id = R.drawable.radar_icon),
+                contentDescription = "Radar Icon",
+                modifier = Modifier
+                    .size(90.dp)
+                    .padding(top = 16.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            //The middle text containing the title of the challenge
+            Text(
+                text = marker.title,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.displayMedium,
+            )
+
+            //The bottom text containing the expiry date of the challenge
+            Text(
+                text = marker.expiryDate.toString(),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
@@ -48,14 +95,39 @@ fun MarkerClustering(items: List<Marker>) {
 
             Log.d("TAG", "onClusterItemClick: $marker")
 
-            //marker.state.hideInfoWindow()
-            marker.state.showInfoWindow() //MAYBE ???
+            marker.state.showInfoWindow()
 
+            //MarkerInfoWindowContent(marker = marker)
+            //marker.state.showInfoWindow() //MAYBE ???
 
             true
-
         },
 
+        clusterItemContent = {marker ->
+            if (isMarkerClicked.value) {
+                if (selectedMarker == marker) {
+                    selectedMarker?.let { selectedMarker ->
+                        DisplayMarkerInfo(marker = selectedMarker)
+                    }
+                }
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally){
+                    Spacer(modifier = Modifier.height(44.dp))
+
+                }
+            }
+
+            Image(
+                painter = painterResource(id = R.drawable.marker),
+                contentDescription = "Marker Icon",
+                modifier = Modifier
+                    .size(90.dp),
+                // .padding(top = 16.dp),
+
+                //contentScale = ContentScale.Crop
+            )
+
+        },
 
         clusterContent = { cluster ->
             Surface(
@@ -75,272 +147,6 @@ fun MarkerClustering(items: List<Marker>) {
                         )
                 }
             }
-
         }
-
     )
-    MarkerInfoWindowContent(
-        state = selectedMarker?.state ?: MarkerState(),
-        onClick = {
-            Log.d("TAG", "YOOOOOO MAN Non-cluster marker clicked! $it")
-            true
-        },
-        title = "Fun fact",
-    ) { marker ->
-        Box(
-            modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
-                )
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                //The image displayed at the top of the info window
-                Image(
-                    painter = painterResource(id = R.drawable.radar_icon),
-                    contentDescription = "Radar Icon",
-                    modifier = Modifier
-                        .size(90.dp)
-                        .padding(10.dp)
-                )
-
-                //The title of the marker
-                Text(
-                    text = "Fun fact",
-                    //text = marker.markerTitle,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(10.dp)
-                )
-
-                //The snippet of the marker
-                Text(
-                    text = "This is a fun fact",
-                    //text = marker.markerSnippet,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(10.dp)
-                )
-            }
-        }
-    }
-
-
-
-
-
-
-
-
-    /*if (isMarkerClicked.value) {
-        selectedMarker?.let { marker ->
-            MarkerInfoWindow(
-                state = marker.state,
-                onClick = {
-                    Log.d("TAG", "YOOOOOO MAN Non-cluster marker clicked! $it")
-                    true
-                }
-            ) { marker ->
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
-                        )
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        //The image displayed at the top of the info window
-                        Image(
-                            painter = painterResource(id = R.drawable.radar_icon),
-                            contentDescription = "Radar Icon",
-                            modifier = Modifier
-                                .size(90.dp)
-                                .padding(10.dp)
-                        )
-
-                        //The title of the marker
-                        Text(
-                            text = "Fun fact",
-                            //text = marker.markerTitle,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(10.dp)
-                        )
-
-                        //The snippet of the marker
-                        Text(
-                            text = "This is a fun fact",
-                            //text = marker.markerSnippet,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Normal,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(10.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }*/
 }
-
-/*    if (isMarkerClicked.value) {
-        selectedMarker?.let { marker ->
-            DisplayMarkerInformation(marker = marker)
-        }
-    }*/
-    //selectedMarker?.let {marker -> DisplayMarkerInformation(marker = marker)}
-
-    //MarkerInfoWindow(
-     //   s
-//   tate = rememberMarkerState(position = LatLng(46.51881+0.1, 6.56779 + 0.1)),
-    //    onClick = {
-    //        Log.d("TAG", "Non-cluster marker clicked! $it")
-    //        true
-    //    }
-    //)
-
-    //for (marker in items) {
-    //        DisplayMarkerInformation(marker = marker)
-    //}
-
-
-////EXP
-    /*MarkerInfoWindow(
-        state = rememberMarkerState(position = LatLng(46.51881, 6.56779)),
-        onClick = {
-            Log.d("MarkerInfoWindow", "Clicked")
-        true
-                  },
-
-        //state = rememberMarkerState(),
-        //title = marker.title,
-        //snippet = marker.expiryDate.toString(),
-        icon = BitmapDescriptorFactory.defaultMarker(geoHuntRed.red)
-    ){marker ->
-        Box(
-            modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
-                )
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                //The image displayed at the top of the info window
-                Image(
-                    painter = painterResource(id = R.drawable.radar_icon),
-                    contentDescription = "Radar Icon",
-                    modifier = Modifier
-                        .size(90.dp)
-                        .padding(top = 16.dp),
-                    contentScale = ContentScale.Crop)
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                //The middle text containing the title of the challenge
-                Text(
-                 //   text = marker.title,
-                    text = "Challenge Title",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    style = MaterialTheme.typography.displayMedium,
-                )
-
-                //The bottom text containing the expiry date of the challenge
-                Text(
-                //    text = marker.expiryDate.toString(),
-                    text = "Expiry Date",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(top = 10.dp, start = 25.dp, end = 25.dp)
-                        .fillMaxWidth(),
-                    style = MaterialTheme.typography.headlineSmall,
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-        }
-    }*/
-
-
-
-
-
-
-
-
-
-
-    //////EXP
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//{
-        //marker ->
-        //if (marker == selectedMarker) {
-        //}
-//    }
-    //selectedMarker?.let { DisplayMarkerInformation(marker = it) }
-
-    ////MarkerInfoWindow(
-
-
-    ///selectedMarker?.let {  BoxMarkerInformation(marker = it) }
-    //if (isMarkerClicked.value) {
-     //   DisplayMarkerInformation(marker = mark)
-    //}
-    //DisplayMarkerInformation(marker = mark)
-
-    //{ marker ->
-    //    DisplayMarkerInformation(marker = marker)
-   // }
-
-    //for (marker in items) {
-    //    DisplayMarkerInformation(marker = marker)
-    //}
-
-
-
-    //MarkerInfoWindow(
-    //    state = rememberMarkerState(position = LatLng(46.51881, 6.56779)),
-    //    onClick = {
-    //        true
-    //    }
-    //)
-
-
-
-

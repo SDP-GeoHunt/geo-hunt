@@ -13,10 +13,42 @@ import java.time.LocalDateTime
 import java.time.Month
 
 private val mockBitmap: Bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+private val mockChallengeDatabase : List<Marker> = listOf<Marker>(
+    Marker(
+        LatLng(46.51958, 6.56398),
+        "Event 1",
+        "Expires on 1 May 2024 at 19:39",
+        mockBitmap,
+        LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12)
+    ),
+    Marker(
+        LatLng(46.519, 6.563),
+        "Event 2",
+        "Expires on 1 May 2024 at 19:39",
+        mockBitmap,
+        LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12)
+    ),
+    Marker(
+        LatLng(46.5192, 6.5632),
+        "Event 3",
+        "Expires on 1 May 2024 at 19:39",
+        mockBitmap,
+        LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12)
+    ),
+    Marker(
+        LatLng(46.5193, 6.5633),
+        "Event 4",
+        "Expires on 1 May 2024 at 19:39",
+        mockBitmap,
+        LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12)
+    ),
+)
 
 @Composable
 fun createListOfMockMarkers(): List<Marker> {
-    val mockChallengeDatabase = remember { mutableStateListOf<Marker>() }
+    val mockChallengeDatabase = mutableListOf<Marker>()
+
+        //remember { mutableStateListOf<Marker>() }
 
     LaunchedEffect(Unit) {
         for (i in 1..100) {
@@ -56,7 +88,7 @@ fun GoogleMapView(
             properties = mapProperties,
             uiSettings = uiSettings,
         ) {
-            val markers = createListOfMockMarkers()
+            val markers = mockChallengeDatabase
 
             //for (marker in markers) {
             //    DisplayMarkerInformation(marker = marker)
@@ -69,7 +101,10 @@ fun GoogleMapView(
             //    items = markers
             //)
             // DisplayMarkers(markers = markers)
+
+            //for (marker in markers) { DisplayMarkerInformation(marker = marker) }
             MarkerClustering(items = markers)
+
 
             content()
         }

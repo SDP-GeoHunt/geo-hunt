@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -59,63 +61,66 @@ fun DisplayMarkers(markers: List<Marker>) {
 }
 
 
-//TODO : change to display marker info only
+//TODO : change to display marker info only, change name and doc
 /**
  * Obsolete: Adds the data from the database to the map as markers
  */
 @Composable
 fun DisplayMarkerInformation(marker: Marker) {
-    MarkerInfoWindow(
-        state = rememberMarkerState(position = marker.position),
+    MarkerInfoWindowContent(
+        state = marker.state,
         //state = rememberMarkerState(),
-        title = marker.title,
-        snippet = marker.expiryDate.toString(),
-        icon = BitmapDescriptorFactory.defaultMarker(geoHuntRed.red)
-    ){
-        Box(
-            modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
-                )
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+        //title = marker.title,
+        //snippet = marker.expiryDate.toString(),
+        //icon = BitmapDescriptorFactory.defaultMarker(geoHuntRed.red)
+        //visible = false,
+
+        content = {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
+                    )
             ) {
-                //The image displayed at the top of the info window
-                Image(
-                    painter = painterResource(id = R.drawable.radar_icon),
-                    contentDescription = "Radar Icon",
-                    modifier = Modifier
-                        .size(90.dp)
-                        .padding(top = 16.dp),
-                    contentScale = ContentScale.Crop)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    //The image displayed at the top of the info window
+                    Image(
+                        painter = painterResource(id = R.drawable.radar_icon),
+                        contentDescription = "Radar Icon",
+                        modifier = Modifier
+                            .size(90.dp)
+                            .padding(top = 16.dp),
+                        contentScale = ContentScale.Crop)
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                //The middle text containing the title of the challenge
-                Text(
-                    text = marker.title,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    style = MaterialTheme.typography.displayMedium,
-                )
+                    //The middle text containing the title of the challenge
+                    Text(
+                        text = marker.title,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        style = MaterialTheme.typography.displayMedium,
+                    )
 
-                //The bottom text containing the expiry date of the challenge
-                Text(
-                    text = marker.expiryDate.toString(),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .padding(top = 10.dp, start = 25.dp, end = 25.dp)
-                        .fillMaxWidth(),
-                    style = MaterialTheme.typography.headlineSmall,
-                )
+                    //The bottom text containing the expiry date of the challenge
+                    Text(
+                        text = marker.expiryDate.toString(),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                            .fillMaxWidth(),
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
-    }
+    )
 }
 
 /**
