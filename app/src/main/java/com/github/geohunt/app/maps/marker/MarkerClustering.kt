@@ -21,6 +21,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
@@ -118,20 +120,25 @@ fun MarkerClustering(items: List<Marker>) {
 
         // Render the clustered markers
         clusterContent = { cluster ->
+            val clusterSize = cluster.size
+
             Surface(
-                modifier = Modifier.size(40.dp),
-                shape = RectangleShape,
-                color = geoHuntRed,
-                contentColor = Color.Blue,
-                border = BorderStroke(2.dp, Color.Green)
+                modifier = Modifier.size(determineClusterSize(clusterSize)),
+                shape = CircleShape,
+                color = determineClusterColor(clusterSize),
+                contentColor = Color.Black,
+                border = BorderStroke(4.dp, Color.Green)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
-                        "%,d".format(cluster.size),
-                        fontSize = 16.sp,
+                        "%,d".format(clusterSize),
+                        fontSize = determineFontSize(clusterSize),
+                        //fontSize = determineFontSize(clusterSize),
                         fontWeight = FontWeight.Black,
                         textAlign = TextAlign.Center,
-
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp)
                         )
                 }
             }
@@ -139,10 +146,41 @@ fun MarkerClustering(items: List<Marker>) {
     )
 }
 
+/*
+ * Determines the color of the cluster based on the size of the cluster
+ *
+ * @param clusterSize The size of the cluster
+ */
 private fun determineClusterColor(clusterSize: Int): Color {
     return when {
         clusterSize < 10 -> Color.Green
         clusterSize < 100 -> Color.Yellow
-        else -> Color.Red
+        else -> geoHuntRed
+    }
+}
+
+/*
+ * Determines the diameter of the cluster based on the size of the cluster
+ *
+ * @param clusterSize The size of the cluster
+ */
+private fun determineClusterSize(clusterSize: Int): Dp {
+    return when {
+        clusterSize < 10 -> 40.dp
+        clusterSize < 100 -> 60.dp
+        else -> 80.dp
+    }
+}
+
+/*
+ * Determines the font size of the cluster based on the size of the cluster
+ *
+ * @param clusterSize The size of the cluster
+ */
+private fun determineFontSize(clusterSize: Int): TextUnit {
+    return when {
+        clusterSize < 10 -> 16.sp
+        clusterSize < 100 -> 20.sp
+        else -> 26.sp
     }
 }
