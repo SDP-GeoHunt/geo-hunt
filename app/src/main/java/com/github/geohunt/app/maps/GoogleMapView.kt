@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.github.geohunt.app.maps.marker.Marker
-import com.github.geohunt.app.maps.marker.MarkerClustering
+import com.github.geohunt.app.maps.marker.MarkerDisplay
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -89,8 +89,7 @@ fun GoogleMapView(
         ) {
             val markers = createListOfMockMarkers()
 
-            MarkerClustering(items = markers)
-
+            MarkerDisplay(items = markers)
 
             content()
         }

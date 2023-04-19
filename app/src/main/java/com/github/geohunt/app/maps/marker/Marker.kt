@@ -15,6 +15,17 @@ import com.google.maps.android.compose.MarkerInfoWindow
 import com.google.maps.android.compose.MarkerState
 import java.time.LocalDateTime
 
+/*
+ * Data class representing a marker that represents
+ * a challenge on the map
+ *
+ * @param markerPosition the position of the marker on the map
+ * @param markerTitle the title of the marker
+ * @param markerSnippet the snippet of the marker
+ * @param image the image of the given challenge
+ * @param expiryDate the date at which the challenge expires
+ * @param state the state of the marker
+ */
 data class Marker(
     val markerPosition: LatLng,
     val markerTitle: String,
