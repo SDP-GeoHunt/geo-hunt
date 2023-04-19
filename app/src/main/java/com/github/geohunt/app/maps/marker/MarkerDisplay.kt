@@ -20,6 +20,7 @@ import com.github.geohunt.app.ui.theme.geoHuntRed
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.compose.MarkerInfoWindow
 import com.google.maps.android.compose.MarkerInfoWindowContent
 import com.google.maps.android.compose.rememberMarkerState
 import java.time.LocalDateTime
@@ -41,7 +42,7 @@ private lateinit var clusterManager: ClusterManager<Marker>
 
 fun createListOfMockMarkers(): List<Marker> {
     var mockChallengeDatabase : MutableList<Marker> = mutableListOf()
-    for (i in 1..100) {
+    for (i in 0..100) {
         val marker = Marker(LatLng(46.51958 + i*0.1, 6.56398 + i*0.1), "Event $i", "Expires on 1 May 2023 at 19:39", mockBitmap, LocalDateTime.of(2023, Month.MAY, 1, 19, 39, 12))
         //, LocalDateTime.of(2023, Month.MAY, 1, 19, 39, 12))
         mockChallengeDatabase.add(marker)
@@ -62,13 +63,14 @@ fun DisplayMarkers(markers: List<Marker>) {
  * Adds the data from the database to the map as markers
  */
 @Composable
-fun AddMarkerOnMap(marker: Marker) {
+fun DisplayMarkerInformation(marker: Marker) {
     MarkerInfoWindowContent(
         state = rememberMarkerState(position = marker.position),
-        title = marker.title,
+        //state = rememberMarkerState(),
+       title = marker.title,
         snippet = marker.expiryDate.toString(),
         icon = BitmapDescriptorFactory.defaultMarker(geoHuntRed.red)
-    ) {
+    ){
         Box(
             modifier = Modifier
                 .background(
@@ -113,4 +115,55 @@ fun AddMarkerOnMap(marker: Marker) {
             }
         }
     }
+}
+
+/**
+ * Adds the data from the database to the map as markers
+ */
+@Composable
+fun BoxMarkerInformation(marker: Marker) {
+
+        Box(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
+                )
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                //The image displayed at the top of the info window
+                Image(
+                    painter = painterResource(id = R.drawable.radar_icon),
+                    contentDescription = "Radar Icon",
+                    modifier = Modifier
+                        .size(90.dp)
+                        .padding(top = 16.dp),
+                    contentScale = ContentScale.Crop)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                //The middle text containing the title of the challenge
+                Text(
+                    text = marker.title,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    style = MaterialTheme.typography.displayMedium,
+                )
+
+                //The bottom text containing the expiry date of the challenge
+                Text(
+                    text = marker.expiryDate.toString(),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                        .fillMaxWidth(),
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
 }

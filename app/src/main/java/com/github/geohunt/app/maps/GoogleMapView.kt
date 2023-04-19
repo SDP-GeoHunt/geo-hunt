@@ -3,6 +3,7 @@ package com.github.geohunt.app.maps
 import android.graphics.Bitmap
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import com.github.geohunt.app.maps.marker.DisplayMarkerInformation
 import com.github.geohunt.app.maps.marker.Marker
 import com.github.geohunt.app.maps.marker.MarkerClustering
 import com.google.android.gms.maps.model.CameraPosition
@@ -44,6 +45,7 @@ fun GoogleMapView(
     val mapVisible by remember { mutableStateOf(true) }
 
     if (mapVisible) {
+
         GoogleMap(
             modifier = modifier,
             cameraPositionState = rememberCameraPositionState {
@@ -55,6 +57,12 @@ fun GoogleMapView(
             uiSettings = uiSettings,
         ) {
             val markers = createListOfMockMarkers()
+
+            //for (marker in markers) {
+            //    DisplayMarkerInformation(marker = marker)
+            //}
+
+
             //CreateListOfMockMarkers()
 
             //Clustering(

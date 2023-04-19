@@ -2,7 +2,10 @@ package com.github.geohunt.app.maps.marker
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -11,11 +14,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.geohunt.app.R
 import com.github.geohunt.app.ui.theme.geoHuntRed
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import com.google.maps.android.compose.clustering.Clustering
@@ -24,8 +31,25 @@ import com.google.maps.android.compose.clustering.Clustering
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun MarkerClustering(items: List<Marker>) {
+    var selectedMarker: Marker? by remember { mutableStateOf(null) }
+
+    //var mark : Marker = null
+    val isMarkerClicked = remember {
+        mutableStateOf(false)
+    }
     Clustering(
         items = items,
+
+        //The content of the info window
+        onClusterItemClick = {
+            marker ->
+            selectedMarker = marker
+         //   mark = marker
+            isMarkerClicked.value = true
+            Log.d("TAG", "onClusterItemClick: $marker")
+            true
+        },
+
 
         clusterContent = { cluster ->
             Surface(
@@ -49,20 +73,40 @@ fun MarkerClustering(items: List<Marker>) {
         }
 
     )
-    MarkerInfoWindow(
+
+    if (isMarkerClicked.value) {
+        selectedMarker?.let { marker ->
+            DisplayMarkerInformation(marker = marker)
+        }
+    }
+    //selectedMarker?.let {marker -> DisplayMarkerInformation(marker = marker)}
+
+    //MarkerInfoWindow(
+     //   state = rememberMarkerState(position = LatLng(46.51881+0.1, 6.56779 + 0.1)),
+    //    onClick = {
+    //        Log.d("TAG", "Non-cluster marker clicked! $it")
+    //        true
+    //    }
+    //)
+
+    //for (marker in items) {
+    //        DisplayMarkerInformation(marker = marker)
+    //}
+
+
+////EXP
+    /*MarkerInfoWindow(
         state = rememberMarkerState(position = LatLng(46.51881, 6.56779)),
         onClick = {
-            true
-        }
-    )
+            Log.d("MarkerInfoWindow", "Clicked")
+        true
+                  },
 
-    ///REMOVE LATER
-    /*MarkerInfoWindowContent(
-        // state = rememberMarkerState(position = marker.position),
+        //state = rememberMarkerState(),
         //title = marker.title,
         //snippet = marker.expiryDate.toString(),
         icon = BitmapDescriptorFactory.defaultMarker(geoHuntRed.red)
-    ) {
+    ){marker ->
         Box(
             modifier = Modifier
                 .background(
@@ -70,7 +114,6 @@ fun MarkerClustering(items: List<Marker>) {
                     shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
                 )
         ) {
-
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -87,8 +130,8 @@ fun MarkerClustering(items: List<Marker>) {
 
                 //The middle text containing the title of the challenge
                 Text(
-                    text = "test",
-                    //  text = marker.title,
+                 //   text = marker.title,
+                    text = "Challenge Title",
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -97,8 +140,8 @@ fun MarkerClustering(items: List<Marker>) {
 
                 //The bottom text containing the expiry date of the challenge
                 Text(
-                    text = "test",
-                    // text = marker.expiryDate.toString(),
+                //    text = marker.expiryDate.toString(),
+                    text = "Expiry Date",
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(top = 10.dp, start = 25.dp, end = 25.dp)
@@ -108,6 +151,79 @@ fun MarkerClustering(items: List<Marker>) {
 
                 Spacer(modifier = Modifier.height(16.dp))
             }
-        }*/
+        }
+    }*/
+
+
+
+
+
+
+
+
+
+
+    //////EXP
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//{
+        //marker ->
+        //if (marker == selectedMarker) {
+        //}
+//    }
+    //selectedMarker?.let { DisplayMarkerInformation(marker = it) }
+
+    ////MarkerInfoWindow(
+
+
+    ///selectedMarker?.let {  BoxMarkerInformation(marker = it) }
+    //if (isMarkerClicked.value) {
+     //   DisplayMarkerInformation(marker = mark)
+    //}
+    //DisplayMarkerInformation(marker = mark)
+
+    //{ marker ->
+    //    DisplayMarkerInformation(marker = marker)
+   // }
+
+    //for (marker in items) {
+    //    DisplayMarkerInformation(marker = marker)
+    //}
+
+
+
+    //MarkerInfoWindow(
+    //    state = rememberMarkerState(position = LatLng(46.51881, 6.56779)),
+    //    onClick = {
+    //        true
+    //    }
+    //)
+
+
 
 }
