@@ -4,6 +4,7 @@ import com.github.geohunt.app.i18n.DateFormatUtils
 import org.junit.Assert.*
 
 import org.junit.Test
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
@@ -11,11 +12,20 @@ import java.time.LocalDateTime
  */
 class DateFormatUtilsTest{
     @Test
-    fun formatDateCorrectlyFormats() {
+    fun formatDateCorrectlyFormatsDateTime() {
         val date = LocalDateTime.of(2001, 7, 24, 20, 50)
         assertEquals("24/07/2001", DateFormatUtils.formatDate(date))
 
         val date2 = LocalDateTime.of(2003, 11, 5, 15, 15)
+        assertEquals("05/11/2003", DateFormatUtils.formatDate(date2))
+    }
+
+    @Test
+    fun formatDateCorrectlyFormatsDate() {
+        val date = LocalDate.of(2001, 7, 24)
+        assertEquals("24/07/2001", DateFormatUtils.formatDate(date))
+
+        val date2 = LocalDate.of(2003, 11, 5)
         assertEquals("05/11/2003", DateFormatUtils.formatDate(date2))
     }
 

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.R
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -22,7 +23,16 @@ object DateFormatUtils {
      * @param dateTime dateTime to format
      */
     fun formatDate(dateTime: LocalDateTime): String {
-        return dateFormatter.format(dateTime)
+        return formatDate(dateTime.toLocalDate())
+    }
+
+    /**
+     * Formats given LocalDate into a string
+     * Formats using the following pattern "day/month/year"
+     * @param date date to format
+     */
+    fun formatDate(date: LocalDate): String {
+        return dateFormatter.format(date)
     }
 
     /**
@@ -94,6 +104,10 @@ object DateFormatUtils {
                 return "Less than 1 hour"
             }
         }
+    }
+
+    fun atEndOfDay(date: LocalDate?): LocalDateTime? {
+        return date?.atTime(23,59, 59)
     }
 }
 

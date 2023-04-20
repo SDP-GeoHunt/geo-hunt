@@ -1,7 +1,6 @@
-package com.github.geohunt.app.ui.components
+package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -20,21 +19,21 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
+import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.sensor.rememberLocationRequestState
 import com.github.geohunt.app.sensor.rememberPermissionsState
+import com.github.geohunt.app.ui.components.LinkText
+import com.github.geohunt.app.ui.components.LinkTextData
 import com.github.geohunt.app.ui.theme.Typography
 import com.github.geohunt.app.utility.*
 import kotlinx.coroutines.tasks.asTask
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
+import java.time.LocalDate
 
 @Composable
 fun CreateChallengeForm(
@@ -56,6 +55,8 @@ fun CreateChallengeForm(
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
+    val selectedDifficulty = remember { mutableStateOf(Challenge.Difficulty.MEDIUM) }
+    val selectedDate: MutableState<LocalDate?> = remember { mutableStateOf(null) }
 
     LaunchedEffect(true) {
         locationPermission.requestPermissions()
@@ -75,22 +76,26 @@ fun CreateChallengeForm(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Text(text = "Create new Challenge",
+            /*Text(text = "Create new Challenge",
                 color = MaterialTheme.colors.primary,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h1)
 
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(25.dp))*/
 
             Image(
                 painter = bitmapPainter,
                 modifier = Modifier
-                    .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
-                    .fillMaxSize(),
+                        .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
+                        .fillMaxSize(0.5f),
                 contentDescription = "Photo just taken of the challenge"
             )
 
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(15.dp))
+
+            ChallengeSettings(selectedDifficulty = selectedDifficulty, selectedDate)
+
+            Spacer(Modifier.height(15.dp))
 
             LinkText(listOf(
                 LinkTextData("By creating a challenge, you agree to GeoHunt's "),
@@ -116,7 +121,8 @@ fun CreateChallengeForm(
                         database.createChallenge(
                             thumbnail = bitmap,
                             location = locationRequest.lastLocation.value!!,
-                            expirationDate = null
+                            expirationDate = DateFormatUtils.atEndOfDay(selectedDate.value),
+                            difficulty = selectedDifficulty.value
                         ).toCompletableFuture(activity)
                             .thenApply(onChallengeCreated)
                             .thenApply { }
