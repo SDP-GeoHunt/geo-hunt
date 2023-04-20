@@ -6,6 +6,7 @@ import com.google.firebase.database.Exclude
 import java.nio.ByteBuffer
 import java.util.zip.CRC32
 import java.lang.Math.toRadians
+import java.nio.ByteOrder
 import kotlin.math.*
 
 /**
@@ -64,6 +65,7 @@ data class Location(var latitude: Double = 0.0,
         // Create the byte buffer
         crc32.update(
             ByteBuffer.allocate(2 * Long.SIZE_BYTES)
+                .order(ByteOrder.BIG_ENDIAN) // explicit the default byte order to byte-buffer
                 .putLong(0, latitude.quantizeToLong(0.1))
                 .putLong(Long.SIZE_BYTES, longitude.quantizeToLong(0.1))
         )

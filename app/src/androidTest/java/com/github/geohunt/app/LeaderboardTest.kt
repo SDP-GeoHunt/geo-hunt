@@ -12,7 +12,7 @@ import com.github.geohunt.app.mocks.MockProfilePicture
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.Leaderboard
+import com.github.geohunt.app.ui.components.leaderboard.Leaderboard
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.github.geohunt.app.utils.ImageIdlingResource
 import org.junit.After
@@ -44,11 +44,14 @@ class LeaderboardTest {
             override var displayName: String? = names[pos]
             override val uid: String = pos.toString()
             override val profilePicture: LazyRef<Bitmap> = MockProfilePicture
+            override val profilePictureHash: Int = 1
             override val challenges: List<LazyRef<Challenge>> = listOf()
             override val activeHunts: List<LazyRef<Challenge>> = listOf()
             override val numberOfFollowers: Int = 10
             override val followList: List<LazyRef<User>> = emptyList()
             override var score: Long = (1500 - pos * 100).toLong()
+            override val isPOIUser: Boolean = false
+            override var likes: List<LazyRef<Challenge>> = listOf()
         }
     }
 

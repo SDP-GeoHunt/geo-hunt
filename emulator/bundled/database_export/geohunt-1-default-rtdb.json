@@ -1,1 +1,26 @@
-{"challenges":{"163f921c":{"-NQWln8MlqnVhArUIdwE":{"authorId":"8b8b0392-ba8b-11ed-afa1-0242ac120002","expirationDate":"null","location":{"latitude":43.880433,"longitude":-103.453748},"publishedDate":"2023-03-14T20:19:33.641982Z"}}},"users":[null,{"displayName":"Debug user","score":123},{"displayName":"John Wick","numberOfFollowers":0,"score":152}]}
+{
+  "challenges": {
+    "163f921c": {
+      "-NQWln8MlqnVhArUIdwE": {
+        "authorId": "8b8b0392-ba8b-11ed-afa1-0242ac120002",
+        "expirationDate": "null",
+        "location": {
+          "latitude": 43.880433,
+          "longitude": -103.453748
+        },
+        "publishedDate": "2023-03-14T20:19:33.641982Z"
+      }
+    }
+  },
+  "users": [
+    null,
+    {
+      "displayName": "Debug user",
+      "score": 123,
+      "uid": "1"
+    },
+    {
+      "displayName": "Here's Johny"
+    }
+  ]
+}

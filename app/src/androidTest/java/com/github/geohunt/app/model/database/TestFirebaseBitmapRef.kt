@@ -36,7 +36,7 @@ class TestFirebaseBitmapRef {
     @Test
     fun testBitmapRefFetchWorkProperly() = runTest {
         val thumbnailId = FirebaseBitmapRef.getImageIdFromChallengeId("163f921c-NQWln8MlqnVhArUIdwE")
-        assertThat(thumbnailId, equalTo("challenges-163f921c-NQWln8MlqnVhArUIdwE.png"))
+        assertThat(thumbnailId, equalTo("challenges-163f921c-NQWln8MlqnVhArUIdwE.jpeg"))
 
         composeTestRule.setContent {
             database = FirebaseDatabase(LocalContext.current.findActivity())

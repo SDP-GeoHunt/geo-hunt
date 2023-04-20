@@ -1,7 +1,6 @@
 package com.github.geohunt.app.ui
 
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -17,6 +16,7 @@ import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.MockAuthenticator
 import com.github.geohunt.app.mocks.MockUser
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Rule
 import org.junit.Test
@@ -70,6 +70,6 @@ class LoginActivityTest {
             hasComponent(LoginActivity::class.java.name),
             hasExtra("login", any(Any::class.java))))
         Intents.release()
-        assert(cf.isDone)
+        assertThat(cf.isDone, equalTo(true))
     }
 }

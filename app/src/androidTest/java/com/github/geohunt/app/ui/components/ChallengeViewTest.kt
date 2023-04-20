@@ -9,9 +9,11 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
+import com.github.geohunt.app.ConstantStrings
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.ui.Logged
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
@@ -22,7 +24,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)
 class ChallengeViewTest {
@@ -33,8 +34,8 @@ class ChallengeViewTest {
         return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
     }
 
-    @Test
-    fun testChallengeViewDisplayUserProperly() : Unit = Authenticator.authInstance.mocked(MockAuthenticator(MockConstant.Johny)).use {
+    private fun testChallengeView(hasDescription: Boolean)
+    {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val profilePicture = createTestBitmap(context)
         var route = ""
@@ -44,7 +45,10 @@ class ChallengeViewTest {
                     override val User.doesFollow: LazyRef<Boolean>
                         get() = InstantLazyRef("..", false)
 
-                    override val loggedUserRef: LazyRef<User>
+                    override val Challenge.doesLoggedUserLikes: LazyRef<Boolean>
+                        get() = InstantLazyRef("..", false)
+
+                    override val loggedUserRef: LiveLazyRef<User>
                         get() = InstantLazyRef("..", MockConstant.Johny)
                 }
             }
@@ -88,7 +92,8 @@ class ChallengeViewTest {
             thumbnail = MockLazyRef("img-ze5f16zaef1465") {
                 Tasks.forResult(createTestBitmap(context))
             },
-            claims = listOf(InstantLazyRef("claim", claim))
+            claims = listOf(InstantLazyRef("claim", claim)),
+            description = ConstantStrings.LORUM_IPSUM.takeIf { hasDescription }
         )
 
         // Sets the composeTestRule content
@@ -140,6 +145,32 @@ class ChallengeViewTest {
         composeTestRule.onNodeWithText("62m")
             .performScrollTo()
             .assertExists()
+
+        // assert description is displayed (upon clicking more)
+        if (hasDescription) {
+            composeTestRule.onNodeWithTag("description-more-btn")
+                .performScrollTo()
+                .assertIsDisplayed()
+                .assert(hasText("more..."))
+                .performClick()
+
+            composeTestRule.onNodeWithText(ConstantStrings.LORUM_IPSUM)
+                .assertIsDisplayed()
+        } else {
+            composeTestRule.onNodeWithTag("description-more-btn")
+                .assertDoesNotExist()
+        }
     }
 
+    @Test
+    fun testChallengeViewWithDescription()
+    {
+        testChallengeView(true)
+    }
+
+    @Test
+    fun testChallengeViewWithoutDescription()
+    {
+        testChallengeView(false)
+    }
 }

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.Singleton
@@ -35,18 +36,17 @@ interface Database {
 
     /**
      * Retrieve a user with a specific ID and return the corresponding [LazyRef]. Notice that this operation
-     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * won't fail if the given element does not exists in the database. The failure will happen upon
      * fetching the returned [LazyRef]
      */
-    fun getUserById(uid: String): LazyRef<User>
+    fun getUserById(uid: String): LiveLazyRef<User>
 
     /**
-     * Retrieve a claim with a specific ID and return the corresponding [LazyRef]. Notice that this operaiton
-     * won't fail if the given element does not exists in the database. The failure will happen upon fetching
-     * the returned [LazyRef]
+     * Retrieve a [LazyRef] to the claim with the provided [cid] as id. Notice that this operation
+     * won't fail if the given element does not exists in the database, instead the failure will happen
+     * upon fetching it.
      */
-    fun getClaimById(iid: String) : LazyRef<Claim>
-
+    fun getClaimById(cid: String): LazyRef<Claim>
 
     /**
      * Get a list of nearby challenges to a specific location
@@ -96,6 +96,15 @@ interface Database {
      */
     fun insertNewUser(user: User): Task<Void>
 
+    /**
+     * Point-Of-Interest user is a special user that does not have any information within the database
+     *
+     * It represent the user attach to any "public" challenge such as Point-Of-Interest. This design
+     * choice was made to ease the process of registering such challenges in the database without having
+     * to think too much onto it
+     */
+    fun getPOIUserID() : String
+
     companion object {
 
         /**
@@ -116,7 +125,7 @@ interface Database {
          * @param activity the Android Activity for which a Database instance will be created or retrieved
          * @return a `Database` instance created or retrieved using the `databaseFactory` Singleton instance
          */
-        fun createDatabaseHandle(activity: Activity): Database {
+        fun createDatabaseHandle(activity: Activity) : Database {
             return databaseFactory.get()(activity)
         }
     }

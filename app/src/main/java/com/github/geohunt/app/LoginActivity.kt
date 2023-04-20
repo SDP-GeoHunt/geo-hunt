@@ -24,6 +24,7 @@ import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.github.geohunt.app.ui.theme.md_theme_light_primary
 import com.github.geohunt.app.ui.theme.seed
+import com.github.geohunt.app.utility.replaceActivity
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,9 +54,9 @@ class LoginActivity : ComponentActivity() {
     }
 
     private fun loggedIn() {
-        startActivity(
-            Intent(this@LoginActivity, MainActivity::class.java)
-        )
+        // prevent the user to go back to the login activity
+        // so we properly replace it
+        replaceActivity(Intent(this@LoginActivity, MainActivity::class.java))
     }
 }
 

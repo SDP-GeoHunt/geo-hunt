@@ -5,14 +5,17 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.*
+import com.github.geohunt.app.model.database.firebase.internal.doFollow
+import com.github.geohunt.app.model.database.firebase.internal.doJoinHunt
+import com.github.geohunt.app.model.database.firebase.internal.doLike
+import com.github.geohunt.app.model.database.firebase.internal.doUpdateUser
 import com.github.geohunt.app.utility.DateUtils
 import com.github.geohunt.app.utility.convertTo
-import com.github.geohunt.app.utility.thenDo
 import com.github.geohunt.app.utility.thenMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.database.DataSnapshot
 import java.time.LocalDateTime
 
 /**
@@ -20,7 +23,7 @@ import java.time.LocalDateTime
  */
 internal class FirebaseLoggedUserContext(
     val database: FirebaseDatabase,
-    override val loggedUserRef: LazyRef<User>
+    override val loggedUserRef: LiveLazyRef<User>
 ) : LoggedUserContext {
 
     private val doesFollowMapByUID = DataPool<String, LazyRef<Boolean>> { uid ->
@@ -41,128 +44,68 @@ internal class FirebaseLoggedUserContext(
         }
     }
 
-    /**
-     * Updates the database to (un)follow the given users.
-     *
-     * @note To ensure easier data querying, the data must be synchronized at 3 places in the database :
-     *       - In the follower's follow list, the followee should be added/removed,
-     *       - The followee's counter should be incremented/decremented,
-     *       - The follower should be added/removed to the followee's follower list.
-     */
-    private fun doFollow(
-        follower: String,
-        followee: String,
-        follow: Boolean = true
-    ): Task<Nothing?> {
-        // TODO Writes are not made atomically and should be batched instead
-        //      See https://github.com/SDP-GeoHunt/geo-hunt/issues/88#issue-1647852411
+    private val doesLikeMapByCID = DataPool<String, LazyRef<Boolean>> { cid ->
+        object : BaseLazyRef<Boolean>() {
+            override val id: String
+                get() = "$cid!like!${loggedUserRef.id}"
 
-        val followerListRef = database.dbUserRef.child(follower).child("followList")
-        val counterRef = database.dbUserRef.child(followee).child("numberOfFollowers")
-        val follows = database.dbFollowersRef.child(followee)
+            override fun fetchValue(): Task<Boolean> {
+                val ref = database.dbUserRef.child(loggedUserRef.id).child("likes").child(cid)
 
-        val defaultMap = emptyMap<String, Boolean>().withDefault { false }
-        val followerListTask = followerListRef.get()
-        val followedCounterTask = counterRef.get()
-        val followsPairsTask = follows.get()
-
-        return Tasks.whenAllSuccess<DataSnapshot>(
-            followerListTask,
-            followedCounterTask,
-            followsPairsTask
-        )
-            .thenDo {
-                val followerList = it[0].convertTo<Map<String, Boolean>>() ?: defaultMap
-                val followedCounter = it[1].convertTo<Int>() ?: 0
-                val followsPairs = it[2].convertTo<Map<String, Boolean>>() ?: defaultMap
-
-                // Abort if the user already follows the followee
-                // or if the user tries to unfollow someone not followed
-                if (!(follow xor (followerList[followee] == true))) {
-                    return@thenDo Tasks.forResult(null)
+                //TODO: Currently update are not supported as this value is actually cached
+                // as such, in the future we should register an "on value change" but only
+                // when the user is displayed
+                return ref.get().thenMap { dataSnapshot ->
+                    dataSnapshot.convertTo<Boolean>() ?: false
                 }
-
-                Tasks.whenAll(
-                    // Update the follower's follow list
-                    followerListRef.setValue(if (follow) (followerList + (followee to true)) else followerList - followee),
-
-                    // Update the follow counter of the followee
-                    counterRef.setValue(
-                        if (follow) followedCounter + 1 else Integer.max(
-                            followedCounter - 1,
-                            0
-                        )
-                    ),
-
-                    // Update the follows relationship
-                    follows.setValue(if (follow) followsPairs + (follower to true) else followsPairs - follower)
-                ).thenMap { null }
             }
+        }
     }
 
     override val User.doesFollow: LazyRef<Boolean>
         get() = doesFollowMapByUID.get(this.uid)
 
+    override val Challenge.doesLoggedUserLikes: LazyRef<Boolean>
+        get() = doesLikeMapByCID.get(this.cid)
+
     override fun User.follow(): Task<Nothing?> {
-        return doFollow(loggedUserRef.id, this.uid, true)
+        return doFollow(database, loggedUserRef.id, this.uid, true)
     }
 
     override fun LazyRef<User>.follow(): Task<Nothing?> {
-        return doFollow(loggedUserRef.id, this.id, true)
+        return doFollow(database, loggedUserRef.id, this.id, true)
     }
 
     override fun User.unfollow(): Task<Nothing?> {
-        return doFollow(loggedUserRef.id, this.uid, false)
+        return doFollow(database, loggedUserRef.id, this.uid, false)
     }
 
     override fun LazyRef<User>.unfollow(): Task<Nothing?> {
-        return doFollow(loggedUserRef.id, this.id, false)
+        return doFollow(database, loggedUserRef.id, this.id, false)
     }
 
-    private fun doJoinHunt(uid: String, cid: String, isJoin: Boolean): Task<Nothing?> {
-        // TODO Writes are not made atomically and should be batched instead
-        //      See https://github.com/SDP-GeoHunt/geo-hunt/issues/88#issue-1647852411
-        val activeHuntsListRef = database.dbUserRef.child(uid).child("activeHunts")
-        val followersNumberRef =
-            database.dbChallengeRef.getChallengeRefFromId(cid).child("numberOfActiveHunters")
+    override fun Challenge.like(): Task<Nothing?> {
+        return doLike(database, loggedUserRef.id, this.cid, true)
+    }
 
-        val activeHuntsListTask = activeHuntsListRef.get()
-        val followersNumberTask = followersNumberRef.get()
-
-        return Tasks.whenAllSuccess<DataSnapshot>(activeHuntsListTask, followersNumberTask).thenDo {
-            val activeHuntsList = it[0].convertTo<Map<String, Boolean>>()
-                ?: mapOf<String, Boolean>().withDefault { false }
-            val followersNumber = it[1].convertTo<Int>() ?: 0
-
-            if (!(isJoin xor (activeHuntsList[cid] == true))) {
-                return@thenDo Tasks.forResult(null) // Already the case
-            }
-
-            Tasks.whenAll(
-                // Increment the number of active hunts within the challenge
-                followersNumberRef.setValue(followersNumber + if (isJoin) 1 else -1),
-
-                // Add the challenge to the list of followed challenge
-                activeHuntsListRef.setValue(
-                    if (isJoin) activeHuntsList + (cid to true)
-                    else activeHuntsList - cid
-                )
-            ).thenMap { null }
-        }
+    override fun Challenge.unlike(): Task<Nothing?> {
+        return doLike(database, loggedUserRef.id, this.cid, false)
     }
 
     override fun Challenge.joinHunt(): Task<Nothing?> {
-        return doJoinHunt(loggedUserRef.id, this.cid, true)
+        return doJoinHunt(database, loggedUserRef.id, this.cid, true)
     }
 
     override fun Challenge.leaveHunt(): Task<Nothing?> {
-        return doJoinHunt(loggedUserRef.id, this.cid, false)
+        return doJoinHunt(database, loggedUserRef.id, this.cid, false)
     }
 
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
-        expirationDate: LocalDateTime?
+        difficulty: Challenge.Difficulty,
+        expirationDate: LocalDateTime?,
+        description: String?
     ): Task<Challenge> {
         // Requirements
         require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
@@ -192,17 +135,23 @@ internal class FirebaseLoggedUserContext(
             .child(challengeId).setValue(true)
 
         // Finally make the completable task that succeed if both task succeeded
-        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask, pushChallengeToUserTask).thenMap {
-            FirebaseChallenge(
-                cid = challengeId,
-                author = loggedUserRef,
-                thumbnail = thumbnailBitmap,
-                publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
-                expirationDate = expirationDate,
-                correctLocation = location,
-                claims = listOf()
-            )
-        }
+        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask, pushChallengeToUserTask)
+            .thenMap {
+                FirebaseChallenge(
+                    cid = challengeId,
+                    author = loggedUserRef,
+                    thumbnail = thumbnailBitmap,
+                    publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
+                    expirationDate = expirationDate,
+                    correctLocation = location,
+                    difficulty = difficulty,
+                    description = description
+                )
+            }
+    }
+
+    override fun updateLoggedUser(editedUser: EditedUser): Task<Nothing?> {
+        return doUpdateUser(database, loggedUserRef.id, editedUser)
     }
 
     override fun Challenge.submitClaim(thumbnail: Bitmap, location: Location): Task<Claim> {
@@ -230,16 +179,17 @@ internal class FirebaseLoggedUserContext(
         val pushChallengeListTask = dbChallengeRef.child("claims").child(claimId).setValue(true)
 
         // Finally make the completable task that succeed if both task succeeded
-        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask, pushChallengeListTask).thenMap {
-            FirebaseClaim(
-                id = claimId,
-                user = loggedUserRef,
-                time = DateUtils.localFromUtcIso8601(claimEntry.time!!),
-                challenge = database.getChallengeById(this.cid),
-                location = location,
-                image = thumbnailBitmap
-            )
-        }
+        return Tasks.whenAll(submitToDatabaseTask, submitToStorageTask, pushChallengeListTask)
+            .thenMap {
+                FirebaseClaim(
+                    id = claimId,
+                    user = loggedUserRef,
+                    time = DateUtils.localFromUtcIso8601(claimEntry.time!!),
+                    challenge = database.getChallengeById(this.cid),
+                    location = location,
+                    image = thumbnailBitmap
+                )
+            }
     }
 
     override fun getFollowedUsers(): Task<List<LazyRef<User>>> {

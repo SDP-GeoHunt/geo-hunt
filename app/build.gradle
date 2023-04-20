@@ -93,6 +93,7 @@ dependencies {
 
     //Google Maps dependencies
     implementation 'com.google.maps.android:maps-compose:2.11.2'
+    implementation 'com.google.maps.android:maps-compose-utils:2.11.2'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     // Firebase
@@ -123,11 +124,6 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 
-    //Google maps test dependencies
-    androidTestImplementation 'androidx.test:runner:1.5.2'
-    androidTestImplementation 'androidx.test:rules:1.5.0'
-    androidTestImplementation "androidx.test.uiautomator:uiautomator:2.3.0-alpha02"
-
     // Navigation
     implementation 'androidx.navigation:navigation-compose:2.5.3'
     implementation 'androidx.navigation:navigation-runtime-ktx:2.5.3'
@@ -138,6 +134,10 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
+
+    // Date Picker
+    implementation 'com.maxkeppeler.sheets-compose-dialogs:core:1.1.1'
+    implementation 'com.maxkeppeler.sheets-compose-dialogs:calendar:1.1.1'
 }
 
 tasks.withType(Test) {

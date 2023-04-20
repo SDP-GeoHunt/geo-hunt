@@ -20,3 +20,9 @@ database-debug.log
 ui-debug.log
 **admin**.json
 
+
+firebase-debug.log
+google-search-key.txt
+*.bin
+*adminsdk*
+bin/

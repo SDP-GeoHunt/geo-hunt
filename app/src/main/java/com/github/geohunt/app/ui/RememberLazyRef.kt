@@ -1,19 +1,18 @@
 package com.github.geohunt.app.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.em
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.utility.findActivity
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -33,6 +32,31 @@ fun <T> rememberLazyRef(lazyRef: () -> LazyRef<T>): MutableState<T?> {
     }
     remember {
         val ref = lazyRef()
+        value.value = ref.value
+        ref.fetch()
+            .addOnSuccessListener {
+                value.value = it
+            }
+    }
+    return value
+}
+
+@Composable
+fun <T> rememberLiveLazyRef(lazyRef: () -> LiveLazyRef<T>): MutableState<T?> {
+    val value = remember {
+        mutableStateOf<T?>(null)
+    }
+
+    val ref = remember { lazyRef() }
+
+    val callback = { t: T -> value.value = t }
+    DisposableEffect(true) {
+        val listener = ref.addListener(callback)
+
+        onDispose { listener.stop() }
+    }
+
+    remember {
         value.value = ref.value
         ref.fetch()
             .addOnSuccessListener {

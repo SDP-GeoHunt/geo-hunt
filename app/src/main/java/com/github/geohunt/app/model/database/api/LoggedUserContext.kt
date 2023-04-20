@@ -2,6 +2,7 @@ package com.github.geohunt.app.model.database.api
 
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
 
@@ -13,7 +14,7 @@ interface LoggedUserContext {
     /**
      * This property represents a reference to the current user
      */
-    val loggedUserRef : LazyRef<User>
+    val loggedUserRef : LiveLazyRef<User>
 
     /**
      * This property represent whether the current user follows this user.
@@ -48,6 +49,21 @@ interface LoggedUserContext {
     fun LazyRef<User>.unfollow() : Task<Nothing?>
 
     /**
+     * The currently logged user insert a like for a specific challenge
+     */
+    fun Challenge.like() : Task<Nothing?>
+
+    /**
+     * The currently logged user remove a previous like for a specific challenge
+     */
+    fun Challenge.unlike() : Task<Nothing?>
+
+    /**
+     * Does the current user likes the provided challenge
+     */
+    val Challenge.doesLoggedUserLikes : LazyRef<Boolean>
+
+    /**
      * Join a hunt for a specific challenge
      * @return Joining a hunt for a specific challenge
      */
@@ -63,7 +79,16 @@ interface LoggedUserContext {
      */
     fun createChallenge(thumbnail: Bitmap,
                         location: Location,
-                        expirationDate: LocalDateTime?) : Task<Challenge>
+                        difficulty: Challenge.Difficulty,
+                        expirationDate: LocalDateTime ?= null,
+                        description: String ?= null) : Task<Challenge>
+
+    /**
+     * Update the currently logged user with according data
+     *
+     * @param editedUser delta-increment of the data to be changed within the user
+     */
+    fun updateLoggedUser(editedUser: EditedUser) : Task<Nothing?>
 
     /**
      * Enables the currently logged user to submit a claim to a specific challenge

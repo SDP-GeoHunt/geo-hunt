@@ -16,6 +16,10 @@ import com.github.geohunt.app.model.database.FirebaseEmulator
 import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.ui.components.navigation.Route
+import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.Claim
+import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
@@ -77,6 +81,12 @@ class ActiveHuntsTest {
             get() = TODO("Not yet implemented")
         override val numberOfActiveHunters: Int
             get() = 0
+        override val description: String?
+            get() = TODO("Not yet implemented")
+        override val difficulty: Challenge.Difficulty
+            get() = TODO("Not yet implemented")
+        override val likes: List<LazyRef<User>>
+            get() = TODO("Not yet implemented")
     }
 
     private val challengeId = "dummy"

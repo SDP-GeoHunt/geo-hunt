@@ -1,10 +1,9 @@
 package com.github.geohunt.app.ui.components.profile
 
+import androidx.compose.ui.test.*
 import android.graphics.Bitmap
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import com.github.geohunt.app.mocks.InstantLazyRef
 import com.github.geohunt.app.mocks.MockChallenge
 import com.github.geohunt.app.mocks.MockLazyRef
@@ -84,5 +83,47 @@ class ProfilePageTest {
 
     private fun wrapLazyChallenge(challenge: Challenge): LazyRef<Challenge> {
         return MockLazyRef("1") { Tasks.forResult(challenge) }
+    }
+
+    @Test
+    fun doesNotShowSettingsBtnIfNotNeeded() {
+        testRule.setContent {
+            ProfilePage(user = InstantLazyRef("1", MockUser()))
+        }
+        testRule.onNodeWithTag("profile-settings-btn").assertDoesNotExist()
+    }
+
+    @Test
+    fun showsSettingsBtnIfAvailable1() {
+        testRule.setContent {
+            ProfilePage(user = InstantLazyRef("1", MockUser()), { })
+        }
+        testRule.onNodeWithTag("profile-settings-btn").assertExists()
+    }
+
+    @Test
+    fun showsSettingsBtnIfAvailable2() {
+        testRule.setContent {
+            ProfilePage(user = InstantLazyRef("1", MockUser()), null, { })
+        }
+        testRule.onNodeWithTag("profile-settings-btn").assertExists()
+    }
+
+    @Test
+    fun showsSettingsBtnIfAvailable3() {
+        testRule.setContent {
+            ProfilePage(user = InstantLazyRef("1", MockUser()), null, null, { })
+        }
+        testRule.onNodeWithTag("profile-settings-btn").assertExists()
+    }
+
+    @Test
+    fun clickingOnSettingsBtnShowsDrawer() {
+        testRule.setContent {
+            ProfilePage(user = InstantLazyRef("1", MockUser()), { })
+        }
+        testRule.onNodeWithTag("settings-drawer").assertIsNotDisplayed()
+        testRule.onNodeWithTag("profile-settings-btn").performClick()
+        testRule.onNodeWithTag("settings-drawer").assertIsDisplayed()
     }
 }

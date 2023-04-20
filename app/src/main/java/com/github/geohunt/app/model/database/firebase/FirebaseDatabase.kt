@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Database
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.utility.thenMap
 import com.github.geohunt.app.utility.toMap
@@ -64,8 +64,19 @@ class FirebaseDatabase(activity: Activity) : Database {
      * If the user already exists, it will override the user. Use with caution.
      */
     override fun insertNewUser(user: User): Task<Void> {
+        UserEntry(user.displayName)
         val userEntry = UserEntry(user.displayName)
         return dbUserRef.child(user.uid).setValue(userEntry)
+    }
+
+    /**
+     * Point-Of-Interest user is a special user that does not have any information within the database
+     *
+     * It represent the user attach to any "public" challenge such as Point-Of-Interest. This design
+     * choices was made to have a location where we can fetch easily "all" point of interest
+     */
+    override fun getPOIUserID(): String {
+        return "0"
     }
 
     /**
@@ -93,21 +104,24 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
-     * Retrieve an image with a given ID and the corresponding [LazyRef]. Notice that this operation
-     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * Retrieve an User with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * won't fail if the given element does not exists in the database. The failure will happen upon
      * fetching the returned [LazyRef]
      *
-     * @param iid the image id, this may depend for image type
+     * @param uid the user id
      * @return A [LazyRef] linked to the result of the operation
      */
-    override fun getUserById(uid: String): LazyRef<User> {
-        return userRefById.get(uid)
+    override fun getUserById(uid: String): LiveLazyRef<User> {
+        return if (uid == getPOIUserID()) {
+            LiveLazyRef.fromLazyRef(FirebasePOIUserRef(uid))
+        } else {
+            userRefById.get(uid)
+        }
     }
 
-    override fun getClaimById(iid: String): LazyRef<Claim> {
-        return claimRefById.get(iid)
+    override fun getClaimById(cid: String): LazyRef<Claim> {
+        return claimRefById.get(cid)
     }
-
 
 
     internal fun getChallengeThumbnailById(cid: String) : FirebaseBitmapRef {
@@ -118,8 +132,8 @@ class FirebaseDatabase(activity: Activity) : Database {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromClaimId(claimId))
     }
 
-    internal fun getProfilePicture(uid: String): FirebaseBitmapRef {
-        return imageRefById.get(FirebaseBitmapRef.getImageIdFromUserId(uid))
+    internal fun getProfilePicture(uid: String, hash: Int): FirebaseBitmapRef {
+        return imageRefById.get(FirebaseBitmapRef.getProfilePictureId(uid, hash.toString()))
     }
 
     @Deprecated("all getFooRefById should be replaced by getFooById")

@@ -45,15 +45,40 @@ interface Challenge
      * but the author
      */
     val correctLocation: Location
-    
+
     /**
      * A list of reference to all of the claims from users
      */
     val claims: List<LazyRef<Claim>>
 
     /**
+     * Provides a description for the current challenge, notice that in order to not break
+     * back-compatibility with the database this entry is nullable (no description provided)
+     */
+    val description: String?
+
+    /**
+     * The challenge's difficulty, affects the way points are computed on submitted guesses
+     */
+    val difficulty: Difficulty
+
+    /**
+     * The various difficulties a challenge can have,
+     * can be converted to a PointCalculator using PointCalculator.fromDifficulty
+     */
+    enum class Difficulty {
+        EASY,
+        MEDIUM,
+        HARD
+    }
+
+    /**
      * Number of users having registered this challenge as an active hunts
      */
     val numberOfActiveHunters : Int
-}
 
+    /**
+     * A list of references to all of the likes from users
+     */
+    val likes: List<LazyRef<User>>
+}

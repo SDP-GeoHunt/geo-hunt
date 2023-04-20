@@ -22,8 +22,11 @@ data class FirebaseChallenge(
     override val publishedDate: LocalDateTime,
     override val expirationDate: LocalDateTime?,
     override val correctLocation: Location,
-    override val claims: List<LazyRef<Claim>>,
-    override val numberOfActiveHunters: Int = 0,
+    override val description: String?,
+    override val difficulty: Challenge.Difficulty,
+    override val claims: List<LazyRef<Claim>> = listOf(),
+    override var likes: List<LazyRef<User>> = listOf(),
+    override val numberOfActiveHunters: Int = 0
 ) : Challenge {
     override val coarseLocation: Location
         get() = correctLocation.getCoarseLocation()
@@ -74,7 +77,10 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate),
         correctLocation =  challengeEntry.location!!,
         claims = challengeEntry.claims.mapNotNull { (key, exists) -> database.getClaimById(key).takeIf { exists } },
-        numberOfActiveHunters = challengeEntry.numberOfActiveHunters
+        numberOfActiveHunters = challengeEntry.numberOfActiveHunters,
+        description = challengeEntry.description,
+        difficulty = Challenge.Difficulty.valueOf(challengeEntry.difficulty),
+        likes = challengeEntry.likes.mapNotNull { (id, doesLike) -> database.getUserById(id).takeIf { doesLike } }
     )
 }
 
@@ -83,9 +89,12 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
  */
 internal data class ChallengeEntry(
     var authorId: String? = null,
+    var location: Location? = null,
     var publishedDate: String? = null,
     var expirationDate: String = "null",
     var claims: Map<String, Boolean> = mapOf<String, Boolean>().withDefault { false },
-    var location: Location? = null,
-    val numberOfActiveHunters: Int = 0
+    var likes: Map<String, Boolean> = mapOf<String, Boolean>().withDefault { false }, //TODO: Delete me
+    var numberOfActiveHunters: Int = 0,
+    var difficulty: String = "MEDIUM",
+    val description: String? = null,
 )

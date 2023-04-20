@@ -1,14 +1,14 @@
 package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
-import android.util.Log
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.utility.*
+import com.github.geohunt.app.utility.DateUtils
+import com.github.geohunt.app.utility.thenMap
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
 

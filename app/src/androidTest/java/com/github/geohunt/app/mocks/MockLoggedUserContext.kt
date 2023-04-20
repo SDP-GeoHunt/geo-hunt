@@ -2,12 +2,13 @@ package com.github.geohunt.app.mocks
 
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.*
 import com.google.android.gms.tasks.Task
 import java.time.LocalDateTime
 
 abstract class MockLoggedUserContext : LoggedUserContext {
-    override val loggedUserRef: LazyRef<User>
+    override val loggedUserRef: LiveLazyRef<User>
         get() = TODO("Not yet implemented")
 
     override val User.doesFollow: LazyRef<Boolean>
@@ -29,6 +30,17 @@ abstract class MockLoggedUserContext : LoggedUserContext {
         TODO("Not yet implemented")
     }
 
+    override fun Challenge.like(): Task<Nothing?> {
+        TODO("Not yet implemented")
+    }
+
+    override fun Challenge.unlike(): Task<Nothing?> {
+        TODO("Not yet implemented")
+    }
+
+    override val Challenge.doesLoggedUserLikes: LazyRef<Boolean>
+        get() = TODO("Not yet implemented")
+
     override fun Challenge.joinHunt(): Task<Nothing?> {
         TODO("Not yet implemented")
     }
@@ -40,8 +52,14 @@ abstract class MockLoggedUserContext : LoggedUserContext {
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
-        expirationDate: LocalDateTime?
+        difficulty: Challenge.Difficulty,
+        expirationDate: LocalDateTime?,
+        description: String?
     ): Task<Challenge> {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateLoggedUser(editedUser: EditedUser): Task<Nothing?> {
         TODO("Not yet implemented")
     }
 

@@ -2,10 +2,10 @@ package com.github.geohunt.app.mocks
 
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Database
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.*
 import com.google.android.gms.tasks.Task
-import java.time.LocalDateTime
+import com.google.android.gms.tasks.Tasks
 
 abstract class BaseMockDatabase : Database {
     override fun getChallengeById(cid: String): LazyRef<Challenge> {
@@ -17,7 +17,11 @@ abstract class BaseMockDatabase : Database {
     }
 
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
-        throw NotImplementedError()
+        TODO("Not yet implemented")
+    }
+
+    override fun getPOIUserID(): String {
+        TODO("Not yet implemented")
     }
 
     override fun getLoggedContext(): LoggedUserContext {
@@ -32,11 +36,12 @@ abstract class BaseMockDatabase : Database {
         TODO("Not yet implemented")
     }
 
-    override fun getUserById(uid: String): LazyRef<User> {
+    override fun getUserById(uid: String): LiveLazyRef<User> {
         TODO("Not yet implemented")
     }
 
     override fun getClaimById(iid: String): LazyRef<Claim> {
         TODO("Not yet implemented")
     }
+
 }

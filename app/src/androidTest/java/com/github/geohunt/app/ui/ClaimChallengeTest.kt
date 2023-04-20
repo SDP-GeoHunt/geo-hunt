@@ -60,7 +60,8 @@ class ClaimChallengeTest {
         expirationDate = LocalDateTime.of(2040, 12, 1, 12, 12, 12),
         thumbnail = MockLazyRef("iid") { TODO() },
         correctLocation = mockedLocation,
-        claims = listOf()
+        claims = listOf(),
+        difficulty = Challenge.Difficulty.MEDIUM
     )
 
     @Before
