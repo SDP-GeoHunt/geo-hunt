@@ -45,11 +45,34 @@ interface Challenge
      * but the author
      */
     val correctLocation: Location
-    
+
     /**
      * A list of reference to all of the claims from users
      */
     val claims: List<LazyRef<Claim>>
 
-}
+    /**
+     * The challenge's difficulty, affects the way points are computed on submitted guesses
+     */
+    val difficulty: Difficulty
 
+    /**
+     * The various difficulties a challenge can have,
+     * can be converted to a PointCalculator using PointCalculator.fromDifficulty
+     */
+    enum class Difficulty {
+        EASY,
+        MEDIUM,
+        HARD
+    }
+
+    /**
+     * A list of references to all of the likes from users
+     */
+    val likes: List<LazyRef<User>>
+
+    /**
+     * The number of likes for this challenge
+     */
+    var numberOfLikes: Int
+}

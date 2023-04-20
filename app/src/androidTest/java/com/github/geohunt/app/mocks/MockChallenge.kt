@@ -15,7 +15,10 @@ class MockChallenge(
     override val expirationDate: LocalDateTime? = null,
     override val thumbnail: LazyRef<Bitmap> = MockLazyRef("1") { TODO() },
     override val correctLocation: Location = Location(.0, .0),
-    override val claims: List<LazyRef<Claim>> = listOf()
+    override val claims: List<LazyRef<Claim>> = listOf(),
+    override val difficulty: Challenge.Difficulty = Challenge.Difficulty.MEDIUM,
+    override var likes: List<LazyRef<User>> = listOf(),
+    override var numberOfLikes: Int = 0
 ) : Challenge {
 
     override val coarseLocation: Location

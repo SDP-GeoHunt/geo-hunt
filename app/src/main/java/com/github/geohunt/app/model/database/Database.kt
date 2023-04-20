@@ -26,7 +26,8 @@ interface Database {
     fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
-        expirationDate: LocalDateTime? = null
+        expirationDate: LocalDateTime? = null,
+        difficulty: Challenge.Difficulty
     ): Task<Challenge>
 
     fun submitClaim(
@@ -96,12 +97,28 @@ interface Database {
      */
     fun insertNewUser(user: User): Task<Void>
 
+    /**
+     * Inserts a new like for the chosen challenge for a given user
+     */
+    suspend fun insertUserLike(uid: String, cid: String)
+
+    /**
+     * Removes a like for the chosen challenge for a given user
+     */
+    suspend fun removeUserLike(uid: String, cid: String)
+
+    /**
+     * Returns true if the user with the given user ID has liked the challenge with the given challenge ID
+     */
+    fun doesUserLike(uid: String, cid: String): LazyRef<Boolean>
+
+
     companion object {
 
         /**
          * A Singleton instance of a factory function that creates a  Database instance
          * for a given Android Activity. This factory method is used by [createDatabaseHandle]
-         * 
+         *
          * @param Activity the Android Activity class for which a Database instance will be created
          * @return a Database instance created using the FirebaseDatabase constructor
          */
