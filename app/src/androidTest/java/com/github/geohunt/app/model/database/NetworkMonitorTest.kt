@@ -1,14 +1,15 @@
 package com.github.geohunt.app.model.database
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.github.geohunt.app.model.database.firebase.FirebaseSingletons
 import com.github.geohunt.app.utils.assertFinishes
 import com.github.geohunt.app.utils.assertTimesOut
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -43,10 +44,8 @@ class NetworkMonitorTest {
         // Note that mocking the database is too hard
         // Because Kotlin's extension getters are impossible to mock
         // and in particular Query.snapshots (used by the monitor) is not mockable
-        composeTestRule.setContent {
-            database = FirebaseSingletons.database.get().database
-            monitor = NetworkMonitor(database, ioDispatcher = UnconfinedTestDispatcher())
-        }
+        database = Firebase.database
+        monitor = NetworkMonitor(database, ioDispatcher = UnconfinedTestDispatcher())
     }
 
     @After
