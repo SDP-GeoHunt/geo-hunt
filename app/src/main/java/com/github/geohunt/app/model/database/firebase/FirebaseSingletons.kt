@@ -9,6 +9,11 @@ import com.google.firebase.storage.ktx.storage
  * Singletons for the database
  */
 object FirebaseSingletons {
+    init {
+        // Enable on-disk persistence for offline access
+        Firebase.database.setPersistenceEnabled(true)
+    }
+
     val storage = Singleton(Firebase.storage("gs://geohunt-1.appspot.com").reference)
     val database = Singleton(Firebase.database.reference)
 }
