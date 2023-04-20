@@ -7,7 +7,7 @@ import com.github.geohunt.app.utils.assertTimesOut
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.After
 import org.junit.Before
@@ -54,12 +54,12 @@ class NetworkMonitorTest {
     }
 
     @Test
-    fun isInitiallyOnline() = runBlocking {
+    fun isInitiallyOnline() = runTest {
         assertOnline(STATUS_CHANGE_TIMEOUT)
     }
 
     @Test
-    fun goingOfflineDoesNotEmitOnline() = runBlocking {
+    fun goingOfflineDoesNotEmitOnline() = runTest {
         database.goOffline()
 
         // Check that there is no "online" status emitted in the next 5 seconds
@@ -67,7 +67,7 @@ class NetworkMonitorTest {
     }
 
     @Test
-    fun goingBackOnlineChangesConnectivityState() = runBlocking {
+    fun goingBackOnlineChangesConnectivityState() = runTest {
         database.goOffline()
         database.goOnline()
 
