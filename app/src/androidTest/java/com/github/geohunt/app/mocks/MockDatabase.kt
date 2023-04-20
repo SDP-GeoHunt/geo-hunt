@@ -32,6 +32,10 @@ abstract class BaseMockDatabase : Database {
         TODO("Not yet implemented")
     }
 
+    override fun getTopNUsers(n: Int): Task<List<LazyRef<User>>> {
+        TODO("Not yet implemented")
+    }
+
     override fun insertNewUser(user: User): Task<Void> {
         TODO("Not yet implemented")
     }
