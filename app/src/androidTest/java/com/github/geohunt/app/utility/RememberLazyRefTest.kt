@@ -1,7 +1,5 @@
 package com.github.geohunt.app.utility
 
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,8 +10,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.mocks.MockLazyRef
+import com.github.geohunt.app.mocks.MockLiveLazyRef
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.rememberLazyRef
+import com.github.geohunt.app.ui.rememberLiveLazyRef
 import com.google.android.gms.tasks.TaskCompletionSource
 import org.hamcrest.Matchers.equalTo
 import org.junit.Rule
@@ -164,5 +164,19 @@ class RememberLazyRefTest {
         // Assert the lazy ref is no longer null and UI was updated
         composeTestRule.onNodeWithText("Society of Depressed People")
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun rememberLiveLazyRefUpdatesAccordingly() {
+        val mockLiveLazyRef = MockLiveLazyRef("1", "machin")
+
+        composeTestRule.setContent {
+            val theRef = rememberLiveLazyRef { mockLiveLazyRef }
+            theRef.value?.let { Text(it) }
+        }
+
+        composeTestRule.onNodeWithText("machin").assertIsDisplayed()
+        mockLiveLazyRef.updateValue("newValue")
+        composeTestRule.onNodeWithText("newValue").assertIsDisplayed()
     }
 }

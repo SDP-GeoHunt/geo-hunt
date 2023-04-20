@@ -28,7 +28,11 @@ interface User {
     /**
      * Holds a lazy-reference to a profile picture that can be loaded on a need-to-know basis
      */
-    val profilePicture: LazyRef<Bitmap>
+    val profilePicture: LazyRef<Bitmap>?
+    /**
+     * Hash of the profile picture
+     */
+    val profilePictureHash: Int?
 
     /**
      * List of challenges the user had published
@@ -54,6 +58,12 @@ interface User {
      * Current score of the user
      */
     val score: Long
+
+    /**
+     * Check whether or not the current user is the special Point-Of-Interest user. For more details
+     * refer to [Database.getPOIUserID]
+     */
+    val isPOIUser : Boolean
 
     /**
      * The list of challenges liked by this user

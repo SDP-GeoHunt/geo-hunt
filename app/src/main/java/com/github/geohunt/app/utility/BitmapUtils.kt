@@ -75,5 +75,10 @@ object BitmapUtils {
         }
     }
 
-
+    /**
+     * Computes the hash of a bitmap
+     */
+    fun hash(bitmap: Bitmap): Int {
+        return bitmap.hashCode()
+    }
 }

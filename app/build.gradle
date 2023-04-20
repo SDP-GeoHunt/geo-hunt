@@ -99,7 +99,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     //Google Maps dependencies
-    implementation 'com.google.maps.android:maps-compose:2.11.4'
+    implementation 'com.google.maps.android:maps-compose:2.11.2'
+    implementation 'com.google.maps.android:maps-compose-utils:2.11.2'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     // Firebase
@@ -129,11 +130,6 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
-
-    //Google maps test dependencies
-    androidTestImplementation 'androidx.test:runner:1.5.2'
-    androidTestImplementation 'androidx.test:rules:1.5.0'
-    androidTestImplementation "androidx.test.uiautomator:uiautomator:2.3.0-alpha02"
 
     // Navigation
     implementation 'androidx.navigation:navigation-compose:2.5.3'

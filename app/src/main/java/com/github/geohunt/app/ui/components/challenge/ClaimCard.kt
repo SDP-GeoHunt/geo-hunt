@@ -3,14 +3,12 @@ package com.github.geohunt.app.ui.components.challenge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -24,6 +22,7 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.LabelledIcon
+import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 @Composable
 fun ClaimCard(
@@ -74,14 +73,7 @@ private fun UserView(claim: Claim) {
             .height(39.dp)
     ) {
         FetchComponent(lazyRef = { claim.user }) { user ->
-            AsyncImage(
-                contentDescription = "User",
-                modifier = Modifier
-                    .size(35.dp)
-                    .clip(CircleShape)
-            ) {
-                user.profilePicture
-            }
+            ProfileIcon(user = user, Modifier.size(35.dp))
 
             Spacer(modifier = Modifier.width(10.dp))
             Column {

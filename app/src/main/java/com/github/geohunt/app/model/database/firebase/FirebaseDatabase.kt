@@ -3,14 +3,14 @@ package com.github.geohunt.app.model.database.firebase
 import android.app.Activity
 import android.graphics.Bitmap
 import com.github.geohunt.app.R
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
+import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
@@ -28,7 +28,8 @@ import java.time.LocalDateTime
 class FirebaseDatabase(activity: Activity) : Database {
     private val database = FirebaseSingletons.database.get()
     private val storage = FirebaseSingletons.storage.get()
-    private val currentUser : String = "8b8b0392-ba8b-11ed-afa1-0242ac120002"
+    private val currentUser : String
+        get() = Authenticator.authInstance.get().user!!.uid
 
     // Database references
     internal val dbUserRef = database.child("users")
@@ -76,8 +77,9 @@ class FirebaseDatabase(activity: Activity) : Database {
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
+        difficulty: Challenge.Difficulty,
         expirationDate: LocalDateTime?,
-        difficulty : Challenge.Difficulty
+        description: String?
     ): Task<Challenge> {
         // Requirements
         require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
@@ -115,9 +117,9 @@ class FirebaseDatabase(activity: Activity) : Database {
                 expirationDate = expirationDate,
                 correctLocation = location,
                 claims = listOf(),
+                description = description,
                 difficulty = difficulty,
-                likes = listOf(),
-                numberOfLikes = 0
+                likes = listOf()
             )
         }
     }
@@ -173,6 +175,16 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
+     * Point-Of-Interest user is a special user that does not have any information within the database
+     *
+     * It represent the user attach to any "public" challenge such as Point-Of-Interest. This design
+     * choices was made to have a location where we can fetch easily "all" point of interest
+     */
+    override fun getPOIUserID(): String {
+        return "0"
+    }
+
+    /**
      * Retrieve a challenge with a given ID and the corresponding [LazyRef]. Notice that this operation
      * won't fail if the given element does not exists in the database. The failure will happend upon
      * fetching the returned [LazyRef]
@@ -204,18 +216,60 @@ class FirebaseDatabase(activity: Activity) : Database {
      * @param uid the user id
      * @return A [LazyRef] linked to the result of the operation
      */
-    override fun getUserById(uid: String): LazyRef<User> {
-        return userRefById.get(uid)
+    override fun getUserById(uid: String): LiveLazyRef<User> {
+        return if (uid == getPOIUserID()) {
+            LiveLazyRef.fromLazyRef(FirebasePOIUserRef(uid))
+        } else {
+            userRefById.get(uid)
+        }
     }
 
+    /**
+     * Updates the user with all the data
+     */
+    override fun updateUser(editedUser: EditedUser): Task<Void?> {
+        val user = editedUser.user
+        val userEntry = UserEntry(
+            user.uid,
+            editedUser.displayName,
+            user.challenges.map { it.id },
+            user.hunts.map { it.id },
+            user.numberOfFollowers,
+            user.follows.associate { it.id to true },
+            user.score,
+            user.profilePictureHash
+        )
 
+        val uploadProfilePicture: Task<Nothing?> =
+            if (editedUser.profilePicture != null) {
+                val hash = BitmapUtils.hash(editedUser.profilePicture!!)
+                val ppRef = getProfilePicture(user.uid, hash)
+                ppRef.value = editedUser.profilePicture
+
+                // update user entry accordingly
+                userEntry.profilePictureHash = hash
+
+                ppRef.saveToLocalStorageThenSubmit().thenMap { null }
+            } else {
+                Tasks.forResult(null)
+            }
+
+        return Tasks.whenAll(
+            dbUserRef.child(user.uid).setValue(userEntry),
+            uploadProfilePicture
+        ).thenMap { return@thenMap null; }
+    }
+
+    override fun getClaimById(cid: String): LazyRef<Claim> {
+        TODO()
+    }
 
     internal fun getThumbnailRefById(cid: String) : FirebaseBitmapRef {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
     }
 
-    internal fun getProfilePicture(uid: String): FirebaseBitmapRef {
-        return imageRefById.get(FirebaseBitmapRef.getImageIdFromUserId(uid))
+    internal fun getProfilePicture(uid: String, hash: Int): FirebaseBitmapRef {
+        return imageRefById.get(FirebaseBitmapRef.getProfilePictureId(uid, hash.toString()))
     }
 
     @Deprecated("all getFooRefById should be replaced by getFooById")
@@ -335,11 +389,9 @@ class FirebaseDatabase(activity: Activity) : Database {
 
         val userLikesRef = dbUserRef.child(uid).child("likes")
         val challengeLikesRef = dbChallengeRef.child(coarseHash).child(elementId).child("likedBy")
-        val challengeLikesCounterRef = dbChallengeRef.child(coarseHash).child(elementId).child("numberOfLikes")
 
         val defaultMap = emptyMap<String, Boolean>().withDefault { false }
         val userLikes = userLikesRef.queryAs<Map<String, Boolean>>() ?: defaultMap
-        val challengeLikesCounter = challengeLikesCounterRef.queryAs<Int>() ?: 0
         val challengeLikes = challengeLikesRef.queryAs<Map<String, Boolean>>() ?: defaultMap
 
         // Abort if the user already likes the challenge
@@ -352,9 +404,6 @@ class FirebaseDatabase(activity: Activity) : Database {
         Tasks.whenAll(
             // Update the user's likes list
             userLikesRef.setValue(if (like) (userLikes + (cid to true)) else userLikes - cid),
-
-            // Update the likes counter of the challenge
-            challengeLikesCounterRef.setValue(if (like) challengeLikesCounter + 1 else max(challengeLikesCounter - 1, 0)),
 
             // Update the challenge's likes list
             challengeLikesRef.setValue(if (like) (challengeLikes + (uid to true)) else challengeLikes - uid)
