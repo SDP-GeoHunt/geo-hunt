@@ -24,7 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
-import com.github.geohunt.app.maps.GoogleMapView
+import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
@@ -84,7 +84,7 @@ fun NavigationController(
         composable(Route.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
             val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
-            GoogleMapView(
+            GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
                 cameraPosition = epflCameraPosition
             )
