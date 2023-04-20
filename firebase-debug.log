@@ -1,57 +1,57 @@
-[debug] [2023-03-31T08:11:41.180Z] ----------------------------------------------------------------------
-[debug] [2023-03-31T08:11:41.182Z] Command:       D:\Program Files\nodejs\node.exe C:\Users\guill\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --import=emulator/bundled
-[debug] [2023-03-31T08:11:41.182Z] CLI Version:   11.24.0
-[debug] [2023-03-31T08:11:41.182Z] Platform:      win32
-[debug] [2023-03-31T08:11:41.183Z] Node Version:  v18.15.0
-[debug] [2023-03-31T08:11:41.184Z] Time:          Fri Mar 31 2023 10:11:41 GMT+0200 (heure d’été d’Europe centrale)
-[debug] [2023-03-31T08:11:41.184Z] ----------------------------------------------------------------------
+[debug] [2023-04-20T13:49:27.550Z] ----------------------------------------------------------------------
+[debug] [2023-04-20T13:49:27.551Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Maeeen\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --import=emulator/bundled
+[debug] [2023-04-20T13:49:27.551Z] CLI Version:   11.25.1
+[debug] [2023-04-20T13:49:27.551Z] Platform:      win32
+[debug] [2023-04-20T13:49:27.551Z] Node Version:  v18.12.1
+[debug] [2023-04-20T13:49:27.552Z] Time:          Thu Apr 20 2023 15:49:27 GMT+0200 (Central European Summer Time)
+[debug] [2023-04-20T13:49:27.552Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2023-03-31T08:11:41.190Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
-[debug] [2023-03-31T08:11:41.304Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2023-03-31T08:11:41.304Z] > authorizing via signed-in user (guillaume314boye@gmail.com)
-[debug] [2023-03-31T08:11:41.620Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
-[debug] [2023-03-31T08:11:41.621Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
-[debug] [2023-03-31T08:11:41.687Z] java version "17.0.6" 2023-01-17 LTS
+[debug] [2023-04-20T13:49:27.587Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-04-20T13:49:27.587Z] > authorizing via signed-in user (marwanazuz@gmail.com)
+[debug] [2023-04-20T13:49:27.620Z] openjdk version "17.0.5" 2022-10-18
+OpenJDK Runtime Environment Temurin-17.0.5+8 (build 17.0.5+8)
 
-[debug] [2023-03-31T08:11:41.688Z] Java(TM) SE Runtime Environment (build 17.0.6+9-LTS-190)
-Java HotSpot(TM) 64-Bit Server VM (build 17.0.6+9-LTS-190, mixed mode, sharing)
+[debug] [2023-04-20T13:49:27.621Z] OpenJDK 64-Bit Server VM Temurin-17.0.5+8 (build 17.0.5+8, mixed mode, sharing)
 
-[debug] [2023-03-31T08:11:41.706Z] Parsed Java major version: 17
+[debug] [2023-04-20T13:49:27.641Z] Parsed Java major version: 17
 [info] i  emulators: Starting emulators: database, storage {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: database, storage"}}
-[debug] [2023-03-31T08:11:41.719Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2023-03-31T08:11:41.719Z] [database] Database Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2023-03-31T08:11:41.719Z] [storage] Storage Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
-[debug] [2023-03-31T08:11:41.719Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"database":[{"address":"127.0.0.1","family":"IPv4","port":9000}],"storage":[{"address":"127.0.0.1","family":"IPv4","port":9199}]},"metadata":{"message":"assigned listening specs for emulators"}}
-[debug] [2023-03-31T08:11:41.730Z] [hub] writing locator at C:\Users\guill\AppData\Local\Temp\hub-geohunt-1.json
-[debug] [2023-03-31T08:11:41.743Z] > refreshing access token with scopes: []
-[debug] [2023-03-31T08:11:41.744Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
-[debug] [2023-03-31T08:11:41.744Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
-[debug] [2023-03-31T08:11:41.842Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
-[debug] [2023-03-31T08:11:41.842Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
-[debug] [2023-03-31T08:11:42.085Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/geohunt-1 [none]
-[debug] [2023-03-31T08:11:42.361Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/geohunt-1 200
-[debug] [2023-03-31T08:11:42.361Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/geohunt-1 {"projectId":"geohunt-1","projectNumber":"15816182548","displayName":"GeoHunt","name":"projects/geohunt-1","resources":{"hostingSite":"geohunt-1","realtimeDatabaseInstance":"geohunt-1-default-rtdb","storageBucket":"geohunt-1.appspot.com","locationId":"europe-west"},"state":"ACTIVE","etag":"1_6e61e259-ac57-4ad1-96e6-0457db68fe9f"}
-[debug] [2023-03-31T08:11:42.361Z] database rules config:  [{"instance":"geohunt-1-default-rtdb","rules":"D:\\guill\\Documents\\04 - Etude\\EPFL\\2022-2023\\BA6\\SDP\\GeoHunt\\emulator\\database.rules.json"}]
-[debug] [2023-03-31T08:11:42.371Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: projectId"}}
-[debug] [2023-03-31T08:11:42.371Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: auto_download"}}
-[debug] [2023-03-31T08:11:42.371Z] Ignoring unsupported arg: rules {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: rules"}}
-[debug] [2023-03-31T08:11:42.371Z] Starting Database Emulator with command {"binary":"java","args":["-Duser.language=en","-jar","C:\\Users\\guill\\.cache\\firebase\\emulators\\firebase-database-emulator-v4.11.0.jar","--host","127.0.0.1","--port",9000,"--single_project_mode","Warning"],"optionalArgs":["port","host","functions_emulator_port","functions_emulator_host","single_project_mode"],"joinArgs":false} {"metadata":{"emulator":{"name":"database"},"message":"Starting Database Emulator with command {\"binary\":\"java\",\"args\":[\"-Duser.language=en\",\"-jar\",\"C:\\\\Users\\\\guill\\\\.cache\\\\firebase\\\\emulators\\\\firebase-database-emulator-v4.11.0.jar\",\"--host\",\"127.0.0.1\",\"--port\",9000,\"--single_project_mode\",\"Warning\"],\"optionalArgs\":[\"port\",\"host\",\"functions_emulator_port\",\"functions_emulator_host\",\"single_project_mode\"],\"joinArgs\":false}"}}
+[debug] [2023-04-20T13:49:27.648Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-04-20T13:49:27.648Z] [database] Database Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-04-20T13:49:27.648Z] [storage] Storage Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-04-20T13:49:27.649Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"database":[{"address":"127.0.0.1","family":"IPv4","port":9000}],"storage":[{"address":"127.0.0.1","family":"IPv4","port":9199}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2023-04-20T13:49:27.651Z] [hub] writing locator at C:\Users\Maeeen\AppData\Local\Temp\hub-geohunt-1.json
+[debug] [2023-04-20T13:49:27.655Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/geohunt-1 [none]
+[debug] [2023-04-20T13:49:28.038Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/geohunt-1 200
+[debug] [2023-04-20T13:49:28.038Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/geohunt-1 {"projectId":"geohunt-1","projectNumber":"15816182548","displayName":"GeoHunt","name":"projects/geohunt-1","resources":{"hostingSite":"geohunt-1","realtimeDatabaseInstance":"geohunt-1-default-rtdb","storageBucket":"geohunt-1.appspot.com","locationId":"europe-west"},"state":"ACTIVE","etag":"1_4fbc8eda-f648-4ee9-aa8b-0ea79a4dc629"}
+[debug] [2023-04-20T13:49:28.038Z] database rules config:  [{"instance":"geohunt-1-default-rtdb","rules":"C:\\Users\\Maeeen\\AndroidStudioProjects\\geo-hunt\\emulator\\database.rules.json"}]
+[debug] [2023-04-20T13:49:28.040Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: projectId"}}
+[debug] [2023-04-20T13:49:28.040Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-04-20T13:49:28.040Z] Ignoring unsupported arg: rules {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: rules"}}
+[debug] [2023-04-20T13:49:28.040Z] Starting Database Emulator with command {"binary":"java","args":["-Duser.language=en","-jar","C:\\Users\\Maeeen\\.cache\\firebase\\emulators\\firebase-database-emulator-v4.11.0.jar","--host","127.0.0.1","--port",9000,"--single_project_mode","Warning"],"optionalArgs":["port","host","functions_emulator_port","functions_emulator_host","single_project_mode"],"joinArgs":false} {"metadata":{"emulator":{"name":"database"},"message":"Starting Database Emulator with command {\"binary\":\"java\",\"args\":[\"-Duser.language=en\",\"-jar\",\"C:\\\\Users\\\\Maeeen\\\\.cache\\\\firebase\\\\emulators\\\\firebase-database-emulator-v4.11.0.jar\",\"--host\",\"127.0.0.1\",\"--port\",9000,\"--single_project_mode\",\"Warning\"],\"optionalArgs\":[\"port\",\"host\",\"functions_emulator_port\",\"functions_emulator_host\",\"single_project_mode\"],\"joinArgs\":false}"}}
 [info] i  database: Database Emulator logging to database-debug.log {"metadata":{"emulator":{"name":"database"},"message":"Database Emulator logging to \u001b[1mdatabase-debug.log\u001b[22m"}}
-[info] i  database: Importing data from D:\guill\Documents\04 - Etude\EPFL\2022-2023\BA6\SDP\GeoHunt\emulator\bundled\database_export\geohunt-1-default-rtdb.json {"metadata":{"emulator":{"name":"database"},"message":"Importing data from D:\\guill\\Documents\\04 - Etude\\EPFL\\2022-2023\\BA6\\SDP\\GeoHunt\\emulator\\bundled\\database_export\\geohunt-1-default-rtdb.json"}}
-[debug] [2023-03-31T08:11:53.890Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"storage"},"message":"Ignoring unsupported arg: port"}}
-[debug] [2023-03-31T08:12:03.764Z] Temp file directory for storage emulator: C:\Users\guill\AppData\Local\Temp/firebase/storage/blobs {"metadata":{"emulator":{"name":"storage"},"message":"Temp file directory for storage emulator: C:\\Users\\guill\\AppData\\Local\\Temp/firebase/storage/blobs"}}
-[debug] [2023-03-31T08:12:03.818Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
-[debug] [2023-03-31T08:12:03.818Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
-[debug] [2023-03-31T08:12:03.819Z] Starting Emulator UI with command {"binary":"node","args":["C:\\Users\\guill\\.cache\\firebase\\emulators\\ui-v1.11.4\\server\\server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"C:\\\\Users\\\\guill\\\\.cache\\\\firebase\\\\emulators\\\\ui-v1.11.4\\\\server\\\\server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[debug] [2023-04-20T13:49:28.563Z] 15:49:28.562 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+ {"metadata":{"emulator":{"name":"database"},"message":"15:49:28.562 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started\r\n"}}
+[debug] [2023-04-20T13:49:28.643Z] 15:49:28.643 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
+ {"metadata":{"emulator":{"name":"database"},"message":"15:49:28.643 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000\r\n"}}
+[info] i  database: Importing data from C:\Users\Maeeen\AndroidStudioProjects\geo-hunt\emulator\bundled\database_export\geohunt-1-default-rtdb.json {"metadata":{"emulator":{"name":"database"},"message":"Importing data from C:\\Users\\Maeeen\\AndroidStudioProjects\\geo-hunt\\emulator\\bundled\\database_export\\geohunt-1-default-rtdb.json"}}
+[debug] [2023-04-20T13:49:28.972Z] 15:49:28.971 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - geohunt-1-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 83ms, init: 0ms
+ {"metadata":{"emulator":{"name":"database"},"message":"15:49:28.971 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - geohunt-1-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 83ms, init: 0ms\r\n"}}
+[debug] [2023-04-20T13:49:29.068Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"storage"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-04-20T13:49:29.432Z] Temp file directory for storage emulator: C:\Users\Maeeen\AppData\Local\Temp/firebase/storage/blobs {"metadata":{"emulator":{"name":"storage"},"message":"Temp file directory for storage emulator: C:\\Users\\Maeeen\\AppData\\Local\\Temp/firebase/storage/blobs"}}
+[debug] [2023-04-20T13:49:29.446Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-04-20T13:49:29.446Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-04-20T13:49:29.446Z] Starting Emulator UI with command {"binary":"node","args":["C:\\Users\\Maeeen\\.cache\\firebase\\emulators\\ui-v1.11.4\\server\\server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"C:\\\\Users\\\\Maeeen\\\\.cache\\\\firebase\\\\emulators\\\\ui-v1.11.4\\\\server\\\\server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
 [info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
-[debug] [2023-03-31T08:12:04.017Z] Web / API server started at 127.0.0.1:4000
+[debug] [2023-04-20T13:49:29.512Z] Web / API server started at 127.0.0.1:4000
  {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at 127.0.0.1:4000\n"}}
-[debug] [2023-03-31T08:12:04.017Z] Web / API server started at ::1:4000
+[debug] [2023-04-20T13:49:29.512Z] Web / API server started at ::1:4000
  {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at ::1:4000\n"}}
-[debug] [2023-03-31T08:12:04.108Z] >>> [apiv2][query] PUT http://127.0.0.1:9000/.settings/rules.json ns=geohunt-1-default-rtdb
-[debug] [2023-03-31T08:12:04.108Z] >>> [apiv2][body] PUT http://127.0.0.1:9000/.settings/rules.json "{\n  \"rules\": {\n    \".read\": true,  // 2023-3-27\n    \".write\": true,  // 2023-3-27\n  }\n}"
-[debug] [2023-03-31T08:12:04.157Z] <<< [apiv2][status] PUT http://127.0.0.1:9000/.settings/rules.json 200
-[debug] [2023-03-31T08:12:04.157Z] <<< [apiv2][body] PUT http://127.0.0.1:9000/.settings/rules.json {"status":"ok"}
+[debug] [2023-04-20T13:49:29.714Z] >>> [apiv2][query] PUT http://127.0.0.1:9000/.settings/rules.json ns=geohunt-1-default-rtdb
+[debug] [2023-04-20T13:49:29.714Z] >>> [apiv2][body] PUT http://127.0.0.1:9000/.settings/rules.json "{\r\n  \"rules\": {\r\n    \".read\": true,  // 2023-3-27\r\n    \".write\": true,  // 2023-3-27\r\n  }\r\n}"
+[debug] [2023-04-20T13:49:29.735Z] 15:49:29.735 [NamespaceSystem-blocking-namespace-operation-dispatcher-7] INFO com.firebase.core.namespace.StateManager - Namespace geohunt-1-default-rtdb status Active to Active
+ {"metadata":{"emulator":{"name":"database"},"message":"15:49:29.735 [NamespaceSystem-blocking-namespace-operation-dispatcher-7] INFO com.firebase.core.namespace.StateManager - Namespace geohunt-1-default-rtdb status Active to Active\r\n"}}
+[debug] [2023-04-20T13:49:29.740Z] <<< [apiv2][status] PUT http://127.0.0.1:9000/.settings/rules.json 200
+[debug] [2023-04-20T13:49:29.740Z] <<< [apiv2][body] PUT http://127.0.0.1:9000/.settings/rules.json {"status":"ok"}
 [info] 
 ┌─────────────────────────────────────────────────────────────┐
 │ ✔  All emulators ready! It is now safe to connect your app. │
