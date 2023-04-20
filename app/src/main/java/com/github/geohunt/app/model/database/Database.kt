@@ -22,12 +22,14 @@ interface Database {
      * @param thumbnail the image that will be displayed with the challenge
      * @param location the location where the user took the picture
      * @param expirationDate the date at which the challenge will expire otherwise null
+     * @param description An optional description for the current challenge
      */
     fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
+        difficulty: Challenge.Difficulty,
         expirationDate: LocalDateTime? = null,
-        difficulty: Challenge.Difficulty
+        description: String? = null
     ): Task<Challenge>
 
     fun submitClaim(
@@ -58,11 +60,17 @@ interface Database {
 
     /**
      * Retrieve a user with a specific ID and return the corresponding [LazyRef]. Notice that this operation
-     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * won't fail if the given element does not exists in the database. The failure will happen upon
      * fetching the returned [LazyRef]
      */
     fun getUserById(uid: String): LazyRef<User>
 
+    /**
+     * Retrieve a [LazyRef] to the claim with the provided [cid] as id. Notice that this operation
+     * won't fail if the given element does not exists in the database, instead the failure will happen
+     * upon fetching it.
+     */
+    fun getClaimById(cid: String): LazyRef<Claim>
 
     /**
      * Get a list of nearby challenges to a specific location
@@ -96,6 +104,15 @@ interface Database {
      * @param user the user to be inserted into the database
      */
     fun insertNewUser(user: User): Task<Void>
+
+    /**
+     * Point-Of-Interest user is a special user that does not have any information within the database
+     *
+     * It represent the user attach to any "public" challenge such as Point-Of-Interest. This design
+     * choice was made to ease the process of registering such challenges in the database without having
+     * to think too much onto it
+     */
+    fun getPOIUserID() : String
 
     /**
      * Inserts a new like for the chosen challenge for a given user

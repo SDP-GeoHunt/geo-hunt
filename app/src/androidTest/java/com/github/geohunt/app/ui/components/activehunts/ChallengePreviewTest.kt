@@ -52,9 +52,8 @@ class ChallengePreviewTest {
             get() = TODO("Not yet implemented")
         override val likes: List<LazyRef<User>>
             get() = TODO("Not yet implemented")
-        override var numberOfLikes: Int
-            get() = TODO("Not yet implemented")
-            set(value) {}
+        override val description: String?
+            get() = null
     }
 
     @Before

@@ -121,8 +121,9 @@ class CreateChallengeViewTest {
             override fun createChallenge(
                 thumbnail: Bitmap,
                 location: Location,
+                difficulty: Challenge.Difficulty,
                 expirationDate: LocalDateTime?,
-                difficulty: Challenge.Difficulty
+                description: String?
             ): Task<Challenge> {
                 val challenge = MockChallenge(
                     cid = "cid",
@@ -131,7 +132,9 @@ class CreateChallengeViewTest {
                     expirationDate = expirationDate,
                     thumbnail = MockLazyRef("iid") { TODO() },
                     correctLocation = location,
-                    claims = listOf()
+                    claims = listOf(),
+                    difficulty = difficulty,
+                    description = description
                 )
                 futureChallenge.complete(challenge)
                 return taskChallengeCompletionSource.task

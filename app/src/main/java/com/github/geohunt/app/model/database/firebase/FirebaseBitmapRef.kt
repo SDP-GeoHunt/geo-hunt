@@ -1,6 +1,7 @@
 package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.utility.BitmapUtils
@@ -59,7 +60,7 @@ internal class FirebaseBitmapRef(
 
         // Write the object to a file on disk
         val writeFileFuture =
-            BitmapUtils.saveToFileAsync(bitmap, file, Bitmap.CompressFormat.PNG, 100).asTask()
+            BitmapUtils.saveToFileAsync(bitmap, file, IMAGE_FORMAT, 100).asTask()
 
         // Submit the object to the remote database
         return writeFileFuture.thenDo {
@@ -77,7 +78,7 @@ internal class FirebaseBitmapRef(
          * @return The image ID for the challenge.
          */
         internal fun getImageIdFromChallengeId(cid: String): String {
-            return "challenges-$cid.png"
+            return "challenges-$cid.jpeg"
         }
 
         /**
@@ -87,8 +88,10 @@ internal class FirebaseBitmapRef(
          * @return The image ID for this user
          */
         internal fun getImageIdFromUserId(uid: String): String {
-            return "user-$uid.png"
+            return "user-$uid.jpeg"
         }
+
+        private val IMAGE_FORMAT = Bitmap.CompressFormat.JPEG
     }
 }
 

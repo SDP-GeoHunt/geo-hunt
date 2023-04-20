@@ -52,6 +52,12 @@ interface Challenge
     val claims: List<LazyRef<Claim>>
 
     /**
+     * Provides a description for the current challenge, notice that in order to not break
+     * back-compatibility with the database this entry is nullable (no description provided)
+     */
+    val description: String?
+
+    /**
      * The challenge's difficulty, affects the way points are computed on submitted guesses
      */
     val difficulty: Difficulty
@@ -70,9 +76,4 @@ interface Challenge
      * A list of references to all of the likes from users
      */
     val likes: List<LazyRef<User>>
-
-    /**
-     * The number of likes for this challenge
-     */
-    var numberOfLikes: Int
 }
