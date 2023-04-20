@@ -65,6 +65,14 @@ interface Database {
     fun getFollowersOf(uid: String): Task<List<LazyRef<User>>>
 
     /**
+     * Get the top @p n users with maximum scores
+     *
+     * @param n the number of user to retrieve at most. Notice that it is possible
+     *          that the number of user is smaller than that
+     */
+    fun getTopNUsers(n: Int) : Task<List<LazyRef<User>>>
+
+    /**
      * Creates a LoggedUserContext instance linked to the current database instance
      * for a given user ID. This function allows you to execute operations that are
      * specific to logged user (e.g. follow/unfollow, like/unlike...). Notice that this

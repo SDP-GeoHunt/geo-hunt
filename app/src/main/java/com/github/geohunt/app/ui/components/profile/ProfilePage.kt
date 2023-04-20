@@ -118,7 +118,7 @@ private fun ProfilePageContent(user: User, showSettingsBtn: Boolean = false, onS
 
                     Spacer(Modifier.weight(1f))
 
-                    if (showSettingsBtn) {
+                        if (showSettingsBtn) {
                         IconButton(onClick = { onSettingsClick() }, modifier = Modifier.testTag("profile-settings-btn")) {
                             Icon(
                                 Icons.Sharp.Settings,

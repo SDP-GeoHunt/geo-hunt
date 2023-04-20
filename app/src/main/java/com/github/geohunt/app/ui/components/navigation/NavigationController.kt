@@ -33,6 +33,7 @@ import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
+import com.github.geohunt.app.ui.components.leaderboard.Leaderboard
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.utility.findActivity
@@ -114,6 +115,7 @@ fun NavigationController(
             ProfilePage(
                 openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
                 onLogout = { logout(authenticator, activity) },
+                openLeaderboard = { navController.navigate(HiddenRoutes.Leaderboard.route) }
             )
         }
 
@@ -176,6 +178,11 @@ fun NavigationController(
                     })
                 }
             }
+        }
+
+        // Open leaderboards
+        composable(HiddenRoutes.Leaderboard.route) {
+            Leaderboard(database)
         }
     }
 }

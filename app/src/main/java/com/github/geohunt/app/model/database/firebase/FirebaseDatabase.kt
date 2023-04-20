@@ -7,6 +7,7 @@ import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.*
+import com.github.geohunt.app.utility.convertTo
 import com.github.geohunt.app.utility.thenMap
 import com.github.geohunt.app.utility.toMap
 import com.google.android.gms.tasks.Task
@@ -169,6 +170,19 @@ class FirebaseDatabase(activity: Activity) : Database {
             .thenMap { snapshot ->
                 snapshot.toMap<Boolean>()
                     .mapNotNull { (id, doesFollow) -> getUserById(id).takeIf { doesFollow } }
+            }
+    }
+
+    override fun getTopNUsers(n: Int): Task<List<LazyRef<User>>> {
+        return dbUserRef
+            .orderByChild("score")
+            .limitToLast(n)
+            .get()
+            .thenMap {  dataSnapshot ->
+                val resultingMap = dataSnapshot.convertTo<Map<String, UserEntry>>() ?: emptyMap<String, UserEntry>()
+                resultingMap.mapNotNull { it }
+                    .sortedByDescending { (_, entry) -> entry.score }
+                    .map { (uid, _) -> getUserById(uid) }
             }
     }
 
