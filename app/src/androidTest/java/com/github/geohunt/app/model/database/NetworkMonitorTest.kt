@@ -8,6 +8,7 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -43,7 +44,7 @@ class NetworkMonitorTest {
         // Because Kotlin's extension getters are impossible to mock
         // and in particular Query.snapshots (used by the monitor) is not mockable
         database = FirebaseSingletons.database.get().database
-        monitor = NetworkMonitor(database)
+        monitor = NetworkMonitor(database, ioDispatcher = UnconfinedTestDispatcher())
     }
 
     @After
