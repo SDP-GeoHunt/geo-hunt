@@ -15,7 +15,8 @@ abstract class BaseMockDatabase : Database {
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
-        expirationDate: LocalDateTime?
+        expirationDate: LocalDateTime?,
+         difficulty: Challenge.Difficulty
     ): Task<Challenge> {
         throw NotImplementedError()
     }

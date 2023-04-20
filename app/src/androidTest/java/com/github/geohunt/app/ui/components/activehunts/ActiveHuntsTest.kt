@@ -14,7 +14,6 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.components.navigation.Route
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -68,6 +67,8 @@ class ActiveHuntsTest {
         override val correctLocation: Location
             get() = TODO("Not yet implemented")
         override val claims: List<LazyRef<Claim>>
+            get() = TODO("Not yet implemented")
+        override val difficulty: Challenge.Difficulty
             get() = TODO("Not yet implemented")
         override val likes: List<LazyRef<User>>
             get() = TODO("Not yet implemented")

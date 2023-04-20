@@ -1,35 +1,21 @@
-package com.github.geohunt.app.model
+package com.github.geohunt.app.model.points
 
 import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.points.PointCalculator.Companion.MAX_POINTS
+import com.github.geohunt.app.model.points.PointCalculator.Companion.MIN_POINTS
 import com.github.geohunt.app.utility.clamp
 import com.github.geohunt.app.utility.gaussianDistributionPDF
 
 /**
- * Object giving access to its only method computePoints, which allows the user to compute
- * the amount of points a claim gets.
+ * Implementation of a point calculator, computes points using a Gaussian function
+ * the standard deviation is given as a parameter to constructor of the class
+ * @param std Standard deviation used in the gaussian function
  */
-object PointCalculator {
-    /**
-     * Hyper parameters of the function used to compute the points
-     */
-    private const val STD = 0.15
-
-    /**
-     * The least amount of points possible.
-     * Note that the function used can't be negative so negative MIN_POINTS value
-     * will work the same way as MIN_POINTS = 0
-     */
-    const val MIN_POINTS = 0.0
-
-    /**
-     * The maximum amount of points possible
-     */
-    const val MAX_POINTS = 5000.0
-
+class GaussianPointCalculator(std: Double) : PointCalculator {
     /**
      * Utility definitions
      */
-    private val calculator = gaussianDistributionPDF(0.0, STD)
+    private val calculator = gaussianDistributionPDF(0.0, std)
     private val fctMaxValue = calculator(0.0)
     private val ratio = MAX_POINTS / fctMaxValue
 
@@ -40,9 +26,8 @@ object PointCalculator {
      * @param l1 First location used to compute points
      * @param l2 Second location used to compute points
      */
-    fun computePoints(l1: Location, l2: Location): Double {
+    override fun computePoints(l1: Location, l2: Location): Double {
         val points = calculator(l1.distanceTo(l2)) * ratio
         return clamp(MIN_POINTS, points, MAX_POINTS)
     }
-
 }

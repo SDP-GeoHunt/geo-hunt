@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components
+package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest.permission
 import android.content.Context
@@ -121,7 +121,8 @@ class CreateChallengeViewTest {
             override fun createChallenge(
                 thumbnail: Bitmap,
                 location: Location,
-                expirationDate: LocalDateTime?
+                expirationDate: LocalDateTime?,
+                difficulty: Challenge.Difficulty
             ): Task<Challenge> {
                 val challenge = MockChallenge(
                     cid = "cid",
@@ -154,7 +155,7 @@ class CreateChallengeViewTest {
                 .assertIsNotEnabled()
 
             // Assert the request was launched
-            assertThat(counter, greaterThanOrEqualTo(1));
+            assertThat(counter, greaterThanOrEqualTo(1))
 
             // Resolve the future
             if (locationRequestFailed) {
