@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui.components.navigation
 
-import android.Manifest
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasTestTag
@@ -8,13 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
-import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.mocks.BaseMockDatabase
-import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.components.navigation.NavigationBar
-import com.github.geohunt.app.ui.components.navigation.NavigationController
-import com.github.geohunt.app.ui.components.navigation.Route
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +41,7 @@ class TestNavigation {
         for (route in Route.values()) {
             // Skip Route.Create because too hard to test
             if (route == Route.Create || route == Route.ActiveHunts || route == Route.Profile) {
-                continue;
+                continue
             }
 
             val node = composeTestRule.onNode(hasTestTag("navbtn-" + route.route))
@@ -62,7 +55,7 @@ class TestNavigation {
         for (route in Route.values()) {
             // Skip Route.Create because too hard to test
             if (route == Route.Create || route == Route.ActiveHunts || route == Route.Profile) {
-                continue;
+                continue
             }
 
             val node = composeTestRule.onNode(hasTestTag("navbtn-" + route.route))

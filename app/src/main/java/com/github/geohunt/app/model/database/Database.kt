@@ -3,10 +3,8 @@ package com.github.geohunt.app.model.database
 import android.app.Activity
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.LiveLazyRef
+import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.Singleton
 import com.google.android.gms.tasks.Task
@@ -22,7 +20,6 @@ interface Database {
      * @param thumbnail the image that will be displayed with the challenge
      * @param location the location where the user took the picture
      * @param expirationDate the date at which the challenge will expire otherwise null
-     * @param description An optional description for the current challenge
      */
     fun createChallenge(
         thumbnail: Bitmap,
@@ -63,7 +60,7 @@ interface Database {
      * won't fail if the given element does not exists in the database. The failure will happen upon
      * fetching the returned [LazyRef]
      */
-    fun getUserById(uid: String): LazyRef<User>
+    fun getUserById(uid: String): LiveLazyRef<User>
 
     /**
      * Retrieve a [LazyRef] to the claim with the provided [cid] as id. Notice that this operation
@@ -104,6 +101,12 @@ interface Database {
      * @param user the user to be inserted into the database
      */
     fun insertNewUser(user: User): Task<Void>
+
+    /**
+     * Updates user with the according data
+     */
+    fun updateUser(user: EditedUser): Task<Void?>
+
 
     /**
      * Point-Of-Interest user is a special user that does not have any information within the database

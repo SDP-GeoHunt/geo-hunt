@@ -1,12 +1,11 @@
 package com.github.geohunt.app.ui.components.navigation
 
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -37,6 +36,9 @@ import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.github.geohunt.app.LoginActivity
+import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
+import com.github.geohunt.app.utility.replaceActivity
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -53,7 +55,11 @@ enum class Route(val titleStringId: Int, val route: String, val icon: Composable
         )
     }),
     Profile(R.string.navigation_profile, "profile", { Icon(Icons.Sharp.Person, null) })
+}
 
+enum class HiddenRoutes(val route: String) {
+    EditProfile("settings/profile"),
+    Leaderboard("leaderboard")
 }
 
 @Composable
@@ -68,19 +74,6 @@ fun NavigationController(
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
-            Column {
-                Button(onClick = {
-                    authenticator.signOut(activity)
-                }) {
-                    Text("Sign out")
-                }
-
-                Button(onClick = {
-                    navController.navigate("challenge-view/16a51054-NSQ2lJtR1UZ5cIgtZFo")
-                }) {
-                    Text(text = "Open challenge view")
-                }
-            }
         }
         composable(Route.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
@@ -104,6 +97,7 @@ fun NavigationController(
                 }
             )
         }
+
         composable(Route.ActiveHunts.route) {
             val user = Authenticator.authInstance.get().user
 
@@ -123,15 +117,23 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                ProfilePage(id = user.uid, database)
+                ProfilePage(
+                    id = user.uid,
+                    openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
+                    onLogout = { logout(authenticator, activity) },
+                    database = database
+                )
             }
         }
 
-        composable(
-            "${Route.Profile.route}/{userId}",
-            arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) {
-            it.arguments?.getString("userId")?.let { it1 -> ProfilePage(id = it1, database) }
+        composable("${Route.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+            it.arguments?.getString("userId")?.let { userId -> ProfilePage(id = userId, database = database) }
+        }
+
+        composable(HiddenRoutes.EditProfile.route) {
+            ProfileEditPage(
+                onBackButton = { navController.popBackStack() }
+            )
         }
 
         // View image
@@ -183,5 +185,11 @@ fun NavigationController(
                 }
             }
         }
+    }
+}
+
+private fun logout(authenticator: Authenticator, activity: ComponentActivity) {
+    authenticator.signOut(activity).thenAccept {
+        activity.replaceActivity(Intent(activity, LoginActivity::class.java))
     }
 }

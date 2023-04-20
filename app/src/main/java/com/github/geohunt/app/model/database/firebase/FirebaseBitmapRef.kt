@@ -1,7 +1,6 @@
 package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.utility.BitmapUtils
@@ -87,8 +86,8 @@ internal class FirebaseBitmapRef(
          * @param uid The ID of the user considered by this method
          * @return The image ID for this user
          */
-        internal fun getImageIdFromUserId(uid: String): String {
-            return "user-$uid.jpeg"
+        internal fun getProfilePictureId(uid: String, hash: String): String {
+            return "user-$uid-$hash.png"
         }
 
         private val IMAGE_FORMAT = Bitmap.CompressFormat.JPEG

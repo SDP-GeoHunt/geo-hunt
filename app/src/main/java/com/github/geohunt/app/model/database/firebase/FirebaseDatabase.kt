@@ -7,11 +7,10 @@ import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.BaseLazyRef
 import com.github.geohunt.app.model.DataPool
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
+import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
@@ -20,7 +19,6 @@ import com.github.geohunt.app.utility.thenMap
 import com.github.geohunt.app.utility.toMap
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import com.google.maps.android.compose.Polygon
 import okhttp3.internal.toImmutableList
 import kotlinx.coroutines.tasks.await
 import java.io.File
@@ -218,12 +216,48 @@ class FirebaseDatabase(activity: Activity) : Database {
      * @param uid the user id
      * @return A [LazyRef] linked to the result of the operation
      */
-    override fun getUserById(uid: String): LazyRef<User> {
+    override fun getUserById(uid: String): LiveLazyRef<User> {
         return if (uid == getPOIUserID()) {
-            FirebasePOIUserRef(uid)
+            LiveLazyRef.fromLazyRef(FirebasePOIUserRef(uid))
         } else {
             userRefById.get(uid)
         }
+    }
+
+    /**
+     * Updates the user with all the data
+     */
+    override fun updateUser(editedUser: EditedUser): Task<Void?> {
+        val user = editedUser.user
+        val userEntry = UserEntry(
+            user.uid,
+            editedUser.displayName,
+            user.challenges.map { it.id },
+            user.hunts.map { it.id },
+            user.numberOfFollowers,
+            user.follows.associate { it.id to true },
+            user.score,
+            user.profilePictureHash
+        )
+
+        val uploadProfilePicture: Task<Nothing?> =
+            if (editedUser.profilePicture != null) {
+                val hash = BitmapUtils.hash(editedUser.profilePicture!!)
+                val ppRef = getProfilePicture(user.uid, hash)
+                ppRef.value = editedUser.profilePicture
+
+                // update user entry accordingly
+                userEntry.profilePictureHash = hash
+
+                ppRef.saveToLocalStorageThenSubmit().thenMap { null }
+            } else {
+                Tasks.forResult(null)
+            }
+
+        return Tasks.whenAll(
+            dbUserRef.child(user.uid).setValue(userEntry),
+            uploadProfilePicture
+        ).thenMap { return@thenMap null; }
     }
 
     override fun getClaimById(cid: String): LazyRef<Claim> {
@@ -234,8 +268,8 @@ class FirebaseDatabase(activity: Activity) : Database {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
     }
 
-    internal fun getProfilePicture(uid: String): FirebaseBitmapRef {
-        return imageRefById.get(FirebaseBitmapRef.getImageIdFromUserId(uid))
+    internal fun getProfilePicture(uid: String, hash: Int): FirebaseBitmapRef {
+        return imageRefById.get(FirebaseBitmapRef.getProfilePictureId(uid, hash.toString()))
     }
 
     @Deprecated("all getFooRefById should be replaced by getFooById")
