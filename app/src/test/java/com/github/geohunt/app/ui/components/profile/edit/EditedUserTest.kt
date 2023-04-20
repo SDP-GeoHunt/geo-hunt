@@ -9,7 +9,7 @@ class EditedUserTest {
     @Test
     fun properlyTakesNameFromUser() {
         val user = MockUser(displayName = "hello")
-        val editedUser = EditedUser.fromUser(user)
+        val editedUser = EditedUser(user.name)
         assert(editedUser.displayName == "hello")
     }
 }
