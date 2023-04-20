@@ -1,9 +1,7 @@
 package com.github.geohunt.app.model.database.api
 
 import android.graphics.Bitmap
-import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.Database
 
 /**
  * Define the profile information of a user as stored in the database
@@ -62,5 +60,9 @@ interface User {
      * refer to [Database.getPOIUserID]
      */
     val isPOIUser : Boolean
-}
 
+    /**
+     * The list of challenges liked by this user
+     */
+    var likes: List<LazyRef<Challenge>>
+}

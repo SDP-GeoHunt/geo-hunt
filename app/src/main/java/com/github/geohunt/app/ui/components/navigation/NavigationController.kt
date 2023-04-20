@@ -29,7 +29,7 @@ import com.github.geohunt.app.maps.GoogleMapView
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
-import com.github.geohunt.app.ui.components.CreateNewChallenge
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
@@ -158,7 +158,10 @@ fun NavigationController(
                     lazyRef = { database.getChallengeById(cid) },
                     modifier = Modifier.align(Alignment.Center),
                 ) {
-                    ChallengeView(it, { cid -> navController.navigate("image-view/$cid") }) {
+                    ChallengeView(it,
+                        database = database,
+                        user = Authenticator.authInstance.get().user!!,
+                        { cid -> navController.navigate("image-view/$cid") }) {
                         navController.popBackStack()
                     }
                 }

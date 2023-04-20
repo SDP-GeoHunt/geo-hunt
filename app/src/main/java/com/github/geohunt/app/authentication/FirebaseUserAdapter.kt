@@ -36,4 +36,7 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
         set(value) {}
 
     override val isPOIUser : Boolean = false
+    override var likes: List<LazyRef<Challenge>>
+        get() = TODO("Not yet implemented (need database)")
+        set(value) {}
 }

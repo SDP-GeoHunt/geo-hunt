@@ -83,9 +83,11 @@ class ChallengeViewTest {
             description = ConstantStrings.LORUM_IPSUM.takeIf { hasDescription }
         )
 
+        val database = object : BaseMockDatabase() {}
+
         // Sets the composeTestRule content
         composeTestRule.setContent {
-            ChallengeView(challenge = challenge, { route = it }) {
+            ChallengeView(challenge = challenge, database = database, user = author2, { route = it }) {
                 route = "../"
             }
         }
@@ -156,5 +158,4 @@ class ChallengeViewTest {
     {
         testChallengeView(false)
     }
-
 }

@@ -10,6 +10,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.MockUser
+import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
@@ -35,7 +36,6 @@ class TestFirebaseDatabase {
     @Before
     fun setup() {
         FirebaseEmulator.init()
-        Authenticator.authInstance.set(LoginActivityTest.MockAuthenticator(MockUser("hello")))
         composeTestRule.setContent {
             database = FirebaseDatabase(LocalContext.current.findActivity())
         }
@@ -66,15 +66,19 @@ class TestFirebaseDatabase {
 
     @Test
     fun testFirebaseDatabaseCreateChallengeWorkUponSuccess() {
+        Authenticator.authInstance.set(LoginActivityTest.MockAuthenticator(MockUser("Punk")))
+
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val bitmap = createTestBitmap(context)
         val future = CompletableFuture<() -> Unit>()
+        val difficulty = Challenge.Difficulty.MEDIUM
 
-        val challengeTask = database.createChallenge(bitmap, currentLocation, null)
+        database.createChallenge(bitmap, currentLocation, difficulty)
             .addOnSuccessListener { challenge ->
                 future.complete {
                     assertThat(challenge.correctLocation, equalTo(currentLocation))
                     assertThat(challenge.coarseLocation, equalTo(currentLocation.getCoarseLocation()))
+                    assertThat(challenge.difficulty, equalTo(difficulty))
                 }
             }
             .addOnFailureListener(future::completeExceptionally)

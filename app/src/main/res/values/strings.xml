@@ -40,4 +40,8 @@
 
     <string name="no_past_challenges">No challenges :(</string>
     <string name="no_past_hunts">No past hunts ;(</string>
+
+    <string name="challenge_settings_difficulty">Difficulty</string>
+    <string name="challenge_settings_date">Date</string>
+    <string name="challenge_settings_date_never">Never</string>
 </resources>

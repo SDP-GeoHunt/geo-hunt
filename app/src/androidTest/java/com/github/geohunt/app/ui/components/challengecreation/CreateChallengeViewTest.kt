@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components
+package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest.permission
 import android.content.Context
@@ -34,7 +34,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.Description
 import org.junit.runner.RunWith
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
@@ -122,6 +121,7 @@ class CreateChallengeViewTest {
             override fun createChallenge(
                 thumbnail: Bitmap,
                 location: Location,
+                difficulty: Challenge.Difficulty,
                 expirationDate: LocalDateTime?,
                 description: String?
             ): Task<Challenge> {
@@ -133,6 +133,7 @@ class CreateChallengeViewTest {
                     thumbnail = MockLazyRef("iid") { TODO() },
                     correctLocation = location,
                     claims = listOf(),
+                    difficulty = difficulty,
                     description = description
                 )
                 futureChallenge.complete(challenge)
@@ -157,7 +158,7 @@ class CreateChallengeViewTest {
                 .assertIsNotEnabled()
 
             // Assert the request was launched
-            assertThat(counter, greaterThanOrEqualTo(1));
+            assertThat(counter, greaterThanOrEqualTo(1))
 
             // Resolve the future
             if (locationRequestFailed) {

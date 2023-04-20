@@ -12,7 +12,6 @@ import com.github.geohunt.app.utility.*
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseReference
 import java.time.LocalDateTime
 
 data class FirebaseChallenge(
@@ -24,6 +23,8 @@ data class FirebaseChallenge(
     override val correctLocation: Location,
     override val claims: List<LazyRef<Claim>>,
     override val description: String?,
+    override val difficulty: Challenge.Difficulty,
+    override var likes: List<LazyRef<User>>
 ) : Challenge {
     override val coarseLocation: Location
         get() = correctLocation.getCoarseLocation()
@@ -70,7 +71,9 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate!!),
         correctLocation =  challengeEntry.location!!,
         claims = (challengeEntry.claims ?: listOf()).map(database::getClaimById),
-        description = challengeEntry.description
+        description = challengeEntry.description,
+        difficulty = Challenge.Difficulty.valueOf(challengeEntry.difficulty),
+        likes = challengeEntry.likes.mapNotNull { (id, doesLike) -> database.getUserById(id).takeIf { doesLike } }
     )
 }
 
@@ -83,5 +86,7 @@ internal data class ChallengeEntry(
     var expirationDate: String? = null,
     var claims: List<String>? = null,
     var location: Location? = null,
-    val description: String? = null
+    val description: String? = null,
+    var difficulty: String = "MEDIUM",
+    var likes: Map<String, Boolean> = emptyMap()
 )
