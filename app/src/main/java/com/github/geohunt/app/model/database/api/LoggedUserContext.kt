@@ -116,10 +116,9 @@ interface LoggedUserContext {
 /**
  * This function allows a code block to be executed with a given LoggedUserContext.
  *
- * @param context The LoggedUserContext to use.
  * @param callback The code block to execute.
  * @return The result of executing the code block.
  */
-fun <R> LoggedUserContext.withContext(callback: LoggedUserContext.() -> R) : R {
+fun <R> LoggedUserContext.executeWithContext(callback: LoggedUserContext.() -> R) : R {
     return callback(this)
 }

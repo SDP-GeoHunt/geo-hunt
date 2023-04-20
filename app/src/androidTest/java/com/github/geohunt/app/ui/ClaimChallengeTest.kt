@@ -120,7 +120,7 @@ class ClaimChallengeTest {
     @Test
     fun testClaimChallengeLaunchIntent() {
         composeTestRule.setContent {
-            database.Logged {
+            database.WithLoggedUserContext {
                 ClaimChallenge(
                     challenge = mockChallenge,
                     onClaimSubmitted = {},
@@ -161,7 +161,7 @@ class ClaimChallengeTest {
         LocationRequestState.defaultFactory.mocked(locationRequestStateFactory).use {
             // Start the application
             composeTestRule.setContent {
-                database.Logged {
+                database.WithLoggedUserContext {
                     SubmitClaimForm(
                         bitmap = resultingPhoto,
                         challenge = mockChallenge,

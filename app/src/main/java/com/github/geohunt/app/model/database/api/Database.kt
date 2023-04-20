@@ -75,7 +75,7 @@ interface Database {
      * @see LoggedUserContext
      */
     fun <R> logged(callback: LoggedUserContext.() -> R) : R {
-        return getLoggedContext().withContext(callback)
+        return getLoggedContext().executeWithContext(callback)
     }
 
     /**

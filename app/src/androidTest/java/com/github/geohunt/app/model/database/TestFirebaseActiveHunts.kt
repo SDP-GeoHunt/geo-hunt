@@ -73,7 +73,7 @@ class TestFirebaseActiveHunts {
     }
 
     @Test
-    fun testJoinChallengeUpdateFollowsList() = runTest {
+    fun testJoinChallengeUpdatesActiveHuntsListWhenJoined() = runTest {
         logged {
             challenge.joinHunt().await()
 

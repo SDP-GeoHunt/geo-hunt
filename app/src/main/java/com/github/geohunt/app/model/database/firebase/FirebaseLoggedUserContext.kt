@@ -184,7 +184,7 @@ internal class FirebaseLoggedUserContext(
                 FirebaseClaim(
                     id = claimId,
                     user = loggedUserRef,
-                    time = DateUtils.localFromUtcIso8601(claimEntry.time!!),
+                    time = DateUtils.localFromUtcIso8601(claimEntry.time),
                     challenge = database.getChallengeById(this.cid),
                     location = location,
                     image = thumbnailBitmap

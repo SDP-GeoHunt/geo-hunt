@@ -10,12 +10,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
 import com.github.geohunt.app.ConstantStrings
-import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.*
-import com.github.geohunt.app.ui.Logged
+import com.github.geohunt.app.ui.WithLoggedUserContext
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
@@ -98,7 +97,7 @@ class ChallengeViewTest {
 
         // Sets the composeTestRule content
         composeTestRule.setContent {
-            database.Logged {
+            database.WithLoggedUserContext {
                 ChallengeView(challenge = challenge, { route = it }, {
                     route = "../"
                 }) { cid ->

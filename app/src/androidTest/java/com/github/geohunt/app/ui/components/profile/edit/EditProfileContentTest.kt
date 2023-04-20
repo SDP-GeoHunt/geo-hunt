@@ -9,7 +9,7 @@ import com.github.geohunt.app.mocks.MockLoggedUserContext
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.database.api.EditedUser
 import com.github.geohunt.app.model.database.api.LoggedUserContext
-import com.github.geohunt.app.ui.Logged
+import com.github.geohunt.app.ui.WithLoggedUserContext
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import org.junit.Rule
@@ -40,7 +40,7 @@ class EditProfileContentTest {
         var instrumentableProfileEdit: MutableState<EditedUser>? = null
 
         composeTestRule.setContent {
-            mockDb.Logged {
+            mockDb.WithLoggedUserContext {
                 instrumentableProfileEdit = instrumentableEditProfileContent(mockUser)
             }
         }
@@ -71,7 +71,7 @@ class EditProfileContentTest {
         var instrumentableProfileEdit: MutableState<EditedUser>? = null
 
         composeTestRule.setContent {
-            mockDb.Logged {
+            mockDb.WithLoggedUserContext {
                 instrumentableProfileEdit = instrumentableEditProfileContent(user = mockUser)
             }
         }

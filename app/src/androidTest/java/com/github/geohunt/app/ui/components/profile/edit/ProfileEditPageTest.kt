@@ -11,7 +11,7 @@ import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.LiveLazyRefListener
 import com.github.geohunt.app.model.database.api.LoggedUserContext
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.Logged
+import com.github.geohunt.app.ui.WithLoggedUserContext
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
@@ -35,7 +35,7 @@ class ProfileEditPageTest {
         val mockDb = createMockDatabase(true)
 
         c.setContent {
-            mockDb.Logged {
+            mockDb.WithLoggedUserContext {
                 ProfileEditPage { }
             }
         }
@@ -47,7 +47,7 @@ class ProfileEditPageTest {
         val mockDb = createMockDatabase()
 
         c.setContent {
-            mockDb.Logged {
+            mockDb.WithLoggedUserContext {
                 ProfileEditPage { }
             }
         }
@@ -59,7 +59,7 @@ class ProfileEditPageTest {
         val mockDb = createMockDatabase()
 
         c.setContent {
-            mockDb.Logged {
+            mockDb.WithLoggedUserContext {
                 ProfileEditPage { }
             }
         }
@@ -72,7 +72,7 @@ class ProfileEditPageTest {
 
         val cf = CompletableFuture<Void?>()
         c.setContent {
-            mockDb.Logged {
+            mockDb.WithLoggedUserContext {
                 ProfileEditPage { cf.complete(null) }
             }
         }

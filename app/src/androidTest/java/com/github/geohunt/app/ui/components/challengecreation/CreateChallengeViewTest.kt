@@ -19,14 +19,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
-import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.LoggedUserContext
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.sensor.LocationRequestState
-import com.github.geohunt.app.ui.Logged
+import com.github.geohunt.app.ui.WithLoggedUserContext
 import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeForm
 import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.google.android.gms.tasks.Task
@@ -108,7 +107,7 @@ class CreateChallengeViewTest {
         }
 
         composeTestRule.setContent {
-            mockDatabase.Logged {
+            mockDatabase.WithLoggedUserContext {
                 CreateNewChallenge(
                     onChallengeCreated = {},
                     onFailure = {}
@@ -178,7 +177,7 @@ class CreateChallengeViewTest {
         LocationRequestState.defaultFactory.mocked(locationRequestStateFactory).use {
             // Start the application
             composeTestRule.setContent {
-                mockDatabase.Logged {
+                mockDatabase.WithLoggedUserContext {
                     CreateChallengeForm(
                         bitmap = resultingPhoto,
                         onChallengeCreated = future::complete,

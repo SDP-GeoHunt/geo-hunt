@@ -12,7 +12,7 @@ import com.github.geohunt.app.model.database.api.LoggedUserContext
  * @param callback the composable callback to be used within the logged context
  */
 @Composable
-fun Database.Logged(callback : @Composable LoggedUserContext.() -> Unit) {
+fun Database.WithLoggedUserContext(callback : @Composable LoggedUserContext.() -> Unit) {
     val loggedUserContext = remember(Authenticator.authInstance.get().user) {
         getLoggedContext()
     }

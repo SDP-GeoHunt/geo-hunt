@@ -13,18 +13,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
+import com.github.geohunt.app.i18n.DateFormatUtils
+import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.LoggedUserContext
+import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.LabelledIcon
 import com.github.geohunt.app.ui.components.user.ProfileIcon
-import com.github.geohunt.app.i18n.DateFormatUtils
-import com.github.geohunt.app.i18n.toSuffixedString
-import com.github.geohunt.app.model.database.api.LoggedUserContext
-import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.rememberLazyRef
 
 @Composable

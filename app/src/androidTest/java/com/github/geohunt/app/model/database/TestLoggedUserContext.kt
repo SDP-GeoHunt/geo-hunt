@@ -26,7 +26,6 @@ class TestLoggedUserContext {
     val composeTestRule = createComposeRule()
 
     private lateinit var database: FirebaseDatabase
-    private lateinit var loggedUser : User
 
     @Before
     fun setup() {

@@ -27,7 +27,7 @@ import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.model.database.api.Database
 import com.github.geohunt.app.ui.FetchComponent
-import com.github.geohunt.app.ui.Logged
+import com.github.geohunt.app.ui.WithLoggedUserContext
 import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
@@ -67,7 +67,7 @@ fun NavigationController(
     navController: NavHostController,
     database: Database,
     modifier: Modifier = Modifier
-) = database.Logged {
+) = database.WithLoggedUserContext {
     val context = LocalContext.current
     val authenticator = Authenticator.authInstance.get()
     val activity: ComponentActivity = LocalContext.current.findActivity() as ComponentActivity
