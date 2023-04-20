@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.github.geohunt.app.maps.marker.Marker
+import com.github.geohunt.app.maps.marker.MarkerInfoBox
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import org.junit.Before
@@ -54,6 +55,33 @@ class GoogleMapTest {
         init()
         composeTestRule.onNodeWithTag("Maps")
             .assertExists()
+    }
+
+    @Test
+    fun testMarkerInfoBoxRendersChallengeInformationCorrectly() {
+        val marker = mockTestChallengeDatabase[0]
+
+        composeTestRule.setContent {
+            loadChallenges(mockTestChallengeDatabase)
+            GoogleMapDisplay(
+                cameraPosition = CameraPosition(epflCoordinates, 9f, 0f, 0f),
+            )
+
+            MarkerInfoBox(
+                marker = marker,
+            )
+        }
+        composeTestRule.onNodeWithTag("MarkerInfoBox")
+            .assertExists()
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag(marker.title)
+            .assertExists()
+            .assertIsDisplayed()
+
+        composeTestRule.onNodeWithTag(marker.expiryDate.toString())
+            .assertExists()
+            .assertIsDisplayed()
     }
 
     @Test

@@ -58,7 +58,8 @@ fun MarkerInfoBox(marker: Marker) {
                 text = marker.title,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .testTag(marker.title),
                 style = MaterialTheme.typography.displayMedium,
             )
 
@@ -68,7 +69,8 @@ fun MarkerInfoBox(marker: Marker) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 10.dp, start = 25.dp, end = 25.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .testTag(marker.expiryDate.toString()),
                 style = MaterialTheme.typography.headlineSmall,
             )
 
