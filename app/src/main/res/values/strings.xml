@@ -54,4 +54,8 @@
     <string name="saving">Saving…</string>
 
     <string name="leaderboard">Leaderboard</string>
+
+    <string name="challenge_settings_difficulty">Difficulty</string>
+    <string name="challenge_settings_date">Date</string>
+    <string name="challenge_settings_date_never">Never</string>
 </resources>

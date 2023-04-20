@@ -75,7 +75,8 @@ class FirebaseDatabase(activity: Activity) : Database {
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
-        expirationDate: LocalDateTime?
+        expirationDate: LocalDateTime?,
+        difficulty : Challenge.Difficulty
     ): Task<Challenge> {
         // Requirements
         require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
@@ -91,6 +92,7 @@ class FirebaseDatabase(activity: Activity) : Database {
             expirationDate = utcIso8601FromLocalNullable(expirationDate),
             claims = listOf(),
             location = location,
+            difficulty = difficulty.toString(),
             likes = mapOf(),
         )
 
@@ -112,6 +114,7 @@ class FirebaseDatabase(activity: Activity) : Database {
                 expirationDate = expirationDate,
                 correctLocation = location,
                 claims = listOf(),
+                difficulty = difficulty,
                 likes = listOf(),
                 numberOfLikes = 0
             )
@@ -193,11 +196,11 @@ class FirebaseDatabase(activity: Activity) : Database {
     }
 
     /**
-     * Retrieve an user with a given ID and the corresponding [LazyRef]. Notice that this operation
+     * Retrieve an User with a given ID and the corresponding [LazyRef]. Notice that this operation
      * won't fail if the given element does not exists in the database. The failure will happen upon
      * fetching the returned [LazyRef]
      *
-     * @param iid the image id, this may depend for image type
+     * @param uid the user id
      * @return A [LazyRef] linked to the result of the operation
      */
     override fun getUserById(uid: String): LiveLazyRef<User> {

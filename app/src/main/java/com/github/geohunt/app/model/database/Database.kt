@@ -24,7 +24,8 @@ interface Database {
     fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
-        expirationDate: LocalDateTime? = null
+        expirationDate: LocalDateTime? = null,
+        difficulty: Challenge.Difficulty
     ): Task<Challenge>
 
     fun submitClaim(

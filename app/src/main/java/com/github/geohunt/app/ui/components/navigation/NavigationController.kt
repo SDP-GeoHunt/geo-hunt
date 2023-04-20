@@ -26,7 +26,7 @@ import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.maps.GoogleMapView
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
-import com.github.geohunt.app.ui.components.CreateNewChallenge
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView

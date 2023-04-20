@@ -13,7 +13,8 @@ abstract class BaseMockDatabase : Database {
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
-        expirationDate: LocalDateTime?
+        expirationDate: LocalDateTime?,
+         difficulty: Challenge.Difficulty
     ): Task<Challenge> {
         throw NotImplementedError()
     }
@@ -29,7 +30,7 @@ abstract class BaseMockDatabase : Database {
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
         throw NotImplementedError()
     }
-    
+
     override fun submitClaim(
         thumbnail: Bitmap,
         challenge: Challenge,

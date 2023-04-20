@@ -68,6 +68,8 @@ class ActiveHuntsTest {
             get() = TODO("Not yet implemented")
         override val claims: List<LazyRef<Claim>>
             get() = TODO("Not yet implemented")
+        override val difficulty: Challenge.Difficulty
+            get() = TODO("Not yet implemented")
         override val likes: List<LazyRef<User>>
             get() = TODO("Not yet implemented")
         override var numberOfLikes: Int
