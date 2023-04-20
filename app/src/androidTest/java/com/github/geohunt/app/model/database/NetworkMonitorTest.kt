@@ -19,7 +19,7 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalCoroutinesApi::class)
 class NetworkMonitorTest {
     @get:Rule
-    val composeRule = createComposeRule()
+    val composeTestRule = createComposeRule()
 
     private lateinit var database: FirebaseDatabase
     private lateinit var monitor: NetworkMonitor
@@ -43,8 +43,10 @@ class NetworkMonitorTest {
         // Note that mocking the database is too hard
         // Because Kotlin's extension getters are impossible to mock
         // and in particular Query.snapshots (used by the monitor) is not mockable
-        database = FirebaseSingletons.database.get().database
-        monitor = NetworkMonitor(database, ioDispatcher = UnconfinedTestDispatcher())
+        composeTestRule.setContent {
+            database = FirebaseSingletons.database.get().database
+            monitor = NetworkMonitor(database, ioDispatcher = UnconfinedTestDispatcher())
+        }
     }
 
     @After
