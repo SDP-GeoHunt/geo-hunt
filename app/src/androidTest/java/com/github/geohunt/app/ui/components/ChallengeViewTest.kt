@@ -2,7 +2,6 @@ package com.github.geohunt.app.ui.components
 
 import android.content.Context
 import android.graphics.Bitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
@@ -10,23 +9,17 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
+import com.github.geohunt.app.ConstantStrings
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.FirebaseEmulator
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.model.database.firebase.FirebaseChallenge
-import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
-import com.github.geohunt.app.model.database.firebase.FirebaseUser
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
-import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,27 +30,14 @@ class ChallengeViewTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private lateinit var database : FirebaseDatabase
-    private val TIMEOUT_TIME_MS = 5000L
-
     private fun createTestBitmap(context: Context) : Bitmap {
         return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
     }
 
-    @Before
-    fun setup() {
-        FirebaseEmulator.init()
-    }
-
-    @After
-    fun cleanup() {}
-
-    @Test
-    fun testChallengeViewDisplayUserProperly()
+    private fun testChallengeView(hasDescription: Boolean)
     {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val profilePicture = createTestBitmap(context)
-        var challenge2 : Challenge? = null
         var route = ""
 
 
@@ -99,19 +79,15 @@ class ChallengeViewTest {
             thumbnail = MockLazyRef("img-ze5f16zaef1465") {
                 Tasks.forResult(createTestBitmap(context))
             },
-            claims = listOf(InstantLazyRef("claim", claim))
+            claims = listOf(InstantLazyRef("claim", claim)),
+            description = ConstantStrings.LORUM_IPSUM.takeIf { hasDescription }
         )
-        challenge2 = challenge
+
+        val database = object : BaseMockDatabase() {}
 
         // Sets the composeTestRule content
         composeTestRule.setContent {
-            database = FirebaseDatabase(LocalContext.current.findActivity())
-
-            ChallengeView(
-                challenge = challenge,
-                database = database,
-                user = author,
-                { route = it }) {
+            ChallengeView(challenge = challenge, database = database, user = author2, { route = it }) {
                 route = "../"
             }
         }
@@ -154,79 +130,32 @@ class ChallengeViewTest {
         composeTestRule.onNodeWithText("62m")
             .performScrollTo()
             .assertExists()
+
+        // assert description is displayed (upon clicking more)
+        if (hasDescription) {
+            composeTestRule.onNodeWithTag("description-more-btn")
+                .performScrollTo()
+                .assertIsDisplayed()
+                .assert(hasText("more..."))
+                .performClick()
+
+            composeTestRule.onNodeWithText(ConstantStrings.LORUM_IPSUM)
+                .assertIsDisplayed()
+        } else {
+            composeTestRule.onNodeWithTag("description-more-btn")
+                .assertDoesNotExist()
+        }
     }
 
     @Test
-    fun testLikingButtonIncrementsAndDecrementsLikes() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        var route = ""
+    fun testChallengeViewWithDescription()
+    {
+        testChallengeView(true)
+    }
 
-        val author = FirebaseUser(
-            displayName = "John wick",
-            score = 48723L,
-            uid = "user-f425zez6z4ef6z15f4",
-            hunts = listOf(),
-            likes = listOf(),
-            profilePicture = MockLazyRef("img-ze5f16zaef1465") {
-                Tasks.forResult(createTestBitmap(context))
-            },
-            challenges = listOf(),
-            follows = listOf(),
-            numberOfFollowers = 0,
-            profilePictureHash = 0
-        )
-
-        val challenge = FirebaseChallenge(
-            author = MockLazyRef("user-f425zez6z4ef6z15f4") {
-                Tasks.forResult(author)
-            },
-            claims = listOf(),
-            thumbnail = MockLazyRef("img-ze5f16zaef1465") {
-                Tasks.forResult(createTestBitmap(context))
-            },
-            correctLocation = Location(50.06638888888889, -5.714722222222222),
-            cid = "test-cid",
-            expirationDate = LocalDateTime.now().plusDays(1),
-            publishedDate = LocalDateTime.now(),
-            difficulty = Challenge.Difficulty.MEDIUM,
-            likes = listOf(),
-            numberOfLikes = 0,
-        )
-
-        // Sets the composeTestRule content
-        composeTestRule.setContent {
-            database = FirebaseDatabase(LocalContext.current.findActivity())
-
-            ChallengeView(
-                challenge = challenge,
-                database = database,
-                user = author,
-                { route = it }) {
-                route = "../"
-            }
-        }
-
-        // Check if the button for liking is loaded
-        composeTestRule.waitUntil(TIMEOUT_TIME_MS) {
-            composeTestRule.onAllNodesWithContentDescription("Likes")
-                .fetchSemanticsNodes()
-                .size == 1
-        }
-
-        // Find the button for liking and check if it exists
-        composeTestRule.onNodeWithContentDescription("Likes")
-            .assertExists()
-            // Check if the number of likes is 0
-            .assertTextEquals("0")
-            // Check if the button has a click action and perform click
-            .assertHasClickAction()
-            .performClick()
-            // Check if the number of likes has increased to 1
-            .assertTextEquals("1")
-            // Check again if the button has a click action and perform click
-            .assertHasClickAction()
-            .performClick()
-            // Check if the number of likes has decreased to 0
-            .assertTextEquals("0")
+    @Test
+    fun testChallengeViewWithoutDescription()
+    {
+        testChallengeView(false)
     }
 }

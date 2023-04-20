@@ -24,8 +24,9 @@ interface Database {
     fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
+        difficulty: Challenge.Difficulty,
         expirationDate: LocalDateTime? = null,
-        difficulty: Challenge.Difficulty
+        description: String? = null
     ): Task<Challenge>
 
     fun submitClaim(
@@ -56,11 +57,17 @@ interface Database {
 
     /**
      * Retrieve a user with a specific ID and return the corresponding [LazyRef]. Notice that this operation
-     * won't fail if the given element does not exists in the database. The failure will happend upon
+     * won't fail if the given element does not exists in the database. The failure will happen upon
      * fetching the returned [LazyRef]
      */
     fun getUserById(uid: String): LiveLazyRef<User>
 
+    /**
+     * Retrieve a [LazyRef] to the claim with the provided [cid] as id. Notice that this operation
+     * won't fail if the given element does not exists in the database, instead the failure will happen
+     * upon fetching it.
+     */
+    fun getClaimById(cid: String): LazyRef<Claim>
 
     /**
      * Get a list of nearby challenges to a specific location
@@ -102,6 +109,15 @@ interface Database {
 
 
     /**
+     * Point-Of-Interest user is a special user that does not have any information within the database
+     *
+     * It represent the user attach to any "public" challenge such as Point-Of-Interest. This design
+     * choice was made to ease the process of registering such challenges in the database without having
+     * to think too much onto it
+     */
+    fun getPOIUserID() : String
+
+    /**
      * Inserts a new like for the chosen challenge for a given user
      */
     suspend fun insertUserLike(uid: String, cid: String)
@@ -122,7 +138,7 @@ interface Database {
         /**
          * A Singleton instance of a factory function that creates a  Database instance
          * for a given Android Activity. This factory method is used by [createDatabaseHandle]
-         * 
+         *
          * @param Activity the Android Activity class for which a Database instance will be created
          * @return a Database instance created using the FirebaseDatabase constructor
          */

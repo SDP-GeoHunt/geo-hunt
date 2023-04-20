@@ -1,6 +1,8 @@
 package com.github.geohunt.app.model.database.firebase
 
 import android.graphics.Bitmap
+import com.github.geohunt.app.model.BaseLazyRef
+import com.github.geohunt.app.model.InvalidLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.LiveLazyRefListener
@@ -12,6 +14,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.android.gms.tasks.Tasks
 
 /**
  * Internal implementation of User in the context of Firebase backend
@@ -25,10 +28,33 @@ class FirebaseUser(
     override val hunts: List<LazyRef<Challenge>>,
     override val numberOfFollowers: Int,
     override val follows: List<LazyRef<User>>,
+    override var likes: List<LazyRef<Challenge>>,
     override var score: Long,
-    override var likes: List<LazyRef<Challenge>>
+    override val isPOIUser: Boolean = false,
 ) : User {
 
+}
+
+/**
+ * Internal implementation of the LazyRef for the firebase user POI-User specifically
+ */
+internal class FirebasePOIUserRef(override val id: String) :
+    BaseLazyRef<User>() {
+    override fun fetchValue(): Task<User> {
+        return Tasks.forResult(FirebaseUser(
+            uid = id,
+            displayName = null,
+            profilePicture = InvalidLazyRef(RuntimeException("Cannot fetch profile picture for POI User")),
+            challenges = listOf(),
+            hunts = listOf(),
+            numberOfFollowers = 0,
+            follows = listOf(),
+            score = 0,
+            isPOIUser = true,
+            likes = listOf(),
+            profilePictureHash = null
+        ))
+    }
 }
 
 /**

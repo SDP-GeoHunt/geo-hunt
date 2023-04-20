@@ -59,7 +59,7 @@ internal class FirebaseBitmapRef(
 
         // Write the object to a file on disk
         val writeFileFuture =
-            BitmapUtils.saveToFileAsync(bitmap, file, Bitmap.CompressFormat.PNG, 100).asTask()
+            BitmapUtils.saveToFileAsync(bitmap, file, IMAGE_FORMAT, 100).asTask()
 
         // Submit the object to the remote database
         return writeFileFuture.thenDo {
@@ -77,7 +77,7 @@ internal class FirebaseBitmapRef(
          * @return The image ID for the challenge.
          */
         internal fun getImageIdFromChallengeId(cid: String): String {
-            return "challenges-$cid.png"
+            return "challenges-$cid.jpeg"
         }
 
         /**
@@ -89,6 +89,8 @@ internal class FirebaseBitmapRef(
         internal fun getProfilePictureId(uid: String, hash: String): String {
             return "user-$uid-$hash.png"
         }
+
+        private val IMAGE_FORMAT = Bitmap.CompressFormat.JPEG
     }
 }
 

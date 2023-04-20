@@ -8,12 +8,14 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.R
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.database.api.EditedUser
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
+import com.github.geohunt.app.ui.LoginActivityTest
 import com.github.geohunt.app.utility.findActivity
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
@@ -65,12 +67,14 @@ class TestFirebaseDatabase {
 
     @Test
     fun testFirebaseDatabaseCreateChallengeWorkUponSuccess() {
+        Authenticator.authInstance.set(LoginActivityTest.MockAuthenticator(MockUser("Punk")))
+
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val bitmap = createTestBitmap(context)
         val future = CompletableFuture<() -> Unit>()
         val difficulty = Challenge.Difficulty.MEDIUM
 
-        val challengeTask = database.createChallenge(bitmap, currentLocation, null, difficulty)
+        database.createChallenge(bitmap, currentLocation, difficulty)
             .addOnSuccessListener { challenge ->
                 future.complete {
                     assertThat(challenge.correctLocation, equalTo(currentLocation))

@@ -60,6 +60,12 @@ interface User {
     val score: Long
 
     /**
+     * Check whether or not the current user is the special Point-Of-Interest user. For more details
+     * refer to [Database.getPOIUserID]
+     */
+    val isPOIUser : Boolean
+
+    /**
      * The list of challenges liked by this user
      */
     var likes: List<LazyRef<Challenge>>
