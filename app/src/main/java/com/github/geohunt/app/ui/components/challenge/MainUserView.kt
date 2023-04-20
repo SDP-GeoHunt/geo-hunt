@@ -39,8 +39,7 @@ internal fun MainUserView(challenge: Challenge) {
             Row {
                 ProfileIcon(
                     user = author,
-                    size = 70.dp,
-                    modifier = Modifier.testTag("profile-icon")
+                    modifier = Modifier.testTag("profile-icon").size(70.dp)
                 )
 
                 Spacer(modifier = Modifier.width(10.dp))

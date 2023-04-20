@@ -17,6 +17,7 @@ import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.database.api.User
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.Rule
 import org.junit.Test
@@ -70,7 +71,7 @@ class LoginActivityTest {
             hasComponent(LoginActivity::class.java.name),
             hasExtra("login", any(Any::class.java))))
         Intents.release()
-        assert(cf.isDone)
+        assertThat(cf.isDone, equalTo(true))
     }
 
     class MockAuthenticator(override val user: User?,

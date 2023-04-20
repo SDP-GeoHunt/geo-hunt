@@ -1,11 +1,11 @@
 package com.github.geohunt.app.ui.components.navigation
 
+import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -24,7 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
-import com.github.geohunt.app.maps.GoogleMapView
+import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
@@ -36,7 +36,9 @@ import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
+import com.github.geohunt.app.LoginActivity
+import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
+import com.github.geohunt.app.utility.replaceActivity
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -53,7 +55,11 @@ enum class Route(val titleStringId: Int, val route: String, val icon: Composable
         )
     }),
     Profile(R.string.navigation_profile, "profile", { Icon(Icons.Sharp.Person, null) })
+}
 
+enum class HiddenRoutes(val route: String) {
+    EditProfile("settings/profile"),
+    Leaderboard("leaderboard")
 }
 
 @Composable
@@ -68,26 +74,13 @@ fun NavigationController(
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
-            Column {
-                Button(onClick = {
-                    authenticator.signOut(activity)
-                }) {
-                    Text("Sign out")
-                }
-
-                Button(onClick = {
-                    navController.navigate("challenge-view/98d755ad-NRrhrThHEiOx3ph_VWP")
-                }) {
-                    Text(text = "Open challenge view")
-                }
-            }
         }
         composable(Route.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
-            val epflCameraPositionState = CameraPositionState(CameraPosition(epflCoordinates, 15f, 0f, 0f))
-            GoogleMapView(
+            val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
+            GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
-                cameraPositionState = epflCameraPositionState
+                cameraPosition = epflCameraPosition
             )
         }
         composable(Route.Create.route) {
@@ -99,10 +92,12 @@ fun NavigationController(
                 },
                 onFailure = {
                     Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Fail to create challenge: $it")
                     navController.popBackStack()
                 }
             )
         }
+
         composable(Route.ActiveHunts.route) {
             val user = Authenticator.authInstance.get().user
 
@@ -122,15 +117,23 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                ProfilePage(id = user.uid, database)
+                ProfilePage(
+                    id = user.uid,
+                    openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
+                    onLogout = { logout(authenticator, activity) },
+                    database = database
+                )
             }
         }
 
-        composable(
-            "${Route.Profile.route}/{userId}",
-            arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) {
-            it.arguments?.getString("userId")?.let { it1 -> ProfilePage(id = it1, database) }
+        composable("${Route.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+            it.arguments?.getString("userId")?.let { userId -> ProfilePage(id = userId, database = database) }
+        }
+
+        composable(HiddenRoutes.EditProfile.route) {
+            ProfileEditPage(
+                onBackButton = { navController.popBackStack() }
+            )
         }
 
         // View image
@@ -182,5 +185,11 @@ fun NavigationController(
                 }
             }
         }
+    }
+}
+
+private fun logout(authenticator: Authenticator, activity: ComponentActivity) {
+    authenticator.signOut(activity).thenAccept {
+        activity.replaceActivity(Intent(activity, LoginActivity::class.java))
     }
 }

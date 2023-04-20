@@ -22,9 +22,9 @@ data class FirebaseChallenge(
     override val expirationDate: LocalDateTime?,
     override val correctLocation: Location,
     override val claims: List<LazyRef<Claim>>,
+    override val description: String?,
     override val difficulty: Challenge.Difficulty,
-    override var likes: List<LazyRef<User>>,
-    override var numberOfLikes: Int,
+    override var likes: List<LazyRef<User>>
 ) : Challenge {
     override val coarseLocation: Location
         get() = correctLocation.getCoarseLocation()
@@ -70,10 +70,10 @@ internal fun DataSnapshot.buildChallenge(database: FirebaseDatabase, cid: String
         publishedDate = DateUtils.localFromUtcIso8601(challengeEntry.publishedDate!!),
         expirationDate = DateUtils.localNullableFromUtcIso8601(challengeEntry.expirationDate!!),
         correctLocation =  challengeEntry.location!!,
-        claims = (challengeEntry.claims ?: listOf()).map(database::getClaimRefById),
+        claims = (challengeEntry.claims ?: listOf()).map(database::getClaimById),
+        description = challengeEntry.description,
         difficulty = Challenge.Difficulty.valueOf(challengeEntry.difficulty),
-        likes = challengeEntry.likes.mapNotNull { (id, doesLike) -> database.getUserById(id).takeIf { doesLike } },
-        numberOfLikes = challengeEntry.numberOfLikes,
+        likes = challengeEntry.likes.mapNotNull { (id, doesLike) -> database.getUserById(id).takeIf { doesLike } }
     )
 }
 
@@ -86,7 +86,7 @@ internal data class ChallengeEntry(
     var expirationDate: String? = null,
     var claims: List<String>? = null,
     var location: Location? = null,
+    val description: String? = null,
     var difficulty: String = "MEDIUM",
-    var likes: Map<String, Boolean> = emptyMap(),
-    var numberOfLikes: Int = 0,
+    var likes: Map<String, Boolean> = emptyMap()
 )

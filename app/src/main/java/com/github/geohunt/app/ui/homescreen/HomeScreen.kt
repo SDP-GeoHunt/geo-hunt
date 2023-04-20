@@ -108,10 +108,11 @@ fun ChallengeItem(challenge: MockChallenge) {
             )
             Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(id = R.drawable.challenge_like),
+                    painter = painterResource(id = R.drawable.thumb_up_outline),
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.size(30.dp).testTag(R.drawable.challenge_like.toString())
+                    modifier = Modifier.size(30.dp)
+                        .testTag(R.drawable.thumb_up_outline.toString())
                 )
                 Text(
                     text = "${challenge.likes}",

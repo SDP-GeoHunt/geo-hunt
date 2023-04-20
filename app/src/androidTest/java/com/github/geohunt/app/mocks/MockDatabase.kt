@@ -2,11 +2,9 @@ package com.github.geohunt.app.mocks
 
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.database.api.*
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import java.time.LocalDateTime
@@ -15,10 +13,15 @@ abstract class BaseMockDatabase : Database {
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
+        difficulty: Challenge.Difficulty,
         expirationDate: LocalDateTime?,
-         difficulty: Challenge.Difficulty
+        description: String?
     ): Task<Challenge> {
-        throw NotImplementedError()
+        TODO("Not yet implemented")
+    }
+
+    override fun getClaimById(cid: String): LazyRef<Claim> {
+        TODO("Not yet implemented")
     }
 
     override fun getChallengeById(cid: String): LazyRef<Challenge> {
@@ -30,7 +33,11 @@ abstract class BaseMockDatabase : Database {
     }
 
     override fun getNearbyChallenge(location: Location): Task<List<Challenge>> {
-        throw NotImplementedError()
+        TODO("Not yet implemented")
+    }
+
+    override fun getPOIUserID(): String {
+        TODO("Not yet implemented")
     }
 
     override fun submitClaim(
@@ -56,7 +63,11 @@ abstract class BaseMockDatabase : Database {
         TODO("Not yet implemented")
     }
 
-    override fun getUserById(uid: String): LazyRef<User> {
+    override fun getUserById(uid: String): LiveLazyRef<User> {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateUser(user: EditedUser): Task<Void?> {
         TODO("Not yet implemented")
     }
 

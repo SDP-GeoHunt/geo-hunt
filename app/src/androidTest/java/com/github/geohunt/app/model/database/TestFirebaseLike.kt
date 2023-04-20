@@ -29,14 +29,6 @@ class TestFirebaseLike {
 
     private suspend fun getUserLikeList() =
         userRef.child("likes").get().thenMap { snapshot -> snapshot.toMap<Boolean>() }.await()
-    private suspend fun getCounter() =
-        challengeRef.database.getReference("challenges")
-            .child(challengeRef.key!!.substring(0, Location.COARSE_HASH_SIZE))
-            .child(challengeRef.key!!.substring(Location.COARSE_HASH_SIZE))
-            .child("numberOfLikes").get().thenMap {
-                    snapshot -> snapshot.value as Long
-            }.await()
-
     private suspend fun getChallengeLikeList() =
         database.getLikesOf(challengeRef.key!!).await()
 
@@ -69,13 +61,6 @@ class TestFirebaseLike {
     }
 
     @Test
-    fun testLikeIncrementCounter() = runTest {
-        database.insertUserLike(userRef.key!!, challengeRef.key!!)
-
-        assertThat(getCounter(), `is`(1))
-    }
-
-    @Test
     fun testLikeUpdatesLikeList() = runTest {
         database.insertUserLike(userRef.key!!, challengeRef.key!!)
 
@@ -89,7 +74,6 @@ class TestFirebaseLike {
         database.insertUserLike(userRef.key!!, challengeRef.key!!)
 
         assertThat(getUserLikeList(), not(hasEntry(not(challengeRef.key!!), true)))
-        assertThat(getCounter(), `is`(1))
         assertThat(getChallengeLikeList(), not(hasEntry(not(userRef.key!!), true)))
     }
 
@@ -105,8 +89,6 @@ class TestFirebaseLike {
     fun testUnlikeDecrementsCounter() = runTest {
         database.insertUserLike(userRef.key!!, challengeRef.key!!)
         database.removeUserLike(userRef.key!!, challengeRef.key!!)
-
-        assertThat(getCounter(), `is`(0))
     }
 
     @Test
@@ -125,7 +107,6 @@ class TestFirebaseLike {
         database.removeUserLike(userRef.key!!, challengeRef.key!!)
 
         assertThat(getUserLikeList(), not(hasEntry(not(challengeRef.key!!), true)))
-        assertThat(getCounter(), `is`(0))
         assertThat(getChallengeLikeList(), not(hasEntry(not(userRef.key!!), true)))
     }
 }
