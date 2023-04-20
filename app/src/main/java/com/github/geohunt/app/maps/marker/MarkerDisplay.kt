@@ -2,6 +2,7 @@ package com.github.geohunt.app.maps.marker
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
@@ -11,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -57,10 +59,12 @@ fun MarkerDisplay(items: List<Marker>) {
             }
             Image(
                 painter = painterResource(id = R.drawable.marker),
-                contentDescription = "Marker Icon",
+                contentDescription = "Marker Icon for ${marker.title}",
                 modifier = Modifier
                     .size(50.dp)
                     .alpha(if (selectedMarker == marker) 0f else 1f)
+                    // Clickable modifier to make the marker clickable for the tests
+                    .clickable(onClick = {})
             )
         },
 
@@ -69,7 +73,7 @@ fun MarkerDisplay(items: List<Marker>) {
             val clusterSize = cluster.size
 
             Surface(
-                modifier = Modifier.size(determineClusterSize(clusterSize)),
+                modifier = Modifier.size(determineClusterSize(clusterSize)).testTag("Cluster for $clusterSize markers"),
                 shape = CircleShape,
                 color = determineClusterColor(clusterSize),
                 contentColor = Color.Black,
@@ -79,7 +83,6 @@ fun MarkerDisplay(items: List<Marker>) {
                     Text(
                         "%,d".format(clusterSize),
                         fontSize = determineFontSize(clusterSize),
-                        //fontSize = determineFontSize(clusterSize),
                         fontWeight = FontWeight.Black,
                         textAlign = TextAlign.Center,
                         modifier = Modifier

@@ -12,6 +12,8 @@ import java.time.LocalDateTime
 import java.time.Month
 
 private val mockBitmap: Bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+private val epflCoordinates = LatLng(46.51958, 6.56398)
+private var challengeDatabase: List<Marker> = mutableListOf()
 private val mockChallengeDatabase : List<Marker> = listOf<Marker>(
     Marker(
         LatLng(46.51958, 6.56398),
@@ -43,32 +45,33 @@ private val mockChallengeDatabase : List<Marker> = listOf<Marker>(
     ),
 )
 
-@Composable
 fun createListOfMockMarkers(): List<Marker> {
-    val mockChallengeDatabase = remember { mutableStateListOf<Marker>()}
+    val mockChallengeDatabase =  mutableListOf<Marker>()
 
-        //remember { mutableStateListOf<Marker>() }
+    for (i in 1..100) {
+        mockChallengeDatabase.add(Marker(
+            LatLng(46.51958 + i * 0.01, 6.56398 + i * 0.01),
+            "Event $i",
+            "Expires on 1 May 2024 at 19:39",
+            mockBitmap,
+            LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12)
+        )
+        )
 
-    LaunchedEffect(Unit) {
-        for (i in 1..100) {
-            mockChallengeDatabase.add(Marker(
-                LatLng(46.51958 + i * 0.01, 6.56398 + i * 0.01),
-                "Event $i",
-                "Expires on 1 May 2024 at 19:39",
-                mockBitmap,
-                LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12)
-            )
-            )
-        }
     }
 
     return mockChallengeDatabase
 }
 
+fun loadChallenges(markers: List<Marker>){
+    challengeDatabase = markers
+}
+
+
 @Composable
 fun GoogleMapView(
     modifier: Modifier = Modifier,
-    cameraPositionState: CameraPositionState = rememberCameraPositionState(),
+    cameraPosition: CameraPosition = (CameraPosition(epflCoordinates, 9f, 0f, 0f)),
     content: @Composable () -> Unit = {}
 ) {
     val uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
@@ -76,14 +79,11 @@ fun GoogleMapView(
     val mapVisible by remember { mutableStateOf(true) }
 
     if (mapVisible) {
-
         GoogleMap(
             modifier = modifier,
             cameraPositionState = rememberCameraPositionState {
-                position = CameraPosition.fromLatLngZoom(LatLng(46.51958, 6.56398), 15f)
+                position = cameraPosition;
             },
-
-            //cameraPositionState,
             properties = mapProperties,
             uiSettings = uiSettings,
         ) {
