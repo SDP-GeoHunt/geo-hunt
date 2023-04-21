@@ -36,6 +36,7 @@ import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.leaderboard.Leaderboard
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
+import com.github.geohunt.app.ui.components.settings.SettingsPage
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.replaceActivity
 import com.google.android.gms.maps.model.CameraPosition
@@ -60,6 +61,7 @@ enum class Route(val titleStringId: Int, val route: String, val icon: Composable
 
 enum class HiddenRoutes(val route: String) {
     EditProfile("settings/profile"),
+    ApplicationSettings("settings"),
     Leaderboard("leaderboard")
 }
 
@@ -115,7 +117,8 @@ fun NavigationController(
             ProfilePage(
                 openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
                 onLogout = { logout(authenticator, activity) },
-                openLeaderboard = { navController.navigate(HiddenRoutes.Leaderboard.route) }
+                openLeaderboard = { navController.navigate(HiddenRoutes.Leaderboard.route) },
+                openSettings = { navController.navigate(HiddenRoutes.ApplicationSettings.route) }
             )
         }
 
@@ -183,6 +186,11 @@ fun NavigationController(
         // Open leaderboards
         composable(HiddenRoutes.Leaderboard.route) {
             Leaderboard(database)
+        }
+
+        // Open settings
+        composable(HiddenRoutes.ApplicationSettings.route) {
+            SettingsPage()
         }
     }
 }
