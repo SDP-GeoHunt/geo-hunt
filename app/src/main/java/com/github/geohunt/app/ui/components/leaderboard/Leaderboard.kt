@@ -88,8 +88,9 @@ fun Leaderboard(
         LeaderboardList(users = users, Modifier.weight(1.0f))
 
         // Bottom "You" item
+
         LeaderboardListItem(
-            position = 953/* users.indexOf(currentUser)*/, // TODO: Hardcoded data!!
+            position = currentUser.rank,
             user = currentUser,
             isCurrent = true
         )

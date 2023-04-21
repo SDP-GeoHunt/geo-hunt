@@ -50,6 +50,7 @@ class LeaderboardTest {
             override val numberOfFollowers: Int = 10
             override val followList: List<LazyRef<User>> = emptyList()
             override var score: Long = (1500 - pos * 100).toLong()
+            override val rank: Int = pos
             override val isPOIUser: Boolean = false
             override var likes: List<LazyRef<Challenge>> = listOf()
         }
@@ -140,7 +141,7 @@ class LeaderboardTest {
         val you = testRule.onNodeWithText("You", useUnmergedTree = true)
 
         you.assertIsDisplayed()
-        you.onSiblings().filterToOne(hasTextExactly((youIndex + 1).toString())).assertIsDisplayed()
+        you.onSiblings().filterToOne(hasTextExactly((mockUsers[youIndex].rank + 1).toString())).assertIsDisplayed()
         you.onSiblings().filterToOne(hasTextExactly("${mockUsers[youIndex].score.toSuffixedString()} pts")).assertIsDisplayed()
     }
 }

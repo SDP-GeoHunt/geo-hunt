@@ -26,6 +26,7 @@ class FirebaseUser(
     override var score: Long,
     override val followList: List<LazyRef<User>>,
     override var likes: List<LazyRef<Challenge>>, override val isPOIUser: Boolean,
+    override val rank: Int = 0,
 ) : User {
 }
 
@@ -89,7 +90,8 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
             likes = entry.likes.mapNotNull { (id, exists) -> db.getChallengeById(id).takeIf { exists } },
             numberOfFollowers = entry.numberOfFollowers,
             score = entry.score,
-            isPOIUser = false
+            isPOIUser = false,
+            rank = entry.rank
         )
     }
 
@@ -117,5 +119,6 @@ internal data class UserEntry(
     var numberOfFollowers: Int = 0,
     var followList: Map<String, Boolean> = emptyMap(),
     var score: Long = 0,
+    var rank: Int = 999,
     var profilePictureHash: Int? = null,
 )

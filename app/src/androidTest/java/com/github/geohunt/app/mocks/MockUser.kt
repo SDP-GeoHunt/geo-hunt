@@ -15,5 +15,6 @@ class MockUser(
     override val numberOfFollowers: Int = 0,
     override val followList: List<LazyRef<User>> = emptyList(),
     override var score: Long = 1, override val isPOIUser: Boolean = false,
-    override var likes: List<LazyRef<Challenge>> = emptyList()
+    override var likes: List<LazyRef<Challenge>> = emptyList(),
+    override val rank: Int = 0
 ) : User
