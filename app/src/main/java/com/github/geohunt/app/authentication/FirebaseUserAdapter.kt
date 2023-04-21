@@ -52,6 +52,11 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
         get() = throw java.lang.UnsupportedOperationException()
         set(value) { throw java.lang.UnsupportedOperationException() }
 
+
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
+    override val rank: Int
+        get() = TODO("Not yet implemented")
+
     @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
     override var likes: List<LazyRef<Challenge>>
         get() = TODO("Not yet implemented (need database)")
