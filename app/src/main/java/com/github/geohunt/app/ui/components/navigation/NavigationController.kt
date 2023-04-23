@@ -36,6 +36,8 @@ import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.leaderboard.Leaderboard
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
+import com.github.geohunt.app.ui.components.settings.AppSettingsPage
+import com.github.geohunt.app.ui.components.settings.PrivacySettingsPage
 import com.github.geohunt.app.ui.components.settings.SettingsPage
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.replaceActivity
@@ -44,7 +46,11 @@ import com.google.android.gms.maps.model.LatLng
 
 typealias ComposableFun = @Composable () -> Unit
 
-enum class Route(val titleStringId: Int, val route: String, val icon: ComposableFun) {
+interface Route {
+    val route: String
+}
+
+enum class VisibleRoute(val titleStringId: Int, override val route: String, val icon: ComposableFun): Route {
 
     Home(R.string.navigation_home, "home", { Icon(Icons.Sharp.Home, null) }),
     Explore(R.string.navigation_explore, "explore", { Icon(Icons.Sharp.Search, null) }),
@@ -59,9 +65,11 @@ enum class Route(val titleStringId: Int, val route: String, val icon: Composable
     Profile(R.string.navigation_profile, "profile", { Icon(Icons.Sharp.Person, null) })
 }
 
-enum class HiddenRoutes(val route: String) {
+enum class HiddenRoute(override val route: String): Route {
     EditProfile("settings/profile"),
-    ApplicationSettings("settings"),
+    Settings("settings"),
+    AppSettings("settings/app"),
+    PrivacySettings("settings/privacy"),
     Leaderboard("leaderboard")
 }
 
@@ -75,10 +83,10 @@ fun NavigationController(
     val authenticator = Authenticator.authInstance.get()
     val activity: ComponentActivity = LocalContext.current.findActivity() as ComponentActivity
 
-    NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
-        composable(Route.Home.route) {
+    NavHost(navController, startDestination = VisibleRoute.Home.route, modifier = modifier) {
+        composable(VisibleRoute.Home.route) {
         }
-        composable(Route.Explore.route) {
+        composable(VisibleRoute.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
             val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
             GoogleMapDisplay(
@@ -86,7 +94,7 @@ fun NavigationController(
                 cameraPosition = epflCameraPosition
             )
         }
-        composable(Route.Create.route) {
+        composable(VisibleRoute.Create.route) {
             CreateNewChallenge(
                 onChallengeCreated = { challenge ->
                     navController.popBackStack()
@@ -104,29 +112,29 @@ fun NavigationController(
             )
         }
 
-        composable(Route.ActiveHunts.route) {
+        composable(VisibleRoute.ActiveHunts.route) {
             ActiveHunts({
-                navController.navigate(Route.Explore.route)
+                navController.navigate(VisibleRoute.Explore.route)
             }) { cid ->
                 navController.navigate("challenge-view/$cid")
             }
         }
 
         // Profile
-        composable(Route.Profile.route) {
+        composable(VisibleRoute.Profile.route) {
             ProfilePage(
-                openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
+                openProfileEdit = { navController.navigate(HiddenRoute.EditProfile.route) },
                 onLogout = { logout(authenticator, activity) },
-                openLeaderboard = { navController.navigate(HiddenRoutes.Leaderboard.route) },
-                openSettings = { navController.navigate(HiddenRoutes.ApplicationSettings.route) }
+                openLeaderboard = { navController.navigate(HiddenRoute.Leaderboard.route) },
+                openSettings = { navController.navigate(HiddenRoute.Settings.route) }
             )
         }
 
-        composable("${Route.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+        composable("${VisibleRoute.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
             it.arguments?.getString("userId")?.let { userId -> ProfilePage(id = userId, database = database) }
         }
 
-        composable(HiddenRoutes.EditProfile.route) {
+        composable(HiddenRoute.EditProfile.route) {
             ProfileEditPage(
                 onBackButton = { navController.popBackStack() }
             )
@@ -184,13 +192,21 @@ fun NavigationController(
         }
 
         // Open leaderboards
-        composable(HiddenRoutes.Leaderboard.route) {
+        composable(HiddenRoute.Leaderboard.route) {
             Leaderboard(database)
         }
 
         // Open settings
-        composable(HiddenRoutes.ApplicationSettings.route) {
-            SettingsPage()
+        composable(HiddenRoute.Settings.route) {
+            SettingsPage({ navController.navigate(it.route)}) { navController.popBackStack() }
+        }
+
+        composable(HiddenRoute.AppSettings.route) {
+            AppSettingsPage(onBack = { navController.popBackStack() })
+        }
+
+        composable(HiddenRoute.PrivacySettings.route) {
+            PrivacySettingsPage(onBack = { navController.popBackStack() })
         }
     }
 }

@@ -25,7 +25,7 @@ fun FlatLongButton(
     text: String,
     onClick: () -> Any,
     modifier: Modifier = Modifier,
-    textColor: Color = MaterialTheme.typography.bodyMedium.color
+    textColor: Color = MaterialTheme.colorScheme.onBackground
 ) {
     val surfaceModifier = modifier
         .padding(start = 8.dp, top = 8.dp, end = 8.dp)
@@ -39,7 +39,7 @@ fun FlatLongButton(
             onClick = { onClick() },
             modifier = Modifier.fillMaxWidth(),
             colors = run {
-                ButtonDefaults.buttonColors(containerColor = Color.Unspecified, contentColor = textColor)
+                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background, contentColor = textColor)
             }) {
             Row(
                 horizontalArrangement = Arrangement.Start,

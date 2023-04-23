@@ -20,7 +20,7 @@ fun NavigationBar(navController: NavController) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination
 
-        for (route in Route.values()) {
+        for (route in VisibleRoute.values()) {
             BottomNavigationItem(
                 selected = currentRoute?.hierarchy?.any { it.route == route.route } == true,
                 modifier = Modifier.testTag("navbtn-" + route.route),
