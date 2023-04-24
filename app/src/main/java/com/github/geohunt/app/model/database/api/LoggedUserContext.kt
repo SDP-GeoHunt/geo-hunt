@@ -83,6 +83,14 @@ interface LoggedUserContext {
                         expirationDate: LocalDateTime ?= null,
                         description: String ?= null) : Task<Challenge>
 
+
+    /**
+     * Changes the visibility of the user's profile.
+     *
+     * @param profileVisibility the profile visibility
+     */
+    fun setProfileVisibility(profileVisibility: ProfileVisibility): Task<Void>
+
     /**
      * Update the currently logged user with according data
      *

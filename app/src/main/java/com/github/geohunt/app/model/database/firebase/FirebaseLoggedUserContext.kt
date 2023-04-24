@@ -10,6 +10,7 @@ import com.github.geohunt.app.model.database.api.*
 import com.github.geohunt.app.model.database.firebase.internal.doFollow
 import com.github.geohunt.app.model.database.firebase.internal.doJoinHunt
 import com.github.geohunt.app.model.database.firebase.internal.doLike
+import com.github.geohunt.app.model.database.firebase.internal.doUpdateProfileVisibility
 import com.github.geohunt.app.model.database.firebase.internal.doUpdateUser
 import com.github.geohunt.app.utility.DateUtils
 import com.github.geohunt.app.utility.convertTo
@@ -152,6 +153,10 @@ internal class FirebaseLoggedUserContext(
 
     override fun updateLoggedUser(editedUser: EditedUser): Task<Nothing?> {
         return doUpdateUser(database, loggedUserRef.id, editedUser)
+    }
+
+    override fun setProfileVisibility(profileVisibility: ProfileVisibility): Task<Void> {
+        return doUpdateProfileVisibility(database, loggedUserRef.id, profileVisibility)
     }
 
     override fun Challenge.submitClaim(thumbnail: Bitmap, location: Location): Task<Claim> {

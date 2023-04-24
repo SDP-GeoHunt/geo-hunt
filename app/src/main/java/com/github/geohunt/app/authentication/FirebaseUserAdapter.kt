@@ -3,6 +3,7 @@ package com.github.geohunt.app.authentication
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.ProfileVisibility
 import com.github.geohunt.app.model.database.api.User
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -60,6 +61,10 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
     override var likes: List<LazyRef<Challenge>>
         get() = TODO("Not yet implemented (need database)")
         set(value) {}
+
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
+    override val profileVisibility: ProfileVisibility
+        get() = throw java.lang.UnsupportedOperationException()
 
     override val isPOIUser : Boolean = false
 }

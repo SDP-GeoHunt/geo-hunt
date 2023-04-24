@@ -74,4 +74,13 @@ interface User {
      * The list of challenges liked by this user
      */
     var likes: List<LazyRef<Challenge>>
+
+    /**
+     * The visibility of the profile
+     */
+    val profileVisibility: ProfileVisibility
+}
+
+enum class ProfileVisibility {
+    PUBLIC, PRIVATE, FOLLOW_ONLY
 }

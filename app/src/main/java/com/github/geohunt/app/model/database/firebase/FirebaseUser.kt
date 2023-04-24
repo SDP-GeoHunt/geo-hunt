@@ -3,6 +3,7 @@ package com.github.geohunt.app.model.database.firebase
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.*
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.ProfileVisibility
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.model.database.api.UserNotFoundException
 import com.github.geohunt.app.utility.thenMap
@@ -27,6 +28,7 @@ class FirebaseUser(
     override val followList: List<LazyRef<User>>,
     override var likes: List<LazyRef<Challenge>>, override val isPOIUser: Boolean,
     override val rank: Int = 0,
+    override val profileVisibility: ProfileVisibility = ProfileVisibility.PUBLIC
 ) : User {
 }
 
@@ -91,7 +93,8 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
             numberOfFollowers = entry.numberOfFollowers,
             score = entry.score,
             isPOIUser = false,
-            rank = entry.rank
+            rank = entry.rank,
+            profileVisibility = ProfileVisibility.values()[entry.profileVisibility]
         )
     }
 
@@ -121,4 +124,5 @@ internal data class UserEntry(
     var score: Long = 0,
     var rank: Int = 999,
     var profilePictureHash: Int? = null,
+    var profileVisibility: Int = 0
 )

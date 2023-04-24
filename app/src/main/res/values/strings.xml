@@ -61,4 +61,20 @@
 
     <string name="app_settings">App settings</string>
     <string name="privacy_settings">Privacy settings</string>
+
+    <string name="theme">Theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system">System</string>
+    <string name="theme_desc">The theme used by the application</string>
+
+    <!-- profile visibility -->
+    <string name="profile_visibility">Profile visibility</string>
+    <string name="public_word">Public</string>
+    <string name="public_desc">Your profile will be visible to everyone.</string>
+    <string name="follow_only">Follow only</string>
+    <string name="follow_only_desc">Your profile will be visible by users that you follow.</string>
+    <string name="private_word">Private</string>
+    <string name="private_desc">Your profile will be visible only by you.</string>
+    <string name="update_profile_visibility_failed">Failed to update profile visibility.</string>
 </resources>
