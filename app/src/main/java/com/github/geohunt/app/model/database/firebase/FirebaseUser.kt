@@ -8,7 +8,7 @@ import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.LiveLazyRefListener
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.model.database.api.UserNotFoundException
+import com.github.geohunt.app.data.exceptions.UserNotFoundException
 import com.github.geohunt.app.utility.thenMap
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
