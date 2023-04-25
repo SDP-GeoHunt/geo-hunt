@@ -17,9 +17,14 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
+import com.github.geohunt.app.ui.components.challenge.difficultyToColor
+import com.github.geohunt.app.ui.theme.difficultyEasy
+import com.github.geohunt.app.ui.theme.difficultyHard
+import com.github.geohunt.app.ui.theme.difficultyMedium
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -157,5 +162,15 @@ class ChallengeViewTest {
     fun testChallengeViewWithoutDescription()
     {
         testChallengeView(false)
+    }
+
+    @Test
+    fun testCorrectDifficultyColorIsPicked() {
+        val difficulties = Challenge.Difficulty.values().toList()
+        val colors = listOf(difficultyEasy, difficultyMedium, difficultyHard)
+
+        for ((difficulty, expected) in difficulties.zip(colors)) {
+            Assert.assertEquals(expected, difficultyToColor(difficulty))
+        }
     }
 }
