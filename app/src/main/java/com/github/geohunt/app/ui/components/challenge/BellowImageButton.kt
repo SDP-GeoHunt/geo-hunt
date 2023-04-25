@@ -1,9 +1,9 @@
 package com.github.geohunt.app.ui.components.challenge
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -23,14 +23,18 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.LabelledIcon
-import com.github.geohunt.app.ui.rememberLazyRef
+import com.github.geohunt.app.model.database.api.Challenge.Difficulty.*
+import com.github.geohunt.app.ui.theme.difficultyEasy
+import com.github.geohunt.app.ui.theme.difficultyHard
+import com.github.geohunt.app.ui.theme.difficultyMedium
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun BellowImageButtons(challenge: Challenge, database: Database, user: User) {
     Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(15.dp, 5.dp)) {
+            .fillMaxWidth()
+            .padding(15.dp, 5.dp),
+        verticalAlignment = Alignment.CenterVertically) {
         val fontSize = 18.sp
         val iconSize = 22.dp
 
@@ -59,6 +63,12 @@ internal fun BellowImageButtons(challenge: Challenge, database: Database, user: 
             tint = Color(R.color.md_theme_light_tertiary),
             contentDescription = "Scores", fontSize = fontSize, iconSize = iconSize
         )
+
+        Spacer(modifier = Modifier
+                .width(22.dp)
+                .weight(0.2f))
+
+        DifficultyCircle(challenge.difficulty)
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -121,5 +131,18 @@ internal fun LikeButton(challenge: Challenge, database: Database, user: User, fo
                 iconSize = iconSize,
             )
         }
+    }
+}
+
+@Composable
+fun DifficultyCircle(difficulty: Challenge.Difficulty) {
+    Canvas(modifier = Modifier.size(15.dp), onDraw = { drawCircle(difficultyToColor(difficulty)) })
+}
+
+fun difficultyToColor(difficulty: Challenge.Difficulty): Color {
+    return when(difficulty) {
+        EASY -> difficultyEasy
+        MEDIUM -> difficultyMedium
+        HARD -> difficultyHard
     }
 }

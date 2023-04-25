@@ -8,6 +8,9 @@ val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 
 val geoHuntRed = Color(0xFFFF3D00)
+val difficultyEasy = Color(0xFF46C403)
+val difficultyMedium = Color(0xFFFF8C00)
+val difficultyHard = Color(0xFFF83838)
 val homeScreenBackground = Color(0xFFE0E0E0)
 val whiteBackground = Color(0xFFFFFFFF)
 
