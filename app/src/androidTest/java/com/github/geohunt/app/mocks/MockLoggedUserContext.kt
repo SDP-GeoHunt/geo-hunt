@@ -63,6 +63,10 @@ abstract class MockLoggedUserContext : LoggedUserContext {
         TODO("Not yet implemented")
     }
 
+    override fun setProfileVisibility(profileVisibility: ProfileVisibility): Task<Void> {
+        TODO("Not yet implemented")
+    }
+
     override fun Challenge.submitClaim(thumbnail: Bitmap, location: Location): Task<Claim> {
         TODO("Not yet implemented")
     }

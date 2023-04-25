@@ -3,6 +3,7 @@ package com.github.geohunt.app.mocks
 import android.graphics.Bitmap
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.ProfileVisibility
 import com.github.geohunt.app.model.database.api.User
 
 class MockUser(
@@ -17,5 +18,6 @@ class MockUser(
     override var score: Long = 1,
     override var likes: List<LazyRef<Challenge>> = listOf(),
     override val isPOIUser: Boolean = false,
-    override val rank: Int = 0
+    override val rank: Int = 0,
+    override val profileVisibility: ProfileVisibility = ProfileVisibility.PUBLIC
 ) : User

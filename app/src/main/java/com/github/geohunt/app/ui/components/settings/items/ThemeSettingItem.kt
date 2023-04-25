@@ -6,7 +6,7 @@ import com.github.geohunt.app.settings.SettingsStore
 import com.github.geohunt.app.settings.ThemeSetting
 import com.github.geohunt.app.ui.components.settings.DropdownSettingsItem
 import com.github.geohunt.app.ui.components.utils.ListDropdownMenu
-import com.github.geohunt.app.utility.rememberSetting
+import com.github.geohunt.app.ui.rememberSetting
 import com.github.geohunt.app.R
 
 @Composable

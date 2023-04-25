@@ -8,7 +8,7 @@ import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
 import com.github.geohunt.app.settings.SettingsStore
 import com.github.geohunt.app.settings.ThemeSetting
-import com.github.geohunt.app.utility.rememberSetting
+import com.github.geohunt.app.ui.rememberSetting
 
 
 private val LightColors = lightColors(

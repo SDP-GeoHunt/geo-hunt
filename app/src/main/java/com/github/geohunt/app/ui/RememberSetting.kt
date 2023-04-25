@@ -1,9 +1,7 @@
-package com.github.geohunt.app.utility
+package com.github.geohunt.app.ui
 
 import androidx.compose.runtime.*
 import com.github.geohunt.app.settings.Setting
-import kotlinx.coroutines.flow.Flow
-import kotlin.reflect.KSuspendFunction1
 
 @Composable
 fun <T> rememberSetting(s: Setting<T>, readOnly: Boolean = true): MutableState<T> {
@@ -11,12 +9,13 @@ fun <T> rememberSetting(s: Setting<T>, readOnly: Boolean = true): MutableState<T
     var isCollected by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        s.flow.collect { state.value = it; isCollected = true }
+        s.flow.collect { state.value = it }
     }
 
     if (!readOnly) {
         LaunchedEffect(state.value) {
             if (isCollected) s.setter(state.value)
+            else isCollected = true
         }
     }
 

@@ -11,6 +11,7 @@ import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.mocks.MockProfilePicture
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.database.api.ProfileVisibility
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.leaderboard.Leaderboard
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
@@ -53,6 +54,7 @@ class LeaderboardTest {
             override val rank: Int = pos
             override val isPOIUser: Boolean = false
             override var likes: List<LazyRef<Challenge>> = listOf()
+            override val profileVisibility: ProfileVisibility = ProfileVisibility.PUBLIC
         }
     }
 
