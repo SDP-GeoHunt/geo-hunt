@@ -1,9 +1,6 @@
 package com.github.geohunt.app.ui.components
-import androidx.compose.runtime.Composable
 
 import android.Manifest
-import android.R.style
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -11,11 +8,22 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -33,11 +41,12 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.sensor.rememberLocationRequestState
 import com.github.geohunt.app.sensor.rememberPermissionsState
 import com.github.geohunt.app.ui.theme.Typography
-import com.github.geohunt.app.utility.*
+import com.github.geohunt.app.utility.BitmapUtils
+import com.github.geohunt.app.utility.createImageFile
+import com.github.geohunt.app.utility.findActivity
+import com.github.geohunt.app.utility.thenDo
+import com.github.geohunt.app.utility.toCompletableFuture
 import kotlinx.coroutines.tasks.asTask
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun SubmitClaimForm(

@@ -42,6 +42,6 @@ interface PointCalculator {
         /**
          * The maximum amount of points possible
          */
-        val MAX_POINTS = 5000.0
+        const val MAX_POINTS = 5000.0
     }
 }

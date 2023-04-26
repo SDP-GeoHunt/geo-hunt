@@ -1,29 +1,16 @@
 package com.github.geohunt.app
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.ui.screens.login.LoginScreen
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
-import com.github.geohunt.app.ui.theme.md_theme_light_primary
-import com.github.geohunt.app.ui.theme.seed
 import com.github.geohunt.app.utility.replaceActivity
 
 class LoginActivity : ComponentActivity() {

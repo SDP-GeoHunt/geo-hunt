@@ -2,10 +2,7 @@ package com.github.geohunt.app.model.database
 
 import com.github.geohunt.app.model.database.firebase.FirebaseSingletons
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
 
 object FirebaseEmulator {
     fun init() {

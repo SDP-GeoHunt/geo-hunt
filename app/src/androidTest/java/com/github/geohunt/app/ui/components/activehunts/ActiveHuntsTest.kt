@@ -68,7 +68,7 @@ class ActiveHuntsTest {
             get() = TODO("Not yet implemented")
         override val claims: List<LazyRef<Claim>>
             get() = TODO("Not yet implemented")
-        override val description: String?
+        override val description: String
             get() = TODO("Not yet implemented")
         override val difficulty: Challenge.Difficulty
             get() = TODO("Not yet implemented")

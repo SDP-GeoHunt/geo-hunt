@@ -3,7 +3,7 @@ package com.github.geohunt.app.data.network.firebase.models
 import com.github.geohunt.app.model.database.api.Location
 
 /**
- * Firebase JSON representation of a [com.github.geohunt.app.data.model.Challenge].
+ * Firebase JSON representation of a [com.github.geohunt.app.model.Challenge].
  *
  * Claims are stored in a separate table, and can be fetched using the
  * [com.github.geohunt.app.data.repository.ChallengeRepository.getClaims] method.

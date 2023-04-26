@@ -1,7 +1,5 @@
 package com.github.geohunt.app.data.network.firebase.models
 
-import androidx.annotation.IntRange
-
 /**
  * Firebase JSON representation of a GeoHunt user.
  *

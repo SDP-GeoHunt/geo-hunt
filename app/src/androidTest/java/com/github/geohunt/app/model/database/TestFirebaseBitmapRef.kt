@@ -1,6 +1,5 @@
 package com.github.geohunt.app.model.database
 
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.github.geohunt.app.model.database.api.Location

@@ -2,7 +2,6 @@ package com.github.geohunt.app.model.database
 
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.firebase.FirebaseDatabase
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.thenMap

@@ -7,7 +7,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performGesture
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.navigation.compose.ComposeNavigator
@@ -21,7 +20,6 @@ import com.github.geohunt.app.mocks.MockLazyRef
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 import com.google.android.gms.tasks.Tasks
-import okhttp3.internal.wait
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
