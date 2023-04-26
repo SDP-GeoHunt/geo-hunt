@@ -1,5 +1,6 @@
 package com.github.geohunt.app.data.repository
 
+import androidx.activity.ComponentActivity
 import com.firebase.ui.auth.IdpResponse
 import com.github.geohunt.app.data.exceptions.UserNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
@@ -55,6 +56,18 @@ class UserRepository(
                     .setValue(newEntry)
                     .await()
             }
+        }
+    }
+
+    /**
+     * Authenticates the user, and creates a user on the database if the user is new to the app.
+     *
+     * If the user is already authenticated, this method is a nop.
+     */
+    suspend fun authenticate(activity: ComponentActivity) {
+        if (!authRepository.isLoggedIn()) {
+            val authResponse = authRepository.promptAuthentication(activity)
+            authResponse?.let { createUserIfNew(it) }
         }
     }
 

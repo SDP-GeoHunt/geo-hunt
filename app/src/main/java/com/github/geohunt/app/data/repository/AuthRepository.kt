@@ -13,6 +13,7 @@ import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.exceptions.auth.AuthenticationCancelledException
 import com.github.geohunt.app.data.exceptions.auth.AuthenticationFailureException
+import com.github.geohunt.app.data.exceptions.auth.UserAlreadyAuthenticatedException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.model.User
 import com.google.firebase.auth.FirebaseAuth
@@ -33,7 +34,6 @@ import kotlin.coroutines.suspendCoroutine
  * repository for easier mocking.
  */
 class AuthRepository(
-    private val userRepository: UserRepository,
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val authUi: AuthUI = AuthUI.getInstance()
 ) {
@@ -56,7 +56,7 @@ class AuthRepository(
      *         undetermined exceptions.
      */
     @Throws(FirebaseUiException::class, AuthenticationCancelledException::class, AuthenticationFailureException::class)
-    private suspend fun launchAuthActivity(activity: ComponentActivity): IdpResponse {
+    private suspend fun launchAuthPrompt(activity: ComponentActivity): IdpResponse {
         return suspendCoroutine { continuation ->
             // Listen for the activity result
             val signInLauncher = activity.registerForActivityResult(
@@ -88,21 +88,20 @@ class AuthRepository(
      * Tries authenticating the user by launching a prompt. The user may choose its preferred
      * authentication methods among the given [providers]. If the authentication fails, returns null.
      *
-     * If the user is already logged in, this method simply returns the current user.
+     * If the user is already logged in, this method throws an [UserAlreadyAuthenticatedException].
      *
-     * @see [launchAuthActivity]
+     * @see [launchAuthPrompt]
      */
-    suspend fun authenticate(activity: ComponentActivity): User? {
+    @Throws(UserAlreadyAuthenticatedException::class)
+    suspend fun promptAuthentication(activity: ComponentActivity): IdpResponse? {
         if (!isLoggedIn()) {
-            try {
-                val authResponse = launchAuthActivity(activity)
-                userRepository.createUserIfNew(authResponse)
+            return try {
+                launchAuthPrompt(activity)
             } catch (_: Exception) {
-                return null
+                null
             }
         }
-
-        return getCurrentUser()
+        throw UserAlreadyAuthenticatedException()
     }
 
     /**

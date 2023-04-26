@@ -1,8 +1,9 @@
-package com.github.geohunt.app.ui
+package com.github.geohunt.app.ui.screens.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.geohunt.app.data.network.NetworkMonitor
+import com.github.geohunt.app.data.repository.AuthRepository
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,9 @@ import kotlinx.coroutines.launch
  * For specific screen states, new view models should be created and bound to the navigation entries'
  * top-level composables in [com.github.geohunt.app.ui.components.navigation.NavigationController].
  */
-class MainViewModel : ViewModel() {
+class MainViewModel(
+    val auth: AuthRepository
+) : ViewModel() {
     private val networkMonitor = NetworkMonitor(Firebase.database)
     private val _isConnected = MutableStateFlow(true)
 

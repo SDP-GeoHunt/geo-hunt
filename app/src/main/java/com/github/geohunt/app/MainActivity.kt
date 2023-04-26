@@ -1,35 +1,38 @@
 package com.github.geohunt.app
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Surface
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.unit.Dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.ui.MainViewModel
-import com.github.geohunt.app.ui.components.navigation.NavigationBar
-import com.github.geohunt.app.ui.components.navigation.NavigationController
+import com.github.geohunt.app.ui.screens.main.MainScreen
+import com.github.geohunt.app.ui.screens.main.MainViewModel
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 
+/**
+ * Main activity launched on application start.
+ *
+ * The activity will check that the user is properly logged in before accessing the app.
+ * If the user is not logged, he is redirected to [LoginActivity].
+ */
 class MainActivity : ComponentActivity() {
 
     private lateinit var database : Database
 
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Ask for login if the user is not logged in
+        if (!viewModel.auth.isLoggedIn()) {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
 
         database = Database.createDatabaseHandle(this)
 
@@ -40,39 +43,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MainComposable(database)
+                    MainScreen(database, viewModel)
                 }
             }
         }
-    }
-}
-
-@Composable
-fun MainComposable(database: Database, viewModel: MainViewModel = viewModel()) {
-    val navController = rememberNavController()
-    val scaffoldState = rememberScaffoldState()
-
-    val isConnected = viewModel.isConnected.collectAsStateWithLifecycle()
-
-    LaunchedEffect(isConnected.value) {
-        if (!isConnected.value) {
-            scaffoldState.snackbarHostState.showSnackbar(
-                message = "Could not connect to the Internet.",
-                duration = SnackbarDuration.Short
-            )
-        }
-    }
-
-    Scaffold(
-        bottomBar = {
-            Surface(modifier = Modifier.shadow(Dp(9f))) {
-                NavigationBar(navController = navController)
-            }
-        },
-        scaffoldState = scaffoldState
-    ) { padding ->
-        NavigationController(navController = navController,
-            database = database,
-            Modifier.padding(padding))
     }
 }
