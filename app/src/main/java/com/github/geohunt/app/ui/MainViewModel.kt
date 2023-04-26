@@ -2,7 +2,7 @@ package com.github.geohunt.app.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.geohunt.app.model.database.NetworkMonitor
+import com.github.geohunt.app.data.network.NetworkMonitor
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow

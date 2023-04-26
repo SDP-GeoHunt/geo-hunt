@@ -1,4 +1,4 @@
-package com.github.geohunt.app.model.database
+package com.github.geohunt.app.data.network
 
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.snapshots
