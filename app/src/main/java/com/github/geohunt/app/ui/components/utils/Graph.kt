@@ -43,7 +43,7 @@ private fun computeOffsets(
         height: Float
 ): List<Offset> {
     val deltaX = xTop - xBottom
-    val offsetX = x.map { width * ((it - xTop).toFloat() / deltaX) }
+    val offsetX = x.map { width * ((it - xBottom).toFloat() / deltaX) }
 
     val deltaY = yTop - yBottom
     //Note that the origin of the canvas is on the top left and our system's origin on the bottom left
