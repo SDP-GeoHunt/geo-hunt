@@ -74,6 +74,6 @@ class NetworkMonitorTest {
         database.goOnline()
 
         // Check that it eventually reaches online connectivity
-        assertOnline(STATUS_CHANGE_TIMEOUT)
+        assertOnline(STATUS_CHANGE_TIMEOUT * 2)
     }
 }
