@@ -38,20 +38,8 @@
                 android:resource="@xml/path_provider" />
         </provider>
 
-        <!--
-          Make the login activity invisible in the navigation entries so that users can't go back
-          See https://stackoverflow.com/questions/5859095/what-is-the-correct-way-of-creating-a-login-screen-activity-in-android
-          -->
         <activity
             android:name=".LoginActivity"
-            android:exported="true"
-            android:label="@string/title_activity_login"
-            android:noHistory="true"
-            android:excludeFromRecents="true"
-            android:theme="@style/GeoHunt" />
-
-        <activity
-            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/GeoHunt">
 
@@ -60,5 +48,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/GeoHunt" />
     </application>
 </manifest>

@@ -23,7 +23,7 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.GoBackBtn
-import com.github.geohunt.app.ui.homescreen.HorizontalDivider
+import com.github.geohunt.app.ui.screens.home.HorizontalDivider
 
 /**
  * @brief Composable function that displays a specific challenge including details

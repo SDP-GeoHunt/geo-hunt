@@ -1,7 +1,5 @@
 package com.github.geohunt.app.ui.screens.login
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,14 +17,13 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.R
 import com.github.geohunt.app.ui.theme.md_theme_light_primary
 import com.github.geohunt.app.ui.theme.seed
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-fun LoginScreen(context: Context) {
+fun LoginScreen(onSignInClick: () -> Unit) {
     Column(
         modifier = Modifier.padding(20.dp),
         verticalArrangement = Arrangement.Center,
@@ -42,11 +39,7 @@ fun LoginScreen(context: Context) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Button(modifier = Modifier.testTag("signin-btn"), onClick = {
-            val intent = Intent(context, LoginActivity::class.java)
-            intent.putExtra("login", 1)
-            context.startActivity(intent)
-        }) {
+        Button(modifier = Modifier.testTag("signin-btn"), onClick = onSignInClick) {
             Text(stringResource(id = R.string.sign_in))
         }
     }

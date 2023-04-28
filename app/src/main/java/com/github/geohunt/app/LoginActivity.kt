@@ -1,48 +1,60 @@
 package com.github.geohunt.app
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.ui.Modifier
-import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.ui.screens.GeoHuntScreen
 import com.github.geohunt.app.ui.screens.login.LoginScreen
-import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import com.github.geohunt.app.ui.screens.login.LoginViewModel
+import com.github.geohunt.app.utility.replaceActivity
 
 /**
- * Login activity.
+ * Main entry point of the application.
+ *
+ * If users are not logged in, they are asked to do by clicking on the "Sign in" button, which
+ * launches an authentication prompt.
+ *
+ * If they are already logged in, they are simply redirected to the [MainActivity].
+ *
+ * @see [LoginViewModel.login]
  */
 class LoginActivity : ComponentActivity() {
+    private lateinit var container: AppContainer
+    private lateinit var viewModel: LoginViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val authenticator: Authenticator = Authenticator.authInstance.get()
+        container = AppContainer.getInstance(application)
+        viewModel = LoginViewModel(container.auth, container.user)
 
-        authenticator.user?.let { loggedIn() }
-
-        if (intent.hasExtra("login")) {
-            authenticator.authenticate(this@LoginActivity).thenAccept {
-                it?.let { loggedIn() }
+        val loginLauncher = viewModel.registerLoginPrompt(
+            this@LoginActivity,
+            onSuccess = { response ->
+                viewModel.acceptResponse(response, andThen = { onSuccessfulLogin() })
+            },
+            onFailure = {
+                Log.e("auth", "Authentication failed with error $it")
             }
+        )
+
+        // Check that the user is not already logged in
+        if (viewModel.isLoggedIn()) {
+            onSuccessfulLogin()
         }
 
         setContent {
-            GeoHuntTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    LoginScreen(context = this@LoginActivity)
-                }
+            GeoHuntScreen {
+                LoginScreen(onSignInClick = { viewModel.launchLoginPrompt(loginLauncher) })
             }
         }
     }
 
-    private fun loggedIn() {
-        // Prevent the user to go back to the login activity
-        finish()
+    private fun onSuccessfulLogin() {
+        // Prevent the user from going back to the login activity by destroying it
+        replaceActivity(Intent(this@LoginActivity, MainActivity::class.java))
     }
 }

@@ -9,7 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
@@ -33,7 +34,7 @@ fun MainScreen(database: Database, viewModel: MainViewModel) {
 
     Scaffold(
         bottomBar = {
-            Surface(modifier = Modifier.shadow(Dp(9f))) {
+            Surface(modifier = Modifier.shadow(9.dp)) {
                 NavigationBar(navController = navController)
             }
         },
@@ -42,7 +43,7 @@ fun MainScreen(database: Database, viewModel: MainViewModel) {
         NavigationController(
             navController = navController,
             database = database,
-            Modifier.padding(padding)
+            modifier = Modifier.padding(padding)
         )
     }
 }

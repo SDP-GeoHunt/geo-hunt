@@ -4,37 +4,39 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.screens.main.MainScreen
 import com.github.geohunt.app.ui.screens.main.MainViewModel
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 
 /**
- * Main activity launched on application start.
+ * Main activity.
  *
  * The activity will check that the user is properly logged in before accessing the app.
  * If the user is not logged, he is redirected to [LoginActivity].
  */
 class MainActivity : ComponentActivity() {
+    private lateinit var database: Database
 
-    private lateinit var database : Database
-
-    private val viewModel: MainViewModel by viewModels()
+    private lateinit var container: AppContainer
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        database = Database.createDatabaseHandle(this)
+        container = AppContainer.getInstance(application)
+        viewModel = MainViewModel(container.auth)
+
         // Ask for login if the user is not logged in
-        if (!viewModel.auth.isLoggedIn()) {
+        if (!viewModel.isLoggedIn()) {
             startActivity(Intent(this, LoginActivity::class.java))
         }
-
-        database = Database.createDatabaseHandle(this)
 
         setContent {
             GeoHuntTheme {
