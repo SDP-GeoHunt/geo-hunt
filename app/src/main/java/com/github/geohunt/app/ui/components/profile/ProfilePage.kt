@@ -34,13 +34,15 @@ fun ProfilePage(
     database: Database,
     openProfileEdit: OptionalCallback = null,
     onLogout: OptionalCallback = null,
-    openLeaderboard: OptionalCallback = null
+    openLeaderboard: OptionalCallback = null,
+    openSettings: OptionalCallback = null
 ) {
     ProfilePage(
         user = database.getUserById(id),
         openProfileEdit = openProfileEdit,
         onLogout = onLogout,
-        openLeaderboard = openLeaderboard
+        openLeaderboard = openLeaderboard,
+        openSettings = openSettings
     )
 }
 
@@ -55,7 +57,8 @@ fun ProfilePage(
     user: LiveLazyRef<User>,
     openProfileEdit: OptionalCallback = null,
     openLeaderboard: OptionalCallback = null,
-    onLogout: OptionalCallback = null
+    onLogout: OptionalCallback = null,
+    openSettings: OptionalCallback = null
 ) {
     val lazyRefRemember = rememberLiveLazyRef { user }
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
@@ -73,7 +76,7 @@ fun ProfilePage(
                 drawerState = drawerState,
                 drawerContent = {
                     if (isMoreOptionsAvailable)
-                        SettingsDrawer(openProfileEdit, openLeaderboard, onLogout) {
+                        SettingsDrawer(openProfileEdit, openLeaderboard, onLogout, openSettings) {
                             coroutineScope.async { drawerState.close() }
                         }
                 }

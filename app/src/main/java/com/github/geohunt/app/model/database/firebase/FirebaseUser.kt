@@ -9,6 +9,7 @@ import com.github.geohunt.app.model.LiveLazyRefListener
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.data.exceptions.UserNotFoundException
+import com.github.geohunt.app.model.database.api.ProfileVisibility
 import com.github.geohunt.app.utility.thenMap
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
@@ -31,6 +32,7 @@ class FirebaseUser(
     override var likes: List<LazyRef<Challenge>>,
     override var score: Long,
     override val isPOIUser: Boolean = false,
+    override val profileVisibility: ProfileVisibility
 ) : User {
 
 }
@@ -52,7 +54,8 @@ internal class FirebasePOIUserRef(override val id: String) :
             score = 0,
             isPOIUser = true,
             likes = listOf(),
-            profilePictureHash = null
+            profilePictureHash = null,
+            profileVisibility = ProfileVisibility.PRIVATE
         ))
     }
 }
@@ -93,7 +96,8 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
             numberOfFollowers = entry.numberOfFollowers,
             follows = entry.follows.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
             score = entry.score,
-            likes = entry.likes.mapNotNull { (id, doesLike) -> db.getChallengeById(id).takeIf { doesLike } }
+            likes = entry.likes.mapNotNull { (id, doesLike) -> db.getChallengeById(id).takeIf { doesLike } },
+            profileVisibility = ProfileVisibility.values()[entry.profileVisibility]
         )
     }
 
@@ -122,5 +126,6 @@ internal data class UserEntry(
     var follows: Map<String, Boolean> = emptyMap(),
     var score: Long = 0,
     var profilePictureHash: Int? = null,
-    var likes: Map<String, Boolean> = emptyMap()
+    var likes: Map<String, Boolean> = emptyMap(),
+    var profileVisibility: Int = ProfileVisibility.PUBLIC.ordinal
 )

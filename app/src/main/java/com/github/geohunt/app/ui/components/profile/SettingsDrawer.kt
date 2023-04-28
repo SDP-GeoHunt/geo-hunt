@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Leaderboard
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -20,11 +21,14 @@ fun SettingsDrawer(
     openProfileEdit: OptionalCallback,
     openLeaderboard: OptionalCallback,
     onLogout: OptionalCallback,
+    openSettings: OptionalCallback,
     close: () -> Any
 ) {
     var isSureToLogOff by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxWidth().testTag("settings-drawer")) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .testTag("settings-drawer")) {
         openProfileEdit?.let { openProfileEdit ->
             FlatLongButton(
                 icon = Icons.Default.Edit,
@@ -40,6 +44,15 @@ fun SettingsDrawer(
                 text = stringResource(R.string.leaderboard),
                 onClick = { close(); openLeaderboard(); },
                 modifier = Modifier.testTag("btn-open-leaderboard")
+            )
+        }
+
+        openSettings?.let { openSettings ->
+            FlatLongButton(
+                icon = Icons.Default.Settings,
+                text = stringResource(id = R.string.settings),
+                onClick = { close(); openSettings() },
+                modifier = Modifier.testTag("btn-open-settings")
             )
         }
 

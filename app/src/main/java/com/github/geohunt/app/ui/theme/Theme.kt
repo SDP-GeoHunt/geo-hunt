@@ -1,11 +1,17 @@
 package com.github.geohunt.app.ui.theme
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.lightColors
 import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.data.settings.Theme
 
 
 private val LightColors = lightColors(
@@ -39,19 +45,24 @@ private val DarkColors = darkColors(
 
 @Composable
 fun GeoHuntTheme(
-  useDarkTheme: Boolean = isSystemInDarkTheme(),
-  content: @Composable() () -> Unit
+    content: @Composable() () -> Unit,
 ) {
-  val colors = if (!useDarkTheme) {
-    LightColors
-  } else {
-    DarkColors
-  }
+    val themeState =
+        AppContainer.get(LocalContext.current.applicationContext as Application)
+            .appSettingsRepository
+            .themeSetting.toOneWayMutableStateFlow(rememberCoroutineScope())
+            .collectAsState()
 
-  MaterialTheme(
-            colors = colors,
-            typography = Typography,
-            shapes = Shapes,
-            content = content
+    val colors = when(themeState.value) {
+        Theme.SYSTEM -> if (isSystemInDarkTheme()) DarkColors else LightColors
+        Theme.LIGHT -> LightColors
+        Theme.DARK -> DarkColors
+    }
+
+    MaterialTheme(
+        colors = colors,
+        typography = Typography,
+        shapes = Shapes,
+        content = content
     )
 }

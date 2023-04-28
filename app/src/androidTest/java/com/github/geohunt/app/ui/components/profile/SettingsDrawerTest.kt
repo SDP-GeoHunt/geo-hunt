@@ -17,23 +17,27 @@ class SettingsDrawerTest {
         val cfProfileEdit = CompletableFuture<Void?>()
         val cfLeaderboard = CompletableFuture<Void?>()
         val cfLogout = CompletableFuture<Void?>()
+        val cfSettings = CompletableFuture<Void?>()
         val numberOfCloses = AtomicInteger(0)
         c.setContent {
             SettingsDrawer(
                 openProfileEdit = { cfProfileEdit.complete(null) },
                 openLeaderboard = { cfLeaderboard.complete(null) },
-                onLogout = { cfLogout.complete(null) }) {
+                onLogout = { cfLogout.complete(null) },
+                openSettings = { cfSettings.complete(null) }
+            ) {
                 numberOfCloses.incrementAndGet()
             }
         }
         clickAndTest("btn-open-profile-edit", cfProfileEdit)
         clickAndTest("btn-open-leaderboard", cfLeaderboard)
+        clickAndTest("btn-open-settings", cfSettings)
 
         // Double click for log off
         c.onNodeWithTag("btn-log-off").performClick()
         assert(!cfLogout.isDone)
         clickAndTest("btn-log-off", cfLogout)
-        assert(numberOfCloses.get() == 3)
+        assert(numberOfCloses.get() == 4)
     }
 
     private fun <T> clickAndTest(testTag: String, cf: CompletableFuture<T>) {
