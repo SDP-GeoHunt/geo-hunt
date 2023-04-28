@@ -36,10 +36,11 @@ class LoginActivity : ComponentActivity() {
 
         //settings.edit().putBoolean("first_application_open", true).commit()
 
+        // Check if the application is being launched for first time
+        // and if so, display the tutorial
         if (settings.getBoolean("first_application_open", true)) {
-            //the app is being launched for first time, do something
-            val i = Intent(this@LoginActivity, TutorialActivity::class.java)
-            replaceActivity(i)
+            val intent = Intent(this@LoginActivity, TutorialActivity::class.java)
+            replaceActivity(intent)
             settings.edit().putBoolean("first_application_open", false).commit()
         }
 

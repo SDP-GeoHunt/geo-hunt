@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui.components.tutorial
 
-import TutorialSlides
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
@@ -31,6 +30,12 @@ import com.github.geohunt.app.utility.replaceActivity
 import com.google.accompanist.pager.PagerState
 import kotlinx.coroutines.CoroutineScope
 
+/**
+ * The main function for the tutorial that displays the
+ * tutorial slides and the buttons for navigating through
+ *
+ * @param activity The activity that the tutorial is being displayed in
+ */
 @Composable
 fun Tutorial(activity: ComponentActivity) {
     val items = TutorialSlides.getData()
@@ -40,7 +45,6 @@ fun Tutorial(activity: ComponentActivity) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopButtons(
             activity = activity,
-            pageNumber = pageState.currentPage,
             pageState = pageState,
             scope = scope
         )
@@ -60,7 +64,7 @@ fun Tutorial(activity: ComponentActivity) {
             activity = activity,
             pageState = pageState,
             scope = scope,
-            size = items.size,
+            slidesCount = items.size,
             index = pageState.currentPage,
             onButtonClick = {
                 if (pageState.currentPage + 1 < items.size) scope.launch {
@@ -71,10 +75,17 @@ fun Tutorial(activity: ComponentActivity) {
     }
 }
 
+/**
+ * Displays the buttons for moving to the next slide
+ * and skipping the tutorial at the top of the screen
+ *
+ * @param activity The activity that the tutorial is being displayed in
+ * @param pageState The state of the pager that the tutorial is using
+ * @param scope The coroutine scope that the tutorial is running in
+ */
 @Composable
 fun TopButtons(
     activity: ComponentActivity,
-    pageNumber: Int,
     pageState: PagerState,
     scope: CoroutineScope,
 ) {
@@ -84,7 +95,7 @@ fun TopButtons(
             .padding(12.dp)
     ) {
         // Button to go to the previous tutorial slide
-        if (pageNumber != 0) {
+        if (pageState.currentPage != 0) {
             Button(
                 onClick = {
                     if (pageState.currentPage + 1 > 1) scope.launch {
@@ -116,12 +127,23 @@ fun TopButtons(
     }
 }
 
+/**
+ * Displays the button for moving to the next tutorial slide
+ * at the bottom of the tutorial screen
+ *
+ * @param activity The current activity
+ * @param pageState The state of the pager
+ * @param scope The coroutine scope
+ * @param slidesCount The size of the tutorial slides
+ * @param index The index of the current tutorial slide
+ * @param onButtonClick The function to call when the button is clicked
+ */
 @Composable
 fun BottomButtons(
     activity: ComponentActivity,
     pageState: PagerState,
     scope: CoroutineScope,
-    size: Int,
+    slidesCount: Int,
     index: Int,
     onButtonClick: () -> Unit = {}
 ) {
@@ -132,7 +154,7 @@ fun BottomButtons(
     ) {
         FloatingActionButton(
             onClick = {
-                if (pageState.currentPage + 1 < size)
+                if (pageState.currentPage + 1 < slidesCount)
                     scope.launch { pageState.scrollToPage(pageState.currentPage + 1) }
                 else activity.replaceActivity(Intent(activity, LoginActivity::class.java))
             },
@@ -148,6 +170,11 @@ fun BottomButtons(
     }
 }
 
+/**
+ * Displays the content of a list of tutorial slides
+ *
+ * @param items: The list of tutorial slides
+ */
 @Composable
 fun TutorialSlideContent(items: TutorialSlides) {
     Column(
@@ -156,7 +183,7 @@ fun TutorialSlideContent(items: TutorialSlides) {
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = items.image),
+            painter = painterResource(id = items.icon),
             contentDescription = "Tutorial Image",
             alignment = Alignment.Center,
             modifier = Modifier

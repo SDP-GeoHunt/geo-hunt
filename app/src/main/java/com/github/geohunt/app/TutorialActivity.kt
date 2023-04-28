@@ -13,6 +13,9 @@ import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.github.geohunt.app.ui.components.tutorial.Tutorial
 import com.github.geohunt.app.ui.components.tutorial.WelcomeScreen
 
+/**
+ * The activity that handles display of the tutorial
+ */
 class TutorialActivity : ComponentActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

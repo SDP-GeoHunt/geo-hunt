@@ -1,7 +1,16 @@
+package com.github.geohunt.app.ui.components.tutorial
+
 import com.github.geohunt.app.R
 
+/**
+ * The data class for the tutorial slides
+ *
+ * @param icon The icon displayed on the slide
+ * @param title The title of the slide
+ * @param description The description for the slide
+ */
 class TutorialSlides(
-    val image: Int,
+    val icon: Int,
     val title: Int,
     val description: Int
 ) {

@@ -27,6 +27,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * The welcome displayed when the user opens the application
+ * for the first time
+ *
+ * @param shouldShowTutorial The state of whether the tutorial should be shown
+ */
 @Composable
 fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
     Column(
