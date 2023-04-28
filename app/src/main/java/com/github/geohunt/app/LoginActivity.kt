@@ -27,10 +27,21 @@ import com.github.geohunt.app.ui.theme.seed
 import com.github.geohunt.app.utility.replaceActivity
 
 class LoginActivity : ComponentActivity() {
+    val PREFERENCES_FILE = "Preferences"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val authenticator: Authenticator = Authenticator.authInstance.get()
+        val settings = getSharedPreferences(PREFERENCES_FILE, 0)
+
+        //settings.edit().putBoolean("first_application_open", true).commit()
+
+        if (settings.getBoolean("first_application_open", true)) {
+            //the app is being launched for first time, do something
+            val i = Intent(this@LoginActivity, TutorialActivity::class.java)
+            replaceActivity(i)
+            settings.edit().putBoolean("first_application_open", false).commit()
+        }
 
         authenticator.user?.let { loggedIn() }
 
