@@ -121,13 +121,23 @@ class FollowRepository(
      */
     @Throws(UserNotLoggedInException::class)
     fun doesFollow(user: User): Flow<Boolean> {
+        return doesFollow(user.id)
+    }
+
+    /**
+     * Returns the follow state of the currently authenticated user with regards to the given user.
+     *
+     * If there is no currently authenticated user, throws a [UserNotLoggedInException].
+     */
+    @Throws(UserNotLoggedInException::class)
+    fun doesFollow(uid: String): Flow<Boolean> {
         authRepository.requireLoggedIn()
 
         val currentUser = authRepository.getCurrentUser()
 
         // There are two locations where we could fetch this information
         // We consider that the user follow list is more appropriate, since it might already be in-cache
-        return database.getReference("followList/${currentUser.id}/${user.id}")
+        return database.getReference("followList/${currentUser.id}/${uid}")
             .snapshots
             .map { it.getValue(Boolean::class.java) ?: false }
             .flowOn(ioDispatcher)

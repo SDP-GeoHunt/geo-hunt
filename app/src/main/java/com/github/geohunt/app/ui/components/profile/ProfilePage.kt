@@ -21,52 +21,30 @@ import kotlinx.coroutines.async
 
 typealias OptionalCallback = (() -> Any)?
 
-/**
- * The main profile page content.
- *
- * @param id The id of the user to be shown
- * @param openProfileEdit A callback triggered when the user wants to edit his profile
- * @param onLogout A callback triggered when the user wants to sign out
- */
-@Composable
-fun ProfilePage(
-    id: String,
-    database: Database,
-    openProfileEdit: OptionalCallback = null,
-    onLogout: OptionalCallback = null,
-    openLeaderboard: OptionalCallback = null
-) {
-    ProfilePage(
-        user = database.getUserById(id),
-        openProfileEdit = openProfileEdit,
-        onLogout = onLogout,
-        openLeaderboard = openLeaderboard
-    )
-}
 
 /**
  * The main profile page content.
  *
- * @param user A lazy ref for the user
+ * @param profilePageViewModel The profile page's view model.
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProfilePage(
-    user: LiveLazyRef<User>,
+    profilePageViewModel: ProfilePageViewModel,
     openProfileEdit: OptionalCallback = null,
     openLeaderboard: OptionalCallback = null,
     onLogout: OptionalCallback = null
 ) {
-    val lazyRefRemember = rememberLiveLazyRef { user }
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-
     val isMoreOptionsAvailable = openProfileEdit != null || onLogout != null || openLeaderboard != null
+
+    val user = profilePageViewModel.user.collectAsState()
 
 
     Box(modifier = Modifier
         .fillMaxSize()) {
-        if (lazyRefRemember.value == null) {
+        if (user.value == null) {
             Progress()
         } else {
             BottomDrawer(
@@ -78,7 +56,7 @@ fun ProfilePage(
                         }
                 }
             ) {
-                ProfilePageContent(lazyRefRemember.value!!, isMoreOptionsAvailable) {
+                ProfilePageContent(profilePageViewModel, isMoreOptionsAvailable) {
                     // On settings click
                     coroutineScope.async { drawerState.open() }
                 }
@@ -89,7 +67,9 @@ fun ProfilePage(
 
 @Composable
 @NoLiveLiterals // Without this, tests do not passes (issue with Jetpack Compose)
-private fun ProfilePageContent(user: User, showSettingsBtn: Boolean = false, onSettingsClick: () -> Any) {
+private fun ProfilePageContent(vm: ProfilePageViewModel, showSettingsBtn: Boolean = false, onSettingsClick: () -> Any) {
+    val userState = vm.user.collectAsState()
+    val user = userState.value ?: return
 
     Column {
         Row {
@@ -99,7 +79,7 @@ private fun ProfilePageContent(user: User, showSettingsBtn: Boolean = false, onS
 
             Column(modifier = Modifier.padding(0.dp, 12.dp)) {
                 Row {
-                    Text(user.displayName ?: user.uid)
+                    Text(user.displayName ?: user.id)
 
                     Spacer(Modifier.weight(1f))
 
@@ -113,21 +93,25 @@ private fun ProfilePageContent(user: User, showSettingsBtn: Boolean = false, onS
                     }
                 }
 
-                UserNumberDetails(user)
+                UserNumberDetails(vm)
             }
         }
 
-        PastChallengeAndHunts(user)
+        PastChallengeAndHunts(vm)
     }
 }
 
 private data class BigNumberContent(val title: String, val subtitleId: Int)
 @Composable
-private fun UserNumberDetails(user: User) {
+private fun UserNumberDetails(vm: ProfilePageViewModel) {
+    val score = vm.score.collectAsState(initial = null)
+    val hunts = vm.claims.collectAsState()
+    val challenges = vm.challenges.collectAsState()
+
     val numbers = listOf(
-        BigNumberContent(user.challenges.size.toString(), R.string.profile_number_of_posts_subtitle),
-        BigNumberContent(user.hunts.size.toString(), R.string.profile_number_of_hunts_subtitle),
-        BigNumberContent(user.score.toString(), R.string.profile_score_subtitle),
+        BigNumberContent(if (challenges.value == null) "…" else challenges.value?.size.toString(), R.string.profile_number_of_posts_subtitle),
+        BigNumberContent(if (hunts.value == null) "…" else hunts.value?.size.toString(), R.string.profile_number_of_hunts_subtitle),
+        BigNumberContent(if (score.value == null) "…" else score.value.toString(), R.string.profile_score_subtitle),
     )
 
     Row(modifier = Modifier

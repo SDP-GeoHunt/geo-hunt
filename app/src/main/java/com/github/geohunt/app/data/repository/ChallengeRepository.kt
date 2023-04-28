@@ -31,6 +31,7 @@ class ChallengeRepository(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val challenges = database.getReference("challenges")
+    private val userChallenges = database.getReference("userChallenges")
 
     /**
      * Converts the [FirebaseChallenge] model to the external model, ready for use in the UI layer.
@@ -123,6 +124,31 @@ class ChallengeRepository(
         )
         challengeRef.setValue(challengeEntry).await()
 
+        userChallenges.child(currentUser.id).child(challengeId).setValue(1)
+
         return challengeEntry.asExternalModel()
+    }
+
+    /**
+     * Returns the challenges from which the given user has created
+     *
+     * @param userId The author's id
+     */
+    suspend fun getChallengesFromUser(userId: String): List<Challenge> {
+        val query = userChallenges.child(userId)
+
+        return withContext(ioDispatcher) {
+            query.get().await().children.map {
+                getChallenge(it.key!!)
+            }
+        }
+    }
+
+    /**
+     * Returns the challenges from which the given user has claimed.
+     */
+    suspend fun getClaimsFromUser(userId: String): List<Claim> {
+        // TODO("need to do")
+        return listOf()
     }
 }

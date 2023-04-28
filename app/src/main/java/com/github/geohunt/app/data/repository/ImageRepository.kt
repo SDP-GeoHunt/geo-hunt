@@ -62,7 +62,7 @@ class ImageRepository(
     suspend fun uploadChallengePhoto(photo: LocalPicture, coarseHash: String, id: String) =
         uploadImage(photo, ImageType.CHALLENGE_PHOTO, "$coarseHash/$id")
 
-    fun getProfilePictureUrl(user: User): String = user.profilePictureUrl
+    fun getProfilePictureUrl(user: User): String? = user.profilePictureUrl
 
     fun getChallengePhoto(challenge: Challenge): String = challenge.photoUrl
 

@@ -80,5 +80,5 @@ class UserRepository(
             ?.asExternalModel() ?: throw UserNotFoundException(id)
     }
 
-    fun getProfilePictureUrl(user: User): String = imageRepository.getProfilePictureUrl(user)
+    fun getProfilePictureUrl(user: User): String? = imageRepository.getProfilePictureUrl(user)
 }

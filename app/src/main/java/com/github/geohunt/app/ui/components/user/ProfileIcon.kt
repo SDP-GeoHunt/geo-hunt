@@ -17,7 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.rememberLazyRef
 
 /**
@@ -34,14 +34,8 @@ fun ProfileIcon(user: User, modifier: Modifier = Modifier) {
         .clip(CircleShape)
 
 
-    if (user.profilePicture != null) {
-        val profilePicture = rememberLazyRef { user.profilePicture!! }
-
-        if (profilePicture.value == null) {
-            DefaultProfileIcon(modifier = newModifier)
-        } else {
-            ProfileIcon(profilePicture.value, user.displayName, modifier = newModifier)
-        }
+    if (user.profilePictureUrl != null) {
+        ProfileIcon(user.profilePictureUrl, user.displayName, modifier = newModifier)
     } else {
         DefaultProfileIcon(modifier = newModifier)
     }

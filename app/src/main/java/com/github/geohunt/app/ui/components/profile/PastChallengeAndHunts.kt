@@ -15,10 +15,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
 
-typealias ComposableFun = @Composable (User) -> Unit
+typealias ComposableFun = @Composable (ProfilePageViewModel) -> Unit
 
 enum class ProfileTabs(val tabName: Int, val tabContent: ComposableFun) {
     PastChallenges(R.string.challenges, { PastChallengesContent(it) }),
@@ -29,7 +29,7 @@ enum class ProfileTabs(val tabName: Int, val tabContent: ComposableFun) {
  * Shows a tab view of two different tabs, for past challenges and past hunts
  */
 @Composable
-fun PastChallengeAndHunts(user: User) {
+fun PastChallengeAndHunts(vm: ProfilePageViewModel) {
     var currentTab by remember { mutableStateOf(ProfileTabs.PastChallenges) }
 
     Column {
@@ -44,7 +44,7 @@ fun PastChallengeAndHunts(user: User) {
             }
         }
 
-        currentTab.tabContent(user)
+        currentTab.tabContent(vm)
     }
 }
 
@@ -52,23 +52,27 @@ fun PastChallengeAndHunts(user: User) {
  * A grid for showing past challenges
  */
 @Composable
-fun PastChallengesContent(user: User) {
-    MakeGrid(testTag = "past-challenges", challenges = user.challenges, whenEmptyText = stringResource(id = R.string.no_past_challenges))
+fun PastChallengesContent(vm: ProfilePageViewModel) {
+    val challenges = vm.challenges.collectAsState()
+
+    MakeGrid(testTag = "past-challenges", challenges = challenges.value ?: listOf(), whenEmptyText = stringResource(id = R.string.no_past_challenges))
 }
 
 /**
  * A grid for showing past hunts
  */
 @Composable
-fun PastHuntsContent(user: User) {
-    MakeGrid(testTag = "past-hunts", challenges = user.hunts, whenEmptyText = stringResource(id = R.string.no_past_hunts))
+fun PastHuntsContent(vm: ProfilePageViewModel) {
+    val hunts = vm.claimedChallenges.collectAsState()
+
+    MakeGrid(testTag = "past-hunts", challenges = hunts.value ?: listOf(), whenEmptyText = stringResource(id = R.string.no_past_hunts))
 }
 
 /**
  * A more general grid used to display challenges
  */
 @Composable
-private fun MakeGrid(testTag: String, challenges: List<LazyRef<Challenge>>, whenEmptyText: String) {
+private fun MakeGrid(testTag: String, challenges: List<Challenge>, whenEmptyText: String) {
     Box(modifier = Modifier.testTag(testTag)) {
         if (challenges.isEmpty()) {
             CenteredText(str = whenEmptyText)

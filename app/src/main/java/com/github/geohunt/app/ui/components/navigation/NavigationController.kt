@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.navigation
 
+import android.app.Application
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -25,6 +26,7 @@ import androidx.navigation.navArgument
 import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
@@ -34,6 +36,7 @@ import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.profile.ProfilePage
+import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.utility.findActivity
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -71,6 +74,7 @@ fun NavigationController(
     val context = LocalContext.current
     val authenticator = Authenticator.authInstance.get()
     val activity: ComponentActivity = LocalContext.current.findActivity() as ComponentActivity
+    val appContainer = AppContainer.getInstance(LocalContext.current.applicationContext as Application)
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
@@ -117,17 +121,24 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
+                val profilePageViewModel = ProfilePageViewModel(
+                    appContainer.auth, appContainer.user, appContainer.challenge, appContainer.follow
+                )
                 ProfilePage(
-                    id = user.uid,
+                    profilePageViewModel,
+                    openLeaderboard = { navController.navigate(HiddenRoutes.Leaderboard.route) },
                     openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
-                    onLogout = { logout(authenticator, activity) },
-                    database = database
+                    onLogout = { logout(authenticator, activity) }
                 )
             }
         }
 
         composable("${Route.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
-            it.arguments?.getString("userId")?.let { userId -> ProfilePage(id = userId, database = database) }
+            it.arguments?.getString("userId")?.let {
+                userId -> ProfilePage(ProfilePageViewModel(
+                    appContainer.auth, appContainer.user, appContainer.challenge, appContainer.follow, userId
+                ))
+            }
         }
 
         composable(HiddenRoutes.EditProfile.route) {
