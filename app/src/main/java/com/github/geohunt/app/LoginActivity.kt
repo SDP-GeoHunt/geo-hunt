@@ -34,8 +34,6 @@ class LoginActivity : ComponentActivity() {
         val authenticator: Authenticator = Authenticator.authInstance.get()
         val settings = getSharedPreferences(PREFERENCES_FILE, 0)
 
-        //settings.edit().putBoolean("first_application_open", true).commit()
-
         // Check if the application is being launched for first time
         // and if so, display the tutorial
         if (settings.getBoolean("first_application_open", true)) {

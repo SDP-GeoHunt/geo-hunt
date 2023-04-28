@@ -45,7 +45,7 @@ fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, start = 25.dp, end = 25.dp)
-                .testTag("WelcomeText"),
+                .testTag("Welcome Label"),
             fontSize = 90.sp,
             fontStyle = FontStyle.Italic,
             fontFamily = FontFamily.Cursive,
@@ -66,7 +66,7 @@ fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
             modifier = Modifier
                 .padding(start = 25.dp, end = 25.dp)
                 .fillMaxWidth()
-                .testTag("WelcomeDescription"),
+                .testTag("Welcome Description"),
             fontSize = 30.sp,
             overflow = TextOverflow.Ellipsis,
             letterSpacing = 5.sp,

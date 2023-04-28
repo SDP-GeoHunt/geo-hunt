@@ -42,7 +42,11 @@ fun Tutorial(activity: ComponentActivity) {
     val scope = rememberCoroutineScope()
     val pageState = rememberPagerState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("Tutorial screen layout")
+    ) {
         TopButtons(
             activity = activity,
             pageState = pageState,
@@ -54,7 +58,8 @@ fun Tutorial(activity: ComponentActivity) {
             state = pageState,
             modifier = Modifier
                 .fillMaxHeight(0.9f)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("Current page is ${pageState.currentPage}"),
             content = {
                 page -> TutorialSlideContent(items = items[page])
             },
@@ -98,15 +103,17 @@ fun TopButtons(
         if (pageState.currentPage != 0) {
             Button(
                 onClick = {
-                    if (pageState.currentPage + 1 > 1) scope.launch {
+                    if (pageState.currentPage > 0) scope.launch {
                         pageState.scrollToPage(pageState.currentPage - 1)
                     }
                 },
-                modifier = Modifier.align(Alignment.CenterStart),
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .testTag("Go back button"),
             ) {
                 Icon(
                     imageVector = Icons.Outlined.KeyboardArrowLeft,
-                    contentDescription = "Back button"
+                    contentDescription = "Go back button"
                 )
             }
         }
@@ -116,7 +123,9 @@ fun TopButtons(
             onClick = {
                 activity.replaceActivity(i = Intent(activity, LoginActivity::class.java))
             },
-            modifier = Modifier.align(Alignment.CenterEnd),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .testTag("Skip button"),
         ) {
             Text(
                 text = "Skip",
@@ -162,10 +171,12 @@ fun BottomButtons(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .clip(RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
+                .testTag("Go forward button"),
         ) {
             Icon(Icons.Outlined.KeyboardArrowRight,
                 tint = Color.White,
-                contentDescription = "Localized description")
+                contentDescription = "Go forward button",
+            )
         }
     }
 }
@@ -188,6 +199,7 @@ fun TutorialSlideContent(items: TutorialSlides) {
             alignment = Alignment.Center,
             modifier = Modifier
                 .size(240.dp)
+                .testTag("Tutorial Image")
         )
 
         Spacer(modifier = Modifier.height(25.dp))
@@ -198,7 +210,8 @@ fun TutorialSlideContent(items: TutorialSlides) {
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             letterSpacing = 1.sp,
-            modifier = Modifier.testTag("Tutorial Title"),
+            modifier = Modifier
+                .testTag("Tutorial Title"),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             )
