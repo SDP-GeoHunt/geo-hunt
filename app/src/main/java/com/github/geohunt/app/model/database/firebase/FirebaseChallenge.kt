@@ -42,8 +42,7 @@ class FirebaseChallengeRef(
         return if (challenge != null) {
             Tasks.forResult(challenge)
         } else {
-            database.dbChallengeRef
-                .getChallengeRefFromId(id).get()
+            database.getChallengeRefFromId(id).get()
                 .thenMap {
                     it.buildChallenge(database, id)
                 }
@@ -59,9 +58,10 @@ class FirebaseChallengeRef(
  * @param cid the id of the challenge to be retrieved
  * @return [DatabaseReference] corresponding reference
  */
-internal fun DatabaseReference.getChallengeRefFromId(cid: String) : DatabaseReference
+internal fun FirebaseDatabase.getChallengeRefFromId(cid: String) : DatabaseReference
 {
-    return child(cid.substring(0, Location.COARSE_HASH_SIZE))
+    return dbChallengeRef
+        .child(cid.substring(0, Location.COARSE_HASH_SIZE))
         .child(cid.substring(Location.COARSE_HASH_SIZE))
 }
 

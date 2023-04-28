@@ -363,7 +363,7 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     private suspend fun doJoinHunt(cid: String, uid: String, doJoin: Boolean) {
         val activeHuntsListRef = dbUserRef.child(uid).child("activeHunts")
-        val numberOfActiveHuntersRef = dbChallengeRef.getChallengeRefFromId(cid).child("numberOfActiveHunters")
+        val numberOfActiveHuntersRef = getChallengeRefFromId(cid).child("numberOfActiveHunters")
 
         val activeHuntsList = activeHuntsListRef.queryAs<Map<String, Boolean>>() ?: emptyMap<String, Boolean>().withDefault { false }
         val numberOfActiveHunters = numberOfActiveHuntersRef.queryAs<Int>() ?: 0
