@@ -33,7 +33,7 @@ internal fun BellowImageButtons(challenge: Challenge, database: Database, user: 
         .padding(15.dp, 5.dp)) {
         val fontSize = 18.sp
         val iconSize = 22.dp
-
+        
         LikeButton(challenge = challenge,
             database = database,
             user = user,

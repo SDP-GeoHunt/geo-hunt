@@ -132,6 +132,7 @@ fun NavigationController(
 
         composable(HiddenRoutes.EditProfile.route) {
             ProfileEditPage(
+                database,
                 onBackButton = { navController.popBackStack() }
             )
         }

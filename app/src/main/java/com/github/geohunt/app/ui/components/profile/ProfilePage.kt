@@ -126,7 +126,7 @@ private data class BigNumberContent(val title: String, val subtitleId: Int)
 private fun UserNumberDetails(user: User) {
     val numbers = listOf(
         BigNumberContent(user.challenges.size.toString(), R.string.profile_number_of_posts_subtitle),
-        BigNumberContent(user.hunts.size.toString(), R.string.profile_number_of_hunts_subtitle),
+        BigNumberContent(user.activeHunts.size.toString(), R.string.profile_number_of_hunts_subtitle),
         BigNumberContent(user.score.toString(), R.string.profile_score_subtitle),
     )
 

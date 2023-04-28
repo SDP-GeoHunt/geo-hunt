@@ -10,17 +10,15 @@ import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.*
-import com.github.geohunt.app.utility.BitmapUtils
+import com.github.geohunt.app.utility.*
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
-import com.github.geohunt.app.utility.queryAs
-import com.github.geohunt.app.utility.thenMap
-import com.github.geohunt.app.utility.toMap
+import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import okhttp3.internal.toImmutableList
 import kotlinx.coroutines.tasks.await
+import okhttp3.internal.toImmutableList
 import java.io.File
 import java.lang.Integer.max
 import java.time.LocalDateTime
@@ -35,7 +33,6 @@ class FirebaseDatabase(activity: Activity) : Database {
     internal val dbUserRef = database.child("users")
     internal val dbChallengeRef = database.child("challenges")
     internal val dbFollowersRef = database.child("followers")
-
     internal val dbClaimRef = database.child("claims")
 
     // Storage references
@@ -55,6 +52,10 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     private val imageRefById = DataPool<String, FirebaseBitmapRef> {
         FirebaseBitmapRef(it, this)
+    }
+
+    private val claimRefById = DataPool<String, FirebaseClaimRef> {
+        FirebaseClaimRef(it, this)
     }
 
     init {
@@ -93,14 +94,14 @@ class FirebaseDatabase(activity: Activity) : Database {
             authorId = currentUser,
             publishedDate = utcIso8601Now(),
             expirationDate = utcIso8601FromLocalNullable(expirationDate),
-            claims = listOf(),
+            claims = emptyMap(),
             location = location,
             difficulty = difficulty.toString(),
             likes = mapOf(),
         )
 
         // Get the reference to the thumbnail Bitmap and set the value
-        val thumbnailBitmap = getThumbnailRefById(challengeId)
+        val thumbnailBitmap = getChallengeThumbnailById(challengeId)
         thumbnailBitmap.value = thumbnail
 
         // Create both jobs (update database, update storage)
@@ -119,7 +120,8 @@ class FirebaseDatabase(activity: Activity) : Database {
                 claims = listOf(),
                 description = description,
                 difficulty = difficulty,
-                likes = listOf()
+                likes = listOf(),
+                numberOfActiveHunters = 0
             )
         }
     }
@@ -132,19 +134,18 @@ class FirebaseDatabase(activity: Activity) : Database {
         require(thumbnail.width * thumbnail.height < R.integer.maximum_number_of_pixel_per_photo)
 
         // State variable
-        val coarseHash = location.getCoarseHash()
-        val dbClaimRef = dbClaimRef.child(coarseHash).push()
-        val claimId = coarseHash + dbClaimRef.key!!
+        val dbClaimRef = dbClaimRef.push()
+        val claimId = dbClaimRef.key!!
 
         val claimEntry = ClaimEntry(
             user = currentUser,
-            challenge = challenge,
+            cid = challenge.cid,
             time = utcIso8601Now(),
             location = location
         )
 
         // Get the reference to the thumbnail Bitmap and set the value
-        val thumbnailBitmap = getThumbnailRefById(claimId)
+        val thumbnailBitmap = getClaimThumbnailById(claimId)
         thumbnailBitmap.value = thumbnail
 
         // Create both jobs (update database, update storage)
@@ -158,7 +159,10 @@ class FirebaseDatabase(activity: Activity) : Database {
                 user = getUserById(currentUser),
                 time = localFromUtcIso8601(claimEntry.time!!),
                 challenge = getChallengeById(challenge.cid),
-                location = location
+                location = location,
+                distance = 0,
+                awardedPoints = 0,
+                image = getClaimThumbnailById(claimId)
             )
         }
     }
@@ -169,7 +173,7 @@ class FirebaseDatabase(activity: Activity) : Database {
      * If the user already exists, it will override the user. Use with caution.
      */
     override fun insertNewUser(user: User): Task<Void> {
-        val userEntry = UserEntry(user.uid, user.displayName, listOf(), listOf(), score = 0)
+        val userEntry = UserEntry(user.displayName, mapOf(), mapOf(), score = 0)
 
         return dbUserRef.child(user.uid).setValue(userEntry)
     }
@@ -228,44 +232,40 @@ class FirebaseDatabase(activity: Activity) : Database {
      * Updates the user with all the data
      */
     override fun updateUser(editedUser: EditedUser): Task<Void?> {
-        val user = editedUser.user
-        val userEntry = UserEntry(
-            user.uid,
-            editedUser.displayName,
-            user.challenges.map { it.id },
-            user.hunts.map { it.id },
-            user.numberOfFollowers,
-            user.follows.associate { it.id to true },
-            user.score,
-            user.profilePictureHash
-        )
+        val uid = editedUser.user.uid
+        val userRef = dbUserRef.child(uid)
+        val updateNameFieldTask =
+            userRef.child("displayName").setValue(editedUser.displayName)
 
-        val uploadProfilePicture: Task<Nothing?> =
-            if (editedUser.profilePicture != null) {
-                val hash = BitmapUtils.hash(editedUser.profilePicture!!)
-                val ppRef = getProfilePicture(user.uid, hash)
-                ppRef.value = editedUser.profilePicture
+        if (editedUser.profilePicture != null) {
+            val hash = BitmapUtils.hash(editedUser.profilePicture!!)
+            val ppRef = getProfilePicture(uid, hash)
+            ppRef.value = editedUser.profilePicture
 
-                // update user entry accordingly
-                userEntry.profilePictureHash = hash
+            return Tasks.whenAllSuccess<Any>(
+                updateNameFieldTask,
 
-                ppRef.saveToLocalStorageThenSubmit().thenMap { null }
-            } else {
-                Tasks.forResult(null)
-            }
+                // Save the profile picture to the storage
+                ppRef.saveToLocalStorageThenSubmit(),
 
-        return Tasks.whenAll(
-            dbUserRef.child(user.uid).setValue(userEntry),
-            uploadProfilePicture
-        ).thenMap { return@thenMap null; }
+                // Update the hash field of the user
+                userRef.child("profilePictureHash").setValue(hash)
+            ).thenMap { null }
+        } else {
+            return updateNameFieldTask.thenMap { null }
+        }
     }
 
     override fun getClaimById(cid: String): LazyRef<Claim> {
-        TODO()
+        return claimRefById.get(cid)
     }
 
-    internal fun getThumbnailRefById(cid: String) : FirebaseBitmapRef {
+    internal fun getChallengeThumbnailById(cid: String) : FirebaseBitmapRef {
         return imageRefById.get(FirebaseBitmapRef.getImageIdFromChallengeId(cid))
+    }
+
+    internal fun getClaimThumbnailById(cid: String) : FirebaseBitmapRef {
+        return imageRefById.get(FirebaseBitmapRef.getImageIdFromClaimId(cid))
     }
 
     internal fun getProfilePicture(uid: String, hash: Int): FirebaseBitmapRef {
@@ -299,11 +299,25 @@ class FirebaseDatabase(activity: Activity) : Database {
             .thenMap { it.toImmutableList() }
     }
 
-    override fun getFollowersOf(uid: String): Task<Map<String, Boolean>> {
+    override fun getFollowersOf(uid: String): Task<List<LazyRef<User>>> {
         return dbFollowersRef.child(uid)
             .get()
             .thenMap { snapshot ->
-                snapshot.toMap<Boolean>().withDefault { false }
+                snapshot.toMap<Boolean>()
+                    .mapNotNull { (uid, exists) -> getUserById(uid).takeIf { exists } }
+            }
+    }
+
+    override fun getTopNUsers(n: Int): Task<List<LazyRef<User>>> {
+        return dbUserRef
+            .orderByChild("score")
+            .limitToLast(n)
+            .get()
+            .thenMap { dataSnapshot ->
+                val resultingMap = dataSnapshot.convertTo<Map<String, UserEntry>>() ?: emptyMap<String, UserEntry>()
+                resultingMap.mapNotNull { it }
+                    .sortedByDescending { (_, entry) -> entry.score }
+                    .map { (uid, _) -> getUserById(uid) }
             }
     }
 
@@ -347,6 +361,28 @@ class FirebaseDatabase(activity: Activity) : Database {
         ).await()
     }
 
+    private suspend fun doJoinHunt(cid: String, uid: String, doJoin: Boolean) {
+        val activeHuntsListRef = dbUserRef.child(uid).child("activeHunts")
+        val numberOfActiveHuntersRef = getChallengeRefFromId(cid).child("numberOfActiveHunters")
+
+        val activeHuntsList = activeHuntsListRef.queryAs<Map<String, Boolean>>() ?: emptyMap<String, Boolean>().withDefault { false }
+        val numberOfActiveHunters = numberOfActiveHuntersRef.queryAs<Int>() ?: 0
+
+
+        if ((doJoin && activeHuntsList[cid] == true)
+            || (!doJoin && activeHuntsList[cid] != true)) {
+            return
+        }
+
+        Tasks.whenAll(
+            // Update the active hunt list
+            activeHuntsListRef.setValue(if (doJoin) (activeHuntsList + (cid to true)) else activeHuntsList - cid),
+
+            // Update the number of followers counter
+            numberOfActiveHuntersRef.setValue(if (doJoin) numberOfActiveHunters + 1 else max(numberOfActiveHunters - 1, 0))
+        ).await()
+    }
+
     /**
      * Makes the first user with the given UID follow the second user.
      */
@@ -356,6 +392,16 @@ class FirebaseDatabase(activity: Activity) : Database {
 
     override suspend fun unfollow(follower: String, followee: String) {
         doFollow(follower, followee, follow = false)
+    }
+
+    override suspend fun joinHunt(cid: String) {
+        val uid = Authenticator.authInstance.get().user!!.uid
+        doJoinHunt(cid, uid, doJoin = true)
+    }
+
+    override suspend fun leaveHunt(cid: String) {
+        val uid = Authenticator.authInstance.get().user!!.uid
+        doJoinHunt(cid, uid, doJoin = false)
     }
 
     /**
