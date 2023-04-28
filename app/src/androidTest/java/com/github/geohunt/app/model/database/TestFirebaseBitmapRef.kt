@@ -1,6 +1,5 @@
 package com.github.geohunt.app.model.database
 
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.github.geohunt.app.model.database.api.Location
@@ -43,7 +42,7 @@ class TestFirebaseBitmapRef {
             database = FirebaseDatabase(LocalContext.current.findActivity())
         }
 
-        val thumbnailRef = database.getThumbnailRefById("163f921c-NQWln8MlqnVhArUIdwE")
+        val thumbnailRef = database.getChallengeThumbnailById("163f921c-NQWln8MlqnVhArUIdwE")
         assertThat(thumbnailRef.id, equalTo(thumbnailId))
 
         thumbnailRef.fetch().await()
