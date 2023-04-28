@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.profile
 
+import android.graphics.Bitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.github.geohunt.app.mocks.InstantLazyRef
@@ -11,6 +12,7 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.google.android.gms.tasks.Tasks
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
 
 class ProfilePageTest {
     @get:Rule
@@ -64,10 +66,14 @@ class ProfilePageTest {
 
     @Test
     fun showsNumberOfChallenges() {
+        val mockChallenge = MockChallenge(
+            thumbnail = InstantLazyRef("1", Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888))
+        )
+
         val mockuser = MockUser(challenges = listOf(
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge())
+            wrapLazyChallenge(mockChallenge),
+            wrapLazyChallenge(mockChallenge),
+            wrapLazyChallenge(mockChallenge)
         ))
         testRule.setContent {
             ProfilePage(user = InstantLazyRef("1", mockuser))

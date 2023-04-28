@@ -31,12 +31,11 @@ class EditProfileContentTest {
             }
         }
 
-        Database.databaseFactory.set { return@set mockDb }
         val mockUser = MockUser(displayName = "caca")
         var instrumentableProfileEdit: MutableState<EditedUser>? = null
 
         composeTestRule.setContent {
-            instrumentableProfileEdit = instrumentableEditProfileContent(user = mockUser)
+            instrumentableProfileEdit = instrumentableEditProfileContent(mockDb, user = mockUser)
         }
 
         assert(instrumentableProfileEdit != null)
@@ -57,12 +56,11 @@ class EditProfileContentTest {
             }
         }
 
-        Database.databaseFactory.set { return@set mockDb }
         val mockUser = MockUser(displayName = "caca")
         var instrumentableProfileEdit: MutableState<EditedUser>? = null
 
         composeTestRule.setContent {
-            instrumentableProfileEdit = instrumentableEditProfileContent(user = mockUser)
+            instrumentableProfileEdit = instrumentableEditProfileContent(mockDb, user = mockUser)
         }
 
         assert(instrumentableProfileEdit != null)

@@ -18,15 +18,14 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.api.EditedUser
 
 @Composable
-fun EditProfileContent(user: User) {
-    instrumentableEditProfileContent(user = user)
+fun EditProfileContent(database: Database, user: User) {
+    instrumentableEditProfileContent(database, user = user)
 }
 
 @Composable
 @NoLiveLiterals
-fun instrumentableEditProfileContent(user: User): MutableState<EditedUser> {
+fun instrumentableEditProfileContent(db: Database, user: User): MutableState<EditedUser> {
     val editedUser = remember { mutableStateOf(EditedUser.fromUser(user)) }
-    val db = Database.databaseFactory.get()(LocalContext.current.findActivity())
     var isSaving by remember { mutableStateOf(false) }
     val ctx = LocalContext.current
 

@@ -32,10 +32,9 @@ class ProfileEditPageTest {
                 return InstantLazyRef("1", null)
             }
         }
-        Database.databaseFactory.set { mockDb }
 
         c.setContent {
-            ProfileEditPage { }
+            ProfileEditPage(mockDb) { }
         }
         c.onNodeWithTag("progress").assertIsDisplayed()
     }
@@ -49,21 +48,31 @@ class ProfileEditPageTest {
         }
         Database.databaseFactory.set { mockDb }
         c.setContent {
-            ProfileEditPage { }
+            ProfileEditPage(mockDb) { }
         }
         c.onNodeWithTag("progress").assertDoesNotExist()
     }
 
     @Test
     fun titleIsShown() {
-        c.setContent { ProfileEditPage { } }
+        val mockDb = object: BaseMockDatabase() {
+            override fun getUserById(uid: String): LiveLazyRef<User> {
+                return InstantLazyRef("1", MockUser(uid = "1"))
+            }
+        }
+        c.setContent { ProfileEditPage(mockDb) { } }
         c.onNodeWithText("Edit profile").assertIsDisplayed()
     }
 
     @Test
     fun clickingOnBackButtonTriggersCallback() {
+        val mockDb = object: BaseMockDatabase() {
+            override fun getUserById(uid: String): LiveLazyRef<User> {
+                return InstantLazyRef("1", MockUser(uid = "1"))
+            }
+        }
         val cf = CompletableFuture<Void?>()
-        c.setContent { ProfileEditPage {
+        c.setContent { ProfileEditPage(mockDb) {
             cf.complete(null)
         }}
         c.onNodeWithTag("back-btn").performClick()
