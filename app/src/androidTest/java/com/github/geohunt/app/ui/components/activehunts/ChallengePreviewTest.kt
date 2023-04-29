@@ -8,15 +8,13 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import com.github.geohunt.app.model.Challenge
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.mocks.MockChallenge
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDateTime
 
 class ChallengePreviewTest {
     @get:Rule
@@ -24,15 +22,9 @@ class ChallengePreviewTest {
 
     private val challengeId = "98d755ad-NRDJLd1aM1I2QXK4qjD"
 
-    private val dummyChallenge = Challenge(
+    private val dummyChallenge = MockChallenge(
         id = challengeId,
-        authorId = "user",
-        photoUrl = "",
-        location = Location(0.0, 0.0),
-        publishedDate = LocalDateTime.of(10, 10, 10, 10, 10),
-        expirationDate = null,
-        difficulty = Challenge.Difficulty.MEDIUM,
-        description = null
+        authorId = "user"
     )
 
     @Before
@@ -40,7 +32,7 @@ class ChallengePreviewTest {
         testRule.setContent {
             GeoHuntTheme {
                 ChallengePreview(challenge = dummyChallenge, getAuthorName = {
-                    MutableStateFlow("John Wick").asStateFlow()
+                    MutableStateFlow("Debug User").asStateFlow()
                 })
             }
         }

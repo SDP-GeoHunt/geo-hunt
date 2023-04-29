@@ -24,6 +24,9 @@ class AppContainer private constructor(application: Application) {
     val auth = AuthRepository()
     val user = UserRepository(image, auth)
 
+    val challenges = ChallengeRepository(user, image, auth)
+    val activeHunts = ActiveHuntsRepository(auth)
+
     companion object {
         private var container: AppContainer? = null
 
