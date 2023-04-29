@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.github.geohunt.app"
-        minSdk 28
+        minSdk 33
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -153,6 +153,28 @@ tasks.withType(Test) {
             'jdk.internal.*'
     ]
 }
+
+task buildTranslationArray {
+    def foundLocales = new StringBuilder()
+    def list = new ArrayList<String>()
+    foundLocales.append("new String[]{")
+
+    def translationParser = (new groovy.xml.XmlParser()).parse("./app/src/main/res/xml/locales_config.xml")
+    translationParser.each {
+        if (!it.attributes().values().empty) {
+            def locale = it.attributes().values()[0]
+            println "Found Locale: " + locale
+            list.add(locale)
+            foundLocales.append('"').append(locale).append("\", ")
+        }
+    }
+
+    foundLocales.append("}")
+    def foundLocalesString = foundLocales.toString().replaceAll(', }','}')
+    println "Locales: " + foundLocalesString
+    android.defaultConfig.buildConfigField "String[]", "TRANSLATION_ARRAY", foundLocalesString
+}
+preBuild.dependsOn buildTranslationArray
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
     reports {

@@ -14,7 +14,6 @@ import com.github.geohunt.app.utility.*
 import com.github.geohunt.app.utility.DateUtils.localFromUtcIso8601
 import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
-import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.tasks.await
@@ -234,8 +233,9 @@ class FirebaseDatabase(activity: Activity) : Database {
     override fun updateUser(editedUser: EditedUser): Task<Void?> {
         val uid = editedUser.user.uid
         val userRef = dbUserRef.child(uid)
-        val updateNameFieldTask =
-            userRef.child("displayName").setValue(editedUser.displayName)
+
+        val updateDisplayNameTask = userRef.child("displayName").setValue(editedUser.displayName)
+        val updatePreferredLocaleTask = userRef.child("preferredLocale").setValue(editedUser.preferredLocale)
 
         if (editedUser.profilePicture != null) {
             val hash = BitmapUtils.hash(editedUser.profilePicture!!)
@@ -243,7 +243,11 @@ class FirebaseDatabase(activity: Activity) : Database {
             ppRef.value = editedUser.profilePicture
 
             return Tasks.whenAllSuccess<Any>(
-                updateNameFieldTask,
+                // Update the name of the user
+                updateDisplayNameTask,
+
+                // Update the locale of the user
+                updatePreferredLocaleTask,
 
                 // Save the profile picture to the storage
                 ppRef.saveToLocalStorageThenSubmit(),
@@ -252,7 +256,10 @@ class FirebaseDatabase(activity: Activity) : Database {
                 userRef.child("profilePictureHash").setValue(hash)
             ).thenMap { null }
         } else {
-            return updateNameFieldTask.thenMap { null }
+            return Tasks.whenAllSuccess<Any>(
+                updateDisplayNameTask,
+                updatePreferredLocaleTask
+            ).thenMap { null }
         }
     }
 

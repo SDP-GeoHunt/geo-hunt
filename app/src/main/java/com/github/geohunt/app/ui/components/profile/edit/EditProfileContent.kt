@@ -13,9 +13,9 @@ import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.button.FlatLongButton
-import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.api.EditedUser
+import com.github.geohunt.app.ui.components.profile.LocalSelector
 
 @Composable
 fun EditProfileContent(database: Database, user: User) {
@@ -45,6 +45,8 @@ fun instrumentableEditProfileContent(db: Database, user: User): MutableState<Edi
         ProfilePictureChanger(user, editedUser) { profilePictureProvider(it) }
 
         DisplayNameChanger(editedUser)
+        
+        LocalSelector(editedUser)
 
         if (isSaving) {
             FlatLongButton(

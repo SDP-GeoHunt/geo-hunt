@@ -31,6 +31,7 @@ class FirebaseUser(
     override var likes: List<LazyRef<Challenge>>,
     override var score: Long,
     override val isPOIUser: Boolean = false,
+    override val preferredLocale: String?,
 ) : User {
 
 }
@@ -52,7 +53,8 @@ internal class FirebasePOIUserRef(override val id: String) :
             score = 0,
             isPOIUser = true,
             likes = listOf(),
-            profilePictureHash = null
+            profilePictureHash = null,
+            preferredLocale = null
         ))
     }
 }
@@ -93,7 +95,8 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
             numberOfFollowers = entry.numberOfFollowers,
             followList = entry.followList.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
             score = entry.score,
-            likes = entry.likes.mapNotNull { (id, doesLike) -> db.getChallengeById(id).takeIf { doesLike } }
+            likes = entry.likes.mapNotNull { (id, doesLike) -> db.getChallengeById(id).takeIf { doesLike } },
+            preferredLocale = entry.preferredLocale
         )
     }
 
@@ -121,5 +124,6 @@ internal data class UserEntry(
     var followList: Map<String, Boolean> = emptyMap(),
     var score: Long = 0,
     var profilePictureHash: Int? = null,
-    var likes: Map<String, Boolean> = emptyMap()
+    var likes: Map<String, Boolean> = emptyMap(),
+    var preferredLocale: String? = null
 )

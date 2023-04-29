@@ -55,6 +55,12 @@ interface User {
     val followList: List<LazyRef<User>>
 
     /**
+     * Preferred locale to be used when logged as the current user, when null
+     * use system settings.
+     */
+    val preferredLocale: String?
+
+    /**
      * Current score of the user
      */
     val score: Long

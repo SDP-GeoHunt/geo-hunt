@@ -49,6 +49,7 @@ class LeaderboardTest {
             override val activeHunts: List<LazyRef<Challenge>> = listOf()
             override val numberOfFollowers: Int = 10
             override val followList: List<LazyRef<User>> = emptyList()
+            override val preferredLocale: String? = null
             override var score: Long = (1500 - pos * 100).toLong()
             override val isPOIUser: Boolean = false
             override var likes: List<LazyRef<Challenge>> = listOf()

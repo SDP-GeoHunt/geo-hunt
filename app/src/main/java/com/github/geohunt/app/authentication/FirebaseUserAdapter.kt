@@ -47,6 +47,10 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
     override val followList: List<LazyRef<User>>
         get() = throw java.lang.UnsupportedOperationException()
 
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
+    override val preferredLocale: String?
+        get() = throw java.lang.UnsupportedOperationException()
+
 
     @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
     override var score: Long
