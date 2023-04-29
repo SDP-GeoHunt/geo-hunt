@@ -29,7 +29,7 @@ data class FirebaseChallenge(
         photoUrl = "",
         location = Location(0.0, 0.0),
         publishedDate = "",
-        expirationDate = "",
+        expirationDate = null,
         difficulty = "",
         description = null
     )
