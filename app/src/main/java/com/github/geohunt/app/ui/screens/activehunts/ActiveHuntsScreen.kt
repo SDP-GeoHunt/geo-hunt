@@ -31,24 +31,22 @@ fun ActiveHuntsScreen(
     openExploreTab: () -> Unit,
     viewModel: ActiveHuntsViewModel = viewModel(factory = ActiveHuntsViewModel.Factory)
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.align(Alignment.Center)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)
-            ) {
-                ActiveHuntsTitle()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp)
+    ) {
+        ActiveHuntsTitle()
 
-                Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(10.dp))
 
-                val challenges = viewModel.activeHunts.collectAsStateWithLifecycle()
+        val challenges = viewModel.activeHunts.collectAsStateWithLifecycle()
 
-                when (challenges.value) {
-                    null -> CircularProgressIndicator()
-                    else -> ActiveHuntsList(challenges.value!!, openExploreTab, getAuthorName = viewModel::getAuthorName)
-                }
+        when (challenges.value) {
+            null -> Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+            else -> ActiveHuntsList(challenges.value!!, openExploreTab, getAuthorName = viewModel::getAuthorName)
         }
     }
 }
