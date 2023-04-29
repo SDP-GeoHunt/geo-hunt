@@ -11,11 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
@@ -43,7 +45,7 @@ fun ActiveHunts(id: String, database: Database, fnExploreCallback: () -> Unit) {
 fun ActiveHunts(user: LazyRef<User>, fnExploreCallback: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         FetchComponent(lazyRef = { user }, modifier = Modifier.align(Alignment.Center)) {resolvedUser ->
-            ActiveHunts(challenges = resolvedUser.challenges, fnExploreCallback)
+            ActiveHunts(challenges = resolvedUser.activeHunts, fnExploreCallback)
         }
     }
 }
@@ -77,13 +79,13 @@ fun TitleText() {
                 withStyle(style = SpanStyle(fontSize = 40.sp, fontFamily = Lobster)) {
 
                     withStyle(style = SpanStyle(color = Color.Black)) {
-                        append("Active")
+                        append(stringResource(R.string.active_hunts_black_part))
                     }
 
                     append(" ")
 
                     withStyle(style = SpanStyle(color = geoHuntRed)) {
-                        append("hunts")
+                        append(stringResource(R.string.active_hunts_red_part))
                     }
                 }
             }
@@ -130,11 +132,10 @@ fun ActiveHuntsList(challenges: List<LazyRef<Challenge>>, fnExploreCallback: () 
 @Composable
 fun EmptyChallengesScreen(emptyScreenCallback: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "No challenges yet...\n" +
-                "Go pick some challenges to begin your hunt!")
+        Text(text = stringResource(R.string.no_challenge_message))
         Spacer(modifier = Modifier.size(10.dp))
         Button(onClick = emptyScreenCallback, colors = ButtonDefaults.buttonColors(backgroundColor = geoHuntRed)) {
-            Text(text = "Search nearby challenges")
+            Text(text = stringResource(R.string.search_nearby_challenges))
         }
     }
 

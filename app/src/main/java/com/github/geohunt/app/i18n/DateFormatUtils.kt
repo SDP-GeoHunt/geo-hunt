@@ -1,6 +1,7 @@
 package com.github.geohunt.app.i18n
 
 import android.icu.text.RelativeDateTimeFormatter
+import android.icu.text.RelativeDateTimeFormatter.Direction
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.R
@@ -35,47 +36,87 @@ object DateFormatUtils {
         return dateFormatter.format(date)
     }
 
-    /**
-     * Returns a human-readable string representing the elapsed time between the given date-time
-     * and the current time, e.g., "2 days ago", "1 hour ago", "5 minutes ago", or "just now".
-     *
-     * @param dateTime The date-time to calculate the elapsed time from.
-     * @return A human-readable string representing the elapsed time.
-     */
     @Composable
-    fun getElapsedTimeString(dateTime: LocalDateTime, prefixStringId: Int) : String {
-        val duration = Duration.between(dateTime, LocalDateTime.now())
+    private fun doTimeString(duration: Duration, formattingStringId: Int, direction: Direction) : String {
         val fmt = RelativeDateTimeFormatter.getInstance()
 
         val raw = when {
             duration.toDays() > 182 ->
                 fmt.format((duration.toDays() + 182) / 365,
-                    RelativeDateTimeFormatter.Direction.LAST,
+                    direction,
                     RelativeDateTimeFormatter.RelativeUnit.YEARS
                 )
             duration.toDays() > 29 ->
                 fmt.format((duration.toDays() + 15) / 30,
-                    RelativeDateTimeFormatter.Direction.LAST,
+                    direction,
                     RelativeDateTimeFormatter.RelativeUnit.MONTHS
                 )
             duration.toDays() > 0 ->
                 fmt.format(duration.toDays(),
-                    RelativeDateTimeFormatter.Direction.LAST,
+                    direction,
                     RelativeDateTimeFormatter.RelativeUnit.DAYS
                 )
             duration.toHours() > 0 ->
                 fmt.format(duration.toHours(),
-                    RelativeDateTimeFormatter.Direction.LAST,
+                    direction,
                     RelativeDateTimeFormatter.RelativeUnit.HOURS
                 )
             duration.toMinutes() > 3 ->
                 fmt.format((duration.toMinutes() / 5) * 5,
-                    RelativeDateTimeFormatter.Direction.LAST,
+                    direction,
                     RelativeDateTimeFormatter.RelativeUnit.MINUTES
                 )
             else -> stringResource(id = R.string.just_now)
         }
-        return stringResource(id = prefixStringId, (raw ?: "???"))
+        return stringResource(id = formattingStringId, (raw ?: "???"))
+    }
+
+    /**
+     * Returns a human-readable string representation of the remaining time until a given date and
+     * the current local date time, e.g., "in 2 days", "1 hour"
+     *
+     * @param dateTime The target date-time of the event to be compared to
+     * @param formattingStringId The identifier of the resource to be used to format the resulting string.
+     *                           e.g. "Expires %s" -> "Expires in 1 hour"
+     * @param passedFormattingStringId Identifier of the string resources whenever the corresponding target date
+     *                               is passed
+     * @return A human-readable string of the remaining time
+     */
+    @Composable
+    fun getRemainingTimeString(dateTime: LocalDateTime, formattingStringId: Int, passedFormattingStringId: Int) : String {
+        val now = LocalDateTime.now()
+        return if (dateTime < now) {
+            doTimeString(
+                duration = Duration.between(dateTime, now),
+                formattingStringId = passedFormattingStringId,
+                direction = Direction.LAST
+            )
+        }
+        else {
+            doTimeString(
+                duration = Duration.between(now, dateTime),
+                formattingStringId = formattingStringId,
+                direction = Direction.NEXT
+            )
+        }
+    }
+
+    /**
+     * Returns a human-readable string representing the elapsed time between the given date-time
+     * and the current time, e.g., "2 days ago", "1 hour ago", "5 minutes ago", or "just now".
+     *
+     * @param dateTime The date-time to calculate the elapsed time from.
+     * @param formattingStringId The identifier of the resource to be used to format the resulting string.
+     *                           e.g. "Expired %s" -> "Expired 2 days ago"
+     * @return A human-readable string representing the elapsed time.
+     */
+    @Composable
+    fun getElapsedTimeString(dateTime: LocalDateTime, formattingStringId: Int) : String {
+        return doTimeString(
+            duration = Duration.between(dateTime, LocalDateTime.now()),
+            formattingStringId = formattingStringId,
+            direction = Direction.LAST
+        )
     }
 
     /**

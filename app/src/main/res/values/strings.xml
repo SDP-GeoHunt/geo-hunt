@@ -10,6 +10,7 @@
     <string name="challenge_published">Published : %1$s</string>
     <string name="challenge_time_remaining">Time remaining : %1$s </string>
 
+
     <!-- All string for formatting message like "published just now" -->
     <string name="just_now">just now</string>
     <string name="published_format">published %s</string>
@@ -58,4 +59,12 @@
     <string name="challenge_settings_difficulty">Difficulty</string>
     <string name="challenge_settings_date">Date</string>
     <string name="challenge_settings_date_never">Never</string>
+    <string name="active_hunts_black_part">Active</string>
+    <string name="active_hunts_red_part">hunts</string>
+    <string name="no_challenge_message">No challenges yet… <br/> Go pick some challenges to begin your hunt!</string>
+    <string name="search_nearby_challenges">Search nearby challenges</string>
+    <string name="never_expires">Never expires</string>
+    <string name="expired_formatter"><![CDATA[Expired <font color="#2596be">%s</font>]]></string>
+    <string name="expires_in_formatter"><![CDATA[Expires <font color="#2596be">%s</font>]]></string>
+
 </resources>

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
+import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
@@ -24,10 +25,18 @@ import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.LabelledIcon
 import com.github.geohunt.app.ui.rememberLazyRef
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.suspendCoroutine
 
 @Composable
 internal fun BellowImageButtons(challenge: Challenge, database: Database, user: User) {
+    val currentUser = rememberLazyRef {
+        database.getUserById(Authenticator.authInstance.get().user!!.uid)
+    }
+
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(15.dp, 5.dp)) {
@@ -62,18 +71,32 @@ internal fun BellowImageButtons(challenge: Challenge, database: Database, user: 
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(
-            modifier = Modifier
-                .size(80.dp, 28.dp)
-                .align(Alignment.CenterVertically),
-            contentPadding = PaddingValues(2.dp, 2.dp),
-            shape = RoundedCornerShape(12.dp),
-            onClick = { /*TODO*/ })
+        if (currentUser.value != null)
         {
-            Text(
-                text = "Join",
-                fontSize = 17.sp
-            )
+            val hasJoined = currentUser.value!!.activeHunts.any { it.id == challenge.cid }
+
+            Button(
+                modifier = Modifier
+                    .size(80.dp, 28.dp)
+                    .align(Alignment.CenterVertically),
+                contentPadding = PaddingValues(2.dp, 2.dp),
+                shape = RoundedCornerShape(12.dp),
+                onClick = {
+                    GlobalScope.launch {
+                        if (hasJoined) {
+                            database.leaveHunt(challenge.cid)
+                        }
+                        else {
+                            database.joinHunt(challenge.cid)
+                        }
+                    }
+                })
+            {
+                Text(
+                    text = if (hasJoined) "Leave" else "Join",
+                    fontSize = 17.sp
+                )
+            }
         }
     }
 }

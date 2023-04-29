@@ -16,11 +16,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.api.Challenge
@@ -28,6 +32,7 @@ import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.ui.theme.geoHuntRed
+import com.ireward.htmlcompose.HtmlText
 import java.time.LocalDateTime
 
 /**
@@ -57,10 +62,12 @@ fun ChallengeImage(challenge: Challenge, modifier: Modifier) {
     val thumbnail = challenge.thumbnail
 
     Box(modifier = modifier.fillMaxWidth()) { //image "frame"
-        FetchComponent(lazyRef = { thumbnail }) {resolvedThumbnail ->
+        FetchComponent(lazyRef = { thumbnail }) { resolvedThumbnail ->
             Image(painter = BitmapPainter(resolvedThumbnail.asImageBitmap()),
                     contentDescription = "Challenge ${challenge.cid}",
-                    modifier = Modifier.clip(RoundedCornerShape(20.dp)).fillMaxSize(),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center)
         }
@@ -122,8 +129,15 @@ fun Location(){
 
 @Composable
 fun ExpirationTime(expirationDate: LocalDateTime?) {
-    val expires = if (expirationDate != null) "Expires in " else "Expires "
-    val expirationDateFmt = DateFormatUtils.formatRemainingTime(expirationDate).lowercase()
+    val expirationStringHtml =
+        if (expirationDate != null) {
+            DateFormatUtils.getRemainingTimeString(
+                expirationDate,
+                formattingStringId = R.string.expires_in_formatter,
+                passedFormattingStringId = R.string.expired_formatter
+            )
+        }
+        else stringResource(R.string.never_expires)
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Icon(Icons.Rounded.CalendarMonth,
@@ -131,17 +145,9 @@ fun ExpirationTime(expirationDate: LocalDateTime?) {
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        Text(buildAnnotatedString {
-            withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                append(expires)
-
-                withStyle(style = SpanStyle(color = geoHuntRed)) {
-                    append(expirationDateFmt)
-                }
-
-                append(" !")
-            }
-
-        })
+        HtmlText(
+            text = expirationStringHtml,
+            style = TextStyle(fontWeight = FontWeight.SemiBold),
+        )
     }
 }
