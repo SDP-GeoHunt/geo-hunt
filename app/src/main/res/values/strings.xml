@@ -58,4 +58,7 @@
     <string name="challenge_settings_difficulty">Difficulty</string>
     <string name="challenge_settings_date">Date</string>
     <string name="challenge_settings_date_never">Never</string>
+
+    <string name="statistics_title">Statistics</string>
+
 </resources>
