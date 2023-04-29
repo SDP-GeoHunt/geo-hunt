@@ -1,9 +1,13 @@
 package com.github.geohunt.app.ui.components.profile
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.github.geohunt.app.mocks.InstantLazyRef
-import com.github.geohunt.app.mocks.MockChallenge
+import com.github.geohunt.app.mocks.MockChallengeClass
 import com.github.geohunt.app.mocks.MockLazyRef
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.LazyRef
@@ -51,9 +55,9 @@ class ProfilePageTest {
     @Test
     fun showsNumberOfHunts() {
         val mockuser = MockUser(hunts = listOf(
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge())
+            wrapLazyChallenge(MockChallengeClass()),
+            wrapLazyChallenge(MockChallengeClass()),
+            wrapLazyChallenge(MockChallengeClass())
         ))
 
         testRule.setContent {
@@ -65,9 +69,9 @@ class ProfilePageTest {
     @Test
     fun showsNumberOfChallenges() {
         val mockuser = MockUser(challenges = listOf(
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge())
+            wrapLazyChallenge(MockChallengeClass()),
+            wrapLazyChallenge(MockChallengeClass()),
+            wrapLazyChallenge(MockChallengeClass())
         ))
         testRule.setContent {
             ProfilePage(user = InstantLazyRef("1", mockuser))

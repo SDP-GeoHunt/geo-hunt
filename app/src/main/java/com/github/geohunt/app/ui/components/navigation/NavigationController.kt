@@ -29,16 +29,16 @@ import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
-import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
-import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePage
+import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
+import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
 import com.github.geohunt.app.utility.findActivity
+import com.github.geohunt.app.utility.replaceActivity
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
-import com.github.geohunt.app.utility.replaceActivity
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -104,9 +104,9 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                ActiveHunts(id = user.uid, database) {
-                    navController.navigate(Route.Explore.route)
-                }
+                ActiveHuntsScreen(
+                    openExploreTab = { navController.navigate(Route.Explore.route) }
+                )
             }
         }
 
