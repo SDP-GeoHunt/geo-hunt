@@ -130,7 +130,7 @@ fun CreateChallengeForm(
                     },
                     enabled = (locationRequest.lastLocation.value != null) && !currentlySubmitting
                 ) {
-                    Text("Create challenge")
+                    Text(stringResource(R.string.create_challenge_button))
                 }
             }
         }

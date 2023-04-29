@@ -129,6 +129,7 @@ object DateFormatUtils {
      * represents an unlimited duration.
      * @param to LocalDateTime to which the remaining time should be computed
      */
+    @Deprecated("Should prefer the other method as this does not comply with i18n")
     fun formatRemainingTime(to: LocalDateTime?): String {
         when(to) {
             null -> return "Never"

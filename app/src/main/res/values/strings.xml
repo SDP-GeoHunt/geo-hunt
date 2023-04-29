@@ -66,5 +66,12 @@
     <string name="never_expires">Never expires</string>
     <string name="expired_formatter"><![CDATA[Expired <font color="#2596be">%s</font>]]></string>
     <string name="expires_in_formatter"><![CDATA[Expires <font color="#2596be">%s</font>]]></string>
+    <string name="leave_hunt">Leave Hunt</string>
+    <string name="join_hunt">Join Hunt</string>
+    <string name="less_button">less...</string>
+    <string name="more_button">more...</string>
+    <string name="submit_a_claim_title">Submit a Claim</string>
+    <string name="submit_claim_button">Submit Claim</string>
+    <string name="create_challenge_button">Create challenge</string>
 
 </resources>
