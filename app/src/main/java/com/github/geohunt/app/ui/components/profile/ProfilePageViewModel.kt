@@ -1,12 +1,14 @@
 package com.github.geohunt.app.ui.components.profile
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import com.github.geohunt.app.data.repository.AuthRepository
-import com.github.geohunt.app.data.repository.ChallengeRepository
-import com.github.geohunt.app.data.repository.FollowRepository
-import com.github.geohunt.app.data.repository.UserRepository
-import com.github.geohunt.app.maps.loadChallenges
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.github.geohunt.app.data.exceptions.UserNotFoundException
+import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
@@ -18,7 +20,7 @@ class ProfilePageViewModel(
     private val userRepository: UserRepository,
     private val challengeRepository: ChallengeRepository,
     private val followRepository: FollowRepository,
-    uid: String = authRepository.getCurrentUser().id,
+    @Suppress("DEPRECATION") private val uid: String = authRepository.getCurrentUser().id,
 ): ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user = _user.asStateFlow()
@@ -32,22 +34,27 @@ class ProfilePageViewModel(
     val claimedChallenges = _claimedChallenges.asStateFlow()
     val score = _claims.asStateFlow().map { it?.sumOf { it.awardedPoints } }
 
+    @Suppress("DEPRECATION")
     val canFollow = authRepository.getCurrentUser().id != uid
 
-    private var _doesFollow = followRepository.doesFollow(uid)
+    private val _doesFollow = followRepository.doesFollow(uid)
     val doesFollow = _doesFollow.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    private var _rank = MutableStateFlow<Int?>(null)
-    val rank = _rank.asStateFlow()
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+
+    private var _didFail = MutableStateFlow<Exception?>(null)
+    val didFail = _didFail.asStateFlow()
 
     private var isFollowTransactionDone = true // flag to prevent spamming the follow button
     fun follow() {
-        if (isFollowTransactionDone && _user.value != null && !doesFollow.value)
+        if (isFollowTransactionDone && _user.value != null && !doesFollow.value) {
             isFollowTransactionDone = false
             viewModelScope.launch {
                 followRepository.follow(_user.value!!)
                 isFollowTransactionDone = true
             }
+        }
     }
 
     fun unfollow() {
@@ -60,12 +67,49 @@ class ProfilePageViewModel(
         }
     }
 
-    init {
+    /**
+     * Refreshes the data
+     */
+    fun refresh() {
         viewModelScope.launch {
-            _user.value = userRepository.getUser(uid)
-            _challenges.value = challengeRepository.getChallengesFromUser(uid)
-            _claims.value = challengeRepository.getClaimsFromUser(uid)
-            _claimedChallenges.value = _claims.value!!.map { challengeRepository.getChallenge(it.parentChallengeId) }
+            if (!_isRefreshing.value) {
+                _isRefreshing.value = true
+                fetch()
+                _isRefreshing.value = false
+            }
+        }
+    }
+
+    private fun fetch() {
+        viewModelScope.launch {
+            try {
+                _user.value = userRepository.getUser(uid)
+                _challenges.value = challengeRepository.getChallengesFromUser(uid)
+                _claims.value = challengeRepository.getClaimsFromUser(uid)
+                _claimedChallenges.value = _claims.value!!.map { challengeRepository.getChallenge(it.parentChallengeId) }
+            } catch (e: UserNotFoundException) {
+                _didFail.value = e
+            }
+        }
+    }
+
+    init {
+        fetch()
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = this[APPLICATION_KEY] as Application
+                val container = AppContainer.getInstance(application)
+
+                ProfilePageViewModel(
+                    container.auth,
+                    container.user,
+                    container.challenge,
+                    container.follow
+                )
+            }
         }
     }
 }

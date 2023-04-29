@@ -10,13 +10,6 @@ data class EditedUser(
     var displayName: String,
     var profilePicture: Bitmap? = null
 ) {
-    /**
-     * Sets the profile picture
-     */
-    fun setProfilePicture(profilePicture: Bitmap): EditedUser {
-        return copy(profilePicture = profilePicture)
-    }
-
     companion object {
         fun fromUser(user: User): EditedUser {
             return EditedUser(user, user.name)

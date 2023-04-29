@@ -13,6 +13,7 @@ import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.screens.main.MainScreen
 import com.github.geohunt.app.ui.screens.main.MainViewModel
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import com.github.geohunt.app.utility.replaceActivity
 
 /**
  * Main activity.
@@ -45,7 +46,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    MainScreen(database, viewModel)
+                    MainScreen(database, viewModel) {
+                        viewModel.logout(this@MainActivity) {
+                            replaceActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        }
+                    }
                 }
             }
         }

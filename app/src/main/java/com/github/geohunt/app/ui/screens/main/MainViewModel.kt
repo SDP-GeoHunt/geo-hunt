@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.screens.main
 
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.viewModelScope
 import com.github.geohunt.app.data.network.NetworkMonitor
 import com.github.geohunt.app.data.repository.AuthRepository
@@ -29,6 +30,16 @@ class MainViewModel(
      * Returns true if the application is connected to the remote database.
      */
     val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
+
+    /**
+     * Asks the auth repository to logout
+     */
+    fun logout(a: ComponentActivity, then: () -> Any) {
+        viewModelScope.launch {
+            authRepository.logOut(a)
+            then()
+        }
+    }
 
     init {
         viewModelScope.launch {

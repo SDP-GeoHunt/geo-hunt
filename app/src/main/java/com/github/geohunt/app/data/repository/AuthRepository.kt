@@ -23,13 +23,16 @@ class AuthRepository(
     private val authUi: AuthUI = AuthUI.getInstance()
 ) {
     /**
-     * Returns the currently authenticated user.
+     * Returns the currently authenticated user as it is stored in Firebase Auth.
      *
      * The caller must first check that there is a user logged in by [requireLoggedIn], otherwise
      * this function will fail with a [NullPointerException].
      *
+     *
      * @return a Firebase user, converted to the external model.
      */
+    @Deprecated("If you use this function, you very probably want the user as it is" +
+            "defined in the RTDB and not in Firebase Auth. Consider using `UserRepository.getCurrentUser()`.")
     fun getCurrentUser(): User {
         val currentUser = auth.currentUser!!
         return User(

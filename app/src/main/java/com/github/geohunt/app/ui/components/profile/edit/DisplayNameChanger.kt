@@ -5,20 +5,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.database.api.EditedUser
 
 @Composable
-fun DisplayNameChanger(editedUser: MutableState<EditedUser>) {
+fun DisplayNameChanger(value: String, onChange: (String) -> Any) {
+
     Row {
        TextField(
-           modifier = Modifier.fillMaxWidth().testTag("display-name-input"),
-           value = editedUser.value.displayName,
-           onValueChange = { editedUser.value = editedUser.value.copy(displayName = it) },
+           modifier = Modifier
+               .fillMaxWidth()
+               .testTag("display-name-input"),
+           value = value,
+           onValueChange = { onChange(it) },
            label = { Text(stringResource(id = R.string.display_name)) },
            singleLine = true
        )

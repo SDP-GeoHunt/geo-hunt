@@ -41,8 +41,25 @@ fun ProfileIcon(user: User, modifier: Modifier = Modifier) {
     }
 }
 
+@Deprecated("Deprecated. Please use the User given by the UserRepository.")
 @Composable
-private fun DefaultProfileIcon(modifier: Modifier) {
+fun ProfileIcon(user: com.github.geohunt.app.model.database.api.User, modifier: Modifier = Modifier) {
+    val newModifier = modifier
+        .aspectRatio(1f)
+        .padding(8.dp)
+        .clip(CircleShape)
+
+    if (user.profilePicture != null) {
+        val v = rememberLazyRef { user.profilePicture!! }
+
+        ProfileIcon(v.value, user.displayName, modifier = newModifier)
+    } else {
+        DefaultProfileIcon(modifier = newModifier)
+    }
+}
+
+@Composable
+fun DefaultProfileIcon(modifier: Modifier) {
     Icon(
         imageVector = Icons.Default.Person,
         contentDescription = "No profile picture",

@@ -1,10 +1,8 @@
 package com.github.geohunt.app.ui.components.navigation
 
 import android.app.Application
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
@@ -23,7 +21,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.data.repository.AppContainer
@@ -31,17 +28,15 @@ import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
-import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
-import com.github.geohunt.app.utility.findActivity
+import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
-import com.github.geohunt.app.utility.replaceActivity
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -69,12 +64,11 @@ enum class HiddenRoutes(val route: String) {
 fun NavigationController(
     navController: NavHostController,
     database: Database,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    logout: () -> Any
 ) {
     val context = LocalContext.current
-    val authenticator = Authenticator.authInstance.get()
-    val activity: ComponentActivity = LocalContext.current.findActivity() as ComponentActivity
-    val appContainer = AppContainer.getInstance(LocalContext.current.applicationContext as Application)
+    val appContainer = AppContainer.getInstance(context.applicationContext as Application)
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
@@ -121,14 +115,10 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                val profilePageViewModel = ProfilePageViewModel(
-                    appContainer.auth, appContainer.user, appContainer.challenge, appContainer.follow
-                )
                 ProfilePage(
-                    profilePageViewModel,
                     openLeaderboard = { navController.navigate(HiddenRoutes.Leaderboard.route) },
                     openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
-                    onLogout = { logout(authenticator, activity) }
+                    onLogout = { logout() }
                 )
             }
         }
@@ -142,9 +132,7 @@ fun NavigationController(
         }
 
         composable(HiddenRoutes.EditProfile.route) {
-            ProfileEditPage(
-                onBackButton = { navController.popBackStack() }
-            )
+            ProfileEditPage(onBackButton = { navController.popBackStack() })
         }
 
         // View image
@@ -196,11 +184,5 @@ fun NavigationController(
                 }
             }
         }
-    }
-}
-
-private fun logout(authenticator: Authenticator, activity: ComponentActivity) {
-    authenticator.signOut(activity).thenAccept {
-        activity.replaceActivity(Intent(activity, LoginActivity::class.java))
     }
 }
