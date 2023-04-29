@@ -1,9 +1,7 @@
 package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest
-import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,130 +16,122 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.BuildConfig
-import com.github.geohunt.app.R
-import com.github.geohunt.app.i18n.DateFormatUtils
-import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.sensor.rememberLocationRequestState
+import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.sensor.rememberPermissionsState
-import com.github.geohunt.app.ui.components.LinkText
-import com.github.geohunt.app.ui.components.LinkTextData
-import com.github.geohunt.app.ui.theme.Typography
 import com.github.geohunt.app.utility.*
-import kotlinx.coroutines.tasks.asTask
-import java.time.LocalDate
 
 @Composable
 fun CreateChallengeForm(
     bitmap: Bitmap,
-    database: Database,
-    onChallengeCreated: (Challenge) -> Unit,
-    onFailure: (Throwable) -> Unit
+    viewModel: CreateChallengeViewModel,
+    onFailure: (Throwable) -> Unit,
+    onSuccess: (Challenge) -> Unit
 ) {
-    var currentlySubmitting by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val activity = context.findActivity()
-    val bitmapPainter = remember { BitmapPainter(bitmap.asImageBitmap()) }
-    val locationRequest = rememberLocationRequestState()
-    val communityGuidelinesUrl = stringResource(R.string.community_guidelines_url)
-    val openCommunityGuidelinesIntent = remember {
-        Intent(Intent.ACTION_VIEW, Uri.parse(communityGuidelinesUrl))
-    }
+    val bitmapPainter = remember(bitmap) { BitmapPainter(bitmap.asImageBitmap()) }
     val locationPermission = rememberPermissionsState(
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_FINE_LOCATION
     )
-    val selectedDifficulty = remember { mutableStateOf(Challenge.Difficulty.MEDIUM) }
-    val selectedDate: MutableState<LocalDate?> = remember { mutableStateOf(null) }
 
-    LaunchedEffect(true) {
+    LaunchedEffect(viewModel) {
         locationPermission.requestPermissions()
-            .thenCompose {
-                locationRequest.requestLocation()
+            .thenAccept {
+                viewModel.startLocationUpdate(onFailure)
             }
-            .thenApply {  }
+            .thenApply { }
             .exceptionally(onFailure)
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.verticalScroll(rememberScrollState())
+    val location = viewModel.location.collectAsState()
+
+    if (location.value != null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
         ) {
-            /*Text(text = "Create new Challenge",
-                color = MaterialTheme.colors.primary,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.h1)
-
-            Spacer(Modifier.height(25.dp))*/
-
-            Image(
-                painter = bitmapPainter,
-                modifier = Modifier
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                Image(
+                    painter = bitmapPainter,
+                    modifier = Modifier
                         .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
                         .fillMaxSize(0.5f),
-                contentDescription = "Photo just taken of the challenge"
-            )
-
-            Spacer(Modifier.height(15.dp))
-
-            ChallengeSettings(selectedDifficulty = selectedDifficulty, selectedDate)
-
-            Spacer(Modifier.height(15.dp))
-
-            LinkText(listOf(
-                LinkTextData("By creating a challenge, you agree to GeoHunt's "),
-                LinkTextData(
-                    text = "Community Guidelines",
-                    tag = "",
-                    annotation = "",
-                    onClick = {
-                        context.startActivity(openCommunityGuidelinesIntent)
-                    }
+                    contentDescription = "Photo just taken of the challenge"
                 )
-            ), style = Typography.h5)
 
-            Spacer(Modifier.height(15.dp))
+                Spacer(Modifier.height(15.dp))
 
-            if (currentlySubmitting) {
-                CircularProgressIndicator()
-            }
-            else {
-                Button(
-                    onClick = {
-                        currentlySubmitting = true
-                        database.createChallenge(
-                            thumbnail = bitmap,
-                            location = locationRequest.lastLocation.value!!,
-                            expirationDate = DateFormatUtils.atEndOfDay(selectedDate.value),
-                            difficulty = selectedDifficulty.value
-                        ).toCompletableFuture(activity)
-                            .thenApply(onChallengeCreated)
-                            .thenApply { }
-                            .exceptionally(onFailure)
-                    },
-                    enabled = (locationRequest.lastLocation.value != null) && !currentlySubmitting
-                ) {
-                    Text("Create challenge")
-                }
+                ChallengeSettings(viewModel)
+
+                Spacer(Modifier.height(15.dp))
+
+//TODO: This code is going to change with i18n PR anyway so...
+//                LinkText(listOf(
+//                    LinkTextData("By creating a challenge, you agree to GeoHunt's "),
+//                    LinkTextData(
+//                        text = "Community Guidelines",
+//                        tag = "",
+//                        annotation = "",
+//                        onClick = {
+//                            context.startActivity(openCommunityGuidelinesIntent)
+//                        }
+//                    )
+//                ), style = Typography.h5)
+
+                Spacer(Modifier.height(15.dp))
+
+                CreateNewChallengeButton(viewModel = viewModel,
+                    onFailure = onFailure,
+                    onSuccess = onSuccess)
+
             }
         }
     }
 }
 
 @Composable
+private fun CreateNewChallengeButton(
+    viewModel: CreateChallengeViewModel,
+    onFailure: (Throwable) -> Unit,
+    onSuccess: (Challenge) -> Unit
+) {
+    val context = LocalContext.current
+    val state = viewModel.submittingState.collectAsState()
+
+    if (state.value == CreateChallengeViewModel.State.CREATING) {
+        CircularProgressIndicator()
+    }
+    else {
+        Button(
+            onClick = {
+                viewModel.create(
+                    { suffix ->
+                        context.createImageFile(suffix)
+                    },
+                    onFailure = onFailure,
+                    onSuccess = onSuccess
+                )
+            },
+            enabled = state.value == CreateChallengeViewModel.State.READY_TO_CREATE
+        ) {
+            Text(text = "Create challenge")
+        }
+    }
+}
+
+
+@Composable
 fun CreateNewChallenge(
-    database: Database,
-    onChallengeCreated: (Challenge) -> Unit = {},
-    onFailure: (Throwable) -> Unit = {}
+    onFailure: (Throwable) -> Unit = {},
+    onSuccess: (Challenge) -> Unit = {},
+    viewModel: CreateChallengeViewModel = viewModel(factory = CreateChallengeViewModel.Factory)
 ) {
     val context = LocalContext.current
     val file = remember { context.createImageFile() }
@@ -152,36 +142,36 @@ fun CreateNewChallenge(
             file
         )
     }
-    val bitmapResult = remember { mutableStateOf<Bitmap?>(null) }
-    val permissions = rememberPermissionsState(Manifest.permission.CAMERA)
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) {
         Log.i("GeoHunt", "Returning from camera")
         if (!it) {
-            onFailure(RuntimeException("Failed to take the photo"))
+            @Suppress("ThrowableNotThrown")
+            onFailure(RuntimeException("Failed to take photo at ${file.absolutePath}"))
         }
         else {
-            BitmapUtils.loadFromFileAsync(file).asTask()
-                .thenDo {  bitmap ->
-                    Log.i("GeoHunt", "Resizing the bitmap...")
-                    BitmapUtils.resizeBitmapToFitAsync(bitmap, R.integer.maximum_number_of_pixel_per_photo).asTask()
-                }
-                .toCompletableFuture(context.findActivity())
-                .thenAccept { bitmap ->
-                    Log.i("GeoHunt", "Updating bitmapResult value")
-                    bitmapResult.value = bitmap
-                }
-                .thenApply {  }
-                .exceptionally(onFailure)
+            viewModel.withPhoto(file, onFailure)
         }
     }
 
-    if (bitmapResult.value != null) {
-        CreateChallengeForm(bitmapResult.value!!, database, onChallengeCreated, onFailure)
-    } else {
-        LaunchedEffect(null) {
-            permissions.requestPermissions()
+    val permission = rememberPermissionsState(
+        Manifest.permission.CAMERA
+    )
+
+    val photoState = viewModel.photoState.collectAsState()
+
+    if (photoState.value != null) {
+        CreateChallengeForm(
+            bitmap = photoState.value!!,
+            viewModel = viewModel,
+            onFailure = onFailure,
+            onSuccess = onSuccess
+        )
+    }
+    else {
+        LaunchedEffect(viewModel) {
+            permission.requestPermissions()
                 .thenApply {
                     cameraLauncher.launch(uri)
                 }

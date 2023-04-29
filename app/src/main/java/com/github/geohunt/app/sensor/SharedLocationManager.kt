@@ -22,8 +22,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.shareIn
 
 class SharedLocationManager(
-    private val context: Context,
-    externalScope: CoroutineScope
+    private val context: Context
 ) {
     private var mFusedLocationClient : FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
@@ -35,7 +34,7 @@ class SharedLocationManager(
         .build()
 
     @SuppressLint("MissingPermission")
-    private val _locationUpdates = callbackFlow<Location> {
+    private fun _locationUpdates(coroutineScope: CoroutineScope) = callbackFlow<Location> {
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 if (result.lastLocation != null) {
@@ -60,9 +59,9 @@ class SharedLocationManager(
         awaitClose {
             mFusedLocationClient.removeLocationUpdates(callback)
         }
-    }.shareIn(externalScope, replay = 0, started = SharingStarted.WhileSubscribed())
+    }.shareIn(coroutineScope, replay = 0, started = SharingStarted.WhileSubscribed())
 
-    fun locationFlow() : Flow<Location> {
-        return _locationUpdates
+    fun locationFlow(coroutineScope: CoroutineScope) : Flow<Location> {
+        return _locationUpdates(coroutineScope)
     }
 }

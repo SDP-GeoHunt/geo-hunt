@@ -1,14 +1,21 @@
 package com.github.geohunt.app.data.repository
 
+import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
+import android.text.style.BulletSpan
+import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.User
+import com.github.geohunt.app.utility.BitmapUtils
+import com.github.geohunt.app.utility.BitmapUtils.resizeBitmapToFit
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.lang.IllegalStateException
 
 /**
@@ -34,6 +41,24 @@ class ImageRepository(
             PROFILE_PICTURE -> "profile"
             CHALLENGE_PHOTO -> "challenge"
         }
+    }
+
+
+    /**
+     * Preprocess the image at the given file
+     */
+    suspend fun preprocessImage(image: Bitmap, outputFileFactory: suspend (String) -> File) : File = withContext(ioDispatcher) {
+        val bitmap = image
+            .resizeBitmapToFit(R.integer.maximum_number_of_pixel_per_photo)
+
+        val outputFile = outputFileFactory(".webp")
+
+        BitmapUtils.saveToFile(bitmap,
+            outputFile,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) Bitmap.CompressFormat.WEBP_LOSSY else Bitmap.CompressFormat.WEBP,
+            80)
+
+        return@withContext outputFile
     }
 
     /**

@@ -1,9 +1,13 @@
 package com.github.geohunt.app.data.repository
 
 import android.app.Application
+import android.location.Location
+import com.github.geohunt.app.sensor.SharedLocationManager
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 /**
  * Container for the application's dependency instances.
@@ -17,6 +21,9 @@ class AppContainer private constructor(application: Application) {
         Firebase.database.setPersistenceEnabled(true)
     }
 
+    val location: LocationRepository = LocationRepository(
+        SharedLocationManager(application.applicationContext)
+    )
     val database = Firebase.database
     val storage = Firebase.storage
 

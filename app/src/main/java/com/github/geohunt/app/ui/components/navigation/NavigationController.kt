@@ -85,15 +85,14 @@ fun NavigationController(
         }
         composable(Route.Create.route) {
             CreateNewChallenge(
-                database = database,
-                onChallengeCreated = { challenge ->
-                    navController.popBackStack()
-                    navController.navigate("challenge-view/${challenge.cid}")
-                },
                 onFailure = {
                     Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
                     Log.e("GeoHunt", "Fail to create challenge: $it")
                     navController.popBackStack()
+                },
+                onSuccess = {
+                    navController.popBackStack()
+                    navController.navigate("challenge-view/${it.id}")
                 }
             )
         }

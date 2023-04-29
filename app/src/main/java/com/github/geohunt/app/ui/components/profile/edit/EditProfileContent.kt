@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.components.button.FlatLongButton
+import com.github.geohunt.app.ui.components.profile.button.FlatLongButton
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.api.EditedUser

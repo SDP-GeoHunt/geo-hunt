@@ -96,8 +96,7 @@ interface MultiplePermissionState {
     /**
      * Are all permission granted
      */
-    val allAreGranted: Boolean
-        get() = permissions.value.none { it.status.isDenied }
+    val allAreGranted: MutableState<Boolean>
 
     /**
      * Ask the user for the required permission, once done update the permission list
@@ -131,9 +130,13 @@ fun rememberPermissionsState(vararg permissions: String): MultiplePermissionStat
 
 private class MutableMultiplePermissionState() : MultiplePermissionState {
 
+    override lateinit var allAreGranted: MutableState<Boolean>
     override lateinit var permissions: MutableState<List<Permission>>
     var launcher: ActivityResultLauncher<Array<String>>? = null
     var future: CompletableFuture<Void>? = null
+
+    private val pAreAllGranted : Boolean
+        get() = permissions.value.none { it.status.isDenied }
 
     @Composable
     fun Initialize(perms : List<String>) {
@@ -143,6 +146,10 @@ private class MutableMultiplePermissionState() : MultiplePermissionState {
             mutableStateOf(perms.map {
                 Permission(it).updated(context)
             })
+        }
+
+        allAreGranted = remember {
+            mutableStateOf(pAreAllGranted)
         }
 
         launcher = rememberLauncherForActivityResult(
@@ -168,8 +175,10 @@ private class MutableMultiplePermissionState() : MultiplePermissionState {
 
         // Either succeed or deny the future
         if (deniedPermissions.isEmpty()) {
+            allAreGranted.value = true
             future?.complete(null)
         } else {
+            allAreGranted.value = false
             future?.completeExceptionally(PermissionDeniedException(deniedPermissions))
         }
     }
@@ -179,7 +188,7 @@ private class MutableMultiplePermissionState() : MultiplePermissionState {
             return future!!
         }
 
-        return if (allAreGranted) {
+        return if (pAreAllGranted) {
             CompletableFuture.completedFuture(null)
         } else {
             future = CompletableFuture()

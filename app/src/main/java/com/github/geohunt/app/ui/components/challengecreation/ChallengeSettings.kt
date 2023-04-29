@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils
-import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.ui.components.utils.ListDropdownMenu
 import com.github.geohunt.app.ui.theme.Lobster
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
@@ -27,46 +27,51 @@ import java.time.LocalDate
  *  - Challenge difficulty
  *  - Challenge expiration date
  * Takes mutable states of the arguments it has to select
- * @param selectedDifficulty Mutable state of a challenge difficulty that can be modified by user interaction
- * @param selectedDate Mutable state of a LocalDate that can be modified by user interaction.
- *  Can be null representing that there is no expiration date
+ * @param viewModel corresponding view model
  */
 @Composable
-fun ChallengeSettings(selectedDifficulty: MutableState<Challenge.Difficulty>, selectedDate: MutableState<LocalDate?>) {
+fun ChallengeSettings(viewModel: CreateChallengeViewModel) {
     Column(modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp)
-            .padding(horizontal = 10.dp),
+        .fillMaxWidth()
+        .height(120.dp)
+        .padding(horizontal = 10.dp),
             verticalArrangement = Arrangement.SpaceBetween) {
-        DifficultySelect(selectedDifficulty)
+        DifficultySelect(viewModel)
 
-        DateSelect(selectedDate)
+        DateSelect(viewModel)
     }
 }
 
 @Composable
-fun DifficultySelect(selectedDifficulty: MutableState<Challenge.Difficulty>) {
+private fun DifficultySelect(viewModel: CreateChallengeViewModel) {
+    val difficulty = viewModel.selectedDifficulty.collectAsState()
+
     Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
         SettingsText(text = stringResource(id = R.string.challenge_settings_difficulty))
 
-        ListDropdownMenu(state = selectedDifficulty,
-                elements = Challenge.Difficulty.values().toList(),
-                toString = Challenge.Difficulty::toString)
+
+        ListDropdownMenu(state = difficulty.value,
+            update = { viewModel.withDifficulty(it) },
+            elements = Challenge.Difficulty.values().toList(),
+            toString = Challenge.Difficulty::toString
+        )
     }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateSelect(selectedDate: MutableState<LocalDate?>) {
+private fun DateSelect(viewModel: CreateChallengeViewModel) {
+    val expirationDate = viewModel.expirationDate.collectAsState()
     val state = UseCaseState(
             embedded = false,
-            onDismissRequest = { selectedDate.value = null }
+            onDismissRequest = { viewModel.withExpirationDate(null) }
     )
+
     CalendarDialog(state = state,
-            selection = CalendarSelection.Date { selectedDate.value = it },
+            selection = CalendarSelection.Date { viewModel.withExpirationDate(it) },
             config = calendarConfig())
 
     Row(modifier = Modifier.fillMaxWidth(),
@@ -74,7 +79,7 @@ fun DateSelect(selectedDate: MutableState<LocalDate?>) {
             verticalAlignment = Alignment.CenterVertically) {
         SettingsText(text = stringResource(id = R.string.challenge_settings_date))
 
-        TextField(value = nullableDateToString(date = selectedDate.value),
+        TextField(value = nullableDateToString(date = expirationDate.value),
                 onValueChange = {},
                 readOnly = true,
                 enabled = false,
