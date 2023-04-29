@@ -1,11 +1,14 @@
 package com.github.geohunt.app.ui.screens.login
 
 import android.app.Activity
+import android.app.Application
 import android.content.Intent
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.FirebaseUiException
@@ -15,6 +18,7 @@ import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.exceptions.auth.AuthenticationCancelledException
 import com.github.geohunt.app.data.exceptions.auth.AuthenticationFailureException
+import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.AuthRepository
 import com.github.geohunt.app.data.repository.UserRepository
 import com.github.geohunt.app.ui.AuthViewModel
@@ -95,6 +99,20 @@ class LoginViewModel(
         viewModelScope.launch {
             userRepository.createUserIfNew(response)
             andThen()
+        }
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
+                val container = AppContainer.getInstance(application)
+
+                LoginViewModel(
+                    container.auth,
+                    container.user
+                )
+            }
         }
     }
 }
