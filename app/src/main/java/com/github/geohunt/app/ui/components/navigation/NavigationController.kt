@@ -35,6 +35,7 @@ import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
+import com.github.geohunt.app.ui.screens.home.HomeScreen
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.replaceActivity
 import com.google.android.gms.maps.model.CameraPosition
@@ -74,6 +75,7 @@ fun NavigationController(
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
+            HomeScreen()
         }
         composable(Route.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)

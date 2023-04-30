@@ -1,6 +1,7 @@
 package com.github.geohunt.app.data.repository
 
 import android.app.Application
+import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -23,9 +24,12 @@ class AppContainer private constructor(application: Application) {
     val image = ImageRepository()
     val auth = AuthRepository()
     val user = UserRepository(image, auth)
+    val follow = FollowRepository(auth)
 
     val challenges = ChallengeRepository(user, image, auth)
     val activeHunts = ActiveHuntsRepository(auth)
+
+    val feedUseCase = GetUserFeedUseCase(auth, challenges, follow)
 
     companion object {
         private var container: AppContainer? = null

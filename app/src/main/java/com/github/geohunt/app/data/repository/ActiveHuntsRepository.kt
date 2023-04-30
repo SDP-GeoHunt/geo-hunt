@@ -28,7 +28,7 @@ class ActiveHuntsRepository(
      *
      * If there are no currently authenticated user, throws a [UserNotLoggedInException].
      */
-    suspend fun updateHuntState(challenge: Challenge, doHunt: Boolean) {
+    private suspend fun updateHuntState(challenge: Challenge, doHunt: Boolean) {
         authRepository.requireLoggedIn()
 
         val currentUser = authRepository.getCurrentUser()

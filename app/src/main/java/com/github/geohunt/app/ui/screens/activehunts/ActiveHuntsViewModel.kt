@@ -30,7 +30,7 @@ open class ActiveHuntsViewModel(
     open val activeHunts: StateFlow<List<Challenge>?> = _activeHunts.asStateFlow()
 
     // The author names of the challenges.
-    private val _authorNames: MutableMap<Challenge, MutableStateFlow<String>> = mutableMapOf()
+    private val authorNames: MutableMap<Challenge, MutableStateFlow<String>> = mutableMapOf()
 
     init {
         viewModelScope.launch {
@@ -49,13 +49,13 @@ open class ActiveHuntsViewModel(
      * the screen.
      */
     open fun getAuthorName(challenge: Challenge): StateFlow<String> {
-        if (!_authorNames.contains(challenge)) {
-            _authorNames[challenge] = MutableStateFlow("Loading …")
+        if (!authorNames.contains(challenge)) {
+            authorNames[challenge] = MutableStateFlow("Loading …")
             viewModelScope.launch {
-                _authorNames[challenge]!!.value = userRepository.getUser(challenge.authorId).displayName!!
+                authorNames[challenge]!!.value = userRepository.getUser(challenge.authorId).displayName!!
             }
         }
-        return _authorNames[challenge]!!.asStateFlow()
+        return authorNames[challenge]!!.asStateFlow()
     }
 
     companion object {
