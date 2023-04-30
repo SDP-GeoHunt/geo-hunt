@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -44,6 +45,7 @@ fun CreateChallengeForm(
     onFailure: (Throwable) -> Unit,
     onSuccess: (Challenge) -> Unit
 ) {
+    val uriHandler = LocalUriHandler.current
     val bitmapPainter = remember(bitmap) { BitmapPainter(bitmap.asImageBitmap()) }
 
     val location = viewModel.location.collectAsState()
@@ -74,7 +76,10 @@ fun CreateChallengeForm(
 
                 HtmlText(
                     text = stringResource(id = R.string.challenge_create_agree_community_link),
-                    modifier = Modifier.padding(25.dp, 0.dp)
+                    modifier = Modifier.padding(25.dp, 0.dp),
+                    linkClicked = { url ->
+                        uriHandler.openUri(url)
+                    }
                 )
 
                 Spacer(Modifier.height(15.dp))
