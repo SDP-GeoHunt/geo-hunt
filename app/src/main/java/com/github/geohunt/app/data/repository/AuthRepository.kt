@@ -21,7 +21,7 @@ import kotlinx.coroutines.tasks.await
 class AuthRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val authUi: AuthUI = AuthUI.getInstance()
-) {
+): AuthRepositoryInterface {
     /**
      * Returns the currently authenticated user as it is stored in Firebase Auth.
      *
@@ -33,7 +33,7 @@ class AuthRepository(
      */
     @Deprecated("If you use this function, you very probably want the user as it is" +
             "defined in the RTDB and not in Firebase Auth. Consider using `UserRepository.getCurrentUser()`.")
-    fun getCurrentUser(): User {
+    override fun getCurrentUser(): User {
         val currentUser = auth.currentUser!!
         return User(
             id = currentUser.uid,
@@ -47,7 +47,7 @@ class AuthRepository(
      *
      * @see requireLoggedIn
      */
-    fun isLoggedIn(): Boolean = auth.currentUser != null
+    override fun isLoggedIn(): Boolean = auth.currentUser != null
 
     /**
      * Ensures that the user is logged in, or throws a [UserNotLoggedInException] otherwise.
@@ -55,7 +55,7 @@ class AuthRepository(
      * @see isLoggedIn
      */
     @Throws(UserNotLoggedInException::class)
-    fun requireLoggedIn() {
+    override fun requireLoggedIn() {
         if (!isLoggedIn()) {
             throw UserNotLoggedInException()
         }
@@ -68,7 +68,7 @@ class AuthRepository(
      *
      * @param context The context requesting the log out.
      */
-    suspend fun logOut(context: ComponentActivity) {
+    override suspend fun logOut(context: ComponentActivity) {
         if (isLoggedIn()) {
             authUi.signOut(context).await()
         }

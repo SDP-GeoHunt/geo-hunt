@@ -15,11 +15,11 @@ import com.github.geohunt.app.model.User
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class ProfilePageViewModel(
-    private val authRepository: AuthRepository,
-    private val userRepository: UserRepository,
-    private val challengeRepository: ChallengeRepository,
-    private val followRepository: FollowRepository,
+open class ProfilePageViewModel(
+    private val authRepository: AuthRepositoryInterface,
+    private val userRepository: UserRepositoryInterface,
+    private val challengeRepository: ChallengeRepositoryInterface,
+    private val followRepository: FollowRepositoryInterface,
     @Suppress("DEPRECATION") private val uid: String = authRepository.getCurrentUser().id,
 ): ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
@@ -84,7 +84,7 @@ class ProfilePageViewModel(
         viewModelScope.launch {
             try {
                 _user.value = userRepository.getUser(uid)
-                _challenges.value = challengeRepository.getChallengesFromUser(uid)
+                _challenges.value = challengeRepository.getPosts(uid).first()
                 _claims.value = challengeRepository.getClaimsFromUser(uid)
                 _claimedChallenges.value = _claims.value!!.map { challengeRepository.getChallenge(it.parentChallengeId) }
             } catch (e: UserNotFoundException) {
@@ -106,7 +106,7 @@ class ProfilePageViewModel(
                 ProfilePageViewModel(
                     container.auth,
                     container.user,
-                    container.challenge,
+                    container.challenges,
                     container.follow
                 )
             }

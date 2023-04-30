@@ -27,7 +27,7 @@ class UserRepository(
     private val authRepository: AuthRepository,
     database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) {
+): UserRepositoryInterface {
     private val users = database.getReference("users")
 
     /**
@@ -39,7 +39,7 @@ class UserRepository(
      * If the user already exists, this method is a nop.
      */
     @Throws(UserNotLoggedInException::class)
-    suspend fun createUserIfNew(identity: IdpResponse) {
+    override suspend fun createUserIfNew(identity: IdpResponse) {
         authRepository.requireLoggedIn()
 
         if (identity.isNewUser) {
@@ -59,7 +59,10 @@ class UserRepository(
         }
     }
 
-    suspend fun getCurrentUser(): User {
+    /**
+     * Returns the current user as described in the Firebase RTDB
+     */
+    override suspend fun getCurrentUser(): User {
         @Suppress("DEPRECATION") val uid = authRepository.getCurrentUser().id
         return getUser(uid)
     }
@@ -79,7 +82,7 @@ class UserRepository(
      * @throws UserNotFoundException if there are no users with the given id.
      */
     @Throws(UserNotFoundException::class)
-    suspend fun getUser(id: String): User = withContext(ioDispatcher) {
+    override suspend fun getUser(id: String): User = withContext(ioDispatcher) {
         users.child(id)
             .get()
             .await()
@@ -90,7 +93,7 @@ class UserRepository(
     /**
      * Updates the user in Firebase's RTDB with the given Edited User.
      */
-    suspend fun updateUser(editedUser: EditedUser) = withContext(ioDispatcher) {
+    override suspend fun updateUser(editedUser: EditedUser): Unit = withContext(ioDispatcher) {
 
         var newProfilePictureUrl: Uri? = null
         if (editedUser.newProfilePicture != null) {
@@ -109,5 +112,5 @@ class UserRepository(
     }
 
 
-    fun getProfilePictureUrl(user: User): String? = imageRepository.getProfilePictureUrl(user)
+    override fun getProfilePictureUrl(user: User): String? = imageRepository.getProfilePictureUrl(user)
 }

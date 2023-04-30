@@ -23,7 +23,7 @@ class FollowRepository(
     private val authRepository: AuthRepository,
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) {
+): FollowRepositoryInterface {
     /**
      * Returns the list of user IDs that the currently authenticated user follows.
      *
@@ -31,7 +31,7 @@ class FollowRepository(
      * 50 000 IDs per megabyte. We expect that a normal user will not have more than ~2 000 IDs
      * in his follow list, which is ~40 Kb. Hence we do not need to paginate this query.
      */
-    fun getFollowList(): Flow<List<String>> {
+    override fun getFollowList(): Flow<List<String>> {
         authRepository.requireLoggedIn()
 
         val currentUser = authRepository.getCurrentUser()
@@ -45,7 +45,7 @@ class FollowRepository(
     /**
      * Returns the number of followers of the given user.
      */
-    fun getFollowCount(user: User): Flow<Long> =
+    override fun getFollowCount(user: User): Flow<Long> =
         database.getReference("followers/${user.id}/:count")
             .snapshots
             .map { it.getValue(Long::class.java) ?: 0 }
@@ -54,7 +54,7 @@ class FollowRepository(
     /**
      * Returns the number of followers of the current user.
      */
-    fun getCurrentUserFollowCount(): Flow<Long> {
+    override fun getCurrentUserFollowCount(): Flow<Long> {
         authRepository.requireLoggedIn()
         return getFollowCount(authRepository.getCurrentUser())
     }
@@ -99,7 +99,7 @@ class FollowRepository(
      * @see [updateFollowState]
      */
     @Throws(UserNotLoggedInException::class)
-    suspend fun follow(user: User) = updateFollowState(user, follow = true)
+    override suspend fun follow(user: User) = updateFollowState(user, follow = true)
 
     /**
      * Make the currently authenticated user unfollow the given user.
@@ -112,7 +112,7 @@ class FollowRepository(
      * @see [updateFollowState]
      */
     @Throws(UserNotLoggedInException::class)
-    suspend fun unfollow(user: User) = updateFollowState(user, follow = false)
+    override suspend fun unfollow(user: User) = updateFollowState(user, follow = false)
 
     /**
      * Returns the follow state of the currently authenticated user with regards to the given user.
@@ -120,7 +120,7 @@ class FollowRepository(
      * If there is no currently authenticated user, throws a [UserNotLoggedInException].
      */
     @Throws(UserNotLoggedInException::class)
-    fun doesFollow(user: User): Flow<Boolean> {
+    override fun doesFollow(user: User): Flow<Boolean> {
         return doesFollow(user.id)
     }
 
@@ -130,7 +130,7 @@ class FollowRepository(
      * If there is no currently authenticated user, throws a [UserNotLoggedInException].
      */
     @Throws(UserNotLoggedInException::class)
-    fun doesFollow(uid: String): Flow<Boolean> {
+    override fun doesFollow(uid: String): Flow<Boolean> {
         authRepository.requireLoggedIn()
 
         val currentUser = authRepository.getCurrentUser()

@@ -1,6 +1,7 @@
 package com.github.geohunt.app.data.repository
 
 import android.app.Application
+import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -20,11 +21,16 @@ class AppContainer private constructor(application: Application) {
     val database = Firebase.database
     val storage = Firebase.storage
 
-    val image = ImageRepository()
     val auth = AuthRepository()
+
+    val image = ImageRepository()
     val user = UserRepository(image, auth)
-    val challenge = ChallengeRepository(user, image, auth)
     val follow = FollowRepository(auth)
+
+    val challenges = ChallengeRepository(user, image, auth)
+    val activeHunts = ActiveHuntsRepository(auth)
+
+    val feedUseCase = GetUserFeedUseCase(auth, challenges, follow)
 
     companion object {
         private var container: AppContainer? = null
@@ -37,6 +43,19 @@ class AppContainer private constructor(application: Application) {
                 container = AppContainer(application)
             }
             return container as AppContainer
+        }
+
+        /**
+         * Returns the singleton instance of [AppContainer] using the firebase emulator.
+         *
+         * This is pretty bad. but has to be done.
+         */
+        fun getEmulatedFirebaseInstance(
+            application: Application
+        ): AppContainer {
+            Firebase.database.useEmulator("10.0.2.2", 9000)
+            Firebase.storage.useEmulator("10.0.2.2", 9199)
+            return getInstance(application)
         }
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,22 +23,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.github.geohunt.app.R
-
-data class MockChallenge(
-    val challengeId: String,
-    val challengeImg: Int,
-    val username: String,
-    val profilePhoto: Int,
-    val likes: Int,
-)
+import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.User
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun HomeScreen(challenges: List<MockChallenge>) {
+fun HomeScreen(viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)) {
+    val challenges = viewModel.challengeFeed.collectAsStateWithLifecycle()
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.LightGray)
+        modifier = Modifier.fillMaxSize()
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -50,7 +49,8 @@ fun HomeScreen(challenges: List<MockChallenge>) {
             Image(
                 painter = painterResource(id = R.drawable.header),
                 contentDescription = null,
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier
+                    .size(200.dp)
                     .testTag(R.drawable.header.toString())
             )
         }
@@ -60,83 +60,100 @@ fun HomeScreen(challenges: List<MockChallenge>) {
                 .wrapContentHeight()
                 .background(Color.White)
         ) {
-            HorizontalDivider()
+            HorizontalDivider(padding = 0.dp)
         }
-        LazyColumn(
-            modifier = Modifier
-                .padding(10.dp, 10.dp)
-                .background(Color.White)
-        ) {
-            items(challenges) { challenge ->
-                ChallengeItem(challenge = challenge)
+
+        when(challenges.value) {
+            null -> Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+            else -> LazyColumn {
+                items(challenges.value!!) { challenge ->
+                    ChallengeItem(
+                        challenge = challenge,
+                        getAuthor = viewModel::getAuthor,
+                        photoUrl = viewModel.getChallengePhoto(challenge)
+                    )
+
+                    Box(modifier = Modifier.fillMaxWidth().height(8.dp).background(Color(0xFFF1F3F4))) {
+
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun ChallengeItem(challenge: MockChallenge) {
-    Box(
+fun ChallengeItem(
+    challenge: Challenge,
+    getAuthor: (Challenge) -> StateFlow<User?>,
+    photoUrl: String
+) {
+    val author = getAuthor(challenge).collectAsStateWithLifecycle()
+
+    Column(
         modifier = Modifier
-            .background(Color.LightGray)
-            .padding(10.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .background(Color.White)
+            .padding(horizontal = 16.dp)
     ) {
-        Column(
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(5.dp)) {
+            when(val v = author.value) {
+                null -> CircularProgressIndicator()
+                else -> {
+                    RoundImageCard(
+                        imageUrl = v.profilePictureUrl,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(3.dp)
+                    )
+                    Text(text = v.displayName ?: v.id, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+        AsyncImage(
+            model = photoUrl,
+            contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(24.dp))
-                .background(Color.White)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(5.dp)) {
-                RoundImageCard(
-                    image = challenge.profilePhoto,
-                    Modifier
-                        .size(48.dp)
-                        .padding(3.dp)
-                )
-                Text(text = challenge.username, fontWeight = FontWeight.Bold)
-            }
+                .padding(8.dp)
+                .clip(RoundedCornerShape(18.dp))
+                .testTag(photoUrl),
+            contentScale = ContentScale.FillWidth,
+        )
+        Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(id = challenge.challengeImg),
+                painter = painterResource(id = R.drawable.thumb_up_outline),
                 contentDescription = null,
+                contentScale = ContentScale.FillBounds,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(18.dp))
-                    .testTag(challenge.challengeImg.toString()),
-                contentScale = ContentScale.FillWidth,
+                    .padding(4.dp)
+                    .size(24.dp)
+                    .testTag(R.drawable.thumb_up_outline.toString())
             )
-            Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.thumb_up_outline),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.size(30.dp)
-                        .testTag(R.drawable.thumb_up_outline.toString())
-                )
-                Text(
-                    text = "${challenge.likes}",
-                    modifier = Modifier.padding(start = 8.dp),
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            Text(
+                // text = "${challenge.likes}",
+                text = "0",
+                modifier = Modifier.padding(start = 8.dp),
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
 
 @Composable
 fun RoundImageCard(
-    image: Int,
+    imageUrl: String?,
     modifier: Modifier = Modifier
-        .padding(9.dp)
-        .size(40.dp)
 ) {
     Card(shape = CircleShape, modifier = modifier) {
-        Image(
-            painter = painterResource(id = image),
+        AsyncImage(
+            model = imageUrl,
             contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.testTag(image.toString())
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.testTag(imageUrl ?: "")
         )
     }
 }

@@ -26,7 +26,7 @@ class TestNavigation {
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
-            NavigationController(navController = navController, database = database)
+            NavigationController(navController = navController, database = database) { }
             NavigationBar(navController = navController)
         }
     }

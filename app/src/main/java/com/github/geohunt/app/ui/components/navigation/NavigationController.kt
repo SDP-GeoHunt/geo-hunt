@@ -29,10 +29,14 @@ import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
-import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePage
+import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
+import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
+import com.github.geohunt.app.ui.screens.home.HomeScreen
+import com.github.geohunt.app.utility.findActivity
+import com.github.geohunt.app.utility.replaceActivity
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.google.android.gms.maps.model.CameraPosition
@@ -72,6 +76,7 @@ fun NavigationController(
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
+            HomeScreen()
         }
         composable(Route.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
@@ -102,9 +107,9 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                ActiveHunts(id = user.uid, database) {
-                    navController.navigate(Route.Explore.route)
-                }
+                ActiveHuntsScreen(
+                    openExploreTab = { navController.navigate(Route.Explore.route) }
+                )
             }
         }
 
@@ -126,7 +131,7 @@ fun NavigationController(
         composable("${Route.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
             it.arguments?.getString("userId")?.let {
                 userId -> ProfilePage(ProfilePageViewModel(
-                    appContainer.auth, appContainer.user, appContainer.challenge, appContainer.follow, userId
+                    appContainer.auth, appContainer.user, appContainer.challenges, appContainer.follow, userId
                 ))
             }
         }

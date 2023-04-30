@@ -19,7 +19,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
 import com.github.geohunt.app.mocks.BaseMockDatabase
-import com.github.geohunt.app.mocks.MockChallenge
+import com.github.geohunt.app.mocks.MockChallengeClass
 import com.github.geohunt.app.mocks.MockClaim
 import com.github.geohunt.app.mocks.MockLazyRef
 import com.github.geohunt.app.model.database.api.Challenge
@@ -54,7 +54,7 @@ class ClaimChallengeTest {
 
     private val mockedLocation = Location(13.412471480006737, 103.86698070815994)
 
-    private val mockChallenge = MockChallenge(
+    private val mockChallenge = MockChallengeClass(
         cid = "cid",
         author = MockLazyRef<User>("uid") { TODO() },
         publishedDate = LocalDateTime.now(),

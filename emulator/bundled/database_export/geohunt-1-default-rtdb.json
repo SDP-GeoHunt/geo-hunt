@@ -12,12 +12,11 @@
       }
     }
   },
-  "users": [
-    null,
-    {
+  "users": {
+    "1": {
       "displayName": "Debug user",
-      "score": 123,
-      "uid": "1"
+      "id": "1",
+      "profilePictureUrl": "null"
     }
-  ]
+  }
 }

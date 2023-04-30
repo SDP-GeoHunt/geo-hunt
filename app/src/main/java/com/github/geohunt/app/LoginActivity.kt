@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.github.geohunt.app.data.repository.AppContainer
+import androidx.activity.viewModels
 import com.github.geohunt.app.ui.screens.GeoHuntScreen
 import com.github.geohunt.app.ui.screens.login.LoginScreen
 import com.github.geohunt.app.ui.screens.login.LoginViewModel
@@ -22,14 +22,10 @@ import com.github.geohunt.app.utility.replaceActivity
  * @see [LoginViewModel.login]
  */
 class LoginActivity : ComponentActivity() {
-    private lateinit var container: AppContainer
-    private lateinit var viewModel: LoginViewModel
+    private val viewModel: LoginViewModel by viewModels(factoryProducer = { LoginViewModel.Factory })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        container = AppContainer.getInstance(application)
-        viewModel = LoginViewModel(container.auth, container.user)
 
         val loginLauncher = viewModel.registerLoginPrompt(
             this@LoginActivity,
