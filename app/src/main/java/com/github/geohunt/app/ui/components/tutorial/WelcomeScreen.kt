@@ -1,13 +1,7 @@
 package com.github.geohunt.app.ui.components.tutorial
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -36,17 +30,18 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
     ) {
         // The welcome text of the application
         Text(
-            text = "Welcome to GeoHunt!",
+            text = "GeoHunt",
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                .padding(top = 40.dp, start = 10.dp, end = 10.dp)
                 .testTag("Welcome Label"),
-            fontSize = 90.sp,
+            fontSize = 80.sp,
             fontStyle = FontStyle.Italic,
             fontFamily = FontFamily.Cursive,
             fontWeight = FontWeight.Bold,
@@ -56,26 +51,32 @@ fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
             softWrap = true,
             color = Color.Red,
         )
+    }
 
-        Spacer(modifier = Modifier.height(30.dp))
-
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         // Description of the application
         Text(
             text = "The fun, interactive, engaging and challenging treasure hunt game!",
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .padding(start = 25.dp, end = 25.dp)
+                .padding(start = 15.dp, end = 15.dp)
                 .fillMaxWidth()
                 .testTag("Welcome Description"),
-            fontSize = 30.sp,
+            fontSize = 25.sp,
             overflow = TextOverflow.Ellipsis,
             letterSpacing = 5.sp,
             softWrap = true,
 
             )
+    }
 
-        Spacer(modifier = Modifier.height(55.dp))
-
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Bottom
+    ) {
         // Button to start the tutorial
         Button(
             onClick = { shouldShowTutorial.value = true },
@@ -83,8 +84,9 @@ fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent
             ),
-            shape = RoundedCornerShape(50.dp)
-
+            shape = RoundedCornerShape(50.dp),
+            modifier = Modifier
+                .padding(bottom = 35.dp)
         ) {
             Box(
                 modifier = Modifier
@@ -92,12 +94,14 @@ fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
                         brush = Brush.linearGradient(colors = listOf(Color(0xFF774387), Color(0xFFDC2431))),
                         shape = RoundedCornerShape(16.dp)
                     )
+                    .align(Alignment.Bottom)
                     .padding(horizontal = 25.dp, vertical = 15.dp),
+
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "GET STARTED",
-                    fontSize = 40.sp,
+                    fontSize = 36.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                 )

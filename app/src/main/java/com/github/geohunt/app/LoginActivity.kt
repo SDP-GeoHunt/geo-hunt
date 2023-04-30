@@ -36,6 +36,10 @@ class LoginActivity : ComponentActivity() {
 
         // Check if the application is being launched for first time
         // and if so, display the tutorial
+
+        //TODO remove before pull request
+        settings.edit().putBoolean("first_application_open", true).commit()
+
         if (settings.getBoolean("first_application_open", true)) {
             val intent = Intent(this@LoginActivity, TutorialActivity::class.java)
             replaceActivity(intent)

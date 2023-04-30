@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -197,8 +198,9 @@ fun TutorialSlideContent(items: TutorialSlides) {
             painter = painterResource(id = items.icon),
             contentDescription = "Tutorial Image",
             alignment = Alignment.Center,
+            contentScale = ContentScale.FillWidth,
             modifier = Modifier
-                .size(240.dp)
+                .fillMaxWidth(0.6f)
                 .testTag("Tutorial Image")
         )
 
@@ -206,7 +208,7 @@ fun TutorialSlideContent(items: TutorialSlides) {
 
         Text(
             text = stringResource(id = items.title),
-            fontSize = 40.sp,
+            fontSize = 35.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             letterSpacing = 1.sp,
@@ -220,13 +222,12 @@ fun TutorialSlideContent(items: TutorialSlides) {
 
         Text(
             text = stringResource(id = items.description),
-            fontSize = 25.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Light,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
-                .padding(10.dp)
                 .testTag("Tutorial Description"),
             letterSpacing = 1.sp,
         )
