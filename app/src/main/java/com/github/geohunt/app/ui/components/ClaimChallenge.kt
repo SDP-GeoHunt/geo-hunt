@@ -87,7 +87,7 @@ fun SubmitClaimForm(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            Text(text = "Submit a Claim",
+            Text(text = stringResource(R.string.submit_a_claim_title),
                 color = MaterialTheme.colors.primary,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h1)
@@ -131,7 +131,7 @@ fun SubmitClaimForm(
                 },
                 enabled = (locationRequest.lastLocation.value != null)
             ) {
-                Text("Submit Claim")
+                Text(stringResource(R.string.submit_claim_button))
             }
         }
     }

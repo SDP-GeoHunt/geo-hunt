@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalPermissionsApi::class)
-
 package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest
@@ -21,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.BuildConfig
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.sensor.RequireCameraPermission
 import com.github.geohunt.app.sensor.RequireFineLocationPermissions
@@ -135,7 +135,7 @@ private fun CreateNewChallengeButton(
             },
             enabled = state.value == CreateChallengeViewModel.State.READY_TO_CREATE
         ) {
-            Text(text = "Create challenge")
+            Text(stringResource(R.string.create_challenge_button))
         }
     }
 }

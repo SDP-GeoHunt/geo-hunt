@@ -43,7 +43,7 @@ interface User {
     /**
      * List of hunts the user had published
      */
-    val hunts: List<LazyRef<Challenge>>
+    val activeHunts: List<LazyRef<Challenge>>
 
     /**
      * Number of followers this user has
@@ -53,7 +53,13 @@ interface User {
     /**
      * List of all of the user that the current user is following,
      */
-    val follows: List<LazyRef<User>>
+    val followList: List<LazyRef<User>>
+
+    /**
+     * Preferred locale to be used when logged as the current user, when null
+     * use system settings.
+     */
+    val preferredLocale: String?
 
     /**
      * Current score of the user

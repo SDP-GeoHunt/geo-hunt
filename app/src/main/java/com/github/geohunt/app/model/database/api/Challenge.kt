@@ -64,6 +64,11 @@ interface Challenge
     val difficulty: Difficulty
 
     /**
+     * Number of active user actively hunting for this challenge
+     */
+    val numberOfActiveHunters: Int
+
+    /**
      * The various difficulties a challenge can have,
      * can be converted to a PointCalculator using PointCalculator.fromDifficulty
      */

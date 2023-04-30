@@ -12,11 +12,13 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.ConstantStrings
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.LazyRef
+import com.github.geohunt.app.model.LiveLazyRef
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
+import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -83,7 +85,11 @@ class ChallengeViewTest {
             description = ConstantStrings.LORUM_IPSUM.takeIf { hasDescription }
         )
 
-        val database = object : BaseMockDatabase() {}
+        val database = object : BaseMockDatabase() {
+            override fun getUserById(uid: String): LiveLazyRef<User> {
+                return MockLiveLazyRef<User>("erf", null)
+            }
+        }
 
         // Sets the composeTestRule content
         composeTestRule.setContent {

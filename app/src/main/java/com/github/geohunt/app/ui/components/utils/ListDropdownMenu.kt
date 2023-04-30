@@ -4,7 +4,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Creates a dropdown menu containing all the elements of elements.
@@ -16,7 +15,12 @@ import kotlinx.coroutines.flow.StateFlow
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun <T> ListDropdownMenu(state: T, update: (T) -> Unit, elements: Collection<T>, toString: (T) -> String) {
+fun <T> ListDropdownMenu(
+    state: T,
+    update: (T) -> Unit,
+    elements: Collection<T>,
+    toString: (T) -> String
+) {
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(expanded = expanded,
@@ -43,10 +47,12 @@ fun <T> ListDropdownMenu(state: T, update: (T) -> Unit, elements: Collection<T>,
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun PreviewText(value: String, expanded: Boolean) {
-    TextField(value = value,
-            onValueChange = {},
-            readOnly = true,
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.testTag("dropdown_menu_text_field"))
+private fun PreviewText(value: String, expanded: Boolean, modifier: Modifier = Modifier) {
+    TextField(
+        value = value,
+        onValueChange = {},
+        readOnly = true,
+        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+        modifier = modifier.testTag("dropdown_menu_text_field")
+    )
 }

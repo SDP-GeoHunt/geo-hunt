@@ -10,12 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.Database
+import com.github.geohunt.app.model.database.api.EditedUser
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.profile.button.FlatLongButton
 import com.github.geohunt.app.utility.findActivity
-import com.github.geohunt.app.R
-import com.github.geohunt.app.model.database.api.EditedUser
 
 @Composable
 fun EditProfileContent(user: User) {

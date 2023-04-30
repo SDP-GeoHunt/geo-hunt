@@ -31,7 +31,7 @@ class TestFirebaseFollow {
     private suspend fun getCounter() =
         userRef2.child("numberOfFollowers").get().await().value as Long
     private suspend fun getFollowers() =
-        database.getFollowersOf(userRef2.key!!).await()
+        database.getFollowersOf(userRef2.key!!).await().map { it.id }
 
     @Before
     fun setup() {
@@ -71,7 +71,7 @@ class TestFirebaseFollow {
     fun testFollowsUpdatesFollowerList() = runTest {
         database.follow(userRef1.key!!, userRef2.key!!)
 
-        assertThat(getFollowers(), hasEntry(userRef1.key!!, true))
+        assertThat(getFollowers(), hasItem(userRef1.key!!))
     }
 
     @Test
@@ -83,7 +83,7 @@ class TestFirebaseFollow {
         // Assert that there is only one entry in each list
         assertThat(getFollowList(), not(hasEntry(not(userRef2.key!!), true)))
         assertThat(getCounter(), `is`(1))
-        assertThat(getFollowers(), not(hasEntry(not(userRef1.key!!), true)))
+        assertThat(getFollowers(), not(hasItem(not(userRef1.key!!))))
     }
 
     @Test
@@ -107,7 +107,7 @@ class TestFirebaseFollow {
         database.follow(userRef1.key!!, userRef2.key!!)
         database.unfollow(userRef1.key!!, userRef2.key!!)
 
-        assertThat(getFollowers(), not(hasEntry(userRef1.key!!, true)))
+        assertThat(getFollowers(), not(hasItem(userRef1.key!!)))
     }
 
     @Test
@@ -119,6 +119,6 @@ class TestFirebaseFollow {
 
         assertThat(getFollowList(), not(hasValue(true)))
         assertThat(getCounter(), `is`(0))
-        assertThat(getFollowers(), not(hasValue(true)))
+        assertThat(getFollowers(), emptyIterable())
     }
 }

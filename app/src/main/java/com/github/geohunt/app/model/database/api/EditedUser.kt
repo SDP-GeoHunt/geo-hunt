@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 data class EditedUser(
     val user: User,
     var displayName: String,
+    var preferredLocale: String?,
     var profilePicture: Bitmap? = null
 ) {
     /**
@@ -20,7 +21,7 @@ data class EditedUser(
 
     companion object {
         fun fromUser(user: User): EditedUser {
-            return EditedUser(user, user.name)
+            return EditedUser(user, user.name, user.preferredLocale)
         }
     }
 }

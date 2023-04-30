@@ -84,7 +84,15 @@ interface Database {
      * @param uid The user ID.
      * @return A map where keys that are mapped to true indicates that it is a follower.
      */
-    fun getFollowersOf(uid: String): Task<Map<String, Boolean>>
+    fun getFollowersOf(uid: String): Task<List<LazyRef<User>>>
+
+    /**
+     * Get the top @p n users with maximum scores
+     *
+     * @param n the number of user to retrieve at most. Notice that it is possible
+     *          that the actual number if smaller than that
+     */
+    fun getTopNUsers(n: Int) : Task<List<LazyRef<User>>>
 
     /**
      * Makes the first user with the given uid follow the second user.
@@ -95,6 +103,10 @@ interface Database {
      * Makes the first user with the given uid unfollow the second user.
      */
     suspend fun unfollow(follower: String, followee: String)
+
+    suspend fun joinHunt(cid: String)
+
+    suspend fun leaveHunt(cid: String)
 
     /**
      * Inserts a new user into the database

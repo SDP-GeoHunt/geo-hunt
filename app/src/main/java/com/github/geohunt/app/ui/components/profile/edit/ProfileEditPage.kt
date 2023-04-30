@@ -16,12 +16,11 @@ import com.github.geohunt.app.ui.rememberLazyRef
 import com.github.geohunt.app.utility.findActivity
 
 @Composable
-fun ProfileEditPage(onBackButton: () -> Any) {
+fun ProfileEditPage(database: Database, onBackButton: () -> Any) {
     // Getting user
     val uid = Authenticator.authInstance.get().user!!.uid
-    val act = LocalContext.current.findActivity()
     val user = rememberLazyRef {
-        Database.databaseFactory.get()(act).getUserById(uid)
+        database.getUserById(uid)
     }
 
     Scaffold(

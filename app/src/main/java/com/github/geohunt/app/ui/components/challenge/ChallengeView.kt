@@ -15,9 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
@@ -147,7 +149,8 @@ fun ShowChallengeDescription(challengeDescription: String) {
             )
 
             Text(
-                text = if (isDescriptionExpanded) "less..." else "more...",
+                text =  stringResource(if (isDescriptionExpanded) R.string.less_button
+                                                             else R.string.more_button),
                 fontSize = 11.sp,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
