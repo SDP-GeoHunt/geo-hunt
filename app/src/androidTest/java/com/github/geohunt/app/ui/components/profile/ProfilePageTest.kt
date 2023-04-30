@@ -1,10 +1,13 @@
 package com.github.geohunt.app.ui.components.profile
 
-import android.graphics.Bitmap
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.github.geohunt.app.mocks.InstantLazyRef
-import com.github.geohunt.app.mocks.MockChallenge
+import com.github.geohunt.app.mocks.MockChallengeClass
 import com.github.geohunt.app.mocks.MockLazyRef
 import com.github.geohunt.app.mocks.MockUser
 import com.github.geohunt.app.model.LazyRef
@@ -12,7 +15,6 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.google.android.gms.tasks.Tasks
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
 
 class ProfilePageTest {
     @get:Rule
@@ -52,10 +54,10 @@ class ProfilePageTest {
 
     @Test
     fun showsNumberOfHunts() {
-        val mockuser = MockUser(activeHunts = listOf(
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge()),
-            wrapLazyChallenge(MockChallenge())
+        val mockuser = MockUser(hunts = listOf(
+            wrapLazyChallenge(MockChallengeClass()),
+            wrapLazyChallenge(MockChallengeClass()),
+            wrapLazyChallenge(MockChallengeClass())
         ))
 
         testRule.setContent {
@@ -66,14 +68,10 @@ class ProfilePageTest {
 
     @Test
     fun showsNumberOfChallenges() {
-        val mockChallenge = MockChallenge(
-            thumbnail = InstantLazyRef("1", Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888))
-        )
-
         val mockuser = MockUser(challenges = listOf(
-            wrapLazyChallenge(mockChallenge),
-            wrapLazyChallenge(mockChallenge),
-            wrapLazyChallenge(mockChallenge)
+            wrapLazyChallenge(MockChallengeClass()),
+            wrapLazyChallenge(MockChallengeClass()),
+            wrapLazyChallenge(MockChallengeClass())
         ))
         testRule.setContent {
             ProfilePage(user = InstantLazyRef("1", mockuser))

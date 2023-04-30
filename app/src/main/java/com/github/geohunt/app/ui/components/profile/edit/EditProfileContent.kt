@@ -10,22 +10,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.components.button.FlatLongButton
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.model.database.api.EditedUser
-import com.github.geohunt.app.ui.components.profile.LocalSelector
+import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.ui.components.profile.button.FlatLongButton
+import com.github.geohunt.app.utility.findActivity
 
 @Composable
-fun EditProfileContent(database: Database, user: User) {
-    instrumentableEditProfileContent(database, user = user)
+fun EditProfileContent(user: User) {
+    instrumentableEditProfileContent(user = user)
 }
 
 @Composable
 @NoLiveLiterals
-fun instrumentableEditProfileContent(db: Database, user: User): MutableState<EditedUser> {
+fun instrumentableEditProfileContent(user: User): MutableState<EditedUser> {
     val editedUser = remember { mutableStateOf(EditedUser.fromUser(user)) }
+    val db = Database.databaseFactory.get()(LocalContext.current.findActivity())
     var isSaving by remember { mutableStateOf(false) }
     val ctx = LocalContext.current
 
@@ -45,8 +46,6 @@ fun instrumentableEditProfileContent(db: Database, user: User): MutableState<Edi
         ProfilePictureChanger(user, editedUser) { profilePictureProvider(it) }
 
         DisplayNameChanger(editedUser)
-        
-        LocalSelector(editedUser)
 
         if (isSaving) {
             FlatLongButton(

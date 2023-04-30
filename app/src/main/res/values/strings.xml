@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">GeoHunt</string>
-    <string name="title_activity_compose">ComposeActivity</string>
     <string name="event_image">Event image</string>
-
-    <string name="title_activity_claim">ClaimActivity</string>
 
     <string name="challenge_claim">Claim</string>
     <string name="challenge_created_by">Created by : %1$s</string>
@@ -24,8 +21,8 @@
     <string name="navigation.create">Create a hunt</string>
     <string name="navigation.active_hunts">Active hunts</string>
     <string name="navigation.profile">Profile</string>
-    <string name="title_activity_start">StartActivity</string>
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_main_activity">GeoHunt</string>
+    <string name="title_activity_login">Login</string>
 
     <string name="sign_in">Sign in</string>
 

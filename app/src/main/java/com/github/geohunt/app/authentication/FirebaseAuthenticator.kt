@@ -10,7 +10,7 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.Database
 import java.util.concurrent.CompletableFuture
 import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.model.database.api.UserNotFoundException
+import com.github.geohunt.app.data.exceptions.UserNotFoundException
 
 /**
  * Implements the Authenticator for Firebase.

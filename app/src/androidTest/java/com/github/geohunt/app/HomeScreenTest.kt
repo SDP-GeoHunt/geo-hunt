@@ -2,8 +2,8 @@ package com.github.geohunt.app
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.github.geohunt.app.ui.homescreen.HomeScreen
-import com.github.geohunt.app.ui.homescreen.MockChallenge
+import com.github.geohunt.app.ui.screens.home.HomeScreen
+import com.github.geohunt.app.ui.screens.home.MockChallenge
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import org.junit.Before
 import org.junit.Rule

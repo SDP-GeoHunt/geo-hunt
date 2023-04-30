@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.homescreen
+package com.github.geohunt.app.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

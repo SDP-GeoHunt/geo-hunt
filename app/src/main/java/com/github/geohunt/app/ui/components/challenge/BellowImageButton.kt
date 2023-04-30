@@ -1,23 +1,31 @@
 package com.github.geohunt.app.ui.components.challenge
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
-import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.model.LazyRef
 import com.github.geohunt.app.model.database.Database
@@ -25,25 +33,16 @@ import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.LabelledIcon
-import com.github.geohunt.app.ui.rememberLazyRef
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlin.coroutines.suspendCoroutine
 
 @Composable
 internal fun BellowImageButtons(challenge: Challenge, database: Database, user: User) {
-    val currentUser = rememberLazyRef {
-        database.getUserById(Authenticator.authInstance.get().user!!.uid)
-    }
-
     Row(modifier = Modifier
         .fillMaxWidth()
         .padding(15.dp, 5.dp)) {
         val fontSize = 18.sp
         val iconSize = 22.dp
-        
+
         LikeButton(challenge = challenge,
             database = database,
             user = user,
@@ -72,33 +71,18 @@ internal fun BellowImageButtons(challenge: Challenge, database: Database, user: 
 
         Spacer(modifier = Modifier.weight(1f))
 
-        if (currentUser.value != null)
+        Button(
+            modifier = Modifier
+                .size(80.dp, 28.dp)
+                .align(Alignment.CenterVertically),
+            contentPadding = PaddingValues(2.dp, 2.dp),
+            shape = RoundedCornerShape(12.dp),
+            onClick = { /*TODO*/ })
         {
-            val hasJoined = currentUser.value!!.activeHunts.any { it.id == challenge.cid }
-
-            Button(
-                modifier = Modifier
-                    .size(80.dp, 28.dp)
-                    .align(Alignment.CenterVertically),
-                contentPadding = PaddingValues(2.dp, 2.dp),
-                shape = RoundedCornerShape(12.dp),
-                onClick = {
-                    GlobalScope.launch {
-                        if (hasJoined) {
-                            database.leaveHunt(challenge.cid)
-                        }
-                        else {
-                            database.joinHunt(challenge.cid)
-                        }
-                    }
-                })
-            {
-                Text(
-                    text = if (hasJoined) stringResource(R.string.leave_hunt)
-                                     else stringResource(R.string.join_hunt),
-                    fontSize = 17.sp
-                )
-            }
+            Text(
+                text = "Join",
+                fontSize = 17.sp
+            )
         }
     }
 }

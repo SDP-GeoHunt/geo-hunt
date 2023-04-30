@@ -38,7 +38,7 @@ fun ProfileEditPage(database: Database, onBackButton: () -> Any) {
             if (user.value == null) {
                 CircularProgressIndicator(modifier = Modifier.fillMaxWidth().testTag("progress"))
             } else {
-                EditProfileContent(database, user.value!!)
+                EditProfileContent(user.value!!)
             }
         }
     }

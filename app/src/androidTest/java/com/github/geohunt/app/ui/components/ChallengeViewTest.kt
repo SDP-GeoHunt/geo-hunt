@@ -74,7 +74,7 @@ class ChallengeViewTest {
                 get() = Location()
         }
 
-        val challenge = MockChallenge(
+        val challenge = MockChallengeClass(
             author = MockLazyRef("user-f425zez6z4ef6z15f4") {
                 Tasks.forResult(author)
             },

@@ -22,23 +22,23 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.ClaimChallenge
-import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
-import com.github.geohunt.app.ui.components.activehunts.ActiveHunts
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePage
+import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
+import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
 import com.github.geohunt.app.utility.findActivity
+import com.github.geohunt.app.utility.replaceActivity
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.github.geohunt.app.LoginActivity
-import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
-import com.github.geohunt.app.utility.replaceActivity
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -85,15 +85,14 @@ fun NavigationController(
         }
         composable(Route.Create.route) {
             CreateNewChallenge(
-                database = database,
-                onChallengeCreated = { challenge ->
-                    navController.popBackStack()
-                    navController.navigate("challenge-view/${challenge.cid}")
-                },
                 onFailure = {
                     Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
                     Log.e("GeoHunt", "Fail to create challenge: $it")
                     navController.popBackStack()
+                },
+                onSuccess = {
+                    navController.popBackStack()
+                    navController.navigate("challenge-view/${it.id}")
                 }
             )
         }
@@ -104,9 +103,9 @@ fun NavigationController(
             if (user == null) {
                 Text("You are not logged in. Weird :(")
             } else {
-                ActiveHunts(id = user.uid, database) {
-                    navController.navigate(Route.Explore.route)
-                }
+                ActiveHuntsScreen(
+                    openExploreTab = { navController.navigate(Route.Explore.route) }
+                )
             }
         }
 

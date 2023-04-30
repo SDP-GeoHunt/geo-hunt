@@ -1,7 +1,13 @@
 package com.github.geohunt.app.ui.components.activehunts
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -13,26 +19,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.github.geohunt.app.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.github.geohunt.app.i18n.DateFormatUtils
-import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.FetchComponent
-import com.github.geohunt.app.ui.rememberLazyRef
+import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.ui.theme.geoHuntRed
-import com.ireward.htmlcompose.HtmlText
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
 
 /**
@@ -40,15 +38,13 @@ import java.time.LocalDateTime
  * and the picture
  */
 @Composable
-fun ChallengePreview(challenge: LazyRef<Challenge>) {
-    FetchComponent(lazyRef = { challenge }, modifier = Modifier.fillMaxSize()) { resolvedChallenge ->
-        Column(modifier = Modifier.fillMaxSize()) {
-            ChallengeImage(challenge = resolvedChallenge, modifier = Modifier.weight(0.85F))
+fun ChallengePreview(challenge: Challenge, getAuthorName: (Challenge) -> StateFlow<String>) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        ChallengeImage(challenge, modifier = Modifier.weight(0.85F))
 
-            Spacer(modifier = Modifier.size(10.dp))
+        Spacer(modifier = Modifier.size(10.dp))
 
-            ChallengeDescription(challenge = resolvedChallenge, modifier = Modifier.weight(0.15F))
-        }
+        ChallengeDescription(challenge, modifier = Modifier.weight(0.15F), getAuthorName = getAuthorName)
     }
 }
 
@@ -58,19 +54,22 @@ fun ChallengePreview(challenge: LazyRef<Challenge>) {
  * this might be changed in the future as it could distort the image
  */
 @Composable
-fun ChallengeImage(challenge: Challenge, modifier: Modifier) {
-    val thumbnail = challenge.thumbnail
+fun ChallengeImage(
+    challenge: Challenge,
+    modifier: Modifier
+) {
+    val imageUrl = challenge.photoUrl
 
     Box(modifier = modifier.fillMaxWidth()) { //image "frame"
-        FetchComponent(lazyRef = { thumbnail }) { resolvedThumbnail ->
-            Image(painter = BitmapPainter(resolvedThumbnail.asImageBitmap()),
-                    contentDescription = "Challenge ${challenge.cid}",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    alignment = Alignment.Center)
-        }
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = "Challenge ${challenge.id}",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .clip(RoundedCornerShape(20.dp))
+                .fillMaxSize()
+        )
     }
 }
 
@@ -80,64 +79,54 @@ fun ChallengeImage(challenge: Challenge, modifier: Modifier) {
  * expiration date
  */
 @Composable
-fun ChallengeDescription(challenge: Challenge, modifier: Modifier) {
+fun ChallengeDescription(challenge: Challenge, modifier: Modifier, getAuthorName: (Challenge) -> StateFlow<String>) {
     Column(modifier = modifier, verticalArrangement = Arrangement.SpaceBetween) {
-        AuthorName(challenge.author)
+        val authorName = getAuthorName(challenge).collectAsStateWithLifecycle()
+        ChallengeAuthor(authorName.value)
 
-        Location()
+        ChallengeLocation()
 
-        ExpirationTime(expirationDate = challenge.expirationDate)
+        ChallengeExpirationDate(expirationDate = challenge.expirationDate)
     }
 }
 
 @Composable
-fun AuthorName(author: LazyRef<User>) {
-    val waitingAuthor = rememberLazyRef { author }
+fun ChallengeAuthor(authorName: String) {
     Row(modifier = Modifier.fillMaxWidth()) {
         Icon(Icons.Rounded.Person, contentDescription = "person_icon")
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        if(waitingAuthor.value != null) Text(text = author.value!!.name)
-        else Text(text = "...")
+        Text(authorName)
     }
 }
 
 @Composable
-fun Location(){
-    //TODO : Hardcoded values, should be replaced with a way to find closest city
-    //or removed entirely
+fun ChallengeLocation() {
+    // TODO Hardcoded values, should be replaced with a way to find closest city or removed entirely
     val city = "Rome"
     val country = "Italy"
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Icon(Icons.Rounded.LocationOn,
-        contentDescription = "location_icon")
+        Icon(Icons.Rounded.LocationOn, contentDescription = "location_icon")
 
         Spacer(modifier = Modifier.size(10.dp))
 
         Text(
-                buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                        append(city)
-                    }
-                    append(", $country")
-                })
-
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                    append(city)
+              }
+                append(", $country")
+            }
+        )
     }
 }
 
 @Composable
-fun ExpirationTime(expirationDate: LocalDateTime?) {
-    val expirationStringHtml =
-        if (expirationDate != null) {
-            DateFormatUtils.getRemainingTimeString(
-                expirationDate,
-                formattingStringId = R.string.expires_in_formatter,
-                passedFormattingStringId = R.string.expired_formatter
-            )
-        }
-        else stringResource(R.string.never_expires)
+fun ChallengeExpirationDate(expirationDate: LocalDateTime?) {
+    val expires = if (expirationDate != null) "Expires in " else "Expires "
+    val expirationDateFmt = DateFormatUtils.formatRemainingTime(expirationDate).lowercase()
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Icon(Icons.Rounded.CalendarMonth,
@@ -145,9 +134,17 @@ fun ExpirationTime(expirationDate: LocalDateTime?) {
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        HtmlText(
-            text = expirationStringHtml,
-            style = TextStyle(fontWeight = FontWeight.SemiBold),
-        )
+        Text(buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                append(expires)
+
+                withStyle(style = SpanStyle(color = geoHuntRed)) {
+                    append(expirationDateFmt)
+                }
+
+                append(" !")
+            }
+
+        })
     }
 }

@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 /**
  * Interface defining the principal attributes for any challenge
  */
+@Deprecated("Should no longer be used, prefer the repository/view model approach")
 interface Challenge
 {
     /**

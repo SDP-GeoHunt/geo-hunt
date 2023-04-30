@@ -6,6 +6,7 @@ import com.github.geohunt.app.model.LazyRef
 /**
  * Define the profile information of a user as stored in the database
  */
+@Deprecated("Should no longer be used, prefer the repository/view model approach")
 interface User {
     /**
      * A string that uniquely identify this specific user in the database

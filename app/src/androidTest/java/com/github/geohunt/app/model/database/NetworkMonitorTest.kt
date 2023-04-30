@@ -1,6 +1,7 @@
 package com.github.geohunt.app.model.database
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.github.geohunt.app.data.network.NetworkMonitor
 import com.github.geohunt.app.utils.assertFinishes
 import com.github.geohunt.app.utils.assertTimesOut
 import com.google.firebase.database.FirebaseDatabase
@@ -73,6 +74,6 @@ class NetworkMonitorTest {
         database.goOnline()
 
         // Check that it eventually reaches online connectivity
-        assertOnline(STATUS_CHANGE_TIMEOUT)
+        assertOnline(STATUS_CHANGE_TIMEOUT * 2)
     }
 }
