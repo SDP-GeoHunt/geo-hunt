@@ -26,13 +26,13 @@ class WelcomeScreenTest {
     fun setup(){
         val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
         settings.edit().putBoolean("first_application_open", true).commit()
-
-        Intents.init()
-        launchActivity<TutorialActivity>()
     }
 
     @Test
     fun opensWelcomeScreenWhenLoggedInForTheFirstTime() {
+        Intents.init()
+        launchActivity<TutorialActivity>()
+
         composeTestRule
             .onNodeWithTag("Welcome Label")
             .assertExists()
@@ -51,6 +51,9 @@ class WelcomeScreenTest {
 
     @Test
     fun clickingOnGetStartedButtonOpensTutorialSlides(){
+        Intents.init()
+        launchActivity<TutorialActivity>()
+
         composeTestRule.onNodeWithText("GET STARTED")
             .assertExists()
             .assertHasClickAction()
