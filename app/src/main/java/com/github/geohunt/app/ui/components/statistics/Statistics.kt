@@ -20,19 +20,25 @@ import com.github.geohunt.app.ui.theme.Lobster
 
 @Composable
 fun Statistics(claims: List<Claim>) {
-    if(claims.size < 2) {
-        EmptyStatisticsScreen()
-    }
-    else {
-        DisplayStatistics(claims = claims)
+    Column(modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+        StatisticsTitle()
+
+        if (claims.size < 2) {
+            EmptyStatisticsScreen()
+        } else {
+            DisplayStatistics(claims = claims)
+        }
     }
 }
 
 @Composable
 fun EmptyStatisticsScreen() {
     Box(modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center) {
-        Text(text = stringResource(id = R.string.statistics_empty_screen_text))
+            contentAlignment = Alignment.Center) {
+        Text(text = stringResource(id = R.string.statistics_empty_screen_text),
+                fontSize = 18.sp)
     }
 }
 
@@ -43,8 +49,6 @@ fun DisplayStatistics(claims: List<Claim>) {
     Column(modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-        StatisticsTitle()
-
         ListDropdownMenu(state = dateGranularityState,
                 elements = DateGranularity.values().toList(),
                 toString = { it.toString() })
