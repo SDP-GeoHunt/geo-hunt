@@ -30,4 +30,16 @@ class StatisticsTest {
         testRule.onNodeWithText("week", substring = true, ignoreCase = true, useUnmergedTree = true)
                 .assertIsDisplayed()
     }
+
+    @Test
+    fun emptyClaimsDisplaysEmptyStatisticsScreen() {
+        setupComposable(listOf())
+        testRule.onNodeWithText("You haven't claimed enough challenges yet").assertIsDisplayed()
+    }
+
+    @Test
+    fun singleElementClaimsDisplaysEmptyStatisticsScreen() {
+        setupComposable(listOf(c1))
+        testRule.onNodeWithText("You haven't claimed enough challenges yet").assertIsDisplayed()
+    }
 }
