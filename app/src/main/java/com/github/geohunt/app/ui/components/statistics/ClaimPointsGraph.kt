@@ -38,11 +38,12 @@ fun createEntries(claims: List<Claim>, dateGranularity: DateGranularity): Pair<L
 
     //Convert claims to dates and points, if we have undisplayed claims
     //we add a base point to represent them
-    val displayedDates = displayedClaims.map { it.time.toLocalDate() }
+    //We also add an empty point at the current date to make the graph go to the end
+    val displayedDates = displayedClaims.map { it.time.toLocalDate() } + listOf(now)
     val entryDates = if(undisplayedClaims.isEmpty()) displayedDates else
         listOf(undisplayedLimit.plusDays(1)) + displayedDates
 
-    val displayedPoints = displayedClaims.map { it.awardedPoints }
+    val displayedPoints = displayedClaims.map { it.awardedPoints } + listOf(0L)
     val awardedPoints = if(undisplayedClaims.isEmpty()) displayedPoints else
         listOf(0L) + displayedPoints
 
