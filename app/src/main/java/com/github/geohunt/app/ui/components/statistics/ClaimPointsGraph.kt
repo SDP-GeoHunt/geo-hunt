@@ -4,6 +4,13 @@ import androidx.compose.runtime.Composable
 import com.github.geohunt.app.model.database.api.Claim
 import java.time.LocalDate
 
+/**
+ * Represents a Graph that show the evolution of the points of claims
+ * Mostly calls the createEntries method which converts a list of claims to a pair
+ * of lists (dates, points) that will represent the points in the graph we want to draw
+ * @param claims The full list of claims we want to represent of the graph
+ * @param dateGranularity the amount of claims we want to show on the graph (last week/month/year)
+ */
 @Composable
 fun ClaimPointsGraph(claims: List<Claim>, dateGranularity: DateGranularity) {
     val (xDatesValues, yValues) = createEntries(claims, dateGranularity)
