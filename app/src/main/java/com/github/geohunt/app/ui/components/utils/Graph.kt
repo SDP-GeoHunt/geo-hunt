@@ -17,6 +17,7 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import com.github.geohunt.app.ui.theme.geoHuntRed
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
@@ -44,7 +45,7 @@ fun Graph(
                     xValues, xBottom, xTop,
                     yValues, yBottom, yTop,
                     size.width, size.height, xPadding, yPadding)
-            drawPoints(offsets, PointMode.Polygon, color = Color.Black, strokeWidth = 4f)
+            drawPoints(offsets, PointMode.Polygon, color = geoHuntRed, strokeWidth = 4f)
         }
     }
 }
