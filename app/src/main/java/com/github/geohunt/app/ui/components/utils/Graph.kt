@@ -50,7 +50,7 @@ fun Graph(
     }
 }
 
-private fun computeOffsets(
+fun computeOffsets(
         x: List<Long>,
         xBottom: Long,
         xTop: Long,
@@ -63,7 +63,7 @@ private fun computeOffsets(
         yPadding: Float
 ): List<Offset> {
     val deltaX = xTop - xBottom
-    val deltaXCanvas = width - 2*xPadding - 20f
+    val deltaXCanvas = width - 2*xPadding
     val offsetX = x.map { deltaXCanvas * ((it - xBottom).toFloat() / deltaX) }
 
     val deltaY = yTop - yBottom
