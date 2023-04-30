@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 /**
  * Establishes a claim-type relationship between a user and a challenge
  */
+@Deprecated("Should no longer be used, prefer the repository/view model approach")
 interface Claim {
     /**
      * String that uniquely identify this claim within the database

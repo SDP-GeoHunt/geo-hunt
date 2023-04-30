@@ -1,8 +1,13 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest
 import android.graphics.Bitmap
+import android.graphics.Paint.Align
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -16,13 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.sensor.RequireCameraPermission
+import com.github.geohunt.app.sensor.RequireFineLocationPermissions
 import com.github.geohunt.app.sensor.rememberPermissionsState
 import com.github.geohunt.app.utility.*
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 
 @Composable
 fun CreateChallengeForm(
@@ -32,19 +44,6 @@ fun CreateChallengeForm(
     onSuccess: (Challenge) -> Unit
 ) {
     val bitmapPainter = remember(bitmap) { BitmapPainter(bitmap.asImageBitmap()) }
-    val locationPermission = rememberPermissionsState(
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
-
-    LaunchedEffect(viewModel) {
-        locationPermission.requestPermissions()
-            .thenAccept {
-                viewModel.startLocationUpdate(onFailure)
-            }
-            .thenApply { }
-            .exceptionally(onFailure)
-    }
 
     val location = viewModel.location.collectAsState()
 
@@ -92,6 +91,21 @@ fun CreateChallengeForm(
                     onSuccess = onSuccess)
 
             }
+        }
+    } else {
+        Column {
+            CircularProgressIndicator(
+                modifier = Modifier.fillMaxSize(0.8f)
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = "Awaiting location",
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                style = TextStyle(fontSize = 20.sp),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -142,6 +156,7 @@ fun CreateNewChallenge(
             file
         )
     }
+    val photoState = viewModel.photoState.collectAsState()
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) {
@@ -155,27 +170,30 @@ fun CreateNewChallenge(
         }
     }
 
-    val permission = rememberPermissionsState(
-        Manifest.permission.CAMERA
-    )
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.reset()
+        }
+    }
 
-    val photoState = viewModel.photoState.collectAsState()
+    RequireCameraPermission {
+        LaunchedEffect(viewModel) {
+            cameraLauncher.launch(uri)
+        }
+    }
 
     if (photoState.value != null) {
-        CreateChallengeForm(
-            bitmap = photoState.value!!,
-            viewModel = viewModel,
-            onFailure = onFailure,
-            onSuccess = onSuccess
-        )
-    }
-    else {
-        LaunchedEffect(viewModel) {
-            permission.requestPermissions()
-                .thenApply {
-                    cameraLauncher.launch(uri)
-                }
-                .exceptionally(onFailure)
+        RequireFineLocationPermissions {
+            LaunchedEffect(viewModel) {
+                viewModel.startLocationUpdate(onFailure)
+            }
+
+            CreateChallengeForm(
+                bitmap = photoState.value!!,
+                viewModel = viewModel,
+                onFailure = onFailure,
+                onSuccess = onSuccess
+            )
         }
     }
 }

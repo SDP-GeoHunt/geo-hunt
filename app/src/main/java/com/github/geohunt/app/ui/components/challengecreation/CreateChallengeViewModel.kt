@@ -116,6 +116,19 @@ class CreateChallengeViewModel(
             callback(throwable)
         }
 
+    override fun onCleared() {
+        super.onCleared()
+        reset()
+    }
+
+    fun reset() {
+        _location.value = null
+        _submittingState.value = State.AWAITING_CAMERA
+        _expirationDate.value = null
+        _photoState.value = null
+        _selectedDifficulty.value = Challenge.Difficulty.MEDIUM
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

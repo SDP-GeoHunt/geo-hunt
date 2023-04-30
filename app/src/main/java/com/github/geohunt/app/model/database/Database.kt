@@ -13,6 +13,7 @@ import java.time.LocalDateTime
 /**
  * Interface representing the API used to communicate with the remote database and the application
  */
+@Deprecated("Should no longer be used, prefer the repository/view model approach")
 interface Database {
     /**
      * Enables the current logged users to create a new challenge with the given parameters
