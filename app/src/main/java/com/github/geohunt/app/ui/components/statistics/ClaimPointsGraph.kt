@@ -32,23 +32,28 @@ fun createEntries(claims: List<Claim>, dateGranularity: DateGranularity): Pair<L
     val awardedPoints = if(undisplayedClaims.isEmpty()) displayedPoints else
         listOf(0L) + displayedPoints
 
-    //Compute the points of the claims
-    val entryPoints = awardedPoints.runningFold(basePoints) {acc, elem -> acc + elem}
+    //Eliminate date duplicates by combining them (adding up points of same dates)
+    val (dates, regroupedPoints) = regroupDates(entryDates, awardedPoints)
 
-    //Eliminate date duplicates by combining them (adding up points)
-    val entries = regroupDates(entryDates, entryPoints)
-    val sortedEntries = entries.sortedBy { it.first }
-
-    val dates = sortedEntries.map { it.first }
-    val points = sortedEntries.map { it.second }
+    //Go from individual claim points to total points until this claim
+    val points = regroupedPoints
+            .runningFold(basePoints) {acc, elem -> acc + elem}
+            .takeLast(regroupedPoints.size) //discard helper element added by runningFold
 
     return Pair(dates, points)
 }
 
-fun regroupDates(entryDates: List<LocalDate>, entryPoints: List<Long>): List<Pair<LocalDate, Long>> {
+fun regroupDates(entryDates: List<LocalDate>, entryPoints: List<Long>): Pair<List<LocalDate>, List<Long>> {
     val pairedList = entryDates.zip(entryPoints)
     val groupedMap = pairedList.groupBy { it.first }
-    return groupedMap.map { entry -> Pair(entry.key, entry.value.sumOf { it.second }) }
+    val groupedPairs = groupedMap
+            .map { entry -> Pair(entry.key, entry.value.sumOf { it.second }) }
+            .sortedBy { it.first.toEpochDay() }
+
+    //We now have a list of pairs (Date, Points), we convert it to a pair of list to be able to return it
+    val dates = groupedPairs.map { it.first }
+    val points = groupedPairs.map { it.second }
+    return Pair(dates, points)
 }
 
 fun partitionClaims(claims: List<Claim>, undisplayedLimit: LocalDate): Pair<List<Claim>, List<Claim>> {
