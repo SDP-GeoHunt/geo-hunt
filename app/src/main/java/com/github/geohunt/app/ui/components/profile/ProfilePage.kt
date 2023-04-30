@@ -89,10 +89,15 @@ fun ProfilePage(
                 } else if (user.value == null) {
                     Progress()
                 } else {
-                    ProfilePageContent(user.value!!, challenges.value, hunts.value, score) {
-                        // On settings click
-                        coroutineScope.async { drawerState.open() }
-                    }
+                    ProfilePageContent(
+                        user.value!!,
+                        challenges.value,
+                        hunts.value,
+                        score,
+                        if (viewModel.isSelf) { { coroutineScope.async {
+                            drawerState.open()
+                        } } } else null
+                    )
                 }
             }
         }
@@ -101,7 +106,7 @@ fun ProfilePage(
 
 @Composable
 @NoLiveLiterals // Without this, tests do not passes (issue with Jetpack Compose)
-private fun ProfilePageContent(
+fun ProfilePageContent(
     user: User,
     challenges: List<Challenge>?,
     hunts: List<Challenge>?,

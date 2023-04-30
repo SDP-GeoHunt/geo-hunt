@@ -35,7 +35,8 @@ open class ProfilePageViewModel(
     val score = _claims.asStateFlow().map { it?.sumOf { it.awardedPoints } }
 
     @Suppress("DEPRECATION")
-    val canFollow = authRepository.getCurrentUser().id != uid
+    val isSelf = authRepository.getCurrentUser().id == uid
+    val canFollow = !isSelf
 
     private val _doesFollow = followRepository.doesFollow(uid)
     val doesFollow = _doesFollow.stateIn(viewModelScope, SharingStarted.Eagerly, false)

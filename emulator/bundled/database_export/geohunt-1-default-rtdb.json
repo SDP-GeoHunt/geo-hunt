@@ -14,8 +14,13 @@
   },
   "users": {
     "1": {
-      "displayName": "Debug user",
+      "displayName": "dn",
       "id": "1",
+      "profilePictureUrl": "null"
+    },
+    "2": {
+      "displayName": "dn2",
+      "id": "2",
       "profilePictureUrl": "null"
     }
   }

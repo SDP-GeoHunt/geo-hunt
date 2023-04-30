@@ -5,6 +5,7 @@ import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import java.lang.IllegalStateException
 
 /**
  * Container for the application's dependency instances.
@@ -53,8 +54,12 @@ class AppContainer private constructor(application: Application) {
         fun getEmulatedFirebaseInstance(
             application: Application
         ): AppContainer {
-            Firebase.database.useEmulator("10.0.2.2", 9000)
-            Firebase.storage.useEmulator("10.0.2.2", 9199)
+            try {
+                Firebase.database.useEmulator("10.0.2.2", 9000)
+                Firebase.storage.useEmulator("10.0.2.2", 9199)
+            } catch(_: IllegalStateException) {
+
+            }
             return getInstance(application)
         }
     }

@@ -17,6 +17,7 @@ open class MockUserRepository(private val userRepository: UserRepository): UserR
 
     override suspend fun getUser(id: String): User {
         if (id == "1") return User("1", "dn", null)
+        if (id == "2") return User("2", "dn2", null)
         return userRepository.getUser(id)
     }
 
