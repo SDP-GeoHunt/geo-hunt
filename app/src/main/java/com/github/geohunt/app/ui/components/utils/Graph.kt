@@ -83,12 +83,12 @@ private fun drawXLabels(
         yOffset: Float
 ) {
     //Subtract 70 to take "height" and rotation of text into account
-    val xSpacing = ((width - xPadding*2 - 70) / (strings.size - 1))
+    val xSpacing = (width - xPadding*2 - 70) / (strings.size - 1)
     val rotationAngle = 275f
     for ((i, str) in strings.withIndex()) {
         val offset = Offset(xPadding + xSpacing * i, yOffset)
         drawScope.rotate(rotationAngle, offset) {
-            drawText(textMeasurer, str, offset)
+            drawScope.drawText(textMeasurer, str, offset)
         }
     }
 }

@@ -1,6 +1,11 @@
 package com.github.geohunt.app.ui.components.statistics
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.model.database.api.Claim
 import java.time.LocalDate
 
@@ -15,7 +20,9 @@ import java.time.LocalDate
 fun ClaimPointsGraph(claims: List<Claim>, dateGranularity: DateGranularity) {
     val (xDatesValues, yValues) = createEntries(claims, dateGranularity)
 
-    DateGraph(xDateValues = xDatesValues, dateGranularity = dateGranularity, yValues = yValues)
+    Box(modifier = Modifier.fillMaxSize().padding(5.dp)) {
+        DateGraph(xDateValues = xDatesValues, dateGranularity = dateGranularity, yValues = yValues)
+    }
 }
 
 fun createEntries(claims: List<Claim>, dateGranularity: DateGranularity): Pair<List<LocalDate>, List<Long>> {

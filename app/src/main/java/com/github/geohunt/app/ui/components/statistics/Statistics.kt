@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.statistics
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.database.api.Claim
@@ -38,7 +40,9 @@ fun EmptyStatisticsScreen() {
 fun DisplayStatistics(claims: List<Claim>) {
     val dateGranularityState = remember { mutableStateOf(DateGranularity.WEEK) }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
         StatisticsTitle()
 
         ListDropdownMenu(state = dateGranularityState,
@@ -53,5 +57,5 @@ fun DisplayStatistics(claims: List<Claim>) {
 fun StatisticsTitle() {
     Text(text = stringResource(id = R.string.statistics_title),
             fontFamily = Lobster,
-            fontSize = 25.sp)
+            fontSize = 40.sp)
 }
