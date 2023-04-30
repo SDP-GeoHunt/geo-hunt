@@ -46,5 +46,22 @@ class AppContainer private constructor(application: Application) {
             }
             return container as AppContainer
         }
+
+        /**
+         * Returns the singleton instance of [AppContainer] using the firebase emulator.
+         *
+         * This is pretty bad. but has to be done.
+         */
+        fun getEmulatedFirebaseInstance(
+            application: Application
+        ): AppContainer {
+            try {
+                Firebase.database.useEmulator("10.0.2.2", 9000)
+                Firebase.storage.useEmulator("10.0.2.2", 9199)
+            } catch(_: IllegalStateException) {
+
+            }
+            return getInstance(application)
+        }
     }
 }

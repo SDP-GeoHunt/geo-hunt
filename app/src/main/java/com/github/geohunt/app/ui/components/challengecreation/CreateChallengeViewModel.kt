@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.AppContainer
@@ -18,6 +19,8 @@ import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsViewModel
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.BitmapUtils.resizeBitmapToFit
+import com.github.geohunt.app.utility.Singleton
+import com.github.geohunt.app.utility.quantize
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -102,12 +105,15 @@ class CreateChallengeViewModel(
     fun withPhoto(file: File, onFailure: (Throwable) -> Unit = {}) {
         require(_submittingState.value == State.AWAITING_CAMERA)
 
+        withPhoto({ BitmapUtils.loadFromFile(file) }, onFailure)
+    }
+
+    fun withPhoto(bitmapFactory: suspend () -> Bitmap, onFailure: (Throwable) -> Unit = {}) {
+        require(_submittingState.value == State.AWAITING_CAMERA)
+
         _submittingState.value = State.AWAITING_LOCATION_PERMISSION
         viewModelScope.launch(exceptionHandler(onFailure)) {
-            val bitmap = BitmapUtils.loadFromFile(file)
-                .resizeBitmapToFit(R.integer.maximum_number_of_pixel_per_photo)
-
-            _photoState.value = bitmap
+            _photoState.value = bitmapFactory().resizeBitmapToFit(R.integer.maximum_number_of_pixel_per_photo)
         }
     }
 
