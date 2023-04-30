@@ -41,10 +41,10 @@ fun ProfilePictureChanger(
     ) {
         if (currentImage == null) {
             // The user did not chose its profile picture, so we shows the default
-            DefaultProfileIcon(modifier = Modifier.size(128.dp))
+            DefaultProfileIcon(modifier = Modifier.size(128.dp).testTag("default-pp"))
         } else {
             // The user chose a profile picture, so we show it to him
-            ProfileIcon(currentImage, "", modifier = Modifier.size(128.dp))
+            ProfileIcon(currentImage, "", modifier = Modifier.size(128.dp).testTag("user-pp"))
         }
 
         IconButton(

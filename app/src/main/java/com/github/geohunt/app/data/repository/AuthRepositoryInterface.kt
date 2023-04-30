@@ -14,6 +14,8 @@ interface AuthRepositoryInterface {
      *
      * @return a Firebase user, converted to the external model.
      */
+    @Deprecated("If you use this and want the user as described in the RTDB, you should prefer" +
+            "use UserRepository#getCurrentUser()")
     fun getCurrentUser(): User
 
     /**

@@ -57,6 +57,7 @@ fun ProfilePage(
     val hunts = viewModel.claimedChallenges.collectAsState()
     val score = claims.value?.sumOf { it.awardedPoints }
     val error = viewModel.didFail.collectAsState()
+    val doesFollow = viewModel.doesFollow.collectAsState()
 
     BoxWithConstraints {
         Box(
@@ -94,10 +95,16 @@ fun ProfilePage(
                         challenges.value,
                         hunts.value,
                         score,
+                        // Do not show settings if seeing another profile
                         if (viewModel.isSelf) { { coroutineScope.async {
                             drawerState.open()
-                        } } } else null
-                    )
+                        } } } else null,
+                        if (viewModel.canFollow) { doesFollow.value } else null
+                    ) {
+                        if (viewModel.canFollow) {
+                            viewModel.toggleFollow()
+                        }
+                    }
                 }
             }
         }
@@ -111,7 +118,9 @@ fun ProfilePageContent(
     challenges: List<Challenge>?,
     hunts: List<Challenge>?,
     score: Long?,
-    onSettingsClick: (() -> Any)?
+    onSettingsClick: (() -> Any)?,
+    isFollowed: Boolean? = null,
+    toggleFollow: (() -> Any)? = null
 ) {
     Column {
         Row {
@@ -141,6 +150,20 @@ fun ProfilePageContent(
                 }
 
                 UserNumberDetails(challenges?.size, hunts?.size, score)
+
+                if (toggleFollow != null && isFollowed != null) {
+                    Button(
+                        onClick = { toggleFollow() },
+                        modifier = Modifier.testTag("follow-btn")
+                    ) {
+                        Text(
+                            if (isFollowed) stringResource(id = R.string.followed) else stringResource(
+                                id = R.string.follow
+                            )
+                        )
+                    }
+                }
+
             }
         }
 

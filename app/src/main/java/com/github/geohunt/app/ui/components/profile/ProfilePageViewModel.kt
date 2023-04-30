@@ -36,7 +36,7 @@ open class ProfilePageViewModel(
 
     @Suppress("DEPRECATION")
     val isSelf = authRepository.getCurrentUser().id == uid
-    val canFollow = !isSelf
+    val canFollow = true
 
     private val _doesFollow = followRepository.doesFollow(uid)
     val doesFollow = _doesFollow.stateIn(viewModelScope, SharingStarted.Eagerly, false)
@@ -91,6 +91,12 @@ open class ProfilePageViewModel(
             } catch (e: UserNotFoundException) {
                 _didFail.value = e
             }
+        }
+    }
+
+    fun toggleFollow() {
+        viewModelScope.launch {
+            if (!doesFollow.value) follow() else unfollow()
         }
     }
 

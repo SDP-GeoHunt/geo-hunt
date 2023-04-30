@@ -10,8 +10,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.AuthRepository
-import com.github.geohunt.app.data.repository.UserRepository
+import com.github.geohunt.app.data.repository.AuthRepositoryInterface
+import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.model.EditedUser
 import com.github.geohunt.app.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +19,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ProfileEditPageViewModel(
-    authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    authRepository: AuthRepositoryInterface,
+    private val userRepository: UserRepositoryInterface
 ): ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
     val user = _user.asStateFlow()

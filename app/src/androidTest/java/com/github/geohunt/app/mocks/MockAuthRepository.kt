@@ -8,7 +8,8 @@ import com.github.geohunt.app.model.User
  * Represents a mocked auth repository where the user
  * is logged in as User("1", "Debug user", null)
  */
-class MockAuthRepository(private val loggedUser: User = User("1", "Debug user", null)): AuthRepositoryInterface {
+class MockAuthRepository(private val loggedUser: User = defaultLoggedUser): AuthRepositoryInterface {
+    @Deprecated("If you use this and want the user as described in the RTDB, you should preferuse UserRepository#getCurrentUser()")
     override fun getCurrentUser(): User {
         return loggedUser
     }
@@ -23,5 +24,9 @@ class MockAuthRepository(private val loggedUser: User = User("1", "Debug user", 
 
     override suspend fun logOut(context: ComponentActivity) {
 
+    }
+
+    companion object {
+        val defaultLoggedUser = User("1", "dn", null)
     }
 }

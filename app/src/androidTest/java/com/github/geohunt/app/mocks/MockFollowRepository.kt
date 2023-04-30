@@ -1,12 +1,11 @@
 package com.github.geohunt.app.mocks
 
-import com.github.geohunt.app.data.repository.FollowRepository
 import com.github.geohunt.app.data.repository.FollowRepositoryInterface
 import com.github.geohunt.app.model.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class MockFollowRepository: FollowRepositoryInterface {
+open class MockFollowRepository: FollowRepositoryInterface {
     override fun getFollowList(): Flow<List<String>> {
         return flowOf(listOf())
     }

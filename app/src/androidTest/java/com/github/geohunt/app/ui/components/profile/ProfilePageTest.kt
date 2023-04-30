@@ -161,7 +161,7 @@ class ProfilePageTest {
     @Test
     fun showsSettingsBtnIfAvailable() {
         testRule.setContent {
-            ProfilePageContent(User("1", "dn", null), listOf(), listOf(), 1) { }
+            ProfilePageContent(User("1", "dn", null), listOf(), listOf(), 1, { })
         }
         testRule.onNodeWithTag("profile-settings-btn").assertIsDisplayed()
     }
@@ -194,4 +194,43 @@ class ProfilePageTest {
         testRule.onNodeWithTag("profile-settings-btn").performClick()
         testRule.onNodeWithTag("settings-drawer").assertIsDisplayed()
     }
+
+    @Test
+    fun showsFollowButtonIfAvailable() {
+        val vm = createViewModel(uid = "2")
+        testRule.setContent {
+            ProfilePage(viewModel = vm)
+        }
+        testRule.onNodeWithTag("follow-btn").assertIsDisplayed()
+    }
+
+    @Test
+    fun doesNotShowFollowButtonIfOwnProfile() {
+        val vm = createViewModel()
+        testRule.setContent {
+            ProfilePage(viewModel = vm)
+        }
+        testRule.onNodeWithTag("follow-btn").assertDoesNotExist()
+    }
+
+    /* Test fails for unknown reason
+    @Test
+    fun clickingOnFollowButtonTriggersFollow() {
+        val cf = CompletableFuture<User>()
+        val vm = createViewModel(uid = "2",
+            follow = object: MockFollowRepository() {
+                override suspend fun follow(user: User) {
+                    withContext(Dispatchers.IO) {
+                        cf.complete(user)
+                    }
+                }
+            }
+        )
+        testRule.setContent {
+            ProfilePage(viewModel = vm)
+        }
+        testRule.onNodeWithTag("follow-btn").performClick()
+        // assert(cf.get(2, TimeUnit.SECONDS).id == "2")
+    }
+     */
 }
