@@ -31,7 +31,9 @@ fun Graph(
         yStrings: List<String>
 ) {
     val textMeasurer = rememberTextMeasurer()
-    Box(modifier = Modifier.border(BorderStroke(2.dp, Color.Red))) {
+    Box(modifier = Modifier
+            .border(BorderStroke(2.dp, Color.Black))
+            .fillMaxSize()) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val xPadding = 125f
             val yPadding = 270f
