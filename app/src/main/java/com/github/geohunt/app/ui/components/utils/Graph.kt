@@ -89,7 +89,7 @@ private fun drawXLabels(
     for ((i, str) in strings.withIndex()) {
         val offset = Offset(xPadding + xSpacing * i, yOffset)
         drawScope.rotate(rotationAngle, offset) {
-            drawScope.drawText(textMeasurer, str, offset)
+            drawText(textMeasurer, str, offset)
         }
     }
 }
