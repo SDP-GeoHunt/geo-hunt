@@ -6,10 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.github.geohunt.app.mocks.InstantLazyRef
 import com.github.geohunt.app.mocks.MockChallenge
-import com.github.geohunt.app.mocks.MockChallengeClass
-import com.github.geohunt.app.mocks.MockUser
 import org.junit.Rule
 import org.junit.Test
 
@@ -51,7 +48,7 @@ class PastChallengesAndHuntsTest {
     @Test
     fun showsEmptyMessageWhenNoPastHunts() {
         testRule.setContent {
-            PastChallengeAndHunts(listOf(), listOf(MockChallenge()))
+            PastChallengeAndHunts(listOf(MockChallenge()), listOf())
         }
         testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastHunts.ordinal}").performClick()
         testRule.onNodeWithText("No past hunts", substring = true).assertIsDisplayed()

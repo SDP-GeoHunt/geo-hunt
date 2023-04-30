@@ -36,7 +36,7 @@ open class ProfilePageViewModel(
 
     @Suppress("DEPRECATION")
     val isSelf = authRepository.getCurrentUser().id == uid
-    val canFollow = true
+    val canFollow = !isSelf
 
     private val _doesFollow = followRepository.doesFollow(uid)
     val doesFollow = _doesFollow.stateIn(viewModelScope, SharingStarted.Eagerly, false)

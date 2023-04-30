@@ -2,6 +2,7 @@ package com.github.geohunt.app.data.repository
 
 import android.app.Application
 import com.github.geohunt.app.domain.GetUserFeedUseCase
+import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -16,7 +17,9 @@ import java.lang.IllegalStateException
  */
 class AppContainer private constructor(application: Application) {
     init {
-        Firebase.database.setPersistenceEnabled(true)
+        try {
+            Firebase.database.setPersistenceEnabled(true)
+        } catch(_: DatabaseException) { /* This is already the case, why forcing it */ }
     }
 
     val database = Firebase.database

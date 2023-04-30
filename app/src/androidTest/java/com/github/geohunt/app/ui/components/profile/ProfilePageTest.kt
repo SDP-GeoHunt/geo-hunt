@@ -172,7 +172,7 @@ class ProfilePageTest {
         testRule.setContent {
             ProfilePage(viewModel = vm)
         }
-        testRule.onNodeWithTag("profile-settings-btn").assertDoesNotExist()
+        testRule.onNodeWithTag("profile-settings-btn").assertIsDisplayed()
     }
 
     @Test
