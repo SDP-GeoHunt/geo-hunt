@@ -80,6 +80,7 @@ class ChallengeRepository(
      */
     fun getChallengePhoto(challenge: Challenge): String = challenge.photoUrl
 
+    @Deprecated("Should use the ClaimRepository::getClaims method instead")
     suspend fun getClaims(challenge: Challenge): List<Claim> {
         TODO()
     }

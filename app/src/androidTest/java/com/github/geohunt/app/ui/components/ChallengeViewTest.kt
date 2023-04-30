@@ -18,7 +18,6 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
-import com.google.android.gms.tasks.TaskCompletionSource
 import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo

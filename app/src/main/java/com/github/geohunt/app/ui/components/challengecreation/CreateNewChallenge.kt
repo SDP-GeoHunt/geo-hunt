@@ -35,6 +35,7 @@ import com.github.geohunt.app.sensor.rememberPermissionsState
 import com.github.geohunt.app.utility.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.ireward.htmlcompose.HtmlText
 
 @Composable
 fun CreateChallengeForm(
@@ -71,18 +72,10 @@ fun CreateChallengeForm(
 
                 Spacer(Modifier.height(15.dp))
 
-//TODO: This code is going to change with i18n PR anyway so...
-//                LinkText(listOf(
-//                    LinkTextData("By creating a challenge, you agree to GeoHunt's "),
-//                    LinkTextData(
-//                        text = "Community Guidelines",
-//                        tag = "",
-//                        annotation = "",
-//                        onClick = {
-//                            context.startActivity(openCommunityGuidelinesIntent)
-//                        }
-//                    )
-//                ), style = Typography.h5)
+                HtmlText(
+                    text = stringResource(id = R.string.challenge_create_agree_community_link),
+                    modifier = Modifier.padding(25.dp, 0.dp)
+                )
 
                 Spacer(Modifier.height(15.dp))
 

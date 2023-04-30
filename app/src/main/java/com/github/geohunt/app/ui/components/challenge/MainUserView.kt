@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.database.api.Challenge
 import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.LabelledIcon
 import com.github.geohunt.app.ui.components.user.ProfileIcon
@@ -24,7 +23,10 @@ import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.i18n.toSuffixedString
 
 @Composable
-internal fun MainUserView(challenge: Challenge) {
+internal fun MainUserView(
+    viewModel: ChallengeViewModel,
+    state: ChallengeViewModel.State
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,88 +34,80 @@ internal fun MainUserView(challenge: Challenge) {
             .height(70.dp)
             .clipToBounds()
     ) {
-        FetchComponent(
-            lazyRef = { challenge.author },
-            modifier = Modifier.align(Alignment.Center)
-        ) { author ->
-            Row {
-                ProfileIcon(
-                    user = author,
-                    modifier = Modifier.testTag("profile-icon").size(70.dp)
-                )
+        Row {
+            // Profile Icon
 
-                Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
-                Column(
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                ) {
-                    Row {
-                        Text(
-                            text = author.name,
-                            fontSize = 27.sp,
-                            maxLines = 1,
-                            textAlign = TextAlign.Left,
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(2.dp)
-                                .wrapContentSize(unbounded = true)
-                        )
+            Column(
+                modifier = Modifier.align(Alignment.CenterVertically)
+            ) {
+                Row {
+                    Text(
+                        text = state.author.name,
+                        fontSize = 27.sp,
+                        maxLines = 1,
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .align(Alignment.Bottom)
+                            .padding(2.dp)
+                            .wrapContentSize(unbounded = true)
+                    )
 
-                        Spacer(modifier = Modifier.weight(1f))
+                    Spacer(modifier = Modifier.weight(1f))
 
-                        LabelledIcon(
-                            text = author.score.toInt().toSuffixedString(),
-                            painter = painterResource(id = R.drawable.cards_diamond),
-                            tint = Color(R.color.md_theme_light_tertiary),
-                            contentDescription = "Card diamond",
-                            fontColor = MaterialTheme.colors.primaryVariant,
-                            fontSize = 19.sp,
-                            iconSize = 20.dp,
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(end = 15.dp)
-                        )
+                    LabelledIcon(
+                        text = state.authorScore.toSuffixedString(),
+                        painter = painterResource(id = R.drawable.cards_diamond),
+                        tint = Color(R.color.md_theme_light_tertiary),
+                        contentDescription = "Card diamond",
+                        fontColor = MaterialTheme.colors.primaryVariant,
+                        fontSize = 19.sp,
+                        iconSize = 20.dp,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(end = 15.dp)
+                    )
+                }
+
+                Row {
+                    Text(
+                        text = DateFormatUtils.getElapsedTimeString(
+                            state.challenge.publishedDate,
+                            R.string.published_format
+                        ),
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colors.primaryVariant,
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .align(Alignment.Top)
+                            .wrapContentSize(unbounded = true)
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Button(
+                        modifier = Modifier
+                            .size(63.dp, 24.dp)
+                            .align(Alignment.CenterVertically),
+                        contentPadding = PaddingValues(2.dp, 2.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        onClick = { /*TODO*/ })
+                    {
+                        Text(text = "Follow", fontSize = 11.sp)
                     }
 
-                    Row {
-                        Text(
-                            text = DateFormatUtils.getElapsedTimeString(
-                                challenge.publishedDate,
-                                R.string.published_format
-                            ),
-                            fontSize = 10.sp,
-                            color = MaterialTheme.colors.primaryVariant,
-                            textAlign = TextAlign.Left,
-                            modifier = Modifier
-                                .padding(start = 12.dp)
-                                .align(Alignment.Top)
-                                .wrapContentSize(unbounded = true)
+                    IconButton(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .testTag("btn-notification"),
+                        onClick = { /*TODO*/ }
+                    ) {
+                        Icon(
+                            Icons.Rounded.Notifications,
+                            contentDescription = "Notification bell"
                         )
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Button(
-                            modifier = Modifier
-                                .size(63.dp, 24.dp)
-                                .align(Alignment.CenterVertically),
-                            contentPadding = PaddingValues(2.dp, 2.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            onClick = { /*TODO*/ })
-                        {
-                            Text(text = "Follow", fontSize = 11.sp)
-                        }
-
-                        IconButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .testTag("btn-notification"),
-                            onClick = { /*TODO*/ }
-                        ) {
-                            Icon(
-                                Icons.Rounded.Notifications,
-                                contentDescription = "Notification bell"
-                            )
-                        }
                     }
                 }
             }

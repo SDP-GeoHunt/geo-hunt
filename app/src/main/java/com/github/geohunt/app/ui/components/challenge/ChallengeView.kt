@@ -7,41 +7,39 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.components.AsyncImage
 import com.github.geohunt.app.ui.components.GoBackBtn
+import com.github.geohunt.app.ui.components.utils.AwaitNullable
 import com.github.geohunt.app.ui.screens.home.HorizontalDivider
 
 /**
  * @brief Composable function that displays a specific challenge including details
  * such as previous claims and the author to the user.
  *
- * @param challenge the challenge to be displayed to the user
- * @param fnViewImageCallback function called in order to open the view for a specific image
- * @param fnGoBackBtn function called when user presses the go back button
+ * @param viewModel The view model
  */
 @Composable
 fun ChallengeView(
-    challenge: Challenge,
-    database: Database,
-    user: User,
+    cid: String,
     fnViewImageCallback: (String) -> Unit,
-    fnGoBackBtn: () -> Unit
+    fnGoBackBtn: () -> Unit,
+    viewModel: ChallengeViewModel = viewModel(factory = ChallengeViewModel.Factory)
 ) {
     val lazyState = rememberLazyListState()
     val transition = updateTransition(
@@ -52,47 +50,53 @@ fun ChallengeView(
         if (isScrolling.value) 1.8f else 1.0f
     }
 
-    Box {
-        Column {
-            // Main challenge image
-            AsyncImage(
-                contentDescription = "Challenge Image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        fnViewImageCallback(challenge.thumbnail.id)
-                    }
-                    .aspectRatio(imageAspectRatio, false),
-                contentScale = ContentScale.Crop
-            ) {
-                challenge.thumbnail
+    val nullableState = viewModel.state.collectAsState()
+    LaunchedEffect(viewModel, cid) {
+        viewModel.withChallengeId(cid)
+    }
+
+    AwaitNullable(state = nullableState) { state ->
+        Box {
+            Column {
+                // Main challenge view image
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(state.challenge.photoUrl)
+                        .crossfade(true)
+                        .build(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            fnViewImageCallback(state.challenge.photoUrl)
+                        }
+                        .aspectRatio(imageAspectRatio, false),
+                    contentDescription = "Image of the challenge"
+                )
+
+                // Button bar bellow the image
+                ///
+
+                // Spacer and horizontal divider
+                Spacer(Modifier.height(2.dp))
+
+                HorizontalDivider(padding = 2.dp)
+
+                // Finally lazy list of claim list
+                LazyClaimList(lazyState, viewModel, state, fnViewImageCallback)
             }
 
-            BellowImageButtons(
-                challenge = challenge,
-                user = user,
-                database = database
-            )
-
-            Spacer(Modifier.height(2.dp))
-
-            HorizontalDivider(padding = 2.dp)
-
-            LazyClaimList(lazyState, challenge, fnViewImageCallback)
+            GoBackBtn(fnGoBackBtn)
         }
-
-        // Go back button (for navigation)
-        GoBackBtn(fnGoBackBtn)
     }
 }
 
 @Composable
 private fun LazyClaimList(
     lazyState: LazyListState,
-    challenge: Challenge,
+    viewModel: ChallengeViewModel,
+    state: ChallengeViewModel.State,
     fnViewImageCallback: (String) -> Unit
 ) {
-
     LazyColumn(
         state = lazyState,
         modifier = Modifier.fillMaxHeight()
@@ -102,18 +106,18 @@ private fun LazyClaimList(
         }
 
         item {
-            MainUserView(challenge = challenge)
+            MainUserView(viewModel = viewModel, state = state)
             HorizontalDivider(padding = 2.dp)
         }
 
-        challenge.description?.apply {
+        state.challenge.description?.apply {
             item {
                 ShowChallengeDescription(this@apply)
             }
         }
 
-        items(challenge.claims.size) { index: Int ->
-            ClaimCard(claimRef = challenge.claims[index], fnViewImageCallback)
+        items(state.claims.size) { index: Int ->
+            ClaimCard(viewModel, state.claims[index], fnViewImageCallback)
         }
     }
 }
@@ -134,7 +138,7 @@ fun ShowChallengeDescription(challengeDescription: String) {
             .fillMaxWidth()
             .heightIn(max = if (isDescriptionExpanded) Int.MAX_VALUE.dp else 90.dp)
             .padding(10.dp),
-        elevation = 10.dp
+        elevation = CardDefaults.cardElevation(10.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.SpaceAround

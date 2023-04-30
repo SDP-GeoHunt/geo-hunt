@@ -35,11 +35,13 @@ class ImageRepository(
 ) {
     enum class ImageType {
         PROFILE_PICTURE,
+        CLAIM_PHOTO,
         CHALLENGE_PHOTO;
 
         override fun toString(): String = when(this) {
             PROFILE_PICTURE -> "profile"
             CHALLENGE_PHOTO -> "challenge"
+            CLAIM_PHOTO -> "claim"
         }
     }
 
@@ -86,6 +88,9 @@ class ImageRepository(
     suspend fun uploadProfilePicture(picture: LocalPicture, id: String) = uploadImage(picture, ImageType.PROFILE_PICTURE, id)
     suspend fun uploadChallengePhoto(photo: LocalPicture, coarseHash: String, id: String) =
         uploadImage(photo, ImageType.CHALLENGE_PHOTO, "$coarseHash/$id")
+
+    suspend fun uploadClaimPhoto(photo: LocalPicture, id: String) =
+        uploadImage(photo, ImageType.CLAIM_PHOTO, id)
 
     fun getProfilePictureUrl(user: User): String = user.profilePictureUrl
 
