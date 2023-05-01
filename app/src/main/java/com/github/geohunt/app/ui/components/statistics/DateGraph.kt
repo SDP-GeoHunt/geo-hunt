@@ -6,6 +6,14 @@ import com.github.geohunt.app.ui.components.utils.Graph
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
+/**
+ * A graph that draws x/y points, where x is a date and y is a value
+ * @param xDateValues The x values of our points represented by dates
+ *  have to be in the range dateGranularity.dateRange(LocalDate.now())
+ * @param dateGranularity the DateGranularity of the graph, gives the range of dates that will
+ *  be shown on the graph (last week, month, year)
+ * @param yValues the y values of our points represented by Long values
+ */
 @Composable
 fun DateGraph(
         xDateValues: List<LocalDate>,
@@ -28,6 +36,10 @@ fun DateGraph(
             yValues = yValues)
 }
 
+/**
+ * Used to represent the granularity of the dates we want to show
+ * Contains 3 values representing a week, a month and a year
+ */
 enum class DateGranularity(private val displaySteps: Long,
                            private val displayUnit: ChronoUnit) {
     WEEK(7, ChronoUnit.DAYS),

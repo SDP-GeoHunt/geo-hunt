@@ -18,6 +18,14 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.ui.components.utils.ListDropdownMenu
 import com.github.geohunt.app.ui.theme.Lobster
 
+/**
+ * A composable made to show statistics of a user,
+ * for now it shows the following information :
+ *  - The evolution of the users points in time,
+ *  also allowing the user to select if they want the graph on last week/month/year
+ *
+ * @param claims The full list of claims of a user, only the part the user wants to see is displayed
+ */
 @Composable
 fun Statistics(claims: List<Claim>) {
     Column(modifier = Modifier.fillMaxSize(),
@@ -33,6 +41,10 @@ fun Statistics(claims: List<Claim>) {
     }
 }
 
+/**
+ * Screen shown when there aren't enough claims to build interesting statistics
+ * (1 claim or less)
+ */
 @Composable
 fun EmptyStatisticsScreen() {
     Box(modifier = Modifier.fillMaxSize(),
@@ -42,6 +54,9 @@ fun EmptyStatisticsScreen() {
     }
 }
 
+/**
+ * Screen containing the Graph and a box to select what dates we want to see
+ */
 @Composable
 fun DisplayStatistics(claims: List<Claim>) {
     val dateGranularityState = remember { mutableStateOf(DateGranularity.WEEK) }

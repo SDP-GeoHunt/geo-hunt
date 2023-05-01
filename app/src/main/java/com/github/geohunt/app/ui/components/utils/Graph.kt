@@ -21,6 +21,10 @@ import com.github.geohunt.app.ui.theme.geoHuntRed
 import kotlin.math.ceil
 import kotlin.math.floor
 
+/**
+ * Represents a graph, the points of the graph are given as arguments
+ * Also draws labels using xStrings for the x axis and the best match for the y axis
+ */
 @OptIn(ExperimentalTextApi::class)
 @Composable
 fun Graph(
@@ -39,7 +43,7 @@ fun Graph(
             val yPadding = 270f
             val yGraphSize = size.height - yPadding - 45
 
-            val yLabelValues = findBestLabelValues(yValues.min(), yValues.max(), yGraphSize)
+            val yLabelValues = findBestLabelSpacing(yValues.min(), yValues.max(), yGraphSize)
             drawXLabels(this, textMeasurer, xStrings, xPadding, size.width, size.height - (yPadding/5))
             drawYLabels(this, textMeasurer, yLabelValues.map { it.toString() }, yGraphSize, xPadding/5)
             val offsets = computeOffsets(
@@ -51,7 +55,11 @@ fun Graph(
     }
 }
 
-fun findBestLabelValues(min: Long, max: Long, size: Float): List<Long> {
+/**
+ * Find the best spacing based on the range of points we want to represent and the size of the window
+ * Chooses the spacings along the list possibleSpacing defined below
+ */
+fun findBestLabelSpacing(min: Long, max: Long, size: Float): List<Long> {
     val possibleSpacings = listOf(50, 100, 500, 1000, 5000, 10000)
     val delta = (max - min).toFloat()
     //take best spacing s.t. it gives some minimal distance between points on the screen
@@ -64,6 +72,10 @@ fun findBestLabelValues(min: Long, max: Long, size: Float): List<Long> {
     return range.toList().map { it * bestSpacing }
 }
 
+/**
+ * Computes the offsets of points (x, y)
+ * Does this by applying a transformation from the real values to canvas values
+ */
 fun computeOffsets(
         x: List<Long>,
         xBottom: Long,
@@ -109,7 +121,7 @@ private fun drawXLabels(
 }
 
 @OptIn(ExperimentalTextApi::class)
-fun drawYLabels(
+private fun drawYLabels(
         drawScope: DrawScope,
         textMeasurer: TextMeasurer,
         yStrings: List<String>,

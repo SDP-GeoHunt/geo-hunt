@@ -58,7 +58,7 @@ fun createEntries(claims: List<Claim>, dateGranularity: DateGranularity): Pair<L
     return Pair(dates, points)
 }
 
-fun regroupDates(entryDates: List<LocalDate>, entryPoints: List<Long>): Pair<List<LocalDate>, List<Long>> {
+private fun regroupDates(entryDates: List<LocalDate>, entryPoints: List<Long>): Pair<List<LocalDate>, List<Long>> {
     val pairedList = entryDates.zip(entryPoints)
     val groupedMap = pairedList.groupBy { it.first }
     val groupedPairs = groupedMap
@@ -71,6 +71,6 @@ fun regroupDates(entryDates: List<LocalDate>, entryPoints: List<Long>): Pair<Lis
     return Pair(dates, points)
 }
 
-fun partitionClaims(claims: List<Claim>, undisplayedLimit: LocalDate): Pair<List<Claim>, List<Claim>> {
+private fun partitionClaims(claims: List<Claim>, undisplayedLimit: LocalDate): Pair<List<Claim>, List<Claim>> {
     return claims.partition { it.time.toLocalDate().toEpochDay() <= undisplayedLimit.toEpochDay() }
 }
