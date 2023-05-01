@@ -74,7 +74,7 @@ private fun UserView(
             .padding(horizontal = 20.dp, vertical = 2.dp)
             .height(39.dp)
     ) {
-        AwaitNullable(state = remember { viewModel.retrieveUser(claim.id) }.collectAsState()) { author ->
+        AwaitNullable(state = remember { viewModel.retrieveUser(claim.claimerId) }.collectAsState()) { author ->
             // Profile Icon
             //
 

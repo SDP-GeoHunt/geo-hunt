@@ -62,6 +62,7 @@ internal fun BellowImageButtons(
                     .align(Alignment.CenterVertically),
                 contentPadding = PaddingValues(10.dp, 2.dp),
                 shape = RoundedCornerShape(12.dp),
+                enabled = !state.alreadyClaimed,
                 onClick = {
                     if (doesHunt.value) fnClaimHuntCallback(state.challenge.id)
                     else viewModel.joinHunt()

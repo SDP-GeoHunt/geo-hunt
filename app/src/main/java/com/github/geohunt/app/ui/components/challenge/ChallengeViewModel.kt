@@ -32,7 +32,8 @@ class ChallengeViewModel(
         val isSelf: Boolean,
         val authorScore: Long,
         val doesFollow: Flow<Boolean>,
-        val doesHunt: Flow<Boolean>
+        val doesHunt: Flow<Boolean>,
+        val alreadyClaimed: Boolean
     )
 
     private val state_ : MutableStateFlow<State?> = MutableStateFlow(null)
@@ -97,7 +98,8 @@ class ChallengeViewModel(
                 isSelf = currentUser.id == user.id,
                 authorScore = authorScore,
                 doesFollow = followRepository.doesFollow(user),
-                doesHunt = activeHuntsRepository.getDoesHunts(challenge))
+                doesHunt = activeHuntsRepository.getDoesHunts(challenge),
+                alreadyClaimed = claimRepository.doesClaims(challenge))
         }
     }
 

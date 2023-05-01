@@ -1,92 +1,84 @@
-package com.github.geohunt.app.ui.components.challengecreation
+package com.github.geohunt.app.ui.components.claims
 
 import android.app.Application
 import android.graphics.Bitmap
-import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
-import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.ChallengeRepository
-import com.github.geohunt.app.data.repository.ImageRepository
-import com.github.geohunt.app.data.repository.LocationRepository
-import com.github.geohunt.app.i18n.DateFormatUtils
+import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsViewModel
+import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeViewModel
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.BitmapUtils.resizeBitmapToFit
-import com.github.geohunt.app.utility.Singleton
-import com.github.geohunt.app.utility.quantize
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.File
-import java.time.LocalDate
 
-class CreateChallengeViewModel(
+class SubmitClaimViewModel(
     private val imageRepository: ImageRepository,
     private val locationRepository: LocationRepository,
-    private val challengeRepository: ChallengeRepository
+    private val challengeRepository: ChallengeRepository,
+    private val claimRepository: ClaimRepository
 ) : ViewModel() {
 
     enum class State {
-        AWAITING_LOCATION_PERMISSION,
+        AWAITING_CHALLENGE,
         AWAITING_CAMERA,
+        AWAITING_LOCATION_PERMISSION,
         AWAITING_LOCATION,
-        READY_TO_CREATE,
-        CREATING
+        READY_TO_CLAIM,
+        CLAIMING
     }
 
     private val _location : MutableStateFlow<Location?> = MutableStateFlow(null)
     val location : StateFlow<Location?> = _location
 
-    private val _expirationDate: MutableStateFlow<LocalDate?> = MutableStateFlow(null)
-    val expirationDate: StateFlow<LocalDate?> = _expirationDate
-
-    private val _selectedDifficulty: MutableStateFlow<Challenge.Difficulty> =
-        MutableStateFlow(Challenge.Difficulty.MEDIUM)
-    val selectedDifficulty: StateFlow<Challenge.Difficulty> = _selectedDifficulty
-
     private val _submittingState : MutableStateFlow<State> =
-        MutableStateFlow(State.AWAITING_CAMERA)
+        MutableStateFlow(State.AWAITING_CHALLENGE)
     val submittingState : StateFlow<State> = _submittingState
-
 
     private val _photoState = MutableStateFlow<Bitmap?>(null)
     val photoState: StateFlow<Bitmap?> = _photoState
 
-    fun withDifficulty(difficulty: Challenge.Difficulty) {
-        _selectedDifficulty.value = difficulty
+    private val _challenge = MutableStateFlow<Challenge?>(null)
+    val challenge: StateFlow<Challenge?> = _challenge
+
+    fun start(cid: String, onFailure: (Throwable) -> Unit = {}) {
+        reset()
+        viewModelScope.launch(exceptionHandler(onFailure)) {
+            _challenge.value = challengeRepository.getChallenge(cid)
+            _submittingState.value = State.AWAITING_CAMERA
+        }
     }
 
-    fun withExpirationDate(expirationDate: LocalDate?) {
-        _expirationDate.value = expirationDate
-    }
-
-    fun create(fileFactory: (String) -> File,
-               onFailure: (Throwable) -> Unit = {},
-               onSuccess: (Challenge) -> Unit = {}) {
-        require(submittingState.value == State.READY_TO_CREATE)
+    fun claim(fileFactory: (String) -> File,
+              onFailure: (Throwable) -> Unit = {},
+              onSuccess: (Claim) -> Unit = {}) {
+        require(submittingState.value == State.READY_TO_CLAIM)
         require(location.value != null)
         require(photoState.value != null)
+        require(challenge.value != null)
 
         viewModelScope.launch(exceptionHandler(onFailure)) {
             val file = imageRepository.preprocessImage(photoState.value!!, fileFactory)
-            _submittingState.value = State.CREATING
+            _submittingState.value = State.CLAIMING
 
-            val challenge = challengeRepository.createChallenge(
+            val claim = claimRepository.claimChallenge(
                 LocalPicture(file),
                 location.value!!,
-                selectedDifficulty.value,
-                DateFormatUtils.atEndOfDay(expirationDate.value)
+                challenge.value!!
             )
 
-            onSuccess(challenge)
+            onSuccess(claim)
         }
     }
 
@@ -98,7 +90,7 @@ class CreateChallengeViewModel(
             locationRepository.getLocations(viewModelScope).collect {
                 _location.value = it
                 if (_submittingState.value == State.AWAITING_LOCATION) {
-                    _submittingState.value = State.READY_TO_CREATE
+                    _submittingState.value = State.READY_TO_CLAIM
                 }
             }
         }
@@ -119,11 +111,6 @@ class CreateChallengeViewModel(
         }
     }
 
-    private fun exceptionHandler(callback: (Throwable) -> Unit) =
-        CoroutineExceptionHandler { _, throwable ->
-            callback(throwable)
-        }
-
     override fun onCleared() {
         super.onCleared()
         reset()
@@ -132,10 +119,14 @@ class CreateChallengeViewModel(
     fun reset() {
         _location.value = null
         _submittingState.value = State.AWAITING_CAMERA
-        _expirationDate.value = null
         _photoState.value = null
-        _selectedDifficulty.value = Challenge.Difficulty.MEDIUM
+        _challenge.value = null
     }
+
+    private fun exceptionHandler(callback: (Throwable) -> Unit) =
+        CoroutineExceptionHandler { _, throwable ->
+            callback(throwable)
+        }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -143,13 +134,13 @@ class CreateChallengeViewModel(
                 val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
                 val container = AppContainer.getInstance(application)
 
-                CreateChallengeViewModel(
+                SubmitClaimViewModel(
                     container.image,
                     container.location,
-                    container.challenges
+                    container.challenges,
+                    container.claims
                 )
             }
         }
     }
 }
-

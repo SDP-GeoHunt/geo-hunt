@@ -4,7 +4,6 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -15,10 +14,8 @@ import androidx.compose.material.icons.sharp.Home
 import androidx.compose.material.icons.sharp.Person
 import androidx.compose.material.icons.sharp.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.text.htmlEncode
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -29,11 +26,10 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.ui.FetchComponent
-import com.github.geohunt.app.ui.components.ClaimChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
+import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
@@ -162,7 +158,7 @@ fun NavigationController(
             ChallengeView(
                 cid = cid,
                 fnViewImageCallback = { url -> navController.navigate("image-view/$url") },
-                fnClaimHuntCallback = { cid ->  },
+                fnClaimHuntCallback = { cid -> navController.navigate("claim-challenge/$cid") },
                 fnGoBackBtn = { navController.popBackStack() }
             )
         }
@@ -173,15 +169,18 @@ fun NavigationController(
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
         ) { backStackEntry ->
             val cid = backStackEntry.arguments?.getString("challengeId")!!
-
-            Box(modifier = Modifier.fillMaxSize()) {
-                FetchComponent(
-                    lazyRef = { database.getChallengeById(cid) },
-                    modifier = Modifier.align(Alignment.Center),
-                ) {
-                    ClaimChallenge(database = database, challenge = it)
+            ClaimChallenge(
+                cid = cid,
+                onFailure = {
+                    Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Fail to create challenge: $it")
+                    navController.popBackStack()
+                },
+                onClaimSubmitted = {
+                    navController.popBackStack()
+                    navController.navigate("challenge-view/$cid")
                 }
-            }
+            )
         }
     }
 }

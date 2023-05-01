@@ -12,11 +12,10 @@ interface PointCalculator {
 
     /**
      * The only function of this interface, computes the points awarded to two locations
-     * @param l1 The first location
-     * @param l2 the second location
+     * @param distance The distance to the "real" position
      * @return the amount of points
      */
-    fun computePoints(l1: Location, l2: Location): Double
+    fun computePoints(distance: Double): Long
 
     companion object {
 

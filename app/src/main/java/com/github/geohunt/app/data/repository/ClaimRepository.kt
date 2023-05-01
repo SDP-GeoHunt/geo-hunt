@@ -9,11 +9,14 @@ import com.github.geohunt.app.data.network.firebase.models.FirebaseClaim
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
+import com.github.geohunt.app.model.points.GaussianPointCalculator
+import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 
@@ -25,7 +28,12 @@ class ClaimRepository(
     private val authRepository: AuthRepository,
     private val imageRepository: ImageRepository,
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = mapOf(
+        Challenge.Difficulty.EASY to GaussianPointCalculator(0.20),
+        Challenge.Difficulty.MEDIUM to GaussianPointCalculator(0.15),
+        Challenge.Difficulty.EASY to GaussianPointCalculator(0.10)
+    ).withDefault { GaussianPointCalculator(0.10) }
 ) {
     private fun getChallengeRefFromId(id: String) {
         database.getReference("claims/$id")
@@ -51,6 +59,14 @@ class ClaimRepository(
             .run {
                 children.mapNotNull { it.getValue(String::class.java) }
             }
+
+    suspend fun doesClaims(challenge: Challenge) : Boolean {
+        authRepository.requireLoggedIn()
+        val currentUser = authRepository.getCurrentUser()
+
+        return getClaimsByUser(currentUser)
+            .any { it.parentChallengeId == challenge.id }
+    }
 
     /**
      * Retrieve the score for a given user
@@ -117,6 +133,9 @@ class ClaimRepository(
         // This ensures that the database doesn't contain nonexistent image data
         val photoUrl: Uri = imageRepository.uploadClaimPhoto(photo, claimId)
 
+        // Compute the distance to the target
+        val distance = location.distanceTo(challenge.location)
+
         // Upload the entry to Firebase's Realtime Database
         val claimEntry = FirebaseClaim(
             currentUser.id,
@@ -124,8 +143,8 @@ class ClaimRepository(
             photoUrl = photoUrl.toString(),
             cid = challenge.id,
             location = location,
-            distance = 0,
-            awardedPoints = 0
+            distance = (distance.toLong() + 1),
+            awardedPoints = pointCalculatorMap[challenge.difficulty]!!.computePoints(distance)
         )
 
         // Upload the entry
