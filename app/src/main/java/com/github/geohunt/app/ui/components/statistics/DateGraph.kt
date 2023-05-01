@@ -20,14 +20,12 @@ fun DateGraph(
 
     val xStrings = dateRange.map { DateFormatUtils.formatDate(it) }
     val integerDateValues = xDateValues.map { it.toEpochDay() }
+
     Graph(xValues = integerDateValues,
             xBottom = dateRange.first().toEpochDay(),
             xTop = dateRange.last().toEpochDay(),
             xStrings = xStrings,
-            yValues = yValues,
-            yBottom = yValues.first(),
-            yTop = yValues.last(),
-            yStrings = yValues.map { it.toString() })
+            yValues = yValues)
 }
 
 enum class DateGranularity(private val displaySteps: Long,

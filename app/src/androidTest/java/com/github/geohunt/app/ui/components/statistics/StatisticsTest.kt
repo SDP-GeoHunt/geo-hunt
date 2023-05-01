@@ -16,6 +16,8 @@ class StatisticsTest {
     private val now = LocalDateTime.now()
     private val c1 = MockClaim(time = now.minusDays(3), awardedPoints = 100L)
     private val c2 = MockClaim(time = now, awardedPoints = 2023L)
+    private val c3 = MockClaim(time = now.minusDays(5), awardedPoints = 4000L)
+    private val c4 = MockClaim(time = now.minusDays(2), awardedPoints = 500)
 
     private fun setupComposable(claims: List<Claim>) {
         testRule.setContent {
@@ -25,7 +27,7 @@ class StatisticsTest {
 
     @Test
     fun baseElementsAreDisplayed() {
-        setupComposable(listOf(c1, c2))
+        setupComposable(listOf(c1, c2, c3, c4))
         testRule.onNodeWithText("Statistics").assertIsDisplayed()
         testRule.onNodeWithText("week", substring = true, ignoreCase = true, useUnmergedTree = true)
                 .assertIsDisplayed()

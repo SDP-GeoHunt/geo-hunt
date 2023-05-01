@@ -20,4 +20,11 @@ class GraphTest {
 
         Assert.assertEquals(expected, offsets)
     }
+
+    @Test
+    fun labelsAreCorrectlyComputed() {
+        val labels = findBestLabelValues(0, 1000, 1000f)
+        val expected = (0L..10L).toList().map { it*100 }
+        Assert.assertEquals(expected, labels)
+    }
 }

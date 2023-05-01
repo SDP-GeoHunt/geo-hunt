@@ -18,6 +18,8 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.ui.theme.geoHuntRed
+import kotlin.math.ceil
+import kotlin.math.floor
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
@@ -26,10 +28,7 @@ fun Graph(
         xBottom: Long,
         xTop: Long,
         xStrings: List<String>,
-        yValues: List<Long>,
-        yBottom: Long,
-        yTop: Long,
-        yStrings: List<String>
+        yValues: List<Long>
 ) {
     val textMeasurer = rememberTextMeasurer()
     Box(modifier = Modifier
@@ -38,16 +37,31 @@ fun Graph(
         Canvas(modifier = Modifier.fillMaxSize()) {
             val xPadding = 125f
             val yPadding = 270f
+            val yGraphSize = size.height - yPadding - 45
 
+            val yLabelValues = findBestLabelValues(yValues.min(), yValues.max(), yGraphSize)
             drawXLabels(this, textMeasurer, xStrings, xPadding, size.width, size.height - (yPadding/5))
-            drawYLabels(this, textMeasurer, yStrings, yPadding, size.height, xPadding/5)
+            drawYLabels(this, textMeasurer, yLabelValues.map { it.toString() }, yGraphSize, xPadding/5)
             val offsets = computeOffsets(
                     xValues, xBottom, xTop,
-                    yValues, yBottom, yTop,
+                    yValues, yLabelValues.first(), yLabelValues.last(),
                     size.width, size.height, xPadding, yPadding)
             drawPoints(offsets, PointMode.Polygon, color = geoHuntRed, strokeWidth = 4f)
         }
     }
+}
+
+fun findBestLabelValues(min: Long, max: Long, size: Float): List<Long> {
+    val possibleSpacings = listOf(50, 100, 500, 1000, 5000, 10000)
+    val delta = (max - min).toFloat()
+    //take best spacing s.t. it gives some minimal distance between points on the screen
+    val bestSpacing = possibleSpacings.firstOrNull() { (it / delta) * size >= 75f }
+            ?: possibleSpacings.last()
+
+    val bottomX = floor(min.toFloat() / bestSpacing).toLong()
+    val topX = ceil(max.toFloat() / bestSpacing).toLong()
+    val range = bottomX..topX
+    return range.toList().map { it * bestSpacing }
 }
 
 fun computeOffsets(
@@ -99,12 +113,11 @@ fun drawYLabels(
         drawScope: DrawScope,
         textMeasurer: TextMeasurer,
         yStrings: List<String>,
-        yPadding: Float,
         height: Float,
         xOffset: Float
 ) {
     //subtract 65 to take into account the "height" of the text
-    val ySpacing = (height - yPadding - 45  ) / (yStrings.size - 1)
+    val ySpacing = height / (yStrings.size - 1)
     for((i, str) in yStrings.reversed().withIndex()) {
         val offset = Offset(xOffset,ySpacing * i)
         drawScope.drawText(textMeasurer, str, offset)
