@@ -2,7 +2,6 @@ package com.github.geohunt.app.data.repository
 
 import androidx.activity.ComponentActivity
 import com.firebase.ui.auth.AuthUI
-import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.model.User
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
@@ -48,18 +47,6 @@ class AuthRepository(
      * @see requireLoggedIn
      */
     override fun isLoggedIn(): Boolean = auth.currentUser != null
-
-    /**
-     * Ensures that the user is logged in, or throws a [UserNotLoggedInException] otherwise.
-     *
-     * @see isLoggedIn
-     */
-    @Throws(UserNotLoggedInException::class)
-    override fun requireLoggedIn() {
-        if (!isLoggedIn()) {
-            throw UserNotLoggedInException()
-        }
-    }
 
     /**
      * Logs out the currently authenticated user.
