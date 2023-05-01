@@ -38,11 +38,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             GeoHuntScreen {
-                MainScreen(database, viewModel) {
-                    viewModel.logout(this@MainActivity) {
+                MainScreen(database, viewModel, logout = {
+                    viewModel.logout(this@MainActivity, then = {
                         replaceActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                    }
-                }
+                    })
+                })
             }
         }
     }
