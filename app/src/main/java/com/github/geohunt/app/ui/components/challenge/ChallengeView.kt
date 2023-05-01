@@ -72,7 +72,7 @@ fun ChallengeView(
                         }
                         .aspectRatio(imageAspectRatio, false)
                         .testTag("challenge-main-image"),
-                    contentDescription = "Image of the challenge"
+                    contentDescription = "Challenge Image"
                 )
 
                 // Button bar bellow the image

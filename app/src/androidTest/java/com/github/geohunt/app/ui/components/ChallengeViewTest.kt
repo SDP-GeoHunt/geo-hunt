@@ -1,9 +1,12 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.github.geohunt.app.ui.components
 
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
@@ -22,10 +25,14 @@ import com.github.geohunt.app.model.database.api.Claim
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
+import com.github.geohunt.app.ui.components.challenge.ChallengeViewModel
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.MatcherAssert.assertThat
@@ -41,10 +48,15 @@ class ChallengeViewTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    private lateinit var appContainer : AppContainer
+
+    private fun createViewModel() : ChallengeViewModel {
+        return ChallengeViewModel.createOf(appContainer)
+    }
+
     @Before
     fun setup() {
-        FirebaseEmulator.init()
-        AppContainer.getEmulatedFirebaseInstance(
+        appContainer = AppContainer.getEmulatedFirebaseInstance(
             androidx.test.core.app.ApplicationProvider.getApplicationContext() as Application
         )
     }
@@ -54,15 +66,17 @@ class ChallengeViewTest {
     }
     
     @Test
-    fun testChallenge1() = runTest {
+    fun testChallenge1() {
         var route = ""
+        val vm = createViewModel()
 
-        composeTestRule.setContent { 
+        composeTestRule.setContent {
             ChallengeView(
                 cid = "163f921c-ML2eCQ52mAQlvCEQZ2n",
                 fnViewImageCallback = { route = "image-view/$it" },
                 fnClaimHuntCallback = { route = "claim/$it" } ,
-                fnGoBackBtn = { route = ".." })
+                fnGoBackBtn = { route = ".." },
+                viewModel = vm)
         }
 
         composeTestRule.waitUntil(2000) {
@@ -74,8 +88,7 @@ class ChallengeViewTest {
         composeTestRule.onNodeWithContentDescription("Challenge Image")
             .assertIsDisplayed()
             .performClick()
-        assertThat(route, equalTo("image-view/http://10.0.1.2:9199/geohunt-1.appspot.com/images/challenges-images.png"))
-
+        assertThat(route, equalTo("image-view/http://10.0.2.2:9199/geohunt-1.appspot.com/images/challenges-images.png"))
 
         composeTestRule.onNodeWithText("Here's Johny")
             .performScrollTo()
@@ -86,142 +99,15 @@ class ChallengeViewTest {
             .assertIsDisplayed()
             .assertHasClickAction()
 
-//        composeTestRule.onNodeWithTag("btn-notification")
-//            .performScrollTo()
-//            .assertIsDisplayed()
-//            .assertHasClickAction()
-//
-//        composeTestRule.onNodeWithText("published just now")
-//            .performScrollTo()
-//            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Join Hunt")
+            .assertIsDisplayed()
+            .assertHasClickAction()
+
+        composeTestRule.onNodeWithTag("description-more-btn")
+            .performScrollTo()
+            .assertIsDisplayed()
+            .assert(hasText("more…"))
+            .performClick()
     }
-    
-//    private fun testChallengeView(hasDescription: Boolean)
-//    {
-//        val context = InstrumentationRegistry.getInstrumentation().targetContext
-//        val profilePicture = createTestBitmap(context)
-//        var route = ""
-//
-//
-//        val author = MockUser(
-//            displayName = "John wick",
-//            score = 48723,
-//            profilePicture = InstantLazyRef("izufiozef", profilePicture)
-//        )
-//
-//        val author2 = MockUser(
-//            displayName = "John Williams",
-//            score = 1248,
-//            profilePicture = InstantLazyRef("izufiozef", profilePicture)
-//        )
-//
-//        val claim = object : Claim {
-//            override val id: String
-//                get() = "claim-ar4f165erf146a5c"
-//            override val challenge: LazyRef<Challenge>
-//                get() = MockLazyRef<Challenge>("cid") { TODO() }
-//            override val image: LazyRef<Bitmap>
-//                get() = MockLazyRef<Bitmap>("bitmap") { Tasks.forResult(createTestBitmap(context)) }
-//            override val user: LazyRef<User>
-//                get() = InstantLazyRef(author2.uid, author2)
-//            override val time: LocalDateTime
-//                get() = LocalDateTime.now()
-//            override val distance: Long
-//                get() = 62
-//            override val awardedPoints: Long
-//                get() = 100
-//            override val location: Location
-//                get() = Location()
-//        }
-//
-//        val challenge = MockChallengeClass(
-//            author = MockLazyRef("user-f425zez6z4ef6z15f4") {
-//                Tasks.forResult(author)
-//            },
-//            thumbnail = MockLazyRef("img-ze5f16zaef1465") {
-//                Tasks.forResult(createTestBitmap(context))
-//            },
-//            claims = listOf(InstantLazyRef("claim", claim)),
-//            description = ConstantStrings.LORUM_IPSUM.takeIf { hasDescription }
-//        )
-//
-//        val database = object : BaseMockDatabase() {
-//            override fun getUserById(uid: String): LiveLazyRef<User> {
-//                return MockLiveLazyRef<User>("erf", null)
-//            }
-//        }
-//
-//        // Sets the composeTestRule content
-//        composeTestRule.setContent {
-////            ChallengeView(challenge = challenge, database = database, user = author2, { route = it }) {
-////                route = "../"
-////            }
-//        }
-//
-//        // Test stuff once loaded
-//        composeTestRule.waitUntil(2000) {
-//            composeTestRule.onAllNodesWithTag("profile-icon")
-//                .fetchSemanticsNodes()
-//                .size == 1
-//        }
-//
-//        // Ensure click on challenge view image redirect to corresponding page
-//        composeTestRule.onNodeWithContentDescription("Challenge Image")
-//            .assertIsDisplayed()
-//            .performClick()
-//        assertThat(route, equalTo("img-ze5f16zaef1465"))
-//
-//        composeTestRule.onNodeWithText("John wick")
-//            .performScrollTo()
-//            .assertIsDisplayed()
-//
-//        composeTestRule.onNodeWithText("Follow")
-//            .performScrollTo()
-//            .assertIsDisplayed()
-//            .assertHasClickAction()
-//
-//        composeTestRule.onNodeWithTag("btn-notification")
-//            .performScrollTo()
-//            .assertIsDisplayed()
-//            .assertHasClickAction()
-//
-//        composeTestRule.onNodeWithText("published just now")
-//            .performScrollTo()
-//            .assertIsDisplayed()
-//
-//        composeTestRule.onNodeWithText("John Williams")
-//            .performScrollTo()
-//            .assertExists()
-//
-//        composeTestRule.onNodeWithText("62m")
-//            .performScrollTo()
-//            .assertExists()
-//
-//        // assert description is displayed (upon clicking more)
-//        if (hasDescription) {
-//            composeTestRule.onNodeWithTag("description-more-btn")
-//                .performScrollTo()
-//                .assertIsDisplayed()
-//                .assert(hasText("more..."))
-//                .performClick()
-//
-//            composeTestRule.onNodeWithText(ConstantStrings.LORUM_IPSUM)
-//                .assertIsDisplayed()
-//        } else {
-//            composeTestRule.onNodeWithTag("description-more-btn")
-//                .assertDoesNotExist()
-//        }
-//    }
-//
-//    @Test
-//    fun testChallengeViewWithDescription()
-//    {
-//        testChallengeView(true)
-//    }
-//
-//    @Test
-//    fun testChallengeViewWithoutDescription()
-//    {
-//        testChallengeView(false)
-//    }
+
 }

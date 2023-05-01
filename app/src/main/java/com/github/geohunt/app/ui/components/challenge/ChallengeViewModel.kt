@@ -102,19 +102,20 @@ class ChallengeViewModel(
     }
 
     companion object {
+        fun createOf(appContainer: AppContainer) =
+            ChallengeViewModel(
+                appContainer.challenges,
+                appContainer.claims,
+                appContainer.user,
+                appContainer.auth,
+                appContainer.follow,
+                appContainer.activeHunts)
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
                 val container = AppContainer.getInstance(application)
-
-                ChallengeViewModel(
-                    container.challenges,
-                    container.claims,
-                    container.user,
-                    container.auth,
-                    container.follow,
-                    container.activeHunts
-                )
+                createOf(container)
             }
         }
     }

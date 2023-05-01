@@ -1,7 +1,6 @@
 package com.github.geohunt.app.data.repository
 
 import android.net.Uri
-import android.util.Log
 import com.github.geohunt.app.data.exceptions.ChallengeNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.local.LocalPicture
@@ -61,10 +60,6 @@ class ChallengeRepository(
         val elementId = id.substring(Location.COARSE_HASH_SIZE)
 
         return withContext(ioDispatcher) {
-            // TODO: Remove following two debug lines
-            val auto = challenges.get().await()
-            Log.i("GeoHunt", auto.toString())
-
             challenges
                 .child(coarseHash)
                 .child(elementId)
