@@ -28,7 +28,7 @@ class ActiveHuntsRepository(
      *
      * If there are no currently authenticated user, throws a [UserNotLoggedInException].
      */
-    suspend fun updateHuntState(challenge: Challenge, doHunt: Boolean) {
+    private suspend fun updateHuntState(challenge: Challenge, doHunt: Boolean) {
         authRepository.requireLoggedIn()
 
         val currentUser = authRepository.getCurrentUser()
@@ -67,10 +67,31 @@ class ActiveHuntsRepository(
 
         val currentUser = authRepository.getCurrentUser()
 
+        // List<String> should not be stored as is within the database,
+        // prefer Map<String, Boolean>
         return activeHunts
             .child(currentUser.id)
             .snapshots
-            .map { it.toList() }
+            .map {
+                it.children.mapNotNull { dataSnapshot ->
+                    dataSnapshot.key.takeIf { dataSnapshot.getValue(Boolean::class.java) ?: false }
+                }
+            }
+            .flowOn(ioDispatcher)
+    }
+
+    /**
+     * Check whether or not the currently authenticated user hunt a specific challenges
+     */
+    fun getDoesHunts(challenge: Challenge) : Flow<Boolean> {
+        authRepository.requireLoggedIn()
+        val currentUser = authRepository.getCurrentUser()
+
+        return activeHunts
+            .child(currentUser.id)
+            .child(challenge.id)
+            .snapshots
+            .map { dataSnapshot -> dataSnapshot.getValue(Boolean::class.java) ?: false  }
             .flowOn(ioDispatcher)
     }
 }

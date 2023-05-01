@@ -1,6 +1,7 @@
 package com.github.geohunt.app.data.repository
 
 import android.net.Uri
+import android.util.Log
 import com.github.geohunt.app.data.exceptions.ChallengeNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.local.LocalPicture
@@ -35,7 +36,7 @@ class ChallengeRepository(
     /**
      * Converts the [FirebaseChallenge] model to the external model, ready for use in the UI layer.
      */
-    private fun FirebaseChallenge.asExternalModel(): Challenge = Challenge(
+    private fun FirebaseChallenge.asExternalModel(id: String): Challenge = Challenge(
         id = id,
         authorId = authorId,
         photoUrl = photoUrl,
@@ -60,13 +61,17 @@ class ChallengeRepository(
         val elementId = id.substring(Location.COARSE_HASH_SIZE)
 
         return withContext(ioDispatcher) {
+            // TODO: Remove following two debug lines
+            val auto = challenges.get().await()
+            Log.i("GeoHunt", auto.toString())
+
             challenges
                 .child(coarseHash)
                 .child(elementId)
                 .get()
                 .await()
                 .getValue(FirebaseChallenge::class.java)
-                ?.asExternalModel() ?: throw ChallengeNotFoundException(id)
+                ?.asExternalModel(id) ?: throw ChallengeNotFoundException(id)
         }
     }
 
@@ -113,7 +118,6 @@ class ChallengeRepository(
 
         // Upload the entry to Firebase's Realtime Database
         val challengeEntry = FirebaseChallenge(
-            id = challengeId,
             authorId = currentUser.id,
             photoUrl = photoUrl.toString(),
             publishedDate = DateUtils.utcIso8601Now(),
@@ -124,6 +128,6 @@ class ChallengeRepository(
         )
         challengeRef.setValue(challengeEntry).await()
 
-        return challengeEntry.asExternalModel()
+        return challengeEntry.asExternalModel(challengeId)
     }
 }

@@ -1,23 +1,38 @@
 {
-  "challenges": {
-    "163f921c": {
-      "-NQWln8MlqnVhArUIdwE": {
-        "authorId": "8b8b0392-ba8b-11ed-afa1-0242ac120002",
-        "expirationDate": "null",
-        "location": {
-          "latitude": 43.880433,
-          "longitude": -103.453748
+    "challenges": {
+        "163f921c": {
+            "-NQWln8MlqnVhArUIdwE": {
+                "authorId": "8b8b0392-ba8b-11ed-afa1-0242ac120002",
+                "expirationDate": "null",
+                "location": {
+                    "latitude": 43.880433,
+                    "longitude": -103.453748
+                },
+                "publishedDate": "2023-03-14T20:19:33.641982Z"
+            },
+            "-ML2eCQ52mAQlvCEQZ2n": {
+                "photoUrl": "http://10.0.1.2:9199/geohunt-1.appspot.com/images/challenges-images.png",
+                "authorId": "2",
+                "location": {
+                    "latitude": 43.880433,
+                    "longitude": -103.453748
+                },
+                "publishedDate": "2023-05-01T12:00:00.000000Z",
+                "difficulty": "MEDIUM",
+                "description": "This is a short description of the challenge"
+            }
+        }
+    },
+    "users": [
+        null,
+        {
+            "displayName": "Debug user",
+            "score": 123,
+            "id": "1"
         },
-        "publishedDate": "2023-03-14T20:19:33.641982Z"
-      }
-    }
-  },
-  "users": [
-    null,
-    {
-      "displayName": "Debug user",
-      "score": 123,
-      "uid": "1"
-    }
-  ]
+        {
+            "id": "2",
+            "displayName": "Here's Johny"
+        }
+    ]
 }

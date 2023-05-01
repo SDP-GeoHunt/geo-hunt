@@ -35,7 +35,7 @@ class EditProfileContentTest {
         var instrumentableProfileEdit: MutableState<EditedUser>? = null
 
         composeTestRule.setContent {
-            instrumentableProfileEdit = instrumentableEditProfileContent(mockDb, user = mockUser)
+            instrumentableProfileEdit = instrumentableEditProfileContent(user = mockUser)
         }
 
         assert(instrumentableProfileEdit != null)
@@ -60,7 +60,7 @@ class EditProfileContentTest {
         var instrumentableProfileEdit: MutableState<EditedUser>? = null
 
         composeTestRule.setContent {
-            instrumentableProfileEdit = instrumentableEditProfileContent(mockDb, user = mockUser)
+            instrumentableProfileEdit = instrumentableEditProfileContent(user = mockUser)
         }
 
         assert(instrumentableProfileEdit != null)

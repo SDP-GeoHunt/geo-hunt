@@ -11,7 +11,6 @@ import com.github.geohunt.app.model.database.api.Location
  * Dates are encoded in ISO 8601, UTC time.
  */
 data class FirebaseChallenge(
-    val id: String,
     val authorId: String,
 
     val photoUrl: String,
@@ -24,7 +23,6 @@ data class FirebaseChallenge(
 ) {
     /** Default constructor to comply with [com.google.firebase.database.DataSnapshot.getValue]'s requirements */
     constructor(): this(
-        id = "",
         authorId = "",
         photoUrl = "",
         location = Location(0.0, 0.0),

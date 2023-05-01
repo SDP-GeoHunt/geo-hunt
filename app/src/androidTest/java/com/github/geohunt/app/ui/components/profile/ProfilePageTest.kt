@@ -54,7 +54,7 @@ class ProfilePageTest {
 
     @Test
     fun showsNumberOfHunts() {
-        val mockuser = MockUser(hunts = listOf(
+        val mockuser = MockUser(activeHunts = listOf(
             wrapLazyChallenge(MockChallengeClass()),
             wrapLazyChallenge(MockChallengeClass()),
             wrapLazyChallenge(MockChallengeClass())

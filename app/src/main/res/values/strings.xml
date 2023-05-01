@@ -2,7 +2,7 @@
     <string name="app_name">GeoHunt</string>
     <string name="event_image">Event image</string>
 
-    <string name="challenge_claim">Claim</string>
+    <string name="claim_hunt">Claim</string>
     <string name="challenge_created_by">Created by : %1$s</string>
     <string name="challenge_published">Published : %1$s</string>
     <string name="challenge_time_remaining">Time remaining : %1$s </string>
@@ -71,5 +71,8 @@
     <string name="submit_a_claim_title">Submit a Claim</string>
     <string name="submit_claim_button">Submit Claim</string>
     <string name="create_challenge_button">Create challenge</string>
+
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
 
 </resources>

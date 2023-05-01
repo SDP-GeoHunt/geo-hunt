@@ -34,6 +34,7 @@ class AppContainer private constructor(application: Application) {
     val challenges = ChallengeRepository(user, image, auth)
     val activeHunts = ActiveHuntsRepository(auth)
     val claims = ClaimRepository(auth, image)
+    val follow = FollowRepository(auth)
 
     companion object {
         private var container: AppContainer? = null

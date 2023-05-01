@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.text.htmlEncode
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -74,6 +76,9 @@ fun NavigationController(
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
+            Button(onClick = { navController.navigate("challenge-view/95a5a7d8-NULhJTXctE8qZqzJ2l8") }) {
+                Text(text = "Not hardcoded")
+            }
         }
         composable(Route.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
@@ -154,19 +159,12 @@ fun NavigationController(
         ) { backStackEntry ->
             val cid = backStackEntry.arguments?.getString("challengeId")!!
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                FetchComponent(
-                    lazyRef = { database.getChallengeById(cid) },
-                    modifier = Modifier.align(Alignment.Center),
-                ) {
-                    ChallengeView(it,
-                        database = database,
-                        user = Authenticator.authInstance.get().user!!,
-                        { cid -> navController.navigate("image-view/$cid") }) {
-                        navController.popBackStack()
-                    }
-                }
-            }
+            ChallengeView(
+                cid = cid,
+                fnViewImageCallback = { url -> navController.navigate("image-view/$url") },
+                fnClaimHuntCallback = { cid ->  },
+                fnGoBackBtn = { navController.popBackStack() }
+            )
         }
 
         // Open claim view for a given challenge

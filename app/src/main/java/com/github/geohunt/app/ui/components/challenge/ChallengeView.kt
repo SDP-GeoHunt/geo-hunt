@@ -38,6 +38,7 @@ import com.github.geohunt.app.ui.screens.home.HorizontalDivider
 fun ChallengeView(
     cid: String,
     fnViewImageCallback: (String) -> Unit,
+    fnClaimHuntCallback: (String) -> Unit,
     fnGoBackBtn: () -> Unit,
     viewModel: ChallengeViewModel = viewModel(factory = ChallengeViewModel.Factory)
 ) {
@@ -69,12 +70,13 @@ fun ChallengeView(
                         .clickable {
                             fnViewImageCallback(state.challenge.photoUrl)
                         }
-                        .aspectRatio(imageAspectRatio, false),
+                        .aspectRatio(imageAspectRatio, false)
+                        .testTag("challenge-main-image"),
                     contentDescription = "Image of the challenge"
                 )
 
                 // Button bar bellow the image
-                ///
+                BellowImageButtons(viewModel = viewModel, state = state, fnClaimHuntCallback = fnClaimHuntCallback)
 
                 // Spacer and horizontal divider
                 Spacer(Modifier.height(2.dp))

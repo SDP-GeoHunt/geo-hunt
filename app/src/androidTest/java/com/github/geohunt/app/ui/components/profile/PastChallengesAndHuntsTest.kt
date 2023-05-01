@@ -68,7 +68,7 @@ class PastChallengesAndHuntsTest {
     @Test
     fun doesNotShowEmptyMessageWhenNoPastHunts() {
         testRule.setContent {
-            PastChallengeAndHunts(user = MockUser(hunts = listOf(InstantLazyRef("1", MockChallengeClass()))))
+            PastChallengeAndHunts(user = MockUser(activeHunts = listOf(InstantLazyRef("1", MockChallengeClass()))))
         }
         testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastHunts.ordinal}").performClick()
         testRule.onNodeWithText("No past hunts", substring = true).assertDoesNotExist()

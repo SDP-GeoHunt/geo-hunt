@@ -6,12 +6,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,27 +89,37 @@ internal fun MainUserView(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Button(
-                        modifier = Modifier
-                            .size(63.dp, 24.dp)
-                            .align(Alignment.CenterVertically),
-                        contentPadding = PaddingValues(2.dp, 2.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        onClick = { /*TODO*/ })
-                    {
-                        Text(text = "Follow", fontSize = 11.sp)
-                    }
+                    if (!state.isSelf) {
+                        val doesFollow = state.doesFollow.collectAsState(initial = false)
 
-                    IconButton(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .testTag("btn-notification"),
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Icon(
-                            Icons.Rounded.Notifications,
-                            contentDescription = "Notification bell"
-                        )
+                        Button(
+                            modifier = Modifier
+                                .height(24.dp)
+                                .align(Alignment.CenterVertically),
+                            contentPadding = PaddingValues(10.dp, 2.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            onClick = {
+                                if (doesFollow.value) viewModel.unfollow()
+                                else viewModel.follow()
+                            })
+                        {
+                            Text(
+                                text = stringResource(id = if (doesFollow.value) R.string.unfollow else R.string.follow),
+                                fontSize = 11.sp
+                            )
+                        }
+
+                        IconButton(
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .testTag("btn-notification"),
+                            onClick = { /*TODO*/ }
+                        ) {
+                            Icon(
+                                Icons.Rounded.Notifications,
+                                contentDescription = "Notification bell"
+                            )
+                        }
                     }
                 }
             }

@@ -11,6 +11,7 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -19,7 +20,9 @@ class ChallengeViewModel(
     private val challengeRepository: ChallengeRepository,
     private val claimRepository: ClaimRepository,
     private val userRepository: UserRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val followRepository: FollowRepository,
+    private val activeHuntsRepository: ActiveHuntsRepository,
 ) : ViewModel() {
 
     data class State(
@@ -28,10 +31,40 @@ class ChallengeViewModel(
         val claims: List<Claim>,
         val isSelf: Boolean,
         val authorScore: Long,
+        val doesFollow: Flow<Boolean>,
+        val doesHunt: Flow<Boolean>
     )
 
     private val state_ : MutableStateFlow<State?> = MutableStateFlow(null)
     val state : StateFlow<State?> = state_
+
+    fun follow() {
+        require(state.value != null)
+        viewModelScope.launch {
+            followRepository.follow(state.value!!.author)
+        }
+    }
+
+    fun unfollow() {
+        require(state.value != null)
+        viewModelScope.launch {
+            followRepository.unfollow(state.value!!.author)
+        }
+    }
+
+    fun joinHunt() {
+        require(state.value != null)
+        viewModelScope.launch {
+            activeHuntsRepository.joinHunt(state.value!!.challenge)
+        }
+    }
+
+    fun leaveHunt() {
+        require(state.value != null)
+        viewModelScope.launch {
+            activeHuntsRepository.leaveHunt(state.value!!.challenge)
+        }
+    }
 
     fun retrieveUser(uid: String) : StateFlow<User?> {
         val mutableStateFlow = MutableStateFlow<User?>(null)
@@ -62,7 +95,9 @@ class ChallengeViewModel(
                 author = user,
                 claims = claims.await(),
                 isSelf = currentUser.id == user.id,
-                authorScore = authorScore)
+                authorScore = authorScore,
+                doesFollow = followRepository.doesFollow(user),
+                doesHunt = activeHuntsRepository.getDoesHunts(challenge))
         }
     }
 
@@ -76,7 +111,9 @@ class ChallengeViewModel(
                     container.challenges,
                     container.claims,
                     container.user,
-                    container.auth
+                    container.auth,
+                    container.follow,
+                    container.activeHunts
                 )
             }
         }
