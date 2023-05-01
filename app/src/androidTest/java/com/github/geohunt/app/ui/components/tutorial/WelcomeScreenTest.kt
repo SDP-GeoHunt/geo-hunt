@@ -10,6 +10,7 @@ import androidx.test.core.app.launchActivity
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.TutorialActivity
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,6 +27,12 @@ class WelcomeScreenTest {
     fun setup(){
         val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
         settings.edit().putBoolean("first_application_open", true).commit()
+    }
+
+    @After
+    fun tearDown(){
+        val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
+        settings.edit().putBoolean("first_application_open", false).commit()
     }
 
     @Test
