@@ -16,8 +16,9 @@ class ClaimPointsGraphTest {
         val (dates, points) = createEntries(claims, DateGranularity.WEEK)
 
         //Check if dates got correctly grouped
-        Assert.assertEquals(2, points.size)
-        Assert.assertEquals(2, dates.size)
+        //We have to add a third date since we don't use now as a value (and it gets added automatically)
+        Assert.assertEquals(3, points.size)
+        Assert.assertEquals(3, dates.size)
 
         //Check if points got correctly added together
         Assert.assertEquals(10L, points[0])
@@ -37,9 +38,10 @@ class ClaimPointsGraphTest {
 
         val (dates, points) = createEntries(claims, DateGranularity.WEEK)
 
-        //We need three entries (one representing undisplayed dates)
-        Assert.assertEquals(3, points.size)
-        Assert.assertEquals(3, dates.size)
+        //We need four entries (one representing undisplayed dates
+        // and one representing LocalDate.now())
+        Assert.assertEquals(4, points.size)
+        Assert.assertEquals(4, dates.size)
 
         //Check if point representing undisplayed dates got added correctly
         Assert.assertEquals(20, points[0])
