@@ -26,7 +26,7 @@ class ProfilePictureChangerTest {
     @Test
     fun showsUsersProfilePictureIfProvided() {
         composeTestRule.setContent {
-            ProfilePictureChanger(currentImage = "http://picsum.photos/200", onImageSelected = { }, { profilePictureProvider(it) })
+            ProfilePictureChanger(currentImage = "", onImageSelected = { }, { profilePictureProvider(it) })
         }
         composeTestRule.onNodeWithTag("user-pp").assertIsDisplayed()
     }

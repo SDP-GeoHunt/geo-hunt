@@ -27,6 +27,6 @@ open class MockUserRepository(private val userRepository: UserRepository? = null
     }
 
     override fun getProfilePictureUrl(user: User): String? {
-        return userRepository?.getProfilePictureUrl(user) ?: "https://picsum.photos/200"
+        return userRepository?.getProfilePictureUrl(user) ?: ""
     }
 }

@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 fun MockChallenge(
     id: String = "1",
     authorId: String = "1",
-    photoUrl: String = "https://picsum.photos/200",
+    photoUrl: String = "",
     location: Location = Location(0.0, 0.0),
     publishedDate: LocalDateTime = LocalDateTime.now(),
     expirationDate: LocalDateTime? = null,

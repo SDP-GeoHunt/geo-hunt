@@ -24,7 +24,7 @@ open class MockChallengeRepository(private val mockedChallenge: Challenge = Mock
     }
 
     override fun getChallengePhoto(challenge: Challenge): String {
-        return "https://picsum.photos/200"
+        return ""
     }
 
     override fun getPosts(userId: String): Flow<List<Challenge>> {
