@@ -1,6 +1,5 @@
 package com.github.geohunt.app.model.database.api
 
-import androidx.core.util.toRange
 import com.github.geohunt.app.utility.quantize
 import com.github.geohunt.app.utility.quantizeToLong
 import com.google.firebase.database.Exclude
@@ -64,13 +63,13 @@ data class Location(var latitude: Double = 0.0,
         generateHash(latitude.quantizeToLong(0.1), longitude.quantizeToLong(0.1))
 
     @Exclude
-    fun getNeighborQuadrant(distance: Double) : List<String> {
+    fun getNeighboringSectors(distance: Double) : List<String> {
         val latitude = latitude.quantizeToLong(0.1)
         val longitude = longitude.quantizeToLong(0.1)
 
         // One degree is roughly 111 kilometers at the equator
         // as such (distance / 111) = number of degree
-        val quantizedDistance = (distance / 111).quantizeToLong(0.1) + 1
+        val quantizedDistance = (distance / 111).quantizeToLong(0.1)
 
         return (-quantizedDistance .. quantizedDistance).toList().flatMap { x ->
             (-quantizedDistance .. quantizedDistance).toList().map { y ->

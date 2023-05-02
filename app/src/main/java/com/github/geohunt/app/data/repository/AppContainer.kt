@@ -1,17 +1,13 @@
 package com.github.geohunt.app.data.repository
 
 import android.app.Application
-import android.location.Location
 import android.util.Log
+import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.sensor.SharedLocationManager
-import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 
 /**
  * Container for the application's dependency instances.
@@ -22,9 +18,7 @@ import kotlinx.coroutines.Dispatchers
  */
 class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInstance: FirebaseStorage, application: Application) {
     init {
-//        try {
-//            Firebase.database.setPersistenceEnabled(true)
-//        } catch (_: DatabaseException) { /* This is already the case, why forcing it */ }
+        Firebase.database.setPersistenceEnabled(true)
     }
 
     val location: LocationRepository = LocationRepository(
@@ -39,6 +33,8 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
     val activeHunts = ActiveHuntsRepository(auth, dbInstance)
     val claims = ClaimRepository(auth, image, dbInstance)
     val follow = FollowRepository(auth, dbInstance)
+
+    val feedUseCase = GetUserFeedUseCase(auth, challenges, follow)
 
     companion object {
         private var container: AppContainer? = null
@@ -77,14 +73,6 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
             }
             return getInstance({ dbInstance }, { storageInstance }, application)
         }
-//        {
-//            try {
-//                FirebaseDatabase.getInstance().useEmulator("10.0.2.2", 9000)
-//                Firebase.storage.useEmulator("10.0.2.2", 9199)
-//            } catch(e: IllegalStateException) {
-//                Log.w("GeoHuntDebug", "Failed to use the emulator: $e")
-//            }
-//            return getInstance(application)
-//        }
+
     }
 }

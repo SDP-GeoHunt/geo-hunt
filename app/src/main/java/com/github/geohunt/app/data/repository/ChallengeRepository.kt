@@ -5,14 +5,19 @@ import com.github.geohunt.app.data.exceptions.ChallengeNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.network.firebase.models.FirebaseChallenge
+import com.github.geohunt.app.data.network.firebase.toList
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -31,6 +36,7 @@ class ChallengeRepository(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val challenges = database.getReference("challenges")
+    private val posts = database.getReference("posts")
 
     /**
      * Converts the [FirebaseChallenge] model to the external model, ready for use in the UI layer.
@@ -42,7 +48,7 @@ class ChallengeRepository(
         location = location,
         publishedDate = DateUtils.localFromUtcIso8601(publishedDate),
         expirationDate = DateUtils.localNullableFromUtcIso8601(expirationDate),
-        difficulty = Challenge.Difficulty.valueOf(difficulty),
+        difficulty = if (difficulty.isEmpty()) Challenge.Difficulty.MEDIUM else Challenge.Difficulty.valueOf(difficulty),
         description = description
     )
 
@@ -71,6 +77,21 @@ class ChallengeRepository(
     }
 
     /**
+     * Returns all challenges in the given sector.
+     *
+     * @param sector The sector hash, as returned by [Location.getCoarseHash]
+     */
+    fun getSectorChallenges(sector: String): Flow<List<Challenge>> =
+        challenges.child(sector)
+            .snapshots
+            .map {
+                it.children.mapNotNull { challenge ->
+                    challenge.getValue(FirebaseChallenge::class.java)?.asExternalModel(challenge.key!!)
+                }
+            }
+            .flowOn(ioDispatcher)
+
+    /**
      * Returns the author of the challenge.
      */
     suspend fun getAuthor(challenge: Challenge): User = userRepository.getUser(challenge.authorId)
@@ -79,6 +100,24 @@ class ChallengeRepository(
      * Returns the URL of the challenge photo stored on Firebase Storage.
      */
     fun getChallengePhoto(challenge: Challenge): String = challenge.photoUrl
+
+    /**
+     * Returns the lists of posted challenges of the given user.
+     */
+    fun getPosts(user: User) = getPosts(user.id)
+
+    /**
+     * Returns the lists of posted challenges of the user with the given ID.
+     */
+    fun getPosts(userId: String): Flow<List<Challenge>> {
+        return posts
+            .child(userId)
+            .snapshots
+            .map { it
+                .toList()
+                .map { id -> getChallenge(id) }
+            }
+    }
 
     @Deprecated("Should use the ClaimRepository::getClaims method instead")
     suspend fun getClaims(challenge: Challenge): List<Claim> {
@@ -121,7 +160,17 @@ class ChallengeRepository(
             location = location,
             description = description
         )
-        challengeRef.setValue(challengeEntry).await()
+
+        withContext(ioDispatcher) {
+            challengeRef.setValue(challengeEntry).await()
+
+            // Add the post to the list of the user posts
+            posts
+                .child(currentUser.id)
+                .child(challengeId)
+                .setValue(true)
+                .await()
+        }
 
         return challengeEntry.asExternalModel(challengeId)
     }
