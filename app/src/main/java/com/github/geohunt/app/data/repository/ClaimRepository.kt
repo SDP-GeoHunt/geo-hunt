@@ -1,6 +1,7 @@
 package com.github.geohunt.app.data.repository
 
 import android.net.Uri
+import android.util.Log
 import com.github.geohunt.app.data.exceptions.ClaimNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.model.database.api.Location
@@ -52,13 +53,18 @@ class ClaimRepository(
     /**
      * Retrieve a list of all claims id for a specific user, useful when lazy loading
      */
-    suspend fun getClaimIdByUser(user: User) : List<String> = withContext(ioDispatcher) {
-        database.getReference("claimsByUser/${user.id}")
-            .get()
-            .await()
-            .run {
-                children.mapNotNull { it.getValue(String::class.java) }
-            }
+    suspend fun getClaimIdByUser(user: User): List<String> {
+        require(user.id.isNotEmpty())
+
+        return withContext(ioDispatcher) {
+            database.getReference("claimsByUser")
+                .child(user.id)
+                .get()
+                .await()
+                .run {
+                    children.mapNotNull { it.getValue(String::class.java) }
+                }
+        }
     }
 
     /**
@@ -75,8 +81,12 @@ class ClaimRepository(
     /**
      * Retrieve the score for a given user
      */
-    suspend fun getScoreFromUser(user: User) : Long = withContext(ioDispatcher) {
-        getClaimsByUser(user).sumOf { it.awardedPoints }
+    suspend fun getScoreFromUser(user: User) : Long {
+        require(user.id.isNotEmpty())
+
+        return withContext(ioDispatcher) {
+            getClaimsByUser(user).sumOf { it.awardedPoints }
+        }
     }
 
     /**
@@ -84,15 +94,19 @@ class ClaimRepository(
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
-    suspend fun getClaimsByUser(user: User) : List<Claim> = withContext(ioDispatcher) {
-        getClaimIdByUser(user).run {
-            map { claimId ->
-                database.getReference("claims/$claimId").get().asDeferred()
-            }.awaitAll().zip(this).map {
-                if (!it.first.exists()) {
-                    throw ClaimNotFoundException(it.second)
+    suspend fun getClaimsByUser(user: User) : List<Claim> {
+        require(user.id.isNotEmpty())
+
+        return withContext(ioDispatcher) {
+            getClaimIdByUser(user).run {
+                map { claimId ->
+                    database.getReference("claims/$claimId").get().asDeferred()
+                }.awaitAll().zip(this).map {
+                    if (!it.first.exists()) {
+                        throw ClaimNotFoundException(it.second)
+                    }
+                    it.first.getValue(FirebaseClaim::class.java)!!.asExternalModel(it.second)
                 }
-                it.first.getValue(FirebaseClaim::class.java)!!.asExternalModel(it.second)
             }
         }
     }
@@ -100,20 +114,24 @@ class ClaimRepository(
     /**
      * Retrieve a list of all claims associated with the current challenges
      */
-    suspend fun getClaimsByChallenge(challenge: Challenge): List<Claim> = withContext(ioDispatcher) {
-        database.getReference("claims/${challenge.id}")
-            .get()
-            .await()
-            .run {
-                children.mapNotNull {
-                    val value = it.getValue(FirebaseClaim::class.java)
-                    if (value != null) it.key!! to value
-                    else null
-                }
+    suspend fun getClaimsByChallenge(challenge: Challenge): List<Claim> {
+        require(challenge.id.isNotEmpty())
+
+        return withContext(ioDispatcher) {
+            database.getReference("claims/${challenge.id}")
+                .get()
+                .await()
+                .run {
+                    children.mapNotNull {
+                        val value = it.getValue(FirebaseClaim::class.java)
+                        if (value != null) it.key!! to value
+                        else null
+                    }
                     .map {
                         it.second.asExternalModel("${challenge.id}/${it.first}")
                     }
-            }
+                }
+        }
     }
 
     /**

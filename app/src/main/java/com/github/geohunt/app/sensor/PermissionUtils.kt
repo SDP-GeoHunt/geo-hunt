@@ -1,9 +1,8 @@
 package com.github.geohunt.app.sensor
 
 import android.Manifest
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import android.util.Log
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -29,9 +28,7 @@ fun RequirePermissions(
     if (permissionState.allPermissionsGranted) {
         withPermission()
     } else {
-        Column {
-
-        }
+        withoutPermission(permissionState)
     }
 }
 
@@ -76,19 +73,26 @@ private fun ShowPermissionRequestPage(
     textToShow: String,
     buttonText: String
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
     ) {
-        LaunchedEffect(locationPermissionsState) {
-            if (!locationPermissionsState.allPermissionsGranted) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.align(Alignment.Center)
+                .padding(20.dp, 0.dp),
+        ) {
+            LaunchedEffect(Unit) {
+                Log.i("GeoHunt", "Launching permission request")
                 locationPermissionsState.launchMultiplePermissionRequest()
             }
-        }
 
-        Text(text = textToShow)
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = { locationPermissionsState.launchMultiplePermissionRequest() }) {
-            Text(buttonText)
+            Text(text = textToShow)
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = { locationPermissionsState.launchMultiplePermissionRequest() }) {
+                Text(buttonText)
+            }
         }
     }
 }
