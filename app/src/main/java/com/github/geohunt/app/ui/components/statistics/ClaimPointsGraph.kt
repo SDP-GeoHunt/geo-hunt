@@ -18,6 +18,7 @@ import java.time.LocalDate
  */
 @Composable
 fun ClaimPointsGraph(claims: List<Claim>, dateGranularity: DateGranularity) {
+    require(claims.size > 1) {"Claims has to contain at least two elements"}
     val (xDatesValues, yValues) = createEntries(claims, dateGranularity)
 
     Box(modifier = Modifier.fillMaxSize().padding(5.dp)) {
@@ -39,13 +40,7 @@ fun createEntries(claims: List<Claim>, dateGranularity: DateGranularity): Pair<L
     //Convert claims to dates and points, if we have undisplayed claims
     //we add a base point to represent them
     //We also add an empty point at the current date to make the graph go to the end
-    val displayedDates = displayedClaims.map { it.time.toLocalDate() } + listOf(now)
-    val entryDates = if(undisplayedClaims.isEmpty()) displayedDates else
-        listOf(undisplayedLimit.plusDays(1)) + displayedDates
-
-    val displayedPoints = displayedClaims.map { it.awardedPoints } + listOf(0L)
-    val awardedPoints = if(undisplayedClaims.isEmpty()) displayedPoints else
-        listOf(0L) + displayedPoints
+    val (entryDates, awardedPoints) = separateClaims(displayedClaims, now, undisplayedClaims, undisplayedLimit)
 
     //Eliminate date duplicates by combining them (adding up points of same dates)
     val (dates, regroupedPoints) = regroupDates(entryDates, awardedPoints)
@@ -56,6 +51,22 @@ fun createEntries(claims: List<Claim>, dateGranularity: DateGranularity): Pair<L
             .takeLast(regroupedPoints.size) //discard helper element added by runningFold
 
     return Pair(dates, points)
+}
+
+private fun partitionClaims(claims: List<Claim>, undisplayedLimit: LocalDate): Pair<List<Claim>, List<Claim>> {
+    return claims.partition { it.time.toLocalDate().toEpochDay() <= undisplayedLimit.toEpochDay() }
+}
+
+private fun separateClaims(displayedClaims: List<Claim>, now: LocalDate, undisplayedClaims: List<Claim>, undisplayedLimit: LocalDate): Pair<List<LocalDate>, List<Long>> {
+    val displayedDates = displayedClaims.map { it.time.toLocalDate() } + listOf(now)
+    val entryDates = if (undisplayedClaims.isEmpty()) displayedDates else
+        listOf(undisplayedLimit.plusDays(1)) + displayedDates
+
+    val displayedPoints = displayedClaims.map { it.awardedPoints } + listOf(0L)
+    val awardedPoints = if (undisplayedClaims.isEmpty()) displayedPoints else
+        listOf(0L) + displayedPoints
+
+    return Pair(entryDates, awardedPoints)
 }
 
 private fun regroupDates(entryDates: List<LocalDate>, entryPoints: List<Long>): Pair<List<LocalDate>, List<Long>> {
@@ -69,8 +80,4 @@ private fun regroupDates(entryDates: List<LocalDate>, entryPoints: List<Long>): 
     val dates = groupedPairs.map { it.first }
     val points = groupedPairs.map { it.second }
     return Pair(dates, points)
-}
-
-private fun partitionClaims(claims: List<Claim>, undisplayedLimit: LocalDate): Pair<List<Claim>, List<Claim>> {
-    return claims.partition { it.time.toLocalDate().toEpochDay() <= undisplayedLimit.toEpochDay() }
 }

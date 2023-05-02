@@ -65,8 +65,8 @@ fun DisplayStatistics(claims: List<Claim>) {
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
         ListDropdownMenu(state = dateGranularityState,
-                elements = DateGranularity.values().toList(),
-                toString = { it.toString() })
+                elements = DateGranularity.values().toList())
+                { it.toString() }
 
         ClaimPointsGraph(claims = claims, dateGranularity = dateGranularityState.value)
     }

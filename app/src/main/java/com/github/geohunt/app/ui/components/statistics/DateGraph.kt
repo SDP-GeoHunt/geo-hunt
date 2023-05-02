@@ -19,12 +19,13 @@ fun DateGraph(
         xDateValues: List<LocalDate>,
         dateGranularity: DateGranularity,
         yValues: List<Long>,
-) {
-    require(xDateValues.isNotEmpty())
-    require(yValues.isNotEmpty())
-    require(xDateValues.size == yValues.size)
+        currentDate: LocalDate = LocalDate.now(),
+        ) {
+    require(xDateValues.isNotEmpty()) {"xDateValues can't be empty"}
+    require(yValues.isNotEmpty()) {"yValues can't be empty"}
+    require(xDateValues.size == yValues.size) {"xDateValues and yValues should be equal"}
 
-    val dateRange = dateGranularity.dateRange(LocalDate.now())
+    val dateRange = dateGranularity.dateRange(currentDate)
 
     val xStrings = dateRange.map { DateFormatUtils.formatDate(it) }
     val integerDateValues = xDateValues.map { it.toEpochDay() }
@@ -46,6 +47,12 @@ enum class DateGranularity(private val displaySteps: Long,
     MONTH(4, ChronoUnit.WEEKS),
     YEAR(12, ChronoUnit.MONTHS);
 
+    /**
+     * Gives the range of dates (in the form of a list)
+     * of all the dates to the until argument.
+     * The list of dates given depends on the DateGranularity, for example
+     * WEEK will give the dates of last week in a list
+     */
     fun dateRange(until: LocalDate): List<LocalDate> {
         val range = (0 until displaySteps).reversed()
         return range.map { until.minus(it, displayUnit) }

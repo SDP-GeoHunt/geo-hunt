@@ -63,7 +63,7 @@ fun findBestLabelSpacing(min: Long, max: Long, size: Float): List<Long> {
     val possibleSpacings = listOf(50, 100, 500, 1000, 5000, 10000)
     val delta = (max - min).toFloat()
     //take best spacing s.t. it gives some minimal distance between points on the screen
-    val bestSpacing = possibleSpacings.firstOrNull() { (it / delta) * size >= 75f }
+    val bestSpacing = possibleSpacings.firstOrNull { (it / delta) * size >= 75f }
             ?: possibleSpacings.last()
 
     val bottomX = floor(min.toFloat() / bestSpacing).toLong()
