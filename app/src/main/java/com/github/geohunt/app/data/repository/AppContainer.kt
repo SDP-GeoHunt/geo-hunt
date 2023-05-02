@@ -17,9 +17,9 @@ import com.google.firebase.storage.FirebaseStorage
  * the codebase.
  */
 class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInstance: FirebaseStorage, application: Application) {
-    init {
-        Firebase.database.setPersistenceEnabled(true)
-    }
+    // init {
+    //     Firebase.database.setPersistenceEnabled(true)
+    // }
 
     val location: LocationRepository = LocationRepository(
         SharedLocationManager(application.applicationContext)
