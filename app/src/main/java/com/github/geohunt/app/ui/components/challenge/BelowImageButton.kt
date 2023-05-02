@@ -19,7 +19,7 @@ import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.ui.components.LabelledIcon
 
 @Composable
-internal fun BellowImageButtons(
+internal fun BelowImageButton(
     viewModel: ChallengeViewModel,
     fnClaimHuntCallback: (String) -> Unit,
     state: ChallengeViewModel.State

@@ -8,6 +8,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -73,7 +74,9 @@ private fun ShowPermissionRequestPage(
     textToShow: String,
     buttonText: String
 ) {
-    Column {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         LaunchedEffect(locationPermissionsState) {
             if (!locationPermissionsState.allPermissionsGranted) {
                 locationPermissionsState.launchMultiplePermissionRequest()

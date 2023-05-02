@@ -30,30 +30,36 @@ import java.time.LocalDate
  * @param viewModel corresponding view model
  */
 @Composable
-fun ChallengeSettings(viewModel: CreateChallengeViewModel) {
+fun ChallengeSettings(
+    difficulty: Challenge.Difficulty,
+    setDifficultyCallback: (Challenge.Difficulty) -> Unit,
+    expirationDate: LocalDate?,
+    setExpirationDate: (LocalDate?) -> Unit
+) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .height(120.dp)
         .padding(horizontal = 10.dp),
             verticalArrangement = Arrangement.SpaceBetween) {
-        DifficultySelect(viewModel)
+        DifficultySelect(difficulty, setDifficultyCallback)
 
-        DateSelect(viewModel)
+        DateSelect(expirationDate, setExpirationDate)
     }
 }
 
 @Composable
-private fun DifficultySelect(viewModel: CreateChallengeViewModel) {
-    val difficulty = viewModel.selectedDifficulty.collectAsState()
-
+private fun DifficultySelect(
+    difficulty: Challenge.Difficulty,
+    setDifficultyCallback: (Challenge.Difficulty) -> Unit
+) {
     Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
         SettingsText(text = stringResource(id = R.string.challenge_settings_difficulty))
 
 
-        ListDropdownMenu(state = difficulty.value,
-            update = { viewModel.withDifficulty(it) },
+        ListDropdownMenu(state = difficulty,
+            update = { setDifficultyCallback(it) },
             elements = Challenge.Difficulty.values().toList(),
             toString = Challenge.Difficulty::toString
         )
@@ -63,15 +69,14 @@ private fun DifficultySelect(viewModel: CreateChallengeViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DateSelect(viewModel: CreateChallengeViewModel) {
-    val expirationDate = viewModel.expirationDate.collectAsState()
+private fun DateSelect(expirationDate: LocalDate?, setExpirationDateCallback: (LocalDate?) -> Unit) {
     val state = UseCaseState(
             embedded = false,
-            onDismissRequest = { viewModel.withExpirationDate(null) }
+            onDismissRequest = { setExpirationDateCallback(null) }
     )
 
     CalendarDialog(state = state,
-            selection = CalendarSelection.Date { viewModel.withExpirationDate(it) },
+            selection = CalendarSelection.Date { setExpirationDateCallback(it) },
             config = calendarConfig())
 
     Row(modifier = Modifier.fillMaxWidth(),
@@ -79,7 +84,7 @@ private fun DateSelect(viewModel: CreateChallengeViewModel) {
             verticalAlignment = Alignment.CenterVertically) {
         SettingsText(text = stringResource(id = R.string.challenge_settings_date))
 
-        TextField(value = nullableDateToString(date = expirationDate.value),
+        TextField(value = nullableDateToString(date = expirationDate),
                 onValueChange = {},
                 readOnly = true,
                 enabled = false,

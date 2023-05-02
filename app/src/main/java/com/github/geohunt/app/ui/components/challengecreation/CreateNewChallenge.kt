@@ -70,7 +70,15 @@ fun CreateChallengeForm(
 
                 Spacer(Modifier.height(15.dp))
 
-                ChallengeSettings(viewModel)
+                val difficulty = viewModel.selectedDifficulty.collectAsState()
+                val expirationDate = viewModel.expirationDate.collectAsState()
+
+                ChallengeSettings(
+                    difficulty = difficulty.value,
+                    setDifficultyCallback = viewModel::withDifficulty,
+                    expirationDate = expirationDate.value,
+                    setExpirationDate = viewModel::withExpirationDate
+                )
 
                 Spacer(Modifier.height(15.dp))
 

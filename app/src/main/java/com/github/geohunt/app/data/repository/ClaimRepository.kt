@@ -16,9 +16,9 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 /**
  * Contains methods for claim/unclaim a challenge, as well as retrieving the list
@@ -33,7 +33,7 @@ class ClaimRepository(
         Challenge.Difficulty.EASY to GaussianPointCalculator(0.20),
         Challenge.Difficulty.MEDIUM to GaussianPointCalculator(0.15),
         Challenge.Difficulty.EASY to GaussianPointCalculator(0.10)
-    ).withDefault { GaussianPointCalculator(0.10) }
+    ).withDefault { GaussianPointCalculator(0.10) },
 ) {
     private fun getChallengeRefFromId(id: String) {
         database.getReference("claims/$id")
@@ -52,35 +52,40 @@ class ClaimRepository(
     /**
      * Retrieve a list of all claims id for a specific user, useful when lazy loading
      */
-    suspend fun getClaimsIdByUser(user: User) : List<String> =
+    suspend fun getClaimIdByUser(user: User) : List<String> = withContext(ioDispatcher) {
         database.getReference("claimsByUser/${user.id}")
             .get()
             .await()
             .run {
                 children.mapNotNull { it.getValue(String::class.java) }
             }
+    }
 
-    suspend fun doesClaims(challenge: Challenge) : Boolean {
+    /**
+     * Check whether the currently logged user claim the given challenges
+     */
+    suspend fun doesClaims(challenge: Challenge) : Boolean = withContext(ioDispatcher) {
         authRepository.requireLoggedIn()
         val currentUser = authRepository.getCurrentUser()
 
-        return getClaimsByUser(currentUser)
+        getClaimsByUser(currentUser)
             .any { it.parentChallengeId == challenge.id }
     }
 
     /**
      * Retrieve the score for a given user
      */
-    suspend fun getScoreFromUser(user: User) : Long =
-        getClaimsByUser(user).fold(0L) { acc, claim -> acc + claim.awardedPoints }
+    suspend fun getScoreFromUser(user: User) : Long = withContext(ioDispatcher) {
+        getClaimsByUser(user).sumOf { it.awardedPoints }
+    }
 
     /**
      * Get all claims of a specific user [user]. If one of his claim is not within the database
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
-    suspend fun getClaimsByUser(user: User) : List<Claim> =
-        getClaimsIdByUser(user).run {
+    suspend fun getClaimsByUser(user: User) : List<Claim> = withContext(ioDispatcher) {
+        getClaimIdByUser(user).run {
             map { claimId ->
                 database.getReference("claims/$claimId").get().asDeferred()
             }.awaitAll().zip(this).map {
@@ -90,24 +95,26 @@ class ClaimRepository(
                 it.first.getValue(FirebaseClaim::class.java)!!.asExternalModel(it.second)
             }
         }
+    }
 
     /**
      * Retrieve a list of all claims associated with the current challenges
      */
-    suspend fun getClaimsByChallenge(challenge: Challenge): List<Claim> =
+    suspend fun getClaimsByChallenge(challenge: Challenge): List<Claim> = withContext(ioDispatcher) {
         database.getReference("claims/${challenge.id}")
             .get()
             .await()
             .run {
                 children.mapNotNull {
-                        val value = it.getValue(FirebaseClaim::class.java)
-                        if (value != null) it.key!! to value
-                        else null
-                    }
+                    val value = it.getValue(FirebaseClaim::class.java)
+                    if (value != null) it.key!! to value
+                    else null
+                }
                     .map {
                         it.second.asExternalModel("${challenge.id}/${it.first}")
                     }
             }
+    }
 
     /**
      * Claim a specific challenge with the given photo and location
@@ -120,7 +127,7 @@ class ClaimRepository(
         photo: LocalPicture,
         location: Location,
         challenge: Challenge
-    ): Claim {
+    ): Claim = withContext(ioDispatcher) {
         authRepository.requireLoggedIn()
 
         val currentUser = authRepository.getCurrentUser()
@@ -154,6 +161,6 @@ class ClaimRepository(
         )
 
         // Finally convert to external model
-        return claimEntry.asExternalModel(claimId)
+        claimEntry.asExternalModel(claimId)
     }
 }

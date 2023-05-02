@@ -76,7 +76,7 @@ fun ChallengeView(
                 )
 
                 // Button bar bellow the image
-                BellowImageButtons(viewModel = viewModel, state = state, fnClaimHuntCallback = fnClaimHuntCallback)
+                BelowImageButton(viewModel = viewModel, state = state, fnClaimHuntCallback = fnClaimHuntCallback)
 
                 // Spacer and horizontal divider
                 Spacer(Modifier.height(2.dp))
@@ -108,7 +108,7 @@ private fun LazyClaimList(
         }
 
         item {
-            MainUserView(viewModel = viewModel, state = state)
+            ChallengeViewAuthor(viewModel = viewModel, state = state)
             HorizontalDivider(padding = 2.dp)
         }
 

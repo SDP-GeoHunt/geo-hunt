@@ -18,14 +18,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.FetchComponent
 import com.github.geohunt.app.ui.components.LabelledIcon
-import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.i18n.toSuffixedString
 
 @Composable
-internal fun MainUserView(
+internal fun ChallengeViewAuthor(
     viewModel: ChallengeViewModel,
     state: ChallengeViewModel.State
 ) {

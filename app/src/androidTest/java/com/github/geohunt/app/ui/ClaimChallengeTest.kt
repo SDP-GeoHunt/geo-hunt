@@ -5,6 +5,7 @@ import android.app.VoiceInteractor.CompleteVoiceRequest
 import android.content.Context
 import android.graphics.Bitmap
 import android.provider.MediaStore
+import android.util.Log
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.test.*
@@ -106,6 +107,7 @@ class ClaimChallengeTest {
             }
 
             viewModel!!.start("163f921c-ML2eCQ52mAQlvCEQZ2n", onFailure = {
+                Log.e("GeoHunt", "$it")
                 Assert.fail()
             })
 
@@ -119,119 +121,8 @@ class ClaimChallengeTest {
             composeTestRule.onNodeWithText("Submit Claim")
                 .performScrollTo()
                 .assertIsDisplayed()
-                .assertIsEnabled()
         }
     }
-
-//    private fun testChallenge(
-//        locationRequestFailed : Boolean = false,
-//        submitClaimFailed : Boolean = false
-//    ) {
-//        val context = InstrumentationRegistry.getInstrumentation().targetContext
-//        val future = CompletableFuture<Claim>()
-//        val resultingPhoto = createTestBitmap(context)
-//        val futureLocation = CompletableFuture<Location>()
-//        val futureClaim = CompletableFuture<Claim>()
-//        val taskClaimCompletionSource = TaskCompletionSource<Claim>()
-//        var counter = 0
-//
-//        val locationRequestStateFactory = @Composable {
-//            object : LocationRequestState {
-//                override val lastLocation: MutableState<Location?> = remember {
-//                    mutableStateOf(null)
-//                }
-//
-//                override fun requestLocation(): CompletableFuture<Location> {
-//                    counter++
-//                    futureLocation.thenAccept {
-//                        lastLocation.value = it
-//                    }
-//                    return futureLocation
-//                }
-//            }
-//        }
-//
-//        val mockDatabase = object: BaseMockDatabase() {
-//            override fun submitClaim(
-//                thumbnail: Bitmap,
-//                challenge: Challenge,
-//                location: Location
-//            ): Task<Claim> {
-//                val claim = MockClaim(
-//                    id = "id",
-//                    user = MockLazyRef<User>("uid") {  TODO() },
-//                    challenge = MockLazyRef<Challenge>("cid") { TODO() },
-//                    location = location,
-//                    time = LocalDateTime.now(),
-//                    image = MockLazyRef("iid") { TODO() },
-//                    distance = 5,
-//                    awardedPoints = 10
-//                )
-//                futureClaim.complete(claim)
-//                return taskClaimCompletionSource.task
-//            }
-//        }
-//
-//        LocationRequestState.defaultFactory.mocked(locationRequestStateFactory).use {
-//            // Start the application
-//            composeTestRule.setContent {
-//                SubmitClaimForm(
-//                    bitmap = resultingPhoto,
-//                    database = mockDatabase,
-//                    challenge = mockChallenge,
-//                    onClaimSubmitted = future::complete,
-//                    onFailure = future::completeExceptionally
-//                )
-//            }
-//
-//            composeTestRule.onNodeWithText("Submit Claim")
-//                .performScrollTo()
-//                .assertIsDisplayed()
-//                .assertIsNotEnabled()
-//
-//            // Assert the request was launched
-//            assertThat(counter, greaterThanOrEqualTo(1))
-//
-//            // Resolve the future
-//            if (locationRequestFailed) {
-//                futureLocation.completeExceptionally(IllegalStateException())
-//                composeTestRule.waitForIdle()
-//                assertThat(future.isCompletedExceptionally, equalTo(true))
-//                return@use // no longer anything to test
-//            }
-//
-//            futureLocation.complete(mockedLocation)
-//
-//            // Ensure the button get updated
-//            assertThat(futureClaim.isDone, equalTo(false))
-//            composeTestRule.onNodeWithText("Submit Claim")
-//                .performScrollTo()
-//                .assertIsDisplayed()
-//                .assertIsEnabled()
-//                .performClick()
-//
-//            composeTestRule.waitForIdle()
-//
-//            assertThat(futureClaim.isDone, equalTo(true))
-//            assertThat(futureClaim.get().location, equalTo(mockedLocation))
-//            assertThat(future.isDone, equalTo(false))
-//
-//            // Finally check that this was completed successfully
-//            if (submitClaimFailed) {
-//                taskClaimCompletionSource.setException(IllegalStateException())
-//                composeTestRule.waitForIdle()
-//
-//                assertThat(future.isCompletedExceptionally, equalTo(true))
-//                return@use // no longer anything to test
-//            }
-//
-//            taskClaimCompletionSource.setResult(futureClaim.get())
-//            composeTestRule.waitForIdle()
-//
-//            assertThat(future.isDone, equalTo(true))
-//            assertThat(future.get(), equalTo(futureClaim.get()))
-//        }
-//    }
 
     private fun createTestBitmap(context: Context) : Bitmap {
         return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
