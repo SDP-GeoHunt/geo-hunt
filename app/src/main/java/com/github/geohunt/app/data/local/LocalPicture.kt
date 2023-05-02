@@ -1,6 +1,8 @@
 package com.github.geohunt.app.data.local
 
 import android.net.Uri
+import androidx.core.net.toUri
+import java.io.File
 
 /**
  * Represents a picture present on the local storage of the phone. This may either be taken by
@@ -13,4 +15,6 @@ import android.net.Uri
  */
 data class LocalPicture(
     val uri: Uri
-)
+) {
+    constructor(file: File) : this(file.toUri())
+}

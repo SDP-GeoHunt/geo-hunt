@@ -1,8 +1,5 @@
 package com.github.geohunt.app.ui.components.profile
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -15,9 +12,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
 import com.github.geohunt.app.model.Challenge
-import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.ui.rememberLazyRef
-import com.github.geohunt.app.ui.theme.skeleton_loading_background
 
 /**
  * Shows a grid of challenges
@@ -35,7 +29,7 @@ fun ChallengeGrid(challenges: List<Challenge>) {
 private fun ChallengeItem(challenge: Challenge) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
-            .data(challenge.photoUrl) // TODO Integrate with file store
+            .data(challenge.photoUrl)
             .size(Size.ORIGINAL)
             .crossfade(true)
             .build(),
