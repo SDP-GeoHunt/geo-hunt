@@ -1,8 +1,10 @@
 package com.github.geohunt.app.ui
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.assertNoUnverifiedIntents
@@ -56,25 +58,27 @@ class LoginActivityTest {
     @Test
     fun titleOfAppIsShown() {
         LoginViewModel.injectRepos(MockAuthRepository(null), MockUserRepository())
+        Intents.init()
         launchActivity<LoginActivity>()
         composeTestRule.onNodeWithText("GeoHunt").assertExists("Title of app does not appear on log in")
+        Intents.release()
     }
 
-    /* fails, because it creates a supplementary activity.
+    // fails, because it creates a supplementary activity.
     @Test
     fun clickingOnButtonTriggersSignIn() {
         LoginViewModel.injectRepos(MockAuthRepository(null), MockUserRepository())
 
 
+        Intents.init()
         launchActivity<LoginActivity>()
 
-        Intents.init()
         composeTestRule.onNode(hasTestTag("signin-btn")).performClick()
 
         intended(hasComponent("com.firebase.ui.auth.KickoffActivity"))
 
         Intents.release()
-    }*/
+    }
 
     class MockAuthenticator(override val user: User?,
                             val authenticateCb: (a: ComponentActivity) -> CompletableFuture<User> = {
