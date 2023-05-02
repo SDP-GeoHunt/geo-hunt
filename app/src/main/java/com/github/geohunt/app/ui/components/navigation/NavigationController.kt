@@ -72,9 +72,7 @@ fun NavigationController(
 
     NavHost(navController, startDestination = Route.Home.route, modifier = modifier) {
         composable(Route.Home.route) {
-            Button(onClick = { navController.navigate("challenge-view/95a5a7d8-NULhJTXctE8qZqzJ2l8") }) {
-                Text(text = "Not hardcoded")
-            }
+
         }
         composable(Route.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)

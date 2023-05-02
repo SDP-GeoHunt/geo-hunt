@@ -10,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.github.geohunt.app.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -39,8 +41,8 @@ fun RequireCameraPermission(withPermission: @Composable () -> Unit) {
     RequirePermissions(
         permissions = listOf(Manifest.permission.CAMERA),
         withoutPermission = { locationPermissionsState ->
-            val textToShow = "GeoHunt requires permission to the camera in order to use this feature"
-            val buttonText = "Request camera permission"
+            val textToShow = stringResource(R.string.require_camera_permission)
+            val buttonText = stringResource(R.string.require_camera_permission_button)
 
             ShowPermissionRequestPage(locationPermissionsState, textToShow, buttonText)
         },
@@ -58,8 +60,8 @@ fun RequireFineLocationPermissions(withPermission: @Composable () -> Unit) {
             Manifest.permission.ACCESS_COARSE_LOCATION
         ),
         withoutPermission = { locationPermissionsState ->
-            val textToShow = "GeoHunt requires the precise location of this device in order to use this feature"
-            val buttonText = "Request location permission"
+            val textToShow = stringResource(R.string.require_location_permission)
+            val buttonText = stringResource(R.string.require_location_permission_button)
 
             ShowPermissionRequestPage(locationPermissionsState, textToShow, buttonText)
 
