@@ -11,10 +11,8 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.LoginActivity
-import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.TutorialActivity
 import org.hamcrest.Matchers
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,27 +21,20 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class WelcomeScreenTest {
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    val composeTestRule = createAndroidComposeRule<TutorialActivity>()
 
     private val PREFERENCES_FILE = "preferences"
 
     @Before
     fun setup(){
         val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
-        settings.edit().putBoolean("first_application_open", true).apply()
-    }
+        settings.edit().putBoolean("first_application_open", true).commit()
 
-    @After
-    fun tearDown(){
-        val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
-        settings.edit().putBoolean("first_application_open", false).apply()
+        launchActivity<TutorialActivity>()
     }
 
     @Test
     fun opensWelcomeScreenWhenLoggedInForTheFirstTime() {
-        Intents.init()
-        launchActivity<TutorialActivity>()
-
         composeTestRule
             .onNodeWithTag("Welcome Label")
             .assertExists()
@@ -56,8 +47,18 @@ class WelcomeScreenTest {
             .onNodeWithText("GET STARTED")
             .assertExists()
             .assertHasClickAction()
+    }
 
-        Intents.release()
+    @Test
+    fun clickingOnGetStartedButtonOpensTutorialSlides(){
+        composeTestRule.onNodeWithText("GET STARTED")
+            .assertExists()
+            .assertHasClickAction()
+            .performClick()
+
+        composeTestRule
+            .onNodeWithTag("Tutorial screen layout")
+            .assertExists()
     }
 
     @Test
@@ -75,23 +76,6 @@ class WelcomeScreenTest {
             .performClick()
 
         Intents.intended(Matchers.allOf(IntentMatchers.hasComponent(LoginActivity::class.java.name)))
-        Intents.release()
-    }
-
-    @Test
-    fun clickingOnGetStartedButtonOpensTutorialSlides(){
-        Intents.init()
-        launchActivity<TutorialActivity>()
-
-        composeTestRule.onNodeWithText("GET STARTED")
-            .assertExists()
-            .assertHasClickAction()
-            .performClick()
-
-        composeTestRule
-            .onNodeWithTag("Tutorial screen layout")
-            .assertExists()
-
         Intents.release()
     }
 }
