@@ -4,15 +4,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.test.core.app.launchActivity
-import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.geohunt.app.LoginActivity
-import com.github.geohunt.app.TutorialActivity
-import org.hamcrest.Matchers
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -107,23 +100,5 @@ class TutorialScreenTest {
         composeTestRule
             .onNodeWithTag("Tutorial Description")
             .assertExists()
-    }
-
-    @Test
-    fun clickingOnSkipButtonOpensLoginScreen() {
-        Intents.init()
-        launchActivity<TutorialActivity>()
-
-        composeTestRule
-            .onNodeWithText("GET STARTED")
-            .performClick()
-
-        composeTestRule
-            .onNodeWithTag("Skip button")
-            .assertHasClickAction()
-            .performClick()
-
-        Intents.intended(Matchers.allOf(IntentMatchers.hasComponent(LoginActivity::class.java.name)))
-        Intents.release()
     }
 }

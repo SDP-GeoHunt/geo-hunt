@@ -27,7 +27,7 @@ import com.github.geohunt.app.ui.theme.seed
 import com.github.geohunt.app.utility.replaceActivity
 
 class LoginActivity : ComponentActivity() {
-    val PREFERENCES_FILE = "Preferences"
+    private val PREFERENCES_FILE = "preferences"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,7 +39,7 @@ class LoginActivity : ComponentActivity() {
         if (settings.getBoolean("first_application_open", true)) {
             val intent = Intent(this@LoginActivity, TutorialActivity::class.java)
             replaceActivity(intent)
-            settings.edit().putBoolean("first_application_open", false).commit()
+            settings.edit().putBoolean("first_application_open", false).apply()
         }
 
         authenticator.user?.let { loggedIn() }
