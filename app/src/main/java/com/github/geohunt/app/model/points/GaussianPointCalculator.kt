@@ -27,6 +27,6 @@ class GaussianPointCalculator(std: Double) : PointCalculator {
      */
     override fun computePoints(distance: Double): Long {
         val points = calculator(distance) * ratio
-        return 1 + clamp(MIN_POINTS, points, MAX_POINTS - 1).toLong()
+        return clamp(MIN_POINTS, points.toLong(), MAX_POINTS)
     }
 }

@@ -36,11 +36,11 @@ interface PointCalculator {
          * Note that the function used can't be negative so negative MIN_POINTS value
          * will work the same way as MIN_POINTS = 0
          */
-        const val MIN_POINTS = 0.0
+        const val MIN_POINTS = 0L
 
         /**
          * The maximum amount of points possible
          */
-        const val MAX_POINTS = 5000.0
+        const val MAX_POINTS = 5000L
     }
 }
