@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -50,6 +51,7 @@ fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
             lineHeight = 70.sp,
             softWrap = true,
             color = Color.Red,
+            style = MaterialTheme.typography.h1,
         )
     }
 
@@ -69,7 +71,7 @@ fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
             overflow = TextOverflow.Ellipsis,
             letterSpacing = 5.sp,
             softWrap = true,
-
+            style = MaterialTheme.typography.body1,
             )
     }
 
@@ -104,6 +106,7 @@ fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
                     fontSize = 36.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.button,
                 )
             }
         }

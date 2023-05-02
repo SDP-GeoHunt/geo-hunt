@@ -5,10 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -130,7 +135,7 @@ fun TopButtons(
         ) {
             Text(
                 text = "Skip",
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colors.onBackground,
                 fontSize = 16.sp,
             )
         }
@@ -214,8 +219,8 @@ fun TutorialSlideContent(items: TutorialSlides) {
             letterSpacing = 1.sp,
             modifier = Modifier
                 .testTag("Tutorial Title"),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.h1,
+            color = MaterialTheme.colors.onBackground,
             )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -225,8 +230,8 @@ fun TutorialSlideContent(items: TutorialSlides) {
             fontSize = 20.sp,
             fontWeight = FontWeight.Light,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.h1,
+            color = MaterialTheme.colors.onBackground,
             modifier = Modifier
                 .testTag("Tutorial Description"),
             letterSpacing = 1.sp,

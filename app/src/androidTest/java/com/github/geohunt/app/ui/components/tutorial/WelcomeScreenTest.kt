@@ -11,6 +11,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.LoginActivity
+import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.TutorialActivity
 import org.hamcrest.Matchers
 import org.junit.After
@@ -22,7 +23,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class WelcomeScreenTest {
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TutorialActivity>()
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     private val PREFERENCES_FILE = "preferences"
 
@@ -35,7 +36,7 @@ class WelcomeScreenTest {
     @After
     fun tearDown(){
         val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
-        settings.edit().putBoolean("first_application_open", false).commit()
+        settings.edit().putBoolean("first_application_open", false).apply()
     }
 
     @Test
