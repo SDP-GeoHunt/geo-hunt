@@ -29,7 +29,11 @@ interface AuthRepositoryInterface {
      * @see isLoggedIn
      */
     @Throws(UserNotLoggedInException::class)
-    fun requireLoggedIn()
+    fun requireLoggedIn() {
+        if (!isLoggedIn()) {
+            throw UserNotLoggedInException()
+        }
+    }
 
     /**
      * Logs out the currently authenticated user.

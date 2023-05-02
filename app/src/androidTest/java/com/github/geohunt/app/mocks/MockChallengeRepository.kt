@@ -20,7 +20,7 @@ open class MockChallengeRepository(private val mockedChallenge: Challenge = Mock
     }
 
     override suspend fun getAuthor(challenge: Challenge): User {
-        return User("1", "dn", null)
+        return MockAuthRepository.defaultLoggedUser
     }
 
     override fun getChallengePhoto(challenge: Challenge): String {
