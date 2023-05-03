@@ -23,16 +23,16 @@
             }
         }
     },
-    "users": [
-        null,
-        {
-            "displayName": "Debug user",
-            "score": 123,
-            "id": "1"
+    "users": {
+        "1": {
+            "displayName": "dn",
+            "id": "1",
+            "profilePictureUrl": "null"
         },
-        {
+        "2": {
             "id": "2",
-            "displayName": "Here's Johny"
+            "displayName": "dn2",
+            "profilePictureUrl": "null"
         }
-    ]
+    }
 }

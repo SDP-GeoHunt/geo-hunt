@@ -17,7 +17,7 @@ import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 
 @Composable
-fun MainScreen(database: Database, viewModel: MainViewModel) {
+fun MainScreen(database: Database, viewModel: MainViewModel, logout: () -> Any) {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
 
@@ -43,7 +43,8 @@ fun MainScreen(database: Database, viewModel: MainViewModel) {
         NavigationController(
             navController = navController,
             database = database,
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(padding),
+            logout = logout
         )
     }
 }

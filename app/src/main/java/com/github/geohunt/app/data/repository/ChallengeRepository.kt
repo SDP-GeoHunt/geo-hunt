@@ -34,7 +34,7 @@ class ChallengeRepository(
     private val authRepository: AuthRepository,
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) {
+): ChallengeRepositoryInterface {
     private val challenges = database.getReference("challenges")
     private val posts = database.getReference("posts")
 
@@ -61,7 +61,8 @@ class ChallengeRepository(
      *           a randomly generated id.
      * @return The queried challenge.
      */
-    suspend fun getChallenge(id: String): Challenge {
+    @Throws(ChallengeNotFoundException::class)
+    override suspend fun getChallenge(id: String): Challenge {
         val coarseHash = id.substring(0, Location.COARSE_HASH_SIZE)
         val elementId = id.substring(Location.COARSE_HASH_SIZE)
 
@@ -81,7 +82,7 @@ class ChallengeRepository(
      *
      * @param sector The sector hash, as returned by [Location.getCoarseHash]
      */
-    fun getSectorChallenges(sector: String): Flow<List<Challenge>> =
+    override fun getSectorChallenges(sector: String): Flow<List<Challenge>> =
         challenges.child(sector)
             .snapshots
             .map {
@@ -94,22 +95,17 @@ class ChallengeRepository(
     /**
      * Returns the author of the challenge.
      */
-    suspend fun getAuthor(challenge: Challenge): User = userRepository.getUser(challenge.authorId)
+    override suspend fun getAuthor(challenge: Challenge): User = userRepository.getUser(challenge.authorId)
 
     /**
      * Returns the URL of the challenge photo stored on Firebase Storage.
      */
-    fun getChallengePhoto(challenge: Challenge): String = challenge.photoUrl
-
-    /**
-     * Returns the lists of posted challenges of the given user.
-     */
-    fun getPosts(user: User) = getPosts(user.id)
+    override fun getChallengePhoto(challenge: Challenge): String = challenge.photoUrl
 
     /**
      * Returns the lists of posted challenges of the user with the given ID.
      */
-    fun getPosts(userId: String): Flow<List<Challenge>> {
+    override fun getPosts(userId: String): Flow<List<Challenge>> {
         return posts
             .child(userId)
             .snapshots
@@ -120,7 +116,7 @@ class ChallengeRepository(
     }
 
     @Deprecated("Should use the ClaimRepository::getClaims method instead")
-    suspend fun getClaims(challenge: Challenge): List<Claim> {
+    override suspend fun getClaims(challenge: Challenge): List<Claim> {
         TODO()
     }
 
@@ -131,12 +127,12 @@ class ChallengeRepository(
      * throws a [UserNotLoggedInException].
      */
     @Throws(UserNotLoggedInException::class)
-    suspend fun createChallenge(
+    override suspend fun createChallenge(
         photo: LocalPicture,
         location: Location,
-        difficulty: Challenge.Difficulty = Challenge.Difficulty.MEDIUM,
-        expirationDate: LocalDateTime? = null,
-        description: String? = null
+        difficulty: Challenge.Difficulty,
+        expirationDate: LocalDateTime?,
+        description: String?
     ): Challenge {
         authRepository.requireLoggedIn()
 
@@ -173,5 +169,15 @@ class ChallengeRepository(
         }
 
         return challengeEntry.asExternalModel(challengeId)
+    }
+
+    /**
+     * Returns all the claims done by a specific user id
+     *
+     * @param uid The user id
+     */
+    override fun getClaimsFromUser(uid: String): List<Claim> {
+        // TODO
+        return listOf()
     }
 }

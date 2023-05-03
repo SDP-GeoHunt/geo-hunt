@@ -74,10 +74,10 @@
     <string name="create_challenge_button">Create challenge</string>
 
     <string name="follow">Follow</string>
+    <string name="followed">Followed</string>
     <string name="unfollow">Unfollow</string>
     <string name="require_camera_permission">GeoHunt requires permission to the camera in order to use this feature</string>
     <string name="require_camera_permission_button">Request camera permission</string>
     <string name="require_location_permission">GeoHunt requires the precise location of this device in order to use this feature</string>
     <string name="require_location_permission_button">Request location permission</string>
-
 </resources>

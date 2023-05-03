@@ -1,9 +1,11 @@
 package com.github.geohunt.app.data.repository
 
+import android.net.Uri
 import com.firebase.ui.auth.IdpResponse
 import com.github.geohunt.app.data.exceptions.UserNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.network.firebase.models.FirebaseUser
+import com.github.geohunt.app.model.EditedUser
 import com.github.geohunt.app.model.User
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,9 +25,9 @@ import kotlinx.coroutines.withContext
 class UserRepository(
     private val imageRepository: ImageRepository,
     private val authRepository: AuthRepository,
-    private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
+    database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) {
+): UserRepositoryInterface {
     private val users = database.getReference("users")
 
     /**
@@ -37,11 +39,11 @@ class UserRepository(
      * If the user already exists, this method is a nop.
      */
     @Throws(UserNotLoggedInException::class)
-    suspend fun createUserIfNew(identity: IdpResponse) {
+    override suspend fun createUserIfNew(identity: IdpResponse) {
         authRepository.requireLoggedIn()
 
         if (identity.isNewUser) {
-            val newUser = authRepository.getCurrentUser()
+            @Suppress("DEPRECATION") val newUser = authRepository.getCurrentUser()
 
             val newEntry = FirebaseUser(
                 id = newUser.id,
@@ -55,6 +57,14 @@ class UserRepository(
                     .await()
             }
         }
+    }
+
+    /**
+     * Returns the current user as described in the Firebase RTDB
+     */
+    override suspend fun getCurrentUser(): User {
+        @Suppress("DEPRECATION") val uid = authRepository.getCurrentUser().id
+        return getUser(uid)
     }
 
     private fun FirebaseUser.asExternalModel(): User {
@@ -76,7 +86,7 @@ class UserRepository(
      * @throws UserNotFoundException if there are no users with the given id.
      */
     @Throws(UserNotFoundException::class)
-    suspend fun getUser(id: String): User = withContext(ioDispatcher) {
+    override suspend fun getUser(id: String): User = withContext(ioDispatcher) {
         users.child(id)
             .get()
             .await()
@@ -84,5 +94,27 @@ class UserRepository(
             ?.asExternalModel() ?: throw UserNotFoundException(id)
     }
 
-    fun getProfilePictureUrl(user: User): String = imageRepository.getProfilePictureUrl(user)
+    /**
+     * Updates the user in Firebase's RTDB with the given Edited User.
+     */
+    override suspend fun updateUser(editedUser: EditedUser): Unit = withContext(ioDispatcher) {
+
+        var newProfilePictureUrl: Uri? = null
+        if (editedUser.newProfilePicture != null) {
+            newProfilePictureUrl = imageRepository.uploadProfilePicture(editedUser.newProfilePicture!!, editedUser.user.id)
+        }
+
+        val userEntry = FirebaseUser(
+            id = editedUser.user.id,
+            displayName = editedUser.newDisplayName ?: editedUser.user.displayName,
+            profilePictureUrl = newProfilePictureUrl?.toString() ?: editedUser.user.profilePictureUrl
+        )
+
+        users.child(editedUser.user.id)
+            .setValue(userEntry)
+            .await()
+    }
+
+
+    override fun getProfilePictureUrl(user: User): String? = imageRepository.getProfilePictureUrl(user)
 }

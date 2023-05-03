@@ -5,9 +5,12 @@ import android.util.Log
 import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.sensor.SharedLocationManager
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
+import java.lang.IllegalStateException
 
 /**
  * Container for the application's dependency instances.
@@ -17,10 +20,7 @@ import com.google.firebase.storage.FirebaseStorage
  * the codebase.
  */
 class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInstance: FirebaseStorage, application: Application) {
-    // init {
-    //     Firebase.database.setPersistenceEnabled(true)
-    // }
-
+    val database = Firebase.database
     val location: LocationRepository = LocationRepository(
         SharedLocationManager(application.applicationContext)
     )
