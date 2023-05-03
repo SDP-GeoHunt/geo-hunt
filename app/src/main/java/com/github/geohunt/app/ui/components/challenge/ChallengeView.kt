@@ -76,7 +76,11 @@ fun ChallengeView(
                 )
 
                 // Button bar bellow the image
-                BelowImageButton(viewModel = viewModel, state = state, fnClaimHuntCallback = fnClaimHuntCallback)
+                BelowImageButton(
+                    joinHunt = { viewModel.joinHunt() },
+                    leaveHunt = { viewModel.leaveHunt() },
+                    state = state,
+                    fnClaimHuntCallback = fnClaimHuntCallback)
 
                 // Spacer and horizontal divider
                 Spacer(Modifier.height(2.dp))
@@ -108,7 +112,10 @@ private fun LazyClaimList(
         }
 
         item {
-            ChallengeViewAuthor(viewModel = viewModel, state = state)
+            ChallengeViewAuthor(
+                doFollow = viewModel::follow,
+                doUnfollow = viewModel::unfollow,
+                state = state)
             HorizontalDivider(padding = 2.dp)
         }
 
@@ -119,7 +126,7 @@ private fun LazyClaimList(
         }
 
         items(state.claims.size) { index: Int ->
-            ClaimCard(viewModel, state.claims[index], fnViewImageCallback)
+            ClaimCard(retrieveUser = viewModel::retrieveUser, state.claims[index], fnViewImageCallback)
         }
     }
 }

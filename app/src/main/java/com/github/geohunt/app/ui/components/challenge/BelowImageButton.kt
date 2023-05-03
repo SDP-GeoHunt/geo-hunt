@@ -20,7 +20,8 @@ import com.github.geohunt.app.ui.components.LabelledIcon
 
 @Composable
 internal fun BelowImageButton(
-    viewModel: ChallengeViewModel,
+    joinHunt: () -> Unit,
+    leaveHunt: () -> Unit,
     fnClaimHuntCallback: (String) -> Unit,
     state: ChallengeViewModel.State
 ) {
@@ -65,7 +66,7 @@ internal fun BelowImageButton(
                 enabled = !state.alreadyClaimed,
                 onClick = {
                     if (doesHunt.value) fnClaimHuntCallback(state.challenge.id)
-                    else viewModel.joinHunt()
+                    else joinHunt()
                 })
             {
                 Text(
@@ -75,7 +76,7 @@ internal fun BelowImageButton(
             }
 
             if (doesHunt.value) {
-                IconButton(onClick = { viewModel.leaveHunt() }) {
+                IconButton(onClick = { leaveHunt() }) {
                     Icon(
                         Icons.Rounded.Cancel,
                         contentDescription = "Leave hunt"

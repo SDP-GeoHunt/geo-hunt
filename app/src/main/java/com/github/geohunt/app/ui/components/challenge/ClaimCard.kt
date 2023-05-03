@@ -23,12 +23,14 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.model.Claim
+import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.LabelledIcon
 import com.github.geohunt.app.ui.components.utils.AwaitNullable
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun ClaimCard(
-    viewModel: ChallengeViewModel,
+    retrieveUser: (String) -> StateFlow<User?>,
     claim: Claim,
     fnViewImageCallback: (String) -> Unit
 ) {
@@ -59,14 +61,14 @@ fun ClaimCard(
                     contentDescription = "Claimed image")
             }
 
-            UserView(viewModel, claim)
+            UserView(retrieveUser = retrieveUser, claim)
         }
     }
 }
 
 @Composable
 private fun UserView(
-    viewModel: ChallengeViewModel,
+    retrieveUser: (String) -> StateFlow<User?>,
     claim: Claim
 ) {
     Row(
@@ -74,7 +76,7 @@ private fun UserView(
             .padding(horizontal = 20.dp, vertical = 2.dp)
             .height(39.dp)
     ) {
-        AwaitNullable(state = remember { viewModel.retrieveUser(claim.claimerId) }.collectAsState()) { author ->
+        AwaitNullable(state = remember { retrieveUser(claim.claimerId) }.collectAsState()) { author ->
             // Profile Icon
             //
 

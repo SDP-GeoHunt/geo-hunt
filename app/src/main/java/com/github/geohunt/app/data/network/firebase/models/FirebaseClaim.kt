@@ -2,7 +2,7 @@ package com.github.geohunt.app.data.network.firebase.models
 
 import com.github.geohunt.app.model.database.api.Location
 
-internal data class FirebaseClaim(
+data class FirebaseClaim(
     var uid: String? = null,
     var time: String? = null,
     var cid: String? = null,

@@ -16,6 +16,7 @@ import com.github.geohunt.app.utility.DateUtils.utcIso8601FromLocalNullable
 import com.github.geohunt.app.utility.DateUtils.utcIso8601Now
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.tasks.await
 import okhttp3.internal.toImmutableList
 import java.io.File
@@ -321,7 +322,7 @@ class FirebaseDatabase(activity: Activity) : Database {
             .limitToLast(n)
             .get()
             .thenMap { dataSnapshot ->
-                val resultingMap = dataSnapshot.convertTo<Map<String, UserEntry>>() ?: emptyMap<String, UserEntry>()
+                val resultingMap = dataSnapshot.getValue<Map<String, UserEntry>>() ?: emptyMap<String, UserEntry>()
                 resultingMap.mapNotNull { it }
                     .sortedByDescending { (_, entry) -> entry.score }
                     .map { (uid, _) -> getUserById(uid) }

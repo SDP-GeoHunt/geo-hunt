@@ -24,7 +24,8 @@ import com.github.geohunt.app.i18n.toSuffixedString
 
 @Composable
 internal fun ChallengeViewAuthor(
-    viewModel: ChallengeViewModel,
+    doFollow: () -> Unit,
+    doUnfollow: () -> Unit,
     state: ChallengeViewModel.State
 ) {
     Box(
@@ -97,8 +98,8 @@ internal fun ChallengeViewAuthor(
                             contentPadding = PaddingValues(10.dp, 2.dp),
                             shape = RoundedCornerShape(12.dp),
                             onClick = {
-                                if (doesFollow.value) viewModel.unfollow()
-                                else viewModel.follow()
+                                if (doesFollow.value) doUnfollow()
+                                else doFollow()
                             })
                         {
                             Text(

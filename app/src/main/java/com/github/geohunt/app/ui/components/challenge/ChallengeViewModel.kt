@@ -14,6 +14,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ChallengeViewModel(
@@ -74,7 +75,7 @@ class ChallengeViewModel(
             mutableStateFlow.value = userRepository.getUser(uid)
         }
 
-        return mutableStateFlow
+        return mutableStateFlow.asStateFlow()
     }
 
     fun withChallengeId(cid: String) {
