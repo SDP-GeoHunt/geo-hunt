@@ -1,15 +1,14 @@
 package com.github.geohunt.app.data.repository
 
 import android.net.Uri
-import android.util.Log
 import com.github.geohunt.app.data.exceptions.ClaimNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
-import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.network.firebase.models.FirebaseClaim
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
+import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.points.GaussianPointCalculator
 import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DateUtils
@@ -36,9 +35,6 @@ class ClaimRepository(
         Challenge.Difficulty.EASY to GaussianPointCalculator(0.10)
     ).withDefault { GaussianPointCalculator(0.10) },
 ) : ClaimRepositoryInterface {
-    private fun getChallengeRefFromId(id: String) {
-        database.getReference("claims/$id")
-    }
 
     private fun FirebaseClaim.asExternalModel(id: String): Claim = Claim(
         id = id,
@@ -53,7 +49,7 @@ class ClaimRepository(
     /**
      * Retrieve a list of all claims id for a specific user, useful when lazy loading
      */
-    override suspend fun getClaimIdByUser(user: User): List<String> {
+    override suspend fun getClaimId(user: User): List<String> {
         require(user.id.isNotEmpty())
 
         return withContext(ioDispatcher) {
@@ -70,22 +66,22 @@ class ClaimRepository(
     /**
      * Check whether the currently logged user claim the given challenges
      */
-    override suspend fun doesClaims(challenge: Challenge) : Boolean = withContext(ioDispatcher) {
+    override suspend fun doesClaim(challenge: Challenge) : Boolean = withContext(ioDispatcher) {
         authRepository.requireLoggedIn()
         val currentUser = authRepository.getCurrentUser()
 
-        getClaimsByUser(currentUser)
+        getClaims(currentUser)
             .any { it.parentChallengeId == challenge.id }
     }
 
     /**
      * Retrieve the score for a given user
      */
-    override suspend fun getScoreFromUser(user: User) : Long {
+    override suspend fun getScore(user: User) : Long {
         require(user.id.isNotEmpty())
 
         return withContext(ioDispatcher) {
-            getClaimsByUser(user).sumOf { it.awardedPoints }
+            getClaims(user).sumOf { it.awardedPoints }
         }
     }
 
@@ -94,11 +90,11 @@ class ClaimRepository(
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
-    override suspend fun getClaimsByUser(user: User) : List<Claim> {
+    override suspend fun getClaims(user: User) : List<Claim> {
         require(user.id.isNotEmpty())
 
         return withContext(ioDispatcher) {
-            getClaimIdByUser(user).run {
+            getClaimId(user).run {
                 map { claimId ->
                     database.getReference("claims/$claimId").get().asDeferred()
                 }.awaitAll().zip(this).map {
@@ -114,7 +110,7 @@ class ClaimRepository(
     /**
      * Retrieve a list of all claims associated with the current challenges
      */
-    override suspend fun getClaimsByChallenge(challenge: Challenge): List<Claim> {
+    override suspend fun getChallengeClaims(challenge: Challenge): List<Claim> {
         require(challenge.id.isNotEmpty())
 
         return withContext(ioDispatcher) {
@@ -123,9 +119,10 @@ class ClaimRepository(
                 .await()
                 .run {
                     children.mapNotNull {
-                        val value = it.getValue(FirebaseClaim::class.java)
-                        if (value != null) it.key!! to value
-                        else null
+                        when(val value = it.getValue(FirebaseClaim::class.java)) {
+                            null -> null
+                            else -> it.key!! to value
+                        }
                     }
                     .map {
                         it.second.asExternalModel("${challenge.id}/${it.first}")

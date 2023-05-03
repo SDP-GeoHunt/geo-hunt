@@ -30,5 +30,5 @@ interface ActiveHuntsRepositoryInterface {
     /**
      * Check whether or not the currently authenticated user hunt a specific challenges
      */
-    fun getDoesHunts(challenge: Challenge) : Flow<Boolean>
+    fun isHunting(challenge: Challenge) : Flow<Boolean>
 }

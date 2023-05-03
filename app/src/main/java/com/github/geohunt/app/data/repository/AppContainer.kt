@@ -50,7 +50,11 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
          * Get the instance for the current AppContainer
          */
         fun getInstance(application: Application): AppContainer = getInstance(
-            { FirebaseDatabase.getInstance().apply { this.setPersistenceEnabled(true) } },
+            { FirebaseDatabase.getInstance().apply {
+                try {
+                    this.setPersistenceEnabled(true)
+                } catch(_: Exception) {}
+            } },
             { FirebaseStorage.getInstance() },
             application
         )

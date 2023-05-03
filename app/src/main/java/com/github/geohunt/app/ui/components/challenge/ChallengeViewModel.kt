@@ -87,10 +87,10 @@ class ChallengeViewModel(
         viewModelScope.launch {
             val challenge = challengeRepository.getChallenge(cid)
             val userAsync = async { userRepository.getUser(challenge.authorId) }
-            val claims = async { claimRepository.getClaimsByChallenge(challenge) }
+            val claims = async { claimRepository.getChallengeClaims(challenge) }
             val user = userAsync.await()
 
-            val authorScore = claimRepository.getScoreFromUser(user)
+            val authorScore = claimRepository.getScore(user)
 
             state_.value = State(
                 challenge = challenge,
@@ -99,8 +99,8 @@ class ChallengeViewModel(
                 isSelf = currentUser.id == user.id,
                 authorScore = authorScore,
                 doesFollow = followRepository.doesFollow(user),
-                doesHunt = activeHuntsRepository.getDoesHunts(challenge),
-                alreadyClaimed = claimRepository.doesClaims(challenge))
+                doesHunt = activeHuntsRepository.isHunting(challenge),
+                alreadyClaimed = claimRepository.doesClaim(challenge))
         }
     }
 

@@ -10,23 +10,23 @@ import java.time.LocalDateTime
 
 open class MockClaimRepository : ClaimRepositoryInterface {
 
-    override suspend fun getClaimIdByUser(user: User): List<String> {
+    override suspend fun getClaimId(user: User): List<String> {
         return emptyList()
     }
 
-    override suspend fun doesClaims(challenge: Challenge): Boolean {
+    override suspend fun doesClaim(challenge: Challenge): Boolean {
         return false
     }
 
-    override suspend fun getScoreFromUser(user: User): Long {
+    override suspend fun getScore(user: User): Long {
         return 0
     }
 
-    override suspend fun getClaimsByUser(user: User): List<Claim> {
+    override suspend fun getClaims(user: User): List<Claim> {
         return emptyList()
     }
 
-    override suspend fun getClaimsByChallenge(challenge: Challenge): List<Claim> {
+    override suspend fun getChallengeClaims(challenge: Challenge): List<Claim> {
         return emptyList()
     }
 

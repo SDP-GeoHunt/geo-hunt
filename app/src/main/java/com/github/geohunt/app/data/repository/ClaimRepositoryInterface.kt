@@ -12,29 +12,29 @@ interface ClaimRepositoryInterface {
     /**
      * Retrieve a list of all claims id for a specific user, useful when lazy loading
      */
-    suspend fun getClaimIdByUser(user: User): List<String>
+    suspend fun getClaimId(user: User): List<String>
 
     /**
      * Check whether the currently logged user claim the given challenges
      */
-    suspend fun doesClaims(challenge: Challenge) : Boolean
+    suspend fun doesClaim(challenge: Challenge) : Boolean
 
     /**
      * Retrieve the score for a given user
      */
-    suspend fun getScoreFromUser(user: User) : Long
+    suspend fun getScore(user: User) : Long
 
     /**
      * Get all claims of a specific user [user]. If one of his claim is not within the database
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
-    suspend fun getClaimsByUser(user: User) : List<Claim>
+    suspend fun getClaims(user: User) : List<Claim>
 
     /**
      * Retrieve a list of all claims associated with the current challenges
      */
-    suspend fun getClaimsByChallenge(challenge: Challenge): List<Claim>
+    suspend fun getChallengeClaims(challenge: Challenge): List<Claim>
 
     /**
      * Claim a specific challenge with the given photo and location

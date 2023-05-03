@@ -73,9 +73,7 @@ class ActiveHuntsRepository(
             .child(currentUser.id)
             .snapshots
             .map {
-                it.children.mapNotNull { dataSnapshot ->
-                    dataSnapshot.key.takeIf { dataSnapshot.getValue(Boolean::class.java) ?: false }
-                }
+                it.toList()
             }
             .flowOn(ioDispatcher)
     }
@@ -83,7 +81,7 @@ class ActiveHuntsRepository(
     /**
      * Check whether or not the currently authenticated user hunt a specific challenges
      */
-    override fun getDoesHunts(challenge: Challenge) : Flow<Boolean> {
+    override fun isHunting(challenge: Challenge) : Flow<Boolean> {
         authRepository.requireLoggedIn()
         val currentUser = authRepository.getCurrentUser()
 
