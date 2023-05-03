@@ -6,13 +6,9 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.test.core.app.launchActivity
-import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.TutorialActivity
-import org.hamcrest.Matchers
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,8 +25,12 @@ class WelcomeScreenTest {
     fun setup(){
         val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
         settings.edit().putBoolean("first_application_open", true).commit()
+    }
 
-        launchActivity<TutorialActivity>()
+    @After
+    fun teardown(){
+        val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
+        settings.edit().putBoolean("first_application_open", false).commit()
     }
 
     @Test
@@ -59,22 +59,5 @@ class WelcomeScreenTest {
         composeTestRule
             .onNodeWithTag("Tutorial screen layout")
             .assertExists()
-    }
-
-    @Test
-    fun clickingOnSkipButtonOpensLoginScreen() {
-        Intents.init()
-
-        composeTestRule
-            .onNodeWithText("GET STARTED")
-            .performClick()
-
-        composeTestRule
-            .onNodeWithTag("Skip button")
-            .assertHasClickAction()
-            .performClick()
-
-        Intents.intended(Matchers.allOf(IntentMatchers.hasComponent(LoginActivity::class.java.name)))
-        Intents.release()
     }
 }

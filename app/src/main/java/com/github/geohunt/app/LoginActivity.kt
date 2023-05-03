@@ -28,6 +28,7 @@ import com.github.geohunt.app.utility.replaceActivity
 
 class LoginActivity : ComponentActivity() {
     private val PREFERENCES_FILE = "preferences"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
