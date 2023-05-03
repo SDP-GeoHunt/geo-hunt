@@ -20,7 +20,7 @@ class ActiveHuntsRepository(
     private val authRepository: AuthRepository,
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) {
+) : ActiveHuntsRepositoryInterface {
     private val activeHunts = database.getReference("activeHunts")
 
     /**
@@ -47,14 +47,14 @@ class ActiveHuntsRepository(
      *
      * This adds the challenge to his active hunts page.
      */
-    suspend fun joinHunt(challenge: Challenge) = updateHuntState(challenge, doHunt = true)
+    override suspend fun joinHunt(challenge: Challenge) = updateHuntState(challenge, doHunt = true)
 
     /**
      * Makes the currently authenticated user leave the hunt on the given challenge.
      *
      * This removes the challenge to his active hunts page.
      */
-    suspend fun leaveHunt(challenge: Challenge) = updateHuntState(challenge, doHunt = false)
+    override suspend fun leaveHunt(challenge: Challenge) = updateHuntState(challenge, doHunt = false)
 
 
     /**
@@ -62,7 +62,7 @@ class ActiveHuntsRepository(
      *
      * If there is no currently authenticated user, throws a [UserNotLoggedInException].
      */
-    fun getActiveHunts(): Flow<List<String>> {
+    override fun getActiveHunts(): Flow<List<String>> {
         authRepository.requireLoggedIn()
 
         val currentUser = authRepository.getCurrentUser()
@@ -83,7 +83,7 @@ class ActiveHuntsRepository(
     /**
      * Check whether or not the currently authenticated user hunt a specific challenges
      */
-    fun getDoesHunts(challenge: Challenge) : Flow<Boolean> {
+    override fun getDoesHunts(challenge: Challenge) : Flow<Boolean> {
         authRepository.requireLoggedIn()
         val currentUser = authRepository.getCurrentUser()
 

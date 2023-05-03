@@ -30,14 +30,19 @@ class ChallengeViewTest {
 
     private lateinit var appContainer : AppContainer
 
-    private fun createViewModel(auth: AuthRepositoryInterface): ChallengeViewModel {
+    private fun createViewModel(challenge: ChallengeRepositoryInterface,
+                                claimRepository: ClaimRepositoryInterface = MockClaimRepository(),
+                                followRepository: FollowRepositoryInterface = MockFollowRepository(),
+                                userRepository: UserRepositoryInterface = MockUserRepository(),
+                                activeHuntsRepository: ActiveHuntsRepositoryInterface = MockActiveHuntRepository(),
+                                auth: AuthRepositoryInterface = MockAuthRepository()): ChallengeViewModel {
         return ChallengeViewModel(
-            challengeRepository = appContainer.challenges,
-            claimRepository = appContainer.claims,
-            userRepository = appContainer.user,
+            challengeRepository = challenge,
+            claimRepository = claimRepository,
+            userRepository = userRepository,
             authRepository = auth,
-            followRepository = appContainer.follow,
-            activeHuntsRepository = appContainer.activeHunts
+            followRepository = followRepository,
+            activeHuntsRepository = activeHuntsRepository,
         )
     }
 
@@ -55,8 +60,21 @@ class ChallengeViewTest {
     @Test
     fun testChallenge1() {
         var route = ""
-        val auth = MockAuthRepository()
-        val vm = createViewModel(auth)
+        val challenge = MockChallenge(
+            photoUrl = "http://10.0.2.2:9199/geohunt-1.appspot.com/images/challenges-images.png",
+            authorId = "2",
+            id = "163f921c-ML2eCQ52mAQlvCEQZ2n",
+            description = "Voilà! In view, a humble vaudevillian veteran cast vicariously as both victim" +
+                    " and villain by the vicissitudes of Fate. This visage, no mere veneer of vanity, is" +
+                    " a vestige of the vox populi, now vacant, vanished. However, this valourous visitation " +
+                    "of a bygone vexation stands vivified and has vowed to vanquish these venal and virulent" +
+                    " vermin vanguarding vice and vouchsafing the violently vicious and voracious violation " +
+                    "of volition! The only verdict is vengeance; a vendetta held as a votive, not in vain, " +
+                    "for the value and veracity of such shall one day vindicate the vigilant and the virtuous. " +
+                    "Verily, this vichyssoise of verbiage veers most verbose, so let me simply add that it’s" +
+                    " my very good honour to meet you and you may call me V.",
+        )
+        val vm = createViewModel(MockChallengeRepository(challenge))
 
         composeTestRule.setContent {
             ChallengeView(

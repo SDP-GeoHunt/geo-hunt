@@ -35,7 +35,7 @@ class ClaimRepository(
         Challenge.Difficulty.MEDIUM to GaussianPointCalculator(0.15),
         Challenge.Difficulty.EASY to GaussianPointCalculator(0.10)
     ).withDefault { GaussianPointCalculator(0.10) },
-) {
+) : ClaimRepositoryInterface {
     private fun getChallengeRefFromId(id: String) {
         database.getReference("claims/$id")
     }
@@ -53,7 +53,7 @@ class ClaimRepository(
     /**
      * Retrieve a list of all claims id for a specific user, useful when lazy loading
      */
-    suspend fun getClaimIdByUser(user: User): List<String> {
+    override suspend fun getClaimIdByUser(user: User): List<String> {
         require(user.id.isNotEmpty())
 
         return withContext(ioDispatcher) {
@@ -70,7 +70,7 @@ class ClaimRepository(
     /**
      * Check whether the currently logged user claim the given challenges
      */
-    suspend fun doesClaims(challenge: Challenge) : Boolean = withContext(ioDispatcher) {
+    override suspend fun doesClaims(challenge: Challenge) : Boolean = withContext(ioDispatcher) {
         authRepository.requireLoggedIn()
         val currentUser = authRepository.getCurrentUser()
 
@@ -81,7 +81,7 @@ class ClaimRepository(
     /**
      * Retrieve the score for a given user
      */
-    suspend fun getScoreFromUser(user: User) : Long {
+    override suspend fun getScoreFromUser(user: User) : Long {
         require(user.id.isNotEmpty())
 
         return withContext(ioDispatcher) {
@@ -94,7 +94,7 @@ class ClaimRepository(
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
-    suspend fun getClaimsByUser(user: User) : List<Claim> {
+    override suspend fun getClaimsByUser(user: User) : List<Claim> {
         require(user.id.isNotEmpty())
 
         return withContext(ioDispatcher) {
@@ -114,7 +114,7 @@ class ClaimRepository(
     /**
      * Retrieve a list of all claims associated with the current challenges
      */
-    suspend fun getClaimsByChallenge(challenge: Challenge): List<Claim> {
+    override suspend fun getClaimsByChallenge(challenge: Challenge): List<Claim> {
         require(challenge.id.isNotEmpty())
 
         return withContext(ioDispatcher) {
@@ -141,7 +141,7 @@ class ClaimRepository(
      * is none, throws a [UserNotLoggedInException]
      */
     @Throws(UserNotLoggedInException::class)
-    suspend fun claimChallenge(
+    override suspend fun claimChallenge(
         photo: LocalPicture,
         location: Location,
         challenge: Challenge

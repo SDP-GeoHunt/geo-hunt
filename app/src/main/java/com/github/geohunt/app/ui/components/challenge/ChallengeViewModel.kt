@@ -17,12 +17,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ChallengeViewModel(
-    private val challengeRepository: ChallengeRepository,
-    private val claimRepository: ClaimRepository,
-    private val userRepository: UserRepository,
+    private val challengeRepository: ChallengeRepositoryInterface,
+    private val claimRepository: ClaimRepositoryInterface,
+    private val userRepository: UserRepositoryInterface,
     private val authRepository: AuthRepositoryInterface,
-    private val followRepository: FollowRepository,
-    private val activeHuntsRepository: ActiveHuntsRepository,
+    private val followRepository: FollowRepositoryInterface,
+    private val activeHuntsRepository: ActiveHuntsRepositoryInterface,
 ) : ViewModel() {
 
     data class State(
