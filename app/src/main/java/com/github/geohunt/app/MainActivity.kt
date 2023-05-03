@@ -31,11 +31,6 @@ class MainActivity : ComponentActivity() {
         container = AppContainer.getInstance(application)
         viewModel = MainViewModel(container.auth)
 
-        // Ask for login if the user is not logged in
-        if (!viewModel.isLoggedIn()) {
-            startActivity(Intent(this, LoginActivity::class.java))
-        }
-
         setContent {
             GeoHuntScreen {
                 MainScreen(database, viewModel, logout = {
