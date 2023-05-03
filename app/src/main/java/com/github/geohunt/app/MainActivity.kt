@@ -9,6 +9,8 @@ import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.screens.GeoHuntScreen
 import com.github.geohunt.app.ui.screens.main.MainScreen
 import com.github.geohunt.app.ui.screens.main.MainViewModel
+import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import com.github.geohunt.app.utility.replaceActivity
 
 /**
  * Main activity.
@@ -29,14 +31,13 @@ class MainActivity : ComponentActivity() {
         container = AppContainer.getInstance(application)
         viewModel = MainViewModel(container.auth)
 
-        // Ask for login if the user is not logged in
-        if (!viewModel.isLoggedIn()) {
-            startActivity(Intent(this, LoginActivity::class.java))
-        }
-
         setContent {
             GeoHuntScreen {
-                MainScreen(database, viewModel)
+                MainScreen(database, viewModel, logout = {
+                    viewModel.logout(this@MainActivity, then = {
+                        replaceActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                    })
+                })
             }
         }
     }

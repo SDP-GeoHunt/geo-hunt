@@ -55,7 +55,7 @@ class ImageViewTest {
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
-            NavigationController(navController = navController, database = database)
+            NavigationController(navController = navController, database = database) { }
 
             LaunchedEffect(true) {
                 navController.navigate("image-view/image-arf4ae56f4a1")

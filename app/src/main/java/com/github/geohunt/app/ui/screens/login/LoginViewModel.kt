@@ -19,8 +19,8 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.data.exceptions.auth.AuthenticationCancelledException
 import com.github.geohunt.app.data.exceptions.auth.AuthenticationFailureException
 import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.AuthRepository
-import com.github.geohunt.app.data.repository.UserRepository
+import com.github.geohunt.app.data.repository.AuthRepositoryInterface
+import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.ui.AuthViewModel
 import kotlinx.coroutines.launch
 
@@ -31,8 +31,8 @@ import kotlinx.coroutines.launch
  * response.
  */
 class LoginViewModel(
-    override val authRepository: AuthRepository,
-    val userRepository: UserRepository,
+    override val authRepository: AuthRepositoryInterface,
+    val userRepository: UserRepositoryInterface,
     val authUi: AuthUI = AuthUI.getInstance()
 ): AuthViewModel(authRepository) {
     /**
@@ -103,16 +103,31 @@ class LoginViewModel(
     }
 
     companion object {
+        private var injectedAuthRepo: AuthRepositoryInterface? = null
+        private var injectedUserRepo: UserRepositoryInterface? = null
+
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
                 val container = AppContainer.getInstance(application)
 
                 LoginViewModel(
-                    container.auth,
-                    container.user
+                    injectedAuthRepo ?: container.auth,
+                    injectedUserRepo ?: container.user
                 )
             }
+        }
+
+        /**
+         * Used to inject custom repositories for testing
+         */
+        fun injectRepos(authRepository: AuthRepositoryInterface?, userRepository: UserRepositoryInterface?) {
+            injectedAuthRepo = authRepository
+            injectedUserRepo = userRepository
+        }
+
+        fun uninjectRepos() {
+            injectRepos(null, null)
         }
     }
 }

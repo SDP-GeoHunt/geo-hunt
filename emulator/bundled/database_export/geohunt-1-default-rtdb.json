@@ -3,7 +3,6 @@
     "163f921c": {
       "-NQWln8MlqnVhArUIdwE": {
         "authorId": "8b8b0392-ba8b-11ed-afa1-0242ac120002",
-        "expirationDate": "null",
         "location": {
           "latitude": 43.880433,
           "longitude": -103.453748
@@ -12,12 +11,16 @@
       }
     }
   },
-  "users": [
-    null,
-    {
-      "displayName": "Debug user",
-      "score": 123,
-      "uid": "1"
+  "users": {
+    "1": {
+      "displayName": "dn",
+      "id": "1",
+      "profilePictureUrl": "null"
+    },
+    "2": {
+      "displayName": "dn2",
+      "id": "2",
+      "profilePictureUrl": "null"
     }
-  ]
+  }
 }

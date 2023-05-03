@@ -2,7 +2,6 @@ package com.github.geohunt.app.data.repository
 
 import androidx.activity.ComponentActivity
 import com.firebase.ui.auth.AuthUI
-import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.model.User
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
@@ -21,16 +20,19 @@ import kotlinx.coroutines.tasks.await
 class AuthRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val authUi: AuthUI = AuthUI.getInstance()
-) {
+): AuthRepositoryInterface {
     /**
-     * Returns the currently authenticated user.
+     * Returns the currently authenticated user as it is stored in Firebase Auth.
      *
      * The caller must first check that there is a user logged in by [requireLoggedIn], otherwise
      * this function will fail with a [NullPointerException].
      *
+     *
      * @return a Firebase user, converted to the external model.
      */
-    fun getCurrentUser(): User {
+    @Deprecated("If you use this function, you very probably want the user as it is" +
+            "defined in the RTDB and not in Firebase Auth. Consider using `UserRepository.getCurrentUser()`.")
+    override fun getCurrentUser(): User {
         val currentUser = auth.currentUser!!
         return User(
             id = currentUser.uid,
@@ -44,19 +46,7 @@ class AuthRepository(
      *
      * @see requireLoggedIn
      */
-    fun isLoggedIn(): Boolean = auth.currentUser != null
-
-    /**
-     * Ensures that the user is logged in, or throws a [UserNotLoggedInException] otherwise.
-     *
-     * @see isLoggedIn
-     */
-    @Throws(UserNotLoggedInException::class)
-    fun requireLoggedIn() {
-        if (!isLoggedIn()) {
-            throw UserNotLoggedInException()
-        }
-    }
+    override fun isLoggedIn(): Boolean = auth.currentUser != null
 
     /**
      * Logs out the currently authenticated user.
@@ -65,7 +55,7 @@ class AuthRepository(
      *
      * @param context The context requesting the log out.
      */
-    suspend fun logOut(context: ComponentActivity) {
+    override suspend fun logOut(context: ComponentActivity) {
         if (isLoggedIn()) {
             authUi.signOut(context).await()
         }

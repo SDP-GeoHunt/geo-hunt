@@ -5,8 +5,8 @@ import com.github.geohunt.app.model.database.api.Location
 import java.time.LocalDateTime
 
 fun MockChallenge(
-    id: String = "",
-    authorId: String = "",
+    id: String = "1",
+    authorId: String = "1",
     photoUrl: String = "",
     location: Location = Location(0.0, 0.0),
     publishedDate: LocalDateTime = LocalDateTime.now(),

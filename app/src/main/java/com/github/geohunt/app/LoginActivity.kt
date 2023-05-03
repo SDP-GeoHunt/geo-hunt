@@ -27,6 +27,12 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Check that the user is not already logged in
+        if (viewModel.isLoggedIn()) {
+            onSuccessfulLogin()
+        }
+
+        // Register the login launcher
         val loginLauncher = viewModel.registerLoginPrompt(
             this@LoginActivity,
             onSuccess = { response ->
@@ -36,11 +42,6 @@ class LoginActivity : ComponentActivity() {
                 Log.e("auth", "Authentication failed with error $it")
             }
         )
-
-        // Check that the user is not already logged in
-        if (viewModel.isLoggedIn()) {
-            onSuccessfulLogin()
-        }
 
         setContent {
             GeoHuntScreen {
