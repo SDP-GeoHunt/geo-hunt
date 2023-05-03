@@ -42,6 +42,7 @@ class ProfileEditPageTest {
         }
         c.onNodeWithTag("progress").assertIsDisplayed()
         cf.complete(null)
+        c.waitForIdle()
         c.onNodeWithTag("progress").assertDoesNotExist()
     }
 
