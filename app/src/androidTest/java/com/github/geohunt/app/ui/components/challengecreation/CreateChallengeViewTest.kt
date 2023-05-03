@@ -96,6 +96,8 @@ class CreateChallengeViewTest {
                 mockedLocationFlow.emit(mockedLocation)
             }
 
+            composeTestRule.waitForIdle()
+
             // Ensure the button get updated
             composeTestRule.onNodeWithText("Create challenge")
                 .performScrollTo()

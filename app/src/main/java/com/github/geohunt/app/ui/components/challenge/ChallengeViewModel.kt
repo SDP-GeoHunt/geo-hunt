@@ -20,7 +20,7 @@ class ChallengeViewModel(
     private val challengeRepository: ChallengeRepository,
     private val claimRepository: ClaimRepository,
     private val userRepository: UserRepository,
-    private val authRepository: AuthRepository,
+    private val authRepository: AuthRepositoryInterface,
     private val followRepository: FollowRepository,
     private val activeHuntsRepository: ActiveHuntsRepository,
 ) : ViewModel() {
