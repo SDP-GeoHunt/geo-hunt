@@ -64,7 +64,6 @@ class WelcomeScreenTest {
     @Test
     fun clickingOnSkipButtonOpensLoginScreen() {
         Intents.init()
-        launchActivity<TutorialActivity>()
 
         composeTestRule
             .onNodeWithText("GET STARTED")
