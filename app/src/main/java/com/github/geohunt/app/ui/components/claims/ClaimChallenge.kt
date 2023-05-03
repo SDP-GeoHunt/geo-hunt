@@ -37,17 +37,14 @@ import com.ireward.htmlcompose.HtmlText
 @Composable
 fun SubmitClaimForm(
     bitmap: Bitmap,
-    viewModel: SubmitClaimViewModel,
-    onFailure: (Throwable) -> Unit,
-    onClaimSubmitted: (Claim) -> Unit
+    state: SubmitClaimViewModel.State,
+    onClaim: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
     val bitmapPainter = remember(bitmap) { BitmapPainter(bitmap.asImageBitmap()) }
 
-    val state = viewModel.submittingState.collectAsState()
-
-    if (state.value != SubmitClaimViewModel.State.READY_TO_CLAIM ||
-        state.value != SubmitClaimViewModel.State.CLAIMING) {
+    if (state == SubmitClaimViewModel.State.READY_TO_CLAIM ||
+        state == SubmitClaimViewModel.State.CLAIMING) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -77,10 +74,7 @@ fun SubmitClaimForm(
 
                 Spacer(Modifier.height(15.dp))
 
-                ClaimChallengeButton(viewModel = viewModel,
-                    onFailure = onFailure,
-                    onClaimSubmitted = onClaimSubmitted)
-
+                ClaimChallengeButton(onClaim = onClaim, state = state)
             }
         }
     }
@@ -104,28 +98,20 @@ fun SubmitClaimForm(
 
 @Composable
 fun ClaimChallengeButton(
-    viewModel: SubmitClaimViewModel,
-    onFailure: (Throwable) -> Unit,
-    onClaimSubmitted: (Claim) -> Unit
+    state: SubmitClaimViewModel.State,
+    onClaim: () -> Unit
 ) {
     val context = LocalContext.current
-    val state = viewModel.submittingState.collectAsState()
 
-    if (state.value == SubmitClaimViewModel.State.CLAIMING) {
+    if (state == SubmitClaimViewModel.State.CLAIMING) {
         CircularProgressIndicator()
     }
     else {
         Button(
             onClick = {
-                viewModel.claim(
-                    { suffix ->
-                        context.createImageFile(suffix)
-                    },
-                    onFailure = onFailure,
-                    onSuccess = onClaimSubmitted
-                )
+                  onClaim()
             },
-            enabled = state.value == SubmitClaimViewModel.State.READY_TO_CLAIM
+            enabled = state == SubmitClaimViewModel.State.READY_TO_CLAIM
         ) {
             Text(stringResource(R.string.claim_challenge_button))
         }
@@ -139,6 +125,7 @@ fun ClaimChallenge(
     onFailure: (Throwable) -> Unit = {},
     viewModel: SubmitClaimViewModel = viewModel(factory = SubmitClaimViewModel.Factory)
 ) {
+    val state = viewModel.submittingState.collectAsState()
     val context = LocalContext.current
     val file = remember { context.createImageFile() }
     val uri = remember {
@@ -186,9 +173,16 @@ fun ClaimChallenge(
 
             SubmitClaimForm(
                 bitmap = photoState.value!!,
-                viewModel = viewModel,
-                onFailure = onFailure,
-                onClaimSubmitted = onClaimSubmitted
+                state = state.value,
+                onClaim = {
+                    viewModel.claim(
+                        { suffix ->
+                            context.createImageFile(suffix)
+                        },
+                        onFailure = onFailure,
+                        onSuccess = onClaimSubmitted
+                    )
+                }
             )
         }
     }

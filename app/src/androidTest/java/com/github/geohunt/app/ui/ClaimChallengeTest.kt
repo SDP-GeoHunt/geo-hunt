@@ -32,6 +32,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.hamcrest.Matchers.equalTo
 import org.junit.*
 import org.junit.runner.RunWith
 import java.util.concurrent.CompletableFuture
@@ -74,54 +75,23 @@ class ClaimChallengeTest {
     @Test
     fun testClaimChallenge() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val resultingBitmap = createTestBitmap(context)
-        val future = CompletableFuture<Claim>()
-        val future1 = CompletableDeferred<Unit>()
+        val bitmap = createTestBitmap(context)
+        val awaitingThingy = CompletableDeferred<Unit>()
 
-        val mockedLocationFlow = MutableSharedFlow<Location>()
-        var viewModel : SubmitClaimViewModel? = null
-
-        LocationRepository.DefaultLocationFlow.mocked(mockedLocationFlow).use {
-            // Start the application
-            composeTestRule.setContent {
-                viewModel = viewModel<SubmitClaimViewModel>(factory = SubmitClaimViewModel.Factory)
-                val state = viewModel!!.submittingState.collectAsState()
-
-                if (state.value != SubmitClaimViewModel.State.AWAITING_CHALLENGE) {
-                    LaunchedEffect(Unit) {
-                        viewModel!!.withPhoto({ resultingBitmap }, future::completeExceptionally)
-                        viewModel!!.startLocationUpdate(future::completeExceptionally)
-                    }
-
-                    if (state.value != SubmitClaimViewModel.State.AWAITING_LOCATION_PERMISSION ||
-                        state.value != SubmitClaimViewModel.State.AWAITING_CAMERA) {
-                        future1.complete(Unit)
-                        SubmitClaimForm(
-                            bitmap = resultingBitmap,
-                            viewModel = viewModel!!,
-                            onClaimSubmitted = future::complete,
-                            onFailure = future::completeExceptionally
-                        )
-                    }
-                }
+        // Start the application
+        composeTestRule.setContent {
+            SubmitClaimForm(bitmap = bitmap, state = SubmitClaimViewModel.State.READY_TO_CLAIM) {
+                awaitingThingy.complete(Unit)
             }
-
-            viewModel!!.start("163f921c-ML2eCQ52mAQlvCEQZ2n", onFailure = {
-                Log.e("GeoHunt", "$it")
-                Assert.fail()
-            })
-
-            // Wait for idle
-            composeTestRule.waitForIdle()
-
-            mockedLocationFlow.emit(mockedLocation)
-            future1.await()
-
-            // Ensure the button get updated
-            composeTestRule.onNodeWithText("Submit Claim")
-                .performScrollTo()
-                .assertIsDisplayed()
         }
+
+        composeTestRule.onNodeWithText("Submit Claim")
+            .performScrollTo()
+            .assertIsDisplayed()
+            .performClick()
+
+        // Awaiting thingy
+        assertThat(awaitingThingy.isCompleted, equalTo(true))
     }
 
     private fun createTestBitmap(context: Context) : Bitmap {
