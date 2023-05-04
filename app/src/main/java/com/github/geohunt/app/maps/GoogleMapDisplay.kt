@@ -42,29 +42,30 @@ fun GoogleMapDisplay(
     val uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
     val mapProperties by remember { mutableStateOf(MapProperties(mapType = MapType.NORMAL)) }
     val mapVisible by remember { mutableStateOf(true) }
+    val cameraPositionState = rememberCameraPositionState {
+        position = cameraPosition
+    }
 
     if (mapVisible) {
         GoogleMap(
             modifier = modifier,
-            cameraPositionState = rememberCameraPositionState {
-                position = cameraPosition
-            },
+            cameraPositionState = cameraPositionState,
             properties = mapProperties,
             uiSettings = uiSettings,
         ) {
-            val coordinateCenter = cameraPosition.target
-            val zoom = cameraPosition.zoom
+            val coordinateCenter = cameraPositionState.position.target
+            val zoom = cameraPositionState.position.zoom
             val latitude = coordinateCenter.latitude
             val longitude = coordinateCenter.longitude
 
-            //val radius = 38000 / 2.0.pow((zoom - 3).toDouble()) * cos(latitude * PI / 180);
-            val radius = 10.0 //TODO change this value later
+            val radius = 38000 / 2.0.pow((zoom - 3).toDouble()) * cos(latitude * PI / 180)
+            Log.d("MAPS SEEN CHALLENGES RAD", radius.toString())
+            //val radius = 30.0 //TODO change this value later
             val location = Location(latitude, longitude)
             val neighboringSectors = location.getNeighboringSectors(radius)
 
             val markersList = remember { mutableStateListOf<Marker>() }
 
-            //val mapsViewModel = MapsViewModel(
             viewModel.retrieveChallengesMultiHash(neighboringSectors)
 
             val challenges = viewModel.challenges.collectAsStateWithLifecycle()
@@ -87,35 +88,8 @@ fun GoogleMapDisplay(
 
             MarkerDisplay(items = markersList)
 
-
-            /*for (sector in neighboringSectors) {
-                val challenges = mapsViewModel.retrieveChallengesSingleHash(sector)
-
-                //val challengesState = challenges.collectAsState()
-                val challengesState = challenges.collectAsStateWithLifecycle()
-                Log.d("COLLECTED CHALLENGES STATE", challengesState.value.toString())
-
-                when(val c = challengesState.value) {
-                    null -> Log.d("COLLECTED HALLENGES STATE", "null")
-                    else -> c.forEach {
-                        Log.d("COLLECTED HALLENGES STATE 2", it.toString())
-
-                        val marker = Marker(
-                            markerPosition = LatLng(it?.location?.latitude ?: 0.0, it?.location?.longitude ?: 0.0),
-                            markerTitle = it?.id ?: "",
-                            markerSnippet = it?.description ?: "",
-                            //TODO use string url a bit later
-                            image = mockBitmap,
-                            expiryDate = it?.expirationDate ?: LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12)
-                        )
-                        markersList.add(marker)
-                    }
-                }
-            }*/
-
-            //Log.d("COLLECTED MARKERS LIST", markersList.toString())
-
             content()
+
         }
     }
 }

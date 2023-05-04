@@ -37,7 +37,10 @@ fun MarkerDisplay(items: List<Marker>) {
     var selectedMarker: Marker? by remember { mutableStateOf(null) }
     val isMarkerClicked = remember { mutableStateOf(false) }
 
-    Clustering(
+    DisplayMarkers(markers = items)
+
+
+    /*Clustering(
         items = items,
 
         // When clicked, update the selected marker
@@ -92,7 +95,7 @@ fun MarkerDisplay(items: List<Marker>) {
                 }
             }
         }
-    )
+    )*/
 }
 
 /*
