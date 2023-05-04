@@ -44,15 +44,7 @@ fun DisplayMarkers(markers: List<Marker>) {
             snippet = challenge.expiryDate.toString(),
             tag = challenge.title,
         ) {
-            Box(
-                modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
-                    )
-            ) {
-                MarkerInfoWindowContent(challenge)
-            }
+            MarkerInfoWindowContent(challenge)
         }
     }
 }
@@ -66,57 +58,65 @@ fun DisplayMarkers(markers: List<Marker>) {
 fun MarkerInfoWindowContent(
     challenge: Marker
 ){
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        //The image displayed at the top of the info window
-        if (challenge.image != "") {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(challenge.image)
-                    .crossfade(true)
-                    .allowHardware(false)
-                    .build(),
-                contentDescription = "Marker Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(90.dp)
-                    .padding(top = 16.dp),
+    Box(
+        modifier = Modifier
+            .background(
+                color = MaterialTheme.colorScheme.onPrimary,
+                shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
             )
-        } else {
-            Image(
-                painter = painterResource(id = R.drawable.radar_icon),
-                contentDescription = "Marker Image",
+    ){
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            //The image displayed at the top of the info window
+            if (challenge.image != "") {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(challenge.image)
+                        .crossfade(true)
+                        .allowHardware(false)
+                        .build(),
+                    contentDescription = "Marker Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(90.dp)
+                        .padding(top = 16.dp),
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.radar_icon),
+                    contentDescription = "Marker Image",
+                    modifier = Modifier
+                        .size(90.dp)
+                     .padding(top = 16.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            //The middle text containing the title of the challenge
+            Text(
+                text = challenge.title,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .size(90.dp)
-                    .padding(top = 16.dp),
-                contentScale = ContentScale.Crop
+                    .fillMaxWidth()
+                    .testTag("Marker title"),
+                style = MaterialTheme.typography.displayMedium,
             )
+
+            //The bottom text containing the expiry date of the challenge
+            Text(
+                text = challenge.expiryDate.toString(),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                    .testTag("Marker expiry date")
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.headlineSmall,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        //The middle text containing the title of the challenge
-        Text(
-            text = challenge.title,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("Marker title"),
-            style = MaterialTheme.typography.displayMedium,
-        )
-
-        //The bottom text containing the expiry date of the challenge
-        Text(
-            text = challenge.expiryDate.toString(),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(top = 10.dp, start = 25.dp, end = 25.dp)
-                .testTag("Marker expiry date")
-                .fillMaxWidth(),
-            style = MaterialTheme.typography.headlineSmall,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
     }
 }
