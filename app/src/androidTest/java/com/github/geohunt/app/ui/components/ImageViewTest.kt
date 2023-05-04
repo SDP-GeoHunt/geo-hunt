@@ -12,6 +12,8 @@ import com.github.geohunt.app.ui.components.navigation.NavigationController
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @RunWith(AndroidJUnit4::class)
 class ImageViewTest {
@@ -23,19 +25,22 @@ class ImageViewTest {
     @Test
     fun testImageViewWithNavController() {
 
+        val url = "http://10.0.2.2:9199/geohunt-1.appspot.com/images/challenges-images.png"
+        val urlEncoded = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
             NavigationController(navController = navController) { }
 
             LaunchedEffect(true) {
-                navController.navigate("image-view/http://10.0.2.2:9199/geohunt-1.appspot.com/images/challenges-images.png")
+                navController.navigate("image-view/$urlEncoded")
+
             }
         }
 
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithTag("image-view-image-arf4ae56f4a1")
+        composeTestRule.onNodeWithTag("image-view-$url")
             .assertIsDisplayed()
     }
 }

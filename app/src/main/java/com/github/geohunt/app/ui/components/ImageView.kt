@@ -18,7 +18,7 @@ import com.github.geohunt.app.R
  * A composable function that displays a zoomable image view with an option to go back to the
  * previous screen.
  *
- * @param url The ID of the image to be displayed.
+ * @param url The url of the image to be displayed.
  * @param fnGoBackCallback function called whenever the user presses on the go-back arrow
  */
 @Composable
