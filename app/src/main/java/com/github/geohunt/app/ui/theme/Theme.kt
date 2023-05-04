@@ -48,7 +48,7 @@ fun GeoHuntTheme(
     content: @Composable() () -> Unit,
 ) {
     val themeState =
-        AppContainer.get(LocalContext.current.applicationContext as Application)
+        AppContainer.getInstance(LocalContext.current.applicationContext as Application)
             .appSettingsRepository
             .themeSetting.toOneWayMutableStateFlow(rememberCoroutineScope())
             .collectAsState()

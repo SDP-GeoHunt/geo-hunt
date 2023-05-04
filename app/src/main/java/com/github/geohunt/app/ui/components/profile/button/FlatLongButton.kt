@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components.button
+package com.github.geohunt.app.ui.components.profile.button
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

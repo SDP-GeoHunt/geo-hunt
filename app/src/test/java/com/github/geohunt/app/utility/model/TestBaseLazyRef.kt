@@ -6,7 +6,6 @@ import com.google.android.gms.tasks.Tasks
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.Test
-import java.util.concurrent.CompletableFuture
 
 class TestBaseLazyRef {
     @Test

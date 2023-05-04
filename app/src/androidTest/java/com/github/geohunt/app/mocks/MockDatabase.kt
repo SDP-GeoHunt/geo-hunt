@@ -9,7 +9,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import java.time.LocalDateTime
 
-abstract class BaseMockDatabase : Database {
+open class BaseMockDatabase : Database {
     override fun createChallenge(
         thumbnail: Bitmap,
         location: Location,
@@ -47,7 +47,11 @@ abstract class BaseMockDatabase : Database {
     ): Task<Claim> {
         throw NotImplementedError()
 }
-    override fun getFollowersOf(uid: String): Task<Map<String, Boolean>> {
+    override fun getFollowersOf(uid: String): Task<List<LazyRef<User>>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getTopNUsers(n: Int): Task<List<LazyRef<User>>> {
         TODO("Not yet implemented")
     }
 
@@ -56,6 +60,14 @@ abstract class BaseMockDatabase : Database {
     }
 
     override suspend fun unfollow(follower: String, followee: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun joinHunt(cid: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun leaveHunt(cid: String) {
         TODO("Not yet implemented")
     }
 

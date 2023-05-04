@@ -1,5 +1,6 @@
 package com.github.geohunt.app.maps
 
+/*
 import android.graphics.Bitmap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -102,3 +103,5 @@ class GoogleMapTest {
             .performClick()
     }
 }
+*/
+

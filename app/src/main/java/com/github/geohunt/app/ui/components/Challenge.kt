@@ -68,7 +68,7 @@ fun Challenge(challenge: Challenge, fnClaimCallback: (String) -> Unit) {
 fun ClaimButton(challenge: Challenge, fnClaimCallback: (String) -> Unit) {
     Button(onClick = { fnClaimCallback(challenge.cid) }) {
         Row (verticalAlignment = Alignment.CenterVertically){
-            Text(text = stringResource(id = R.string.challenge_claim))
+            Text(text = stringResource(id = R.string.claim_hunt))
             Icon(painter = painterResource(id = R.drawable.radar_icon),
                     contentDescription = "Radar icon of claim button")
         }

@@ -12,11 +12,12 @@ class MockUser(
     override val profilePicture: LazyRef<Bitmap> = MockProfilePicture,
     override val profilePictureHash: Int? = 1,
     override val challenges: List<LazyRef<Challenge>> = emptyList(),
-    override val hunts: List<LazyRef<Challenge>> = emptyList(),
     override val numberOfFollowers: Int = 0,
-    override val follows: List<LazyRef<User>> = emptyList(),
     override var score: Long = 1,
     override val isPOIUser: Boolean = false,
+    override val profileVisibility: ProfileVisibility = ProfileVisibility.PUBLIC,
     override var likes: List<LazyRef<Challenge>> = emptyList(),
-    override val profileVisibility: ProfileVisibility = ProfileVisibility.PUBLIC
+    override val preferredLocale: String? = null,
+    override val activeHunts: List<LazyRef<Challenge>> = listOf(),
+    override val followList: List<LazyRef<User>> = listOf()
 ) : User

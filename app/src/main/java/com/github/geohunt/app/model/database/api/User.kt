@@ -6,6 +6,7 @@ import com.github.geohunt.app.model.LazyRef
 /**
  * Define the profile information of a user as stored in the database
  */
+@Deprecated("Should no longer be used, prefer the repository/view model approach")
 interface User {
     /**
      * A string that uniquely identify this specific user in the database
@@ -42,7 +43,7 @@ interface User {
     /**
      * List of hunts the user had published
      */
-    val hunts: List<LazyRef<Challenge>>
+    val activeHunts: List<LazyRef<Challenge>>
 
     /**
      * Number of followers this user has
@@ -52,7 +53,13 @@ interface User {
     /**
      * List of all of the user that the current user is following,
      */
-    val follows: List<LazyRef<User>>
+    val followList: List<LazyRef<User>>
+
+    /**
+     * Preferred locale to be used when logged as the current user, when null
+     * use system settings.
+     */
+    val preferredLocale: String?
 
     /**
      * Current score of the user

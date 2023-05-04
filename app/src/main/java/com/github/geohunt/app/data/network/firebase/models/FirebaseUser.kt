@@ -1,7 +1,5 @@
 package com.github.geohunt.app.data.network.firebase.models
 
-import androidx.annotation.IntRange
-
 /**
  * Firebase JSON representation of a GeoHunt user.
  *
@@ -13,7 +11,7 @@ import androidx.annotation.IntRange
 data class FirebaseUser(
     val id: String,
     val displayName: String?,
-    val profilePictureUrl: String
+    val profilePictureUrl: String?
 ) {
     /** Default constructor to comply with [com.google.firebase.database.DataSnapshot.getValue]'s requirements */
     constructor(): this(

@@ -15,6 +15,7 @@ data class Claim(
     val id: String,
     val parentChallengeId: String,
     val claimerId: String,
+    val photoUrl: String,
 
     val claimDate: LocalDateTime,
 

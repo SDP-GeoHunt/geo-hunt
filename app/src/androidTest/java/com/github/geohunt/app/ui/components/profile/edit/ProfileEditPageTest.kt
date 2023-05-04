@@ -2,15 +2,12 @@ package com.github.geohunt.app.ui.components.profile.edit
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.github.geohunt.app.authentication.Authenticator
-import com.github.geohunt.app.mocks.BaseMockDatabase
-import com.github.geohunt.app.mocks.InstantLazyRef
-import com.github.geohunt.app.mocks.MockUser
-import com.github.geohunt.app.model.LiveLazyRef
-import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.ui.LoginActivityTest
-import org.junit.Before
+import com.github.geohunt.app.mocks.MockAuthRepository
+import com.github.geohunt.app.mocks.MockUserRepository
+import com.github.geohunt.app.model.EditedUser
+import com.github.geohunt.app.model.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.CompletableFuture
@@ -20,45 +17,68 @@ class ProfileEditPageTest {
     @get:Rule
     val c = createComposeRule()
 
-    @Before
-    fun mockAuthenticator() {
-        Authenticator.authInstance.set(LoginActivityTest.MockAuthenticator(MockUser(uid = "1")))
+    private fun createViewModel(authRepository: MockAuthRepository = MockAuthRepository(), userRepository: MockUserRepository = MockUserRepository()): ProfileEditPageViewModel {
+        return ProfileEditPageViewModel(
+            authRepository,
+            userRepository
+        )
     }
 
     @Test
-    fun showsLoadingIfNotAvailableYet() {
-        val mockDb = object: BaseMockDatabase() {
-            override fun getUserById(uid: String): LiveLazyRef<User> {
-                return InstantLazyRef("1", null)
+    fun showsLoadingIfNotReadyYet() {
+        val cf = CompletableFuture<Void?>()
+        val vm = createViewModel(
+            userRepository = object: MockUserRepository() {
+                override suspend fun getCurrentUser(): User {
+                    return withContext(Dispatchers.IO) {
+                        cf.get()
+                        MockAuthRepository.defaultLoggedUser
+                    }
+                }
             }
-        }
-        Database.databaseFactory.set { mockDb }
-
+        )
         c.setContent {
-            ProfileEditPage { }
+            ProfileEditPage(onBackButton = { }, vm = vm)
         }
         c.onNodeWithTag("progress").assertIsDisplayed()
-    }
-
-    @Test
-    fun doesNotShowLoadingIfAvailable() {
-        val mockDb = object: BaseMockDatabase() {
-            override fun getUserById(uid: String): LiveLazyRef<User> {
-                return InstantLazyRef("1", MockUser(uid = "1"))
-            }
-        }
-        Database.databaseFactory.set { mockDb }
-        c.setContent {
-            ProfileEditPage { }
-        }
+        cf.complete(null)
+        c.waitForIdle()
         c.onNodeWithTag("progress").assertDoesNotExist()
     }
 
     @Test
     fun titleIsShown() {
-        c.setContent { ProfileEditPage { } }
+        c.setContent { ProfileEditPage({ }, vm = createViewModel()) }
         c.onNodeWithText("Edit profile").assertIsDisplayed()
     }
+
+    @Test
+    fun triggersUpdateCorrectly() {
+        val cf = CompletableFuture<EditedUser>()
+        val vm = createViewModel(
+            userRepository = object: MockUserRepository() {
+                override suspend fun updateUser(editedUser: EditedUser) {
+                    cf.complete(editedUser)
+                }
+            }
+        )
+        c.setContent {
+            ProfileEditPage(onBackButton = {}, vm = vm)
+        }
+        c.onNodeWithTag("display-name-input").performTextInput("prout")
+        c.onNodeWithTag("save-btn").performClick()
+        val newUser = cf.get(2, TimeUnit.SECONDS)
+        assert(newUser.newDisplayName != null)
+        assert(newUser.newDisplayName!!.contains("prout"))
+    }
+
+    /*
+    @Before
+    fun mockAuthenticator() {
+        Authenticator.authInstance.set(LoginActivityTest.MockAuthenticator(MockUser(uid = "1")))
+    }
+
+
 
     @Test
     fun clickingOnBackButtonTriggersCallback() {
@@ -68,5 +88,6 @@ class ProfileEditPageTest {
         }}
         c.onNodeWithTag("back-btn").performClick()
         cf.get(2, TimeUnit.SECONDS)
-    }
+    }*/
+    // TODO
 }

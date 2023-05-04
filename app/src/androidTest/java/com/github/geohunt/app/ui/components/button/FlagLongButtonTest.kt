@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.github.geohunt.app.ui.components.profile.button.FlatLongButton
 import org.junit.Rule
 import org.junit.Test
 import java.util.concurrent.CompletableFuture
