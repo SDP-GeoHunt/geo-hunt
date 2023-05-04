@@ -1,10 +1,22 @@
 package com.github.geohunt.app.ui.screens.main
 
+import android.content.Context
+import android.provider.Settings.Global.getString
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
+import com.github.geohunt.app.R
 import com.github.geohunt.app.data.network.NetworkMonitor
 import com.github.geohunt.app.data.repository.AuthRepository
+import com.github.geohunt.app.data.repository.FollowRepository
+import com.github.geohunt.app.data.repository.UserRepository
 import com.github.geohunt.app.ui.AuthViewModel
+import com.github.geohunt.app.utility.showNotification
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +51,32 @@ class MainViewModel(
             authRepository.logOut(a)
             then()
         }
+    }
+
+    fun listenForNewNotification(context: Context) {
+        val database = FirebaseDatabase.getInstance()
+        val challengesRef = database.getReference("challenges")
+
+        val challengesListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach { child ->
+                    if (child.key != null) {
+                        showNotification(
+                            context = context,
+                            title = context.resources.getString(R.string.new_challenge_notification_title),
+                            message = context.resources.getString(R.string.new_challenge_notification_message)
+                        )
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w("ERROR:", "Failed to listen for challenges.", error.toException())
+            }
+        }
+
+        challengesRef.addValueEventListener(challengesListener)
+
     }
 
     init {

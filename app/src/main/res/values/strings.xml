@@ -90,4 +90,8 @@
     <string name="require_camera_permission_button">Request camera permission</string>
     <string name="require_location_permission">GeoHunt requires the precise location of this device in order to use this feature</string>
     <string name="require_location_permission_button">Request location permission</string>
+
+    <string name="new_challenge_notification_title">New Challenge!</string>
+    <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
+
 </resources>
