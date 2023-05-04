@@ -2,6 +2,7 @@ package com.github.geohunt.app.ui.components.tutorial
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -24,31 +25,31 @@ class TutorialScreenTest {
     }
 
     @Test
-    fun checkLayoutAndButtonsAreShowed() {
+    fun checkLayoutAndButtonsAreShown() {
         composeTestRule
             .onNodeWithTag("Tutorial screen layout")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithTag("Go forward button")
-            .assertExists()
+            .assertIsDisplayed()
             // Perform click to go to next screen and display the back button
             .performClick()
 
         composeTestRule
             .onNodeWithTag("Go back button")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithTag("Skip button")
-            .assertExists()
+            .assertIsDisplayed()
     }
 
     @Test
     fun clickingOnForwardAndBackButtonsChangesThePage() {
         composeTestRule
             .onNodeWithTag("Current page is 0")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithTag("Go forward button")
@@ -57,7 +58,7 @@ class TutorialScreenTest {
 
         composeTestRule
             .onNodeWithTag("Current page is 1")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithTag("Go forward button")
@@ -66,7 +67,7 @@ class TutorialScreenTest {
 
         composeTestRule
             .onNodeWithTag("Current page is 2")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithTag("Go back button")
@@ -75,7 +76,7 @@ class TutorialScreenTest {
 
         composeTestRule
             .onNodeWithTag("Current page is 1")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithTag("Go back button")
@@ -84,21 +85,21 @@ class TutorialScreenTest {
 
         composeTestRule
             .onNodeWithTag("Current page is 0")
-            .assertExists()
+            .assertIsDisplayed()
     }
 
     @Test
     fun checkSlideContentIsCorrectlyDisplayed() {
         composeTestRule
             .onNodeWithTag("Tutorial Image")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithTag("Tutorial Title")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithTag("Tutorial Description")
-            .assertExists()
+            .assertIsDisplayed()
     }
 }

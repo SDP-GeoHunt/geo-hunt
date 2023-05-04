@@ -24,7 +24,7 @@ import com.github.geohunt.app.utility.replaceActivity
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels(factoryProducer = { LoginViewModel.Factory })
 
-    private val PREFERENCES_FILE = "preferences"
+    private val PREFERENCES_FILE = R.string.preferences_file.toString()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +43,6 @@ class LoginActivity : ComponentActivity() {
             replaceActivity(intent)
             settings.edit().putBoolean("first_application_open", false).apply()
         }
-
 
         // Register the login launcher
         val loginLauncher = viewModel.registerLoginPrompt(

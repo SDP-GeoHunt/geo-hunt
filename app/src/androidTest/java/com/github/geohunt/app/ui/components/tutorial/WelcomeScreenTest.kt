@@ -3,6 +3,7 @@ package com.github.geohunt.app.ui.components.tutorial
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -47,15 +48,15 @@ class WelcomeScreenTest {
 
         composeTestRule
             .onNodeWithTag("Welcome Label")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithTag("Welcome Description")
-            .assertExists()
+            .assertIsDisplayed()
 
         composeTestRule
             .onNodeWithText("GET STARTED")
-            .assertExists()
+            .assertIsDisplayed()
             .assertHasClickAction()
     }
 }

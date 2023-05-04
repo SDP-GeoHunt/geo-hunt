@@ -67,7 +67,7 @@ fun Tutorial(activity: ComponentActivity) {
                 .fillMaxWidth()
                 .testTag("Current page is ${pageState.currentPage}"),
             content = {
-                page -> TutorialSlideContent(items = items[page])
+                page -> TutorialSlideContent(slide = items[page])
             },
         )
 
@@ -188,19 +188,19 @@ fun BottomButtons(
 }
 
 /**
- * Displays the content of a list of tutorial slides
+ * Displays the content of a slide
  *
- * @param items: The list of tutorial slides
+ * @param slide: The list of tutorial slides
  */
 @Composable
-fun TutorialSlideContent(items: TutorialSlides) {
+fun TutorialSlideContent(slide: TutorialSlides) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = items.icon),
+            painter = painterResource(id = slide.icon),
             contentDescription = "Tutorial Image",
             alignment = Alignment.Center,
             contentScale = ContentScale.FillWidth,
@@ -212,7 +212,7 @@ fun TutorialSlideContent(items: TutorialSlides) {
         Spacer(modifier = Modifier.height(25.dp))
 
         Text(
-            text = stringResource(id = items.title),
+            text = stringResource(id = slide.title),
             fontSize = 35.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -226,7 +226,7 @@ fun TutorialSlideContent(items: TutorialSlides) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(id = items.description),
+            text = stringResource(id = slide.description),
             fontSize = 20.sp,
             fontWeight = FontWeight.Light,
             textAlign = TextAlign.Center,
