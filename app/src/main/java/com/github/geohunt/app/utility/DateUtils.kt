@@ -56,9 +56,9 @@ object DateUtils {
      *
      * @param localDateTime the datetime to be converted
      */
-    fun utcIso8601FromLocalNullable(localDateTime: LocalDateTime?) : String {
+    fun utcIso8601FromLocalNullable(localDateTime: LocalDateTime?) : String? {
         return when (localDateTime) {
-            null -> "null"
+            null -> null
             else -> utcIso8601FromLocal(localDateTime)
         }
     }
@@ -77,9 +77,9 @@ object DateUtils {
      *
      * @param value the ISO 8601 complaint String to be converted, also can be "null"
      */
-    fun localNullableFromUtcIso8601(value: String) : LocalDateTime? {
+    fun localNullableFromUtcIso8601(value: String?) : LocalDateTime? {
         return when (value) {
-            "null" -> null
+            null -> null
             else -> localFromUtcIso8601(value)
         }
     }

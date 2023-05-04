@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.database.api.Claim
+import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.ui.components.utils.ListDropdownMenu
 import com.github.geohunt.app.ui.theme.Lobster
 
@@ -65,6 +65,7 @@ fun DisplayStatistics(claims: List<Claim>) {
             verticalArrangement = Arrangement.spacedBy(5.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
         ListDropdownMenu(state = dateGranularityState,
+                update = { },
                 elements = DateGranularity.values().toList())
                 { it.toString() }
 

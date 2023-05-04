@@ -29,7 +29,7 @@ class DateFormatUtilsTest {
         val future = CompletableFuture<String>()
         composableTestRule.setContent {
             future.complete(
-               DateFormatUtils.getElapsedTimeString(dateTime = getAgo(value), prefixStringId = R.string.claimed_format)
+               DateFormatUtils.getElapsedTimeString(dateTime = getAgo(value), formattingStringId = R.string.claimed_format)
             )
         }
         return future.join()

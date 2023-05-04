@@ -78,3 +78,8 @@ fun gaussianDistributionPDF (mean: Double, std: Double): (Double) -> Double {
 fun clamp(min: Double, x: Double, max: Double): Double {
     return max(min(x, max), min)
 }
+
+fun clamp(min: Long, x: Long, max: Long) : Long {
+    return max(min(x, max), min)
+}
+

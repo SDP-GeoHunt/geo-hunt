@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 /**
@@ -24,6 +24,7 @@ import com.github.geohunt.app.ui.components.user.ProfileIcon
 fun LeaderboardListItem(
     position: Int,
     user: User,
+    score: Long,
     isCurrent: Boolean = false
 ) {
     require(position >= 0) { "position should be non-negative."}
@@ -62,6 +63,6 @@ fun LeaderboardListItem(
 
         Spacer(Modifier.weight(1.0f))
 
-        LeaderboardScore(score = user.score, color = textColor)
+        LeaderboardScore(score = score, color = textColor)
     }
 }

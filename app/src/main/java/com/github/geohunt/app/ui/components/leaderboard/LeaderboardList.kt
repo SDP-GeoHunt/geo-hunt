@@ -9,7 +9,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.User
 
 /**
  * Draws the main leaderboard list.
@@ -20,14 +20,14 @@ import com.github.geohunt.app.model.database.api.User
  * @param modifier The modifier to apply to the [LazyColumn] scrollable list.
  */
 @Composable
-fun LeaderboardList(users: List<User>, modifier: Modifier) {
+fun LeaderboardList(users: List<User>, scoreByUser: Map<User, Long>, modifier: Modifier) {
     LazyColumn(
         modifier = modifier
     ) {
         itemsIndexed(users) { index: Int, user: User ->
             when(index) {
                 in 0..2 -> {
-                    LeaderboardPodiumItem(position = index, user = user)
+                    LeaderboardPodiumItem(position = index, user = user, score = scoreByUser[user] ?: 0)
                     Spacer(Modifier.height(10.dp))
                 }
 
@@ -39,7 +39,7 @@ fun LeaderboardList(users: List<User>, modifier: Modifier) {
                     Divider(
                         Modifier.padding(horizontal = 16. dp)
                     )
-                    LeaderboardListItem(position = index, user = user)
+                    LeaderboardListItem(position = index, user = user, score = scoreByUser[user] ?: 0)
                 }
             }
         }

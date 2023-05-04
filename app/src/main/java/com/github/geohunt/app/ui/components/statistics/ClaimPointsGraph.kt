@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.github.geohunt.app.model.database.api.Claim
+import com.github.geohunt.app.model.Claim
 import java.time.LocalDate
 
 /**
@@ -27,7 +27,7 @@ fun ClaimPointsGraph(claims: List<Claim>, dateGranularity: DateGranularity) {
 }
 
 fun createEntries(claims: List<Claim>, dateGranularity: DateGranularity): Pair<List<LocalDate>, List<Long>> {
-    val sortedClaims = claims.sortedBy { it.time }
+    val sortedClaims = claims.sortedBy { it.claimDate }
 
     //Split claims, undisplayed/displayed claims
     val now = LocalDate.now()
@@ -54,11 +54,11 @@ fun createEntries(claims: List<Claim>, dateGranularity: DateGranularity): Pair<L
 }
 
 private fun partitionClaims(claims: List<Claim>, undisplayedLimit: LocalDate): Pair<List<Claim>, List<Claim>> {
-    return claims.partition { it.time.toLocalDate().toEpochDay() <= undisplayedLimit.toEpochDay() }
+    return claims.partition { it.claimDate.toLocalDate().toEpochDay() <= undisplayedLimit.toEpochDay() }
 }
 
 private fun separateClaims(displayedClaims: List<Claim>, now: LocalDate, undisplayedClaims: List<Claim>, undisplayedLimit: LocalDate): Pair<List<LocalDate>, List<Long>> {
-    val displayedDates = displayedClaims.map { it.time.toLocalDate() } + listOf(now)
+    val displayedDates = displayedClaims.map { it.claimDate.toLocalDate() } + listOf(now)
     val entryDates = if (undisplayedClaims.isEmpty()) displayedDates else
         listOf(undisplayedLimit.plusDays(1)) + displayedDates
 
