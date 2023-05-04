@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,8 +26,7 @@ import kotlin.math.cos
 import kotlin.math.pow
 
 private val epflCoordinates = LatLng(46.51958, 6.56398)
-private var wantToMockChallenges = false
-private val mockTestChallengeDatabase : SnapshotStateList<Marker> = mutableStateListOf()
+
 /*
  * Displays the Google Map and its content
  *
@@ -67,7 +65,7 @@ fun GoogleMapDisplay(
             val location = Location(latitude, longitude)
             val neighboringSectors = location.getNeighboringSectors(radius)
 
-            var markers = remember { mutableStateListOf<Marker>() }
+            val markers = remember { mutableStateListOf<Marker>() }
             viewModel.updateFetchableChallenges(neighboringSectors)
             val challenges = viewModel.challenges.collectAsStateWithLifecycle()
             challenges.value?.forEach {
@@ -80,10 +78,6 @@ fun GoogleMapDisplay(
                 markers.add(marker)
             }
 
-            if (wantToMockChallenges){
-                markers = mockTestChallengeDatabase
-            }
-
             DisplayMarkers(markers = markers)
 
             content()
@@ -91,12 +85,3 @@ fun GoogleMapDisplay(
     }
 }
 
-/**
- * Injects mock challenges into the map
- *
- * @param challenges the challenges to inject
- */
-fun injectMockChallenges(challenges: SnapshotStateList<Marker>)  {
-    wantToMockChallenges = true
-    mockTestChallengeDatabase.addAll(challenges)
-}

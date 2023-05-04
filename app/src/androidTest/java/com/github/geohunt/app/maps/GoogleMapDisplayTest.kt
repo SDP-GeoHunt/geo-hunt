@@ -22,7 +22,7 @@ import java.time.LocalDateTime
 import java.time.Month
 
 @RunWith(JUnit4::class)
-class GoogleMapTest {
+class GoogleMapDisplayTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -45,8 +45,6 @@ class GoogleMapTest {
     fun testMapIsDisplayed() {
         val cameraPosition = CameraPosition(epflCoordinates, 12f, 0f, 0f)
         composeTestRule.setContent {
-            injectMockChallenges(mockTestChallengeDatabase)
-
             GoogleMapDisplay(
                 Modifier.testTag("Maps"),
                 cameraPosition = cameraPosition,
@@ -60,8 +58,6 @@ class GoogleMapTest {
     @Test
     fun markerInfoWindowContentIsDisplayedCorrectly() {
         composeTestRule.setContent {
-            injectMockChallenges(mockTestChallengeDatabase)
-
             MarkerInfoWindowContent(challenge = mockTestChallengeDatabase[0])
         }
 
