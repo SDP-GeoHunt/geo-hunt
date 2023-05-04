@@ -1,15 +1,8 @@
 package com.github.geohunt.app.maps.marker
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,11 +15,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.size.Scale
 import com.github.geohunt.app.R
 import com.google.maps.android.compose.MarkerInfoWindow
 import com.google.maps.android.compose.rememberMarkerState
+
 
 /**
  * Displays provided markers on the map
@@ -36,8 +31,6 @@ import com.google.maps.android.compose.rememberMarkerState
 @Composable
 fun DisplayMarkers(markers: List<Marker>) {
     markers.forEach { challenge ->
-        Log.d("DisplayMarkers", "DisplayMarkers: ${challenge.title}")
-
         MarkerInfoWindow (
             state = rememberMarkerState(position = challenge.coordinates),
             title = challenge.title,
@@ -70,18 +63,27 @@ fun MarkerInfoWindowContent(
         ) {
             //The image displayed at the top of the info window
             if (challenge.image != "") {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(challenge.image)
-                        .crossfade(true)
-                        .allowHardware(false)
-                        .build(),
-                    contentDescription = "Marker Image",
-                    contentScale = ContentScale.Crop,
+                Column(
                     modifier = Modifier
-                        .size(90.dp)
-                        .padding(top = 16.dp),
-                )
+                        .fillMaxWidth()
+                        .testTag("Marker image")
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            ImageRequest.Builder(LocalContext.current).data(data = challenge.image)
+                                .apply(block = fun ImageRequest.Builder.() {
+                                    crossfade(true)
+                                    allowHardware(false)
+                                    scale(Scale.FILL)
+                                }).build()
+                        ),
+                        contentDescription = "Marker Image",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .size(70.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+            }
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.radar_icon),

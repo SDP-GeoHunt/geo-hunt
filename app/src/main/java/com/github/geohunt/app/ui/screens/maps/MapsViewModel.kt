@@ -22,12 +22,12 @@ class MapsViewModel(
     val challenges: StateFlow<List<Challenge>?> = _challenges.asStateFlow()
 
     fun updateFetchableChallenges(sectorHashes: List<String>) {
-        val aggregateChallengeFlow = sectorHashes.map { sectorHash ->
-            challengeRepository.getSectorChallenges(sectorHash)
-        }.aggregateFlows()
-
         viewModelScope.launch {
-                aggregateChallengeFlow.collect {
+            val aggregateChallengeFlow = sectorHashes.map { sectorHash ->
+                challengeRepository.getSectorChallenges(sectorHash)
+            }.aggregateFlows()
+
+            aggregateChallengeFlow.collect {
                 _challenges.value = it
             }
         }
