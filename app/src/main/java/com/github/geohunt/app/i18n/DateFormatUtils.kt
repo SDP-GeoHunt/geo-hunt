@@ -153,6 +153,6 @@ object DateFormatUtils {
     }
 }
 
-private fun RelativeDateTimeFormatter.format(quantity: Long, direction: RelativeDateTimeFormatter.Direction, timeUnit: RelativeDateTimeFormatter.RelativeUnit): String? {
+private fun RelativeDateTimeFormatter.format(quantity: Long, direction: Direction, timeUnit: RelativeDateTimeFormatter.RelativeUnit): String? {
     return this.format(quantity.toDouble(), direction, timeUnit)
 }

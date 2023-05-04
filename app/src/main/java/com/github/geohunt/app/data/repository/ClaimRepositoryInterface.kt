@@ -6,7 +6,7 @@ import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 
 interface ClaimRepositoryInterface {
     /**

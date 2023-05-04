@@ -12,7 +12,7 @@ import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.BitmapUtils.resizeBitmapToFit
 import kotlinx.coroutines.CoroutineExceptionHandler

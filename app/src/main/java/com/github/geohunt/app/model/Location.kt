@@ -1,4 +1,4 @@
-package com.github.geohunt.app.model.database.api
+package com.github.geohunt.app.model
 
 import com.github.geohunt.app.utility.quantize
 import com.github.geohunt.app.utility.quantizeToLong

@@ -12,7 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import com.github.geohunt.app.BuildConfig
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.utility.Singleton
 import com.github.geohunt.app.utility.findActivity
 import com.github.geohunt.app.utility.toCompletableFuture

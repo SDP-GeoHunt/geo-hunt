@@ -16,7 +16,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.claims.SubmitClaimForm
 import com.github.geohunt.app.ui.components.claims.SubmitClaimViewModel

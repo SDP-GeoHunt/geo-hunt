@@ -9,7 +9,7 @@ import com.github.geohunt.app.data.network.firebase.toList
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.snapshots

@@ -12,12 +12,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 
 @Composable
-fun MainScreen(database: Database, viewModel: MainViewModel, logout: () -> Any) {
+fun MainScreen(viewModel: MainViewModel, logout: () -> Any) {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
 
@@ -42,7 +41,6 @@ fun MainScreen(database: Database, viewModel: MainViewModel, logout: () -> Any) 
     ) { padding ->
         NavigationController(
             navController = navController,
-            database = database,
             modifier = Modifier.padding(padding),
             logout = logout
         )

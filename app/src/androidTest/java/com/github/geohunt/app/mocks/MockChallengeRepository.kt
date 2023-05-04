@@ -5,7 +5,7 @@ import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime

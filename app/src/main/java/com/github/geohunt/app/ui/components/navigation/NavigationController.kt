@@ -5,7 +5,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Home
@@ -20,33 +19,34 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
-import com.github.geohunt.app.authentication.Authenticator
+import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.maps.GoogleMapDisplay
-import com.github.geohunt.app.model.database.Database
-import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
-import com.github.geohunt.app.ui.components.profile.ProfilePage
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
-import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
+import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
+import com.github.geohunt.app.ui.screens.home.HomeScreen
+import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.settings.SettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsPage
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsViewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 typealias ComposableFun = @Composable () -> Unit
 
-interface Route {
+interface VisibileRoute {
     val route: String
 }
 
-enum class VisibleRoute(val titleStringId: Int, override val route: String, val icon: ComposableFun): Route {
+enum class VisibleRoute(val titleStringId: Int, override val route: String, val icon: ComposableFun): VisibileRoute {
 
     Home(R.string.navigation_home, "home", { Icon(Icons.Sharp.Home, null) }),
     Explore(R.string.navigation_explore, "explore", { Icon(Icons.Sharp.Search, null) }),
@@ -61,7 +61,7 @@ enum class VisibleRoute(val titleStringId: Int, override val route: String, val 
     Profile(R.string.navigation_profile, "profile", { Icon(Icons.Sharp.Person, null) })
 }
 
-enum class HiddenRoute(override val route: String): Route {
+enum class HiddenRoute(override val route: String): VisibileRoute {
     EditProfile("settings/profile"),
     Settings("settings"),
     AppSettings("settings/app"),
@@ -72,7 +72,6 @@ enum class HiddenRoute(override val route: String): Route {
 @Composable
 fun NavigationController(
     navController: NavHostController,
-    database: Database,
     modifier: Modifier = Modifier,
     logout: () -> Any
 ) {
@@ -81,6 +80,7 @@ fun NavigationController(
 
     NavHost(navController, startDestination = VisibleRoute.Home.route, modifier = modifier) {
         composable(VisibleRoute.Home.route) {
+            HomeScreen()
         }
         composable(VisibleRoute.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
@@ -105,31 +105,18 @@ fun NavigationController(
         }
 
         composable(VisibleRoute.ActiveHunts.route) {
-            val user = Authenticator.authInstance.get().user
-
-            if (user == null) {
-                Text("You are not logged in. Weird :(")
-            } else {
-                ActiveHuntsScreen(
-                    openExploreTab = { navController.navigate(VisibleRoute.Explore.route) }
-                )
-            }
+            ActiveHuntsScreen(
+                openExploreTab = { navController.navigate(VisibleRoute.Explore.route) }
+            )
         }
 
         // Profile
         composable(VisibleRoute.Profile.route) {
-            val user = Authenticator.authInstance.get().user
-
-            if (user == null) {
-                Text("You are not logged in. Weird :(")
-            } else {
-                ProfilePage(
-                    openLeaderboard = { navController.navigate(HiddenRoute.Leaderboard.route) },
-                    openProfileEdit = { navController.navigate(HiddenRoute.EditProfile.route) },
-                    onLogout = { logout() },
-                    openSettings = { navController.navigate(HiddenRoute.Settings.route) }
-                )
-            }
+            ProfilePage(
+                openLeaderboard = { navController.navigate(HiddenRoute.Leaderboard.route) },
+                openProfileEdit = { navController.navigate(HiddenRoute.EditProfile.route) },
+                onLogout = { logout() }
+            )
         }
 
         composable("${VisibleRoute.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
@@ -148,11 +135,11 @@ fun NavigationController(
 
         // View image
         composable(
-            "image-view/{imageId}",
-            arguments = listOf(navArgument("imageId") { type = NavType.StringType })
+            "image-view/{imageUrl}",
+            arguments = listOf(navArgument("imageUrl") { type = NavType.StringType })
         ) { backStackEntry ->
-            val iid = backStackEntry.arguments?.getString("imageId")!!
-            ZoomableImageView(database = database, iid = iid) {
+            val url = backStackEntry.arguments?.getString("imageUrl")!!
+            ZoomableImageView(url = url) {
                 navController.popBackStack()
             }
         }
@@ -166,7 +153,7 @@ fun NavigationController(
 
             ChallengeView(
                 cid = cid,
-                fnViewImageCallback = { url -> navController.navigate("image-view/$url") },
+                fnViewImageCallback = { navController.navigate("image-view/${URLEncoder.encode(it, StandardCharsets.UTF_8.toString())}") },
                 fnClaimHuntCallback = { cid -> navController.navigate("claim-challenge/$cid") },
                 fnGoBackBtn = { navController.popBackStack() }
             )
@@ -211,4 +198,3 @@ fun NavigationController(
         }
     }
 }
-

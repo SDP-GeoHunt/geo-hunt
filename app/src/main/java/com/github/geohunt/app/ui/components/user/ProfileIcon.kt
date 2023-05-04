@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.ui.rememberLazyRef
 
 /**
  * Creates a round profile icon of the given size.
@@ -36,23 +35,6 @@ fun ProfileIcon(user: User, modifier: Modifier = Modifier) {
 
     if (user.profilePictureUrl != null) {
         ProfileIcon(user.profilePictureUrl, user.displayName, modifier = newModifier)
-    } else {
-        DefaultProfileIcon(modifier = newModifier)
-    }
-}
-
-@Deprecated("Deprecated. Please use the User given by the UserRepository.")
-@Composable
-fun ProfileIcon(user: com.github.geohunt.app.model.database.api.User, modifier: Modifier = Modifier) {
-    val newModifier = modifier
-        .aspectRatio(1f)
-        .padding(8.dp)
-        .clip(CircleShape)
-
-    if (user.profilePicture != null) {
-        val v = rememberLazyRef { user.profilePicture!! }
-
-        ProfileIcon(v.value, user.displayName, modifier = newModifier)
     } else {
         DefaultProfileIcon(modifier = newModifier)
     }

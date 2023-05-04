@@ -8,7 +8,7 @@ import org.junit.Test
 
 class MathUtilsTest {
 
-    private val epsilon = 1e-5;
+    private val epsilon = 1e-5
 
     @Test
     fun quantizeCorrectlyWorkForValidInput() {
