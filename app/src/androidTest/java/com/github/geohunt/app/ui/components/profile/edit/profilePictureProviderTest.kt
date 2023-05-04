@@ -52,7 +52,7 @@ class profilePictureProviderTest {
     @Test
     fun callbacksWhenPicked() {
         var provider: (() -> Unit)? = null
-        val cf = CompletableFuture<Bitmap>()
+        val cf = CompletableFuture<Uri>()
         rule.setContent {
             provider = profilePictureProvider(onPick = { cf.complete(it) })
         }
@@ -84,7 +84,7 @@ class profilePictureProviderTest {
     @Test
     fun doesNotCallbackOnFail() {
         var provider: (() -> Unit)? = null
-        val cf = CompletableFuture<Bitmap>()
+        val cf = CompletableFuture<Uri>()
         rule.setContent {
             provider = profilePictureProvider(onPick = { cf.complete(it) })
         }

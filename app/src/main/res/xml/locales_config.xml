@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notice, when adding a new locale, this list must be
+     kept synchronised with the one defined in build.gradle (app).
+     Aka. then resourceConfigurations -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <!-- <locale android:name="en_US" /> -->
+</locale-config>

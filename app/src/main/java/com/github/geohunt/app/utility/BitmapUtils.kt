@@ -20,11 +20,15 @@ object BitmapUtils {
      */
     fun saveToFileAsync(bitmap: Bitmap, file: File, format: CompressFormat, quality: Int) : Deferred<Unit> {
         return CoroutineScope(Dispatchers.IO).async {
-            withContext(Dispatchers.IO) {
-                FileOutputStream(file).use {
-                    bitmap.compress(format, quality, it)
-                    it.flush()
-                }
+            saveToFile(bitmap, file, format, quality)
+        }
+    }
+
+    suspend fun saveToFile(bitmap: Bitmap, file: File, format: CompressFormat, quality: Int) {
+        return withContext(Dispatchers.IO) {
+            FileOutputStream(file).use {
+                bitmap.compress(format, quality, it)
+                it.flush()
             }
         }
     }
@@ -36,10 +40,14 @@ object BitmapUtils {
      */
     fun loadFromFileAsync(file: File) : Deferred<Bitmap> {
         return CoroutineScope(Dispatchers.IO).async {
-            withContext(Dispatchers.IO) {
-                FileInputStream(file).use {
-                    BitmapFactory.decodeStream(it)
-                }
+            loadFromFile(file)
+        }
+    }
+
+    suspend fun loadFromFile(file: File) : Bitmap {
+        return withContext(Dispatchers.IO) {
+            FileInputStream(file).use {
+                BitmapFactory.decodeStream(it)
             }
         }
     }
@@ -54,12 +62,21 @@ object BitmapUtils {
      * @return a [Task] containing the resized bitmap
      */
     fun resizeBitmapToFitAsync(bitmap: Bitmap, maxPixels: Int) : Deferred<Bitmap> {
-        require(maxPixels > 0)
+        require(maxPixels > 0) // Early exit
 
         return CoroutineScope(Dispatchers.Main).async {
+            bitmap.resizeBitmapToFit(maxPixels)
+        }
+    }
+
+    suspend fun Bitmap.resizeBitmapToFit(maxPixels: Int) : Bitmap {
+        require(maxPixels > 0)
+        val bitmap = this
+
+        return withContext(Dispatchers.IO) {
             // If the bitmap is already well sized
             if (bitmap.width * bitmap.height <= maxPixels) {
-                return@async bitmap
+                 return@withContext bitmap
             }
 
             // Compute the scaling factor to fit within the max pixel

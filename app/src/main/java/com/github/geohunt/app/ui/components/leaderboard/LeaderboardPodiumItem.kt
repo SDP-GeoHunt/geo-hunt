@@ -13,7 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.theme.Lobster
 import com.github.geohunt.app.ui.theme.geoHuntRed
@@ -27,7 +27,7 @@ import com.github.geohunt.app.ui.theme.geoHuntRed
  * @param position A number between 0 and 2 indicating the user's ranking.
  */
 @Composable
-fun LeaderboardPodiumItem(user: User, position: Int) {
+fun LeaderboardPodiumItem(user: User, score: Long, position: Int) {
     require(position in 0..2) { "Position in PodiumItem should be in 0..2" }
 
     val height = arrayOf(100. dp, 70. dp, 70. dp)[position]
@@ -60,7 +60,7 @@ fun LeaderboardPodiumItem(user: User, position: Int) {
             )
 
             if (position == 0) {
-                LeaderboardScore(user.score, color = Color.White)
+                LeaderboardScore(score, color = Color.White)
             }
         }
 
@@ -73,7 +73,7 @@ fun LeaderboardPodiumItem(user: User, position: Int) {
             verticalArrangement = Arrangement.Center
         ) {
             if (position != 0) {
-                LeaderboardScore(user.score, color = Color.White)
+                LeaderboardScore(score, color = Color.White)
             } else {
                 Icon(
                     painter = painterResource(R.drawable.baseline_local_fire_department_24),
