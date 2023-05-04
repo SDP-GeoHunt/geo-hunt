@@ -1,16 +1,16 @@
-package com.github.geohunt.app.ui.settings.privacysettings
+package com.github.geohunt.app.ui.settings.privacy_settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.geohunt.app.data.repository.ProfileVisibilityRepositoryInterface
-import com.github.geohunt.app.data.repository.UserRepository
+import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.model.database.api.ProfileVisibility
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PrivacySettingsViewModel(
-    private val userRepository: UserRepository,
+    private val userRepository: UserRepositoryInterface,
     private val profileVisibilityRepository: ProfileVisibilityRepositoryInterface
 ): ViewModel() {
     private val _isDisabled = MutableStateFlow(true)

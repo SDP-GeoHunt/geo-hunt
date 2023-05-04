@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.settings.privacysettings
+package com.github.geohunt.app.ui.settings.privacy_settings
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding

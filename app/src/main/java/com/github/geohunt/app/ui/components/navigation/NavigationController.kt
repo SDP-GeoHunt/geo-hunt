@@ -37,8 +37,8 @@ import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
 import com.github.geohunt.app.ui.settings.SettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
-import com.github.geohunt.app.ui.settings.privacysettings.PrivacySettingsPage
-import com.github.geohunt.app.ui.settings.privacysettings.PrivacySettingsViewModel
+import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsPage
+import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsViewModel
 
 typealias ComposableFun = @Composable () -> Unit
 

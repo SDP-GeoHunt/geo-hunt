@@ -1,8 +1,10 @@
-package com.github.geohunt.app.ui.settings.privacysettings
+package com.github.geohunt.app.ui.settings.privacy_settings
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.alorma.compose.settings.ui.SettingsGroup
 import com.github.geohunt.app.R
@@ -22,7 +24,8 @@ fun ProfileVisibilityChooser(viewModel: PrivacySettingsViewModel) {
             isSelected = visibility.value == ProfileVisibility.PUBLIC,
             value = ProfileVisibility.PUBLIC,
             onSelect = callback,
-            disabled = isDisabled.value
+            disabled = isDisabled.value,
+            modifier = Modifier.testTag("select-public")
         )
         RadioItem(
             title = stringResource(id = R.string.following_only),
@@ -30,7 +33,8 @@ fun ProfileVisibilityChooser(viewModel: PrivacySettingsViewModel) {
             isSelected = visibility.value == ProfileVisibility.FOLLOWING_ONLY,
             value = ProfileVisibility.FOLLOWING_ONLY,
             onSelect = callback,
-            disabled = isDisabled.value
+            disabled = isDisabled.value,
+            modifier = Modifier.testTag("select-following-only")
         )
         RadioItem(
             title = stringResource(id = R.string.private_word),
@@ -38,7 +42,8 @@ fun ProfileVisibilityChooser(viewModel: PrivacySettingsViewModel) {
             isSelected = visibility.value == ProfileVisibility.PRIVATE,
             value = ProfileVisibility.PRIVATE,
             onSelect = callback,
-            disabled = isDisabled.value
+            disabled = isDisabled.value,
+            modifier = Modifier.testTag("select-private")
         )
     }
 }
