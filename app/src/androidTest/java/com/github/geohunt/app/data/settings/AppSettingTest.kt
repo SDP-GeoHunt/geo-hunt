@@ -37,9 +37,8 @@ class AppSettingTest {
             }
             assert(msf?.value == 0)
             cf.complete(null)
-            cfEmitted.get(2, TimeUnit.SECONDS)
+            cfEmitted.get(2, TimeUnit.SECONDS) // Intended
             assert(msf?.value == 1)
         }
-
     }
 }

@@ -44,7 +44,7 @@ fun ProfilePage(
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val isMoreOptionsAvailable =
-        openProfileEdit != null || onLogout != null || openLeaderboard != null
+        openProfileEdit != null || onLogout != null || openLeaderboard != null || openSettings != null
 
     // Refreshing
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
@@ -97,12 +97,12 @@ fun ProfilePage(
                 if (error.value != null) {
                     ErrorFetchingPage(
                         stringResource(id = R.string.error_fetching_page),
-                        fullModifier
+                        fullModifier.testTag("error-profile")
                     )
                 } else if (isPrivate.value) {
                     ErrorFetchingPage(
                         stringResource(id = R.string.private_profile_page),
-                        fullModifier
+                        fullModifier.testTag("private-profile")
                     )
                 } else {
                     if (user.value == null) {

@@ -31,4 +31,8 @@ open class MockFollowRepository: FollowRepositoryInterface {
     override fun doesFollow(uid: String): Flow<Boolean> {
         return flowOf(false)
     }
+
+    override fun doesFollow(userAUid: String, userBUid: String): Flow<Boolean> {
+        return flowOf(false)
+    }
 }

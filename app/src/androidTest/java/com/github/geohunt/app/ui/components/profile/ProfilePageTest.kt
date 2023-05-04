@@ -2,6 +2,7 @@ package com.github.geohunt.app.ui.components.profile
 
 import android.app.Application
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -11,14 +12,17 @@ import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.AuthRepositoryInterface
 import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.FollowRepositoryInterface
+import com.github.geohunt.app.data.repository.ProfileVisibilityRepositoryInterface
 import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.mocks.MockChallenge
 import com.github.geohunt.app.mocks.MockChallengeRepository
 import com.github.geohunt.app.mocks.MockFollowRepository
+import com.github.geohunt.app.mocks.MockProfileVisibilityRepository
 import com.github.geohunt.app.mocks.MockUserRepository
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
+import com.github.geohunt.app.model.database.api.ProfileVisibility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -49,6 +53,7 @@ class ProfilePageTest {
         user: UserRepositoryInterface? = MockUserRepository(appContainer!!.user),
         challenge: ChallengeRepositoryInterface? = null,
         follow: FollowRepositoryInterface? = MockFollowRepository(),
+        visibility: ProfileVisibilityRepositoryInterface? = MockProfileVisibilityRepository(),
         uid: String = "1"
     ): ProfilePageViewModel {
         return ProfilePageViewModel(
@@ -56,6 +61,7 @@ class ProfilePageTest {
             userRepository = user ?: appContainer!!.user,
             challengeRepository = challenge ?: appContainer!!.challenges,
             followRepository = follow ?: appContainer!!.follow,
+            profileVisibilityRepository = visibility ?: appContainer!!.profileVisibilities,
             uid = uid
         )
     }
@@ -191,9 +197,8 @@ class ProfilePageTest {
         testRule.setContent {
             ProfilePage(viewModel = vm) { }
         }
-        testRule.onNodeWithTag("settings-drawer").assertDoesNotExist()
+        testRule.onNodeWithTag("settings-drawer").assertIsNotDisplayed()
         testRule.onNodeWithTag("profile-settings-btn").performClick()
-        Thread.sleep(5000)
         testRule.onNodeWithTag("settings-drawer").assertIsDisplayed()
     }
 
@@ -213,6 +218,32 @@ class ProfilePageTest {
             ProfilePage(viewModel = vm)
         }
         testRule.onNodeWithTag("follow-btn").assertDoesNotExist()
+    }
+
+    @Test
+    fun doesNotShowProfileIfPrivate() {
+        val vm = createViewModel(
+            visibility = object: MockProfileVisibilityRepository() {
+                override suspend fun getProfileVisibility(uid: String): Flow<ProfileVisibility> {
+                    assert(uid == "2")
+                    return flowOf(ProfileVisibility.PRIVATE)
+                }
+            },
+            uid = "2"
+        )
+        testRule.setContent {
+            ProfilePage(vm)
+        }
+        testRule.onNodeWithTag("private-profile").assertIsDisplayed()
+    }
+
+    @Test
+    fun showsErrorIfUserDoNotExists() {
+        val vm = createViewModel(uid = "-")
+        testRule.setContent {
+            ProfilePage(vm)
+        }
+        testRule.onNodeWithTag("error-profile").assertIsDisplayed()
     }
 
     /* Test fails for unknown reason
