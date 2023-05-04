@@ -135,7 +135,7 @@ fun NavigationController(
         composable("${VisibleRoute.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
             it.arguments?.getString("userId")?.let {
                 userId -> ProfilePage(ProfilePageViewModel(
-                    container.auth, container.user, container.challenges, container.follow, userId
+                    container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, userId
                 ))
             }
         }
@@ -203,7 +203,10 @@ fun NavigationController(
         }
 
         composable(HiddenRoute.PrivacySettings.route) {
-            val viewModel = PrivacySettingsViewModel()
+            val viewModel = PrivacySettingsViewModel(
+                userRepository = container.user,
+                profileVisibilityRepository = container.profileVisibilities
+            )
             PrivacySettingsPage(onBack = { navController.popBackStack() }, viewModel)
         }
     }

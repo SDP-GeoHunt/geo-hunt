@@ -17,6 +17,7 @@ fun <T> RadioItem(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     subtitle: String? = null,
+    disabled: Boolean = false
 ) {
     SettingsMenuLink(
         modifier = modifier,
@@ -24,7 +25,7 @@ fun <T> RadioItem(
         subtitle = { subtitle?.let { subtitle -> Text(subtitle) } },
         icon = icon?.let { { Icon(icon, contentDescription = title) } },
         action = {
-            RadioButton(selected = isSelected, onClick = { onSelect(value) })
+            RadioButton(selected = isSelected, onClick = { onSelect(value) }, enabled = !disabled)
         }
     ) {
         onSelect(value)

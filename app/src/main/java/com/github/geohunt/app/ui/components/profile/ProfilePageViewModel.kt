@@ -12,6 +12,7 @@ import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
+import com.github.geohunt.app.model.database.api.ProfileVisibility
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -20,6 +21,7 @@ open class ProfilePageViewModel(
     private val userRepository: UserRepositoryInterface,
     private val challengeRepository: ChallengeRepositoryInterface,
     private val followRepository: FollowRepositoryInterface,
+    private val profileVisibilityRepository: ProfileVisibilityRepositoryInterface,
     @Suppress("DEPRECATION") private val uid: String = authRepository.getCurrentUser().id,
 ): ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
@@ -35,7 +37,8 @@ open class ProfilePageViewModel(
     val score = _claims.asStateFlow().map { it?.sumOf { it.awardedPoints } }
 
     @Suppress("DEPRECATION")
-    val isSelf = authRepository.getCurrentUser().id == uid
+    private val authedUid = authRepository.getCurrentUser().id
+    val isSelf = authedUid == uid
     val canFollow = !isSelf
 
     private val _doesFollow = followRepository.doesFollow(uid)
@@ -46,6 +49,9 @@ open class ProfilePageViewModel(
 
     private var _didFail = MutableStateFlow<Exception?>(null)
     val didFail = _didFail.asStateFlow()
+
+    private var _isPrivate = MutableStateFlow<Boolean>(false)
+    val isPrivate = _isPrivate.asStateFlow()
 
     private var isFollowTransactionDone = true // flag to prevent spamming the follow button
     fun follow() {
@@ -84,6 +90,18 @@ open class ProfilePageViewModel(
     private fun fetch() {
         viewModelScope.launch {
             try {
+                if (!isSelf) {
+                    when (profileVisibilityRepository.getProfileVisibility(uid).first()) {
+                        ProfileVisibility.PUBLIC -> {}
+                        ProfileVisibility.PRIVATE -> { _isPrivate.value = true; return@launch }
+                        ProfileVisibility.FOLLOWING_ONLY -> {
+                            val isPrivate = !followRepository.doesFollow(uid, authedUid).first()
+                            _isPrivate.value = isPrivate
+                            if (isPrivate) return@launch
+                        }
+                    }
+                }
+
                 _user.value = userRepository.getUser(uid)
                 _challenges.value = challengeRepository.getPosts(uid).first()
                 _claims.value = challengeRepository.getClaimsFromUser(uid)
@@ -114,7 +132,8 @@ open class ProfilePageViewModel(
                     container.auth,
                     container.user,
                     container.challenges,
-                    container.follow
+                    container.follow,
+                    container.profileVisibilities
                 )
             }
         }

@@ -34,7 +34,7 @@ class FollowRepository(
     override fun getFollowList(): Flow<List<String>> {
         authRepository.requireLoggedIn()
 
-        val currentUser = authRepository.getCurrentUser()
+        @Suppress("DEPRECATION") val currentUser = authRepository.getCurrentUser()
 
         return database.getReference("followList/${currentUser.id}")
             .snapshots
@@ -56,6 +56,7 @@ class FollowRepository(
      */
     override fun getCurrentUserFollowCount(): Flow<Long> {
         authRepository.requireLoggedIn()
+        @Suppress("DEPRECATION")
         return getFollowCount(authRepository.getCurrentUser())
     }
 
@@ -73,7 +74,7 @@ class FollowRepository(
     private suspend fun updateFollowState(user: User, follow: Boolean) {
         authRepository.requireLoggedIn()
 
-        val currentUser = authRepository.getCurrentUser()
+        @Suppress("DEPRECATION") val currentUser = authRepository.getCurrentUser()
 
         // In spite of its appearance, this code does **not** update all locations at once, but
         // rather sequentially.
@@ -133,11 +134,21 @@ class FollowRepository(
     override fun doesFollow(uid: String): Flow<Boolean> {
         authRepository.requireLoggedIn()
 
-        val currentUser = authRepository.getCurrentUser()
+        @Suppress("DEPRECATION") val currentUser = authRepository.getCurrentUser()
 
+        return doesFollow(currentUser.id, uid)
+    }
+
+    /**
+     * Returns the follow state of whether userA's uid follows userB's uid
+     *
+     * @parma userAUid
+     * @param userBUid
+     */
+    override fun doesFollow(userAUid: String, userBUid: String): Flow<Boolean> {
         // There are two locations where we could fetch this information
         // We consider that the user follow list is more appropriate, since it might already be in-cache
-        return database.getReference("followList/${currentUser.id}/${uid}")
+        return database.getReference("followList/$userAUid/$userBUid")
             .snapshots
             .map { it.getValue(Boolean::class.java) ?: false }
             .flowOn(ioDispatcher)

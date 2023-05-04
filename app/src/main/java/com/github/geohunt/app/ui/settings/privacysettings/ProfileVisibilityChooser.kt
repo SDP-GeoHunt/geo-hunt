@@ -11,6 +11,7 @@ import com.github.geohunt.app.ui.settings.RadioItem
 
 @Composable
 fun ProfileVisibilityChooser(viewModel: PrivacySettingsViewModel) {
+    val isDisabled = viewModel.isDisabled.collectAsState()
     val visibility = viewModel.profileVisibility.collectAsState()
     val callback: (ProfileVisibility) -> Unit = { viewModel.setProfileVisibility(it) }
 
@@ -20,21 +21,24 @@ fun ProfileVisibilityChooser(viewModel: PrivacySettingsViewModel) {
             subtitle = stringResource(id = R.string.public_desc),
             isSelected = visibility.value == ProfileVisibility.PUBLIC,
             value = ProfileVisibility.PUBLIC,
-            onSelect = callback
+            onSelect = callback,
+            disabled = isDisabled.value
         )
         RadioItem(
             title = stringResource(id = R.string.following_only),
             subtitle = stringResource(id = R.string.following_only_desc),
             isSelected = visibility.value == ProfileVisibility.FOLLOWING_ONLY,
             value = ProfileVisibility.FOLLOWING_ONLY,
-            onSelect = callback
+            onSelect = callback,
+            disabled = isDisabled.value
         )
         RadioItem(
             title = stringResource(id = R.string.private_word),
             subtitle = stringResource(id = R.string.private_desc),
             isSelected = visibility.value == ProfileVisibility.PRIVATE,
             value = ProfileVisibility.PRIVATE,
-            onSelect = callback
+            onSelect = callback,
+            disabled = isDisabled.value
         )
     }
 }

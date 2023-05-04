@@ -81,6 +81,9 @@
     <string name="require_location_permission">GeoHunt requires the precise location of this device in order to use this feature</string>
     <string name="require_location_permission_button">Request location permission</string>
 
+    <string name="error_fetching_page">An error occurred when fetching the profile page.</string>
+    <string name="private_profile_page">You do not have access to this user\'s profile page.</string>
+
     <!-- settings -->
     <string name="app_settings">App settings</string>
     <string name="privacy_settings">Privacy settings</string>

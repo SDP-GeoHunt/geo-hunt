@@ -8,11 +8,9 @@ import com.github.geohunt.app.data.settings.AppSettingsSerializer
 import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.sensor.SharedLocationManager
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
 import java.lang.IllegalStateException
 
 /**
@@ -42,6 +40,9 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
     // Settings
     private val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
     val appSettingsRepository = AppSettingsRepositoryImpl(application.dataStore)
+
+    // Profile visibilities
+    val profileVisibilities = ProfileVisibilityRepository(database)
 
 
     companion object {

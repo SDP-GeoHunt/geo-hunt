@@ -51,4 +51,13 @@ interface FollowRepositoryInterface {
      */
     @Throws(UserNotLoggedInException::class)
     fun doesFollow(uid: String): Flow<Boolean>
+
+    /**
+     * Returns the follow state of whether userA's uid follows userB's uid
+     *
+     * @parma userAUid
+     * @param userBUid
+     */
+    @Throws(UserNotLoggedInException::class)
+    fun doesFollow(userAUid: String, userBUid: String): Flow<Boolean>
 }
