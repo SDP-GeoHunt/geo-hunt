@@ -56,6 +56,16 @@
     <string name="challenge_settings_difficulty">Difficulty</string>
     <string name="challenge_settings_date">Date</string>
     <string name="challenge_settings_date_never">Never</string>
+
+    // Strings defined for the tutorial
+    <string name="title_activity_tutorial">TutorialActivity</string>
+    <string name="tutorial_first_screen_title"> Create your own challenges!</string>
+    <string name="tutorial_first_screen_description">Create your own challenges and share them with the community!</string>
+    <string name="tutorial_second_screen_title">Explore the map!</string>
+    <string name="tutorial_second_screen_description">Explore the map and find challenges near you!</string>
+    <string name="tutorial_third_screen_title">Complete challenges!</string>
+    <string name="tutorial_third_screen_description">Complete challenges and earn points!</string>
+
     <string name="active_hunts_black_part">Active</string>
     <string name="active_hunts_red_part">hunts</string>
     <string name="no_challenge_message">No challenges yet… <br/> Go pick some challenges to begin your hunt!</string>
@@ -80,4 +90,8 @@
     <string name="require_camera_permission_button">Request camera permission</string>
     <string name="require_location_permission">GeoHunt requires the precise location of this device in order to use this feature</string>
     <string name="require_location_permission_button">Request location permission</string>
+
+    <string name="new_challenge_notification_title">New Challenge!</string>
+    <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
+
 </resources>
