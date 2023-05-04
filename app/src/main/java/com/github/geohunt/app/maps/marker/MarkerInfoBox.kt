@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 
+//TODO The whole class is to be removed
 /**
  * Displays the window containing challenge information
  * that is represented on the map by the provided marker

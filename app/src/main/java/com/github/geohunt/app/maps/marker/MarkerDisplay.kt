@@ -16,9 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.github.geohunt.app.R
 import com.github.geohunt.app.ui.theme.geoHuntRed
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -50,13 +53,29 @@ fun DisplayMarkers(markers: List<Marker>) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     //The image displayed at the top of the info window
-                    Image(
-                        painter = painterResource(id = R.drawable.radar_icon),
-                        contentDescription = "Radar Icon",
-                        modifier = Modifier
-                            .size(90.dp)
-                            .padding(top = 16.dp),
-                        contentScale = ContentScale.Crop)
+                    if (challenge.image != "") {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(challenge.image)
+                                .crossfade(true)
+                                .allowHardware(false)
+                                .build(),
+                            contentDescription = "Marker Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(90.dp)
+                                .padding(top = 16.dp),
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.radar_icon),
+                            contentDescription = "Marker Image",
+                            modifier = Modifier
+                                .size(90.dp)
+                                .padding(top = 16.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 

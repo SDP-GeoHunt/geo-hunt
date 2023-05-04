@@ -1,6 +1,5 @@
 package com.github.geohunt.app.maps.marker
 
-import android.graphics.Bitmap
 import com.google.android.gms.maps.model.LatLng
 import java.time.LocalDateTime
 
@@ -15,7 +14,7 @@ import java.time.LocalDateTime
  */
 data class Marker(
     val title: String,
-    val image: Bitmap,
+    val image: String,
     val coordinates: LatLng,
     val expiryDate: LocalDateTime
     )
