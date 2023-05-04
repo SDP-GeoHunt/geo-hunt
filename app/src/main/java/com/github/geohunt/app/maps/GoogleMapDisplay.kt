@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.geohunt.app.maps.marker.Marker
 import com.github.geohunt.app.maps.marker.MarkerDisplay
 import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.ui.components.maps.MapsViewModel
+import com.github.geohunt.app.ui.screens.maps.MapsViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -62,9 +62,25 @@ fun GoogleMapDisplay(
             val markersList = remember { mutableStateListOf<Marker>() }
 
             val mapsViewModel = MapsViewModel()
+            mapsViewModel.retrieveChallengesMultiHash(neighboringSectors)
+
+            val challenges = mapsViewModel.challenges.collectAsStateWithLifecycle()
+
+            challenges.value?.forEach {
+                val marker = Marker(
+                    markerPosition = LatLng(it.location?.latitude ?: 0.0, it.location?.longitude ?: 0.0),
+                    markerTitle = it.id ?: "",
+                    markerSnippet = it.description ?: "",
+                    //TODO use string url a bit later
+                    image = mockBitmap,
+                    expiryDate = it.expirationDate ?: LocalDateTime.of(2024, Month.MAY, 1, 19, 0),
+                )
+
+                markersList.add(marker)
+            }
 
 
-            for (sector in neighboringSectors) {
+            /*for (sector in neighboringSectors) {
                 val challenges = mapsViewModel.retrieveChallengesSingleHash(sector)
 
                 //val challengesState = challenges.collectAsState()
@@ -87,9 +103,9 @@ fun GoogleMapDisplay(
                         markersList.add(marker)
                     }
                 }
-            }
+            }*/
 
-            Log.d("COLLECTED MARKERS LIST", markersList.toString())
+            //Log.d("COLLECTED MARKERS LIST", markersList.toString())
 
             content()
         }

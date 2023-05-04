@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.components.maps
+package com.github.geohunt.app.ui.screens.maps
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -19,20 +19,36 @@ class MapsViewModel() : ViewModel() {
     val user = UserRepository(image, auth)
     val challengeRepository = ChallengeRepository(user, image, auth)
 
-    fun retrieveChallengesSingleHash(sectorHash: String): StateFlow<List<Challenge?>> {
-        val mutableStateFlow = MutableStateFlow<List<Challenge?>>(listOf())
+    private val _challenges: MutableStateFlow<List<Challenge>?> = MutableStateFlow(null)
+    val challenges: StateFlow<List<Challenge>?> = _challenges.asStateFlow()
 
+    /*fun retrieveChallengesSingleHash(sectorHash: String): StateFlow<List<Challenge?>> {
         viewModelScope.launch {
+            val challengeFlow = challengeRepository.getSectorChallenges(sectorHash)
 
-                val challengeFlow = challengeRepository.getSectorChallenges(sectorHash)
-
-                challengeFlow.collect(){
-                    mutableStateFlow.value = it
-                    Log.d("MapsViewModel", "Challenge:q $it")
-                }
-
+            challengeFlow.collect(){
+                mutableStateFlow.value = it
+                Log.d("MapsViewModel", "Challenge:q $it")
+            }
         }
 
         return mutableStateFlow.asStateFlow()
+    }*/
+
+    fun retrieveChallengesMultiHash(sectorHashes: List<String>) {
+
+
+        viewModelScope.launch {
+            for (sectorHash in sectorHashes) {
+                val challengeFlow = challengeRepository.getSectorChallenges(sectorHash)
+
+                challengeFlow.collect(){
+                    _challenges.value = it
+                    Log.d("MapsViewModel", "Challenge:q $it")
+                }
+            }
+        }
+
+        //return mutableStateFlow.asStateFlow()
     }
 }
