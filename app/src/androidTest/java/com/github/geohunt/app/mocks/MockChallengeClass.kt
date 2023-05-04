@@ -19,7 +19,8 @@ class MockChallengeClass(
     override val description: String? = null,
     override val difficulty: com.github.geohunt.app.model.database.api.Challenge.Difficulty =
         com.github.geohunt.app.model.database.api.Challenge.Difficulty.MEDIUM,
-    override var likes: List<LazyRef<User>> = listOf()
+    override var likes: List<LazyRef<User>> = listOf(),
+    override val numberOfActiveHunters: Int = 0
 ) : com.github.geohunt.app.model.database.api.Challenge {
 
     override val coarseLocation: Location

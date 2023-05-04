@@ -20,13 +20,11 @@ data class FirebaseClaim(
     override val user: LazyRef<User>,
     override val time: LocalDateTime,
     override val location: Location,
+    override val image: LazyRef<Bitmap>,
+    override val distance: Long = 0,
+    override val awardedPoints: Long = 0
 ) : Claim {
-    override val image: LazyRef<Bitmap>
-        get() = TODO("Not yet implemented")
-    override val distance: Long
-        get() = TODO("Not yet implemented")
-    override val awardedPoints: Long
-        get() = TODO("Not yet implemented")
+
 }
 
 /**
@@ -38,12 +36,8 @@ internal class FirebaseClaimRef(
 ) : BaseLazyRef<Claim>() {
 
     override fun fetchValue(): Task<Claim> {
-        // Retrieve the coarseHash and elementId
-        val coarseHash = id.substring(0, Location.COARSE_HASH_SIZE)
-        val elementId = id.substring(Location.COARSE_HASH_SIZE)
-
         return database.dbClaimRef
-            .child(coarseHash).child(elementId).get()
+            .child(id).get()
             .thenMap {
                 if (!it.exists()) {
                     throw RuntimeException("Claim $id was not found in the database")
@@ -53,9 +47,12 @@ internal class FirebaseClaimRef(
                 FirebaseClaim(
                     id = id,
                     user = database.getUserById(claimEntry.user!!),
-                    time = DateUtils.localFromUtcIso8601(claimEntry.time!!),
-                    challenge = database.getChallengeById(claimEntry.challenge?.cid!!),
+                    time = DateUtils.localFromUtcIso8601(claimEntry.time ?: "null"),
+                    challenge = database.getChallengeById(claimEntry.cid!!),
                     location =  claimEntry.location!!,
+                    image = database.getClaimThumbnailById(id),
+                    distance = claimEntry.distance,
+                    awardedPoints = claimEntry.awardedPoints
                 )
             }
     }
@@ -68,7 +65,8 @@ internal class FirebaseClaimRef(
 internal data class ClaimEntry(
     var user: String? = null,
     var time: String? = null,
-    var challenge: Challenge? = null,
+    var cid: String? = null,
     var location: Location? = null,
-    val distance: Long? = null,
+    val distance: Long = 0,
+    val awardedPoints : Long = 0
 )

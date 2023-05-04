@@ -28,6 +28,6 @@ data class Challenge(
     enum class Difficulty {
         EASY,
         MEDIUM,
-        HARD
+        HARD,
     }
 }

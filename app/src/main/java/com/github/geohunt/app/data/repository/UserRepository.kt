@@ -67,11 +67,15 @@ class UserRepository(
         return getUser(uid)
     }
 
-    private fun FirebaseUser.asExternalModel(): User = User(
-        id = id,
-        displayName = displayName,
-        profilePictureUrl = profilePictureUrl
-    )
+    private fun FirebaseUser.asExternalModel(): User {
+        require(id.isNotEmpty())
+
+        return User(
+            id = id,
+            displayName = displayName,
+            profilePictureUrl = profilePictureUrl
+        )
+    }
 
     /**
      * Returns the user with the given ID.

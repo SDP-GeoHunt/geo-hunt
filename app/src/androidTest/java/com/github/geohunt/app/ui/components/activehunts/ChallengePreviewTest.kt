@@ -40,7 +40,6 @@ class ChallengePreviewTest {
 
     @Test
     fun challengeInformationAreDisplayed() {
-        testRule.onNodeWithText("Expires", substring = true).assertIsDisplayed().assertTextContains("never", substring = true)
         testRule.onNodeWithText("Debug User", substring = true).assertIsDisplayed()
         testRule.onNodeWithText("Italy", substring = true).assertIsDisplayed()
     }

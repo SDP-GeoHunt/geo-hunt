@@ -36,6 +36,8 @@ class ProfilePageTest {
 
     var appContainer: AppContainer? = null
 
+    private val photoUrl = ""
+
     @Before
     fun initAppContainer() {
         appContainer = AppContainer.getEmulatedFirebaseInstance(
@@ -84,12 +86,12 @@ class ProfilePageTest {
 
     @Test
     fun showsSumOfClaimsAsScore() {
-        val vm = createViewModel(
+            val vm = createViewModel(
             challenge = object: MockChallengeRepository() {
                 override fun getClaimsFromUser(uid: String): List<Claim> {
                     return listOf(
-                        Claim("1", "1", "1", LocalDateTime.MIN, 1, 100),
-                        Claim("1", "1", "1", LocalDateTime.MIN, 1, 69)
+                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 100),
+                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 69)
                     )
                 }
             },
@@ -115,8 +117,8 @@ class ProfilePageTest {
             challenge = object: MockChallengeRepository() {
                 override fun getClaimsFromUser(uid: String): List<Claim> {
                     return listOf(
-                        Claim("1", "1", "1", LocalDateTime.MIN, 1, 100),
-                        Claim("1", "1", "1", LocalDateTime.MIN, 1, 69)
+                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 100),
+                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 69)
                     )
                 }
             }
@@ -138,8 +140,8 @@ class ProfilePageTest {
                 }
                 override fun getClaimsFromUser(uid: String): List<Claim> {
                     return listOf(
-                        Claim("1", "1", "1", LocalDateTime.MIN, 1, 100),
-                        Claim("1", "1", "1", LocalDateTime.MIN, 1, 69)
+                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 100),
+                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 69)
                     )
                 }
             }

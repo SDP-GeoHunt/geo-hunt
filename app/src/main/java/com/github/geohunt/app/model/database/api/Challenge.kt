@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 /**
  * Interface defining the principal attributes for any challenge
  */
+@Deprecated("Should no longer be used, prefer the repository/view model approach")
 interface Challenge
 {
     /**
@@ -61,6 +62,11 @@ interface Challenge
      * The challenge's difficulty, affects the way points are computed on submitted guesses
      */
     val difficulty: Difficulty
+
+    /**
+     * Number of active user actively hunting for this challenge
+     */
+    val numberOfActiveHunters: Int
 
     /**
      * The various difficulties a challenge can have,

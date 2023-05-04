@@ -25,12 +25,13 @@ class FirebaseUser(
     override val profilePicture: LazyRef<Bitmap>?,
     override val profilePictureHash: Int?,
     override val challenges: List<LazyRef<Challenge>>,
-    override val hunts: List<LazyRef<Challenge>>,
+    override val activeHunts: List<LazyRef<Challenge>>,
     override val numberOfFollowers: Int,
-    override val follows: List<LazyRef<User>>,
+    override val followList: List<LazyRef<User>>,
     override var likes: List<LazyRef<Challenge>>,
     override var score: Long,
     override val isPOIUser: Boolean = false,
+    override val preferredLocale: String?,
 ) : User {
 
 }
@@ -46,13 +47,14 @@ internal class FirebasePOIUserRef(override val id: String) :
             displayName = null,
             profilePicture = InvalidLazyRef(RuntimeException("Cannot fetch profile picture for POI User")),
             challenges = listOf(),
-            hunts = listOf(),
+            activeHunts = listOf(),
             numberOfFollowers = 0,
-            follows = listOf(),
+            followList = listOf(),
             score = 0,
             isPOIUser = true,
             likes = listOf(),
-            profilePictureHash = null
+            profilePictureHash = null,
+            preferredLocale = null
         ))
     }
 }
@@ -84,16 +86,17 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
 
     private fun fromEntryToUser(entry: UserEntry): User {
         return FirebaseUser(
-            uid = entry.uid,
+            uid = id,
             displayName = entry.displayName,
-            profilePicture = entry.profilePictureHash?.let { db.getProfilePicture(entry.uid, it) },
+            profilePicture = entry.profilePictureHash?.let { db.getProfilePicture(id, it) },
             profilePictureHash = entry.profilePictureHash,
-            challenges = entry.challenges.map { db.getChallengeById(it) },
-            hunts = entry.hunts.map { db.getChallengeById(it) },
+            challenges = entry.challenges.mapNotNull { (cid, exists) -> db.getChallengeById(cid).takeIf { exists } },
+            activeHunts = entry.activeHunts.mapNotNull { (cid, exists) -> db.getChallengeById(cid).takeIf { exists } },
             numberOfFollowers = entry.numberOfFollowers,
-            follows = entry.follows.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
+            followList = entry.followList.mapNotNull { (id, doesFollow) -> db.getUserById(id).takeIf { doesFollow } },
             score = entry.score,
-            likes = entry.likes.mapNotNull { (id, doesLike) -> db.getChallengeById(id).takeIf { doesLike } }
+            likes = entry.likes.mapNotNull { (id, doesLike) -> db.getChallengeById(id).takeIf { doesLike } },
+            preferredLocale = entry.preferredLocale
         )
     }
 
@@ -114,13 +117,13 @@ internal class FirebaseUserRef(override val id: String, private val db: Firebase
  * Raw user entry has stored in the database
  */
 internal data class UserEntry(
-    var uid: String = "",
     var displayName: String? = null,
-    var challenges: List<String> = listOf(),
-    var hunts: List<String> = listOf(),
+    var challenges: Map<String, Boolean> = emptyMap(),
+    var activeHunts: Map<String, Boolean> = emptyMap(),
     var numberOfFollowers: Int = 0,
-    var follows: Map<String, Boolean> = emptyMap(),
+    var followList: Map<String, Boolean> = emptyMap(),
     var score: Long = 0,
     var profilePictureHash: Int? = null,
-    var likes: Map<String, Boolean> = emptyMap()
+    var likes: Map<String, Boolean> = emptyMap(),
+    var preferredLocale: String? = null
 )

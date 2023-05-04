@@ -20,7 +20,7 @@ class ListDropdownMenuTest {
 
     private fun <T> setupComposable(state: MutableState<T>, elements: Collection<T>, toString: (T) -> String) {
         testRule.setContent {
-            ListDropdownMenu(state = state, elements = elements, toString = toString)
+            ListDropdownMenu(state = state.value, { state.value = it }, elements = elements, toString = toString)
         }
     }
 

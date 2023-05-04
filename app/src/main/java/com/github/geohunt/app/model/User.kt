@@ -6,7 +6,10 @@ data class User(
     val id: String,
     val displayName: String?,
     val profilePictureUrl: String?
-)
+) {
+   val name : String
+        get() = displayName ?: "???"
+}
 
 /**
  * Represents a sets of changes on the user.

@@ -42,7 +42,7 @@ class TestFirebaseBitmapRef {
             database = FirebaseDatabase(LocalContext.current.findActivity())
         }
 
-        val thumbnailRef = database.getThumbnailRefById("163f921c-NQWln8MlqnVhArUIdwE")
+        val thumbnailRef = database.getChallengeThumbnailById("163f921c-NQWln8MlqnVhArUIdwE")
         assertThat(thumbnailRef.id, equalTo(thumbnailId))
 
         thumbnailRef.fetch().await()

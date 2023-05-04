@@ -115,6 +115,7 @@ class ChallengeRepository(
             }
     }
 
+    @Deprecated("Should use the ClaimRepository::getClaims method instead")
     override suspend fun getClaims(challenge: Challenge): List<Claim> {
         TODO()
     }

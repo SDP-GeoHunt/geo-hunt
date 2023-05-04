@@ -34,7 +34,7 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
 
 
     @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
-    override val hunts: List<LazyRef<Challenge>>
+    override val activeHunts: List<LazyRef<Challenge>>
         get() = throw java.lang.UnsupportedOperationException()
 
 
@@ -44,7 +44,11 @@ class FirebaseUserAdapter(firebaseUser: FirebaseUser) : User {
 
 
     @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
-    override val follows: List<LazyRef<User>>
+    override val followList: List<LazyRef<User>>
+        get() = throw java.lang.UnsupportedOperationException()
+
+    @Deprecated("You should prefer getting the FirebaseUserRef from the Database directly.")
+    override val preferredLocale: String?
         get() = throw java.lang.UnsupportedOperationException()
 
 
