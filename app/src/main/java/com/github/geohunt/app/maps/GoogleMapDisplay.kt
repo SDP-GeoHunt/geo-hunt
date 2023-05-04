@@ -91,6 +91,11 @@ fun GoogleMapDisplay(
     }
 }
 
+/**
+ * Injects mock challenges into the map
+ *
+ * @param challenges the challenges to inject
+ */
 fun injectMockChallenges(challenges: SnapshotStateList<Marker>)  {
     wantToMockChallenges = true
     mockTestChallengeDatabase.addAll(challenges)

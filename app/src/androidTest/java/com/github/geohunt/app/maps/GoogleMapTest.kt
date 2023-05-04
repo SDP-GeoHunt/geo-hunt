@@ -4,13 +4,13 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.onNodeWithText
 import com.github.geohunt.app.maps.marker.Marker
+import com.github.geohunt.app.maps.marker.MarkerInfoWindowContent
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import org.junit.Before
@@ -25,29 +25,25 @@ import java.time.Month
 class GoogleMapTest {
     @get:Rule
     val composeTestRule = createComposeRule()
+
     private val epflCoordinates = LatLng(46.51958, 6.56398)
     private var mockTestChallengeDatabase : SnapshotStateList<Marker> = mutableStateListOf()
 
-    private fun initializeMockChallengeDatabase() {
-        val mockChallengeDatabase =  mutableStateListOf<Marker>()
-
+    @Before
+    fun initializeMockChallengeDatabase() {
         for (i in 1..3) {
-            mockChallengeDatabase.add(Marker(
+            mockTestChallengeDatabase.add(Marker(
                 title = "Event $i",
                 image = "",
                 coordinates = LatLng(46.51958 + i * 0.01, 6.56398 + i * 0.01),
                 expiryDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
             )
         }
-
-        mockTestChallengeDatabase = mockChallengeDatabase
     }
 
-    @Before
-    fun init() {
-        initializeMockChallengeDatabase()
-
-        val cameraPosition = CameraPosition(epflCoordinates, 9f, 0f, 0f)
+    @Test
+    fun testMapIsDisplayed() {
+        val cameraPosition = CameraPosition(epflCoordinates, 12f, 0f, 0f)
         composeTestRule.setContent {
             injectMockChallenges(mockTestChallengeDatabase)
 
@@ -56,34 +52,33 @@ class GoogleMapTest {
                 cameraPosition = cameraPosition,
             )
         }
-    }
 
-    @Test
-    fun testMapIsDisplayed() {
         composeTestRule.onNodeWithTag("Maps")
             .assertExists()
     }
 
     @Test
-    fun testThreeMockMarkersAreDisplayedAndClickable() {
-        init()
+    fun markerInfoWindowContentIsDisplayedCorrectly() {
+        composeTestRule.setContent {
+            injectMockChallenges(mockTestChallengeDatabase)
 
-        composeTestRule.onNodeWithContentDescription("Marker Icon for Event 1")
-            .assertExists()
-            .assertIsDisplayed()
-            .assertHasClickAction()
-            .performClick()
+            MarkerInfoWindowContent(challenge = mockTestChallengeDatabase[0])
+        }
 
-        composeTestRule.onNodeWithContentDescription("Marker Icon for Event 2")
+        composeTestRule
+            .onNodeWithContentDescription("Marker Image")
             .assertExists()
-            .assertIsDisplayed()
-            .assertHasClickAction()
-            .performClick()
 
-        composeTestRule.onNodeWithContentDescription("Marker Icon for Event 3")
-            .assertExists()
+        composeTestRule
+            .onNodeWithTag("Marker title")
             .assertIsDisplayed()
-            .assertHasClickAction()
-            .performClick()
+
+        composeTestRule
+            .onNodeWithTag("Marker expiry date")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("2024-05-01T19:39:12")
+            .assertIsDisplayed()
     }
 }

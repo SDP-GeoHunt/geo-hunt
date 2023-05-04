@@ -16,5 +16,5 @@ data class Marker(
     val title: String,
     val image: String,
     val coordinates: LatLng,
-    val expiryDate: LocalDateTime
+    val expiryDate: LocalDateTime,
     )
