@@ -33,7 +33,7 @@ class LoginActivity : ComponentActivity() {
         if (viewModel.isLoggedIn()) {
             onSuccessfulLogin()
         }
-        val authenticator: Authenticator = Authenticator.authInstance.get()
+
         val settings = getSharedPreferences(PREFERENCES_FILE, 0)
 
         // Check if the application is being launched for first time
@@ -44,7 +44,6 @@ class LoginActivity : ComponentActivity() {
             settings.edit().putBoolean("first_application_open", false).apply()
         }
 
-        authenticator.user?.let { loggedIn() }
 
         // Register the login launcher
         val loginLauncher = viewModel.registerLoginPrompt(
