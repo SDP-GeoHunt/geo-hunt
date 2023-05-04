@@ -4,7 +4,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.test.junit4.createComposeRule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.test.runTest
@@ -31,9 +31,9 @@ class AppSettingTest {
             val setter: suspend (Int) -> Unit = { }
             val testAppSetting = AppSetting(flow, 0, setter)
 
-            var msf: MutableStateFlow<Int>? = null
+            var msf: StateFlow<Int>? = null
             composeTestRule.setContent {
-                msf = testAppSetting.toOneWayMutableStateFlow(rememberCoroutineScope())
+                msf = testAppSetting.toStateFlow(rememberCoroutineScope())
             }
             assert(msf?.value == 0)
             cf.complete(null)

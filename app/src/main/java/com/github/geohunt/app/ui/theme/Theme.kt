@@ -50,7 +50,7 @@ fun GeoHuntTheme(
     val themeState =
         AppContainer.getInstance(LocalContext.current.applicationContext as Application)
             .appSettingsRepository
-            .themeSetting.toOneWayMutableStateFlow(rememberCoroutineScope())
+            .themeSetting.toStateFlow(rememberCoroutineScope())
             .collectAsState()
 
     val colors = when(themeState.value) {
