@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.github.geohunt.app.data.exceptions.UserNotFoundException
 import com.github.geohunt.app.mocks.MockAuthRepository
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.AuthRepositoryInterface
@@ -242,7 +243,15 @@ class ProfilePageTest {
 
     @Test
     fun showsErrorIfUserDoNotExists() {
-        val vm = createViewModel(uid = "-")
+        val vm = createViewModel(
+            uid = "-",
+            user = object: MockUserRepository() {
+                override suspend fun getUser(id: String): User {
+                    if (id == "-") throw UserNotFoundException("-")
+                    return super.getUser(id)
+                }
+            }
+        )
         testRule.setContent {
             ProfilePage(vm)
         }

@@ -50,7 +50,7 @@ open class ProfilePageViewModel(
     private var _didFail = MutableStateFlow<Exception?>(null)
     val didFail = _didFail.asStateFlow()
 
-    private var _isPrivate = MutableStateFlow<Boolean>(false)
+    private var _isPrivate = MutableStateFlow(false)
     val isPrivate = _isPrivate.asStateFlow()
 
     private var isFollowTransactionDone = true // flag to prevent spamming the follow button

@@ -13,14 +13,7 @@ class PrivacySettingsPageTest {
     private fun mockViewModel(): PrivacySettingsViewModel {
         return PrivacySettingsViewModel(
             MockUserRepository(),
-            object: MockProfileVisibilityRepository() {
-                override suspend fun setProfileVisibility(
-                    uid: String,
-                    visibility: ProfileVisibility
-                ) {
-                    super.setProfileVisibility(uid, visibility)
-                }
-            }
+            MockProfileVisibilityRepository()
         )
     }
 
