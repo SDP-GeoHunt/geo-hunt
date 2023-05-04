@@ -2,7 +2,6 @@ package com.github.geohunt.app.ui.components.claims
 
 import android.app.Application
 import android.graphics.Bitmap
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -13,15 +12,13 @@ import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeViewModel
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.BitmapUtils.resizeBitmapToFit
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class SubmitClaimViewModel(

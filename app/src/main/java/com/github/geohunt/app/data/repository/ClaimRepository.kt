@@ -8,7 +8,7 @@ import com.github.geohunt.app.data.network.firebase.models.FirebaseClaim
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.points.GaussianPointCalculator
 import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DateUtils

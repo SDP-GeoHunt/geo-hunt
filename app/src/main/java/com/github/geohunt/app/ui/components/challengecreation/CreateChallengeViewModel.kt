@@ -2,11 +2,9 @@ package com.github.geohunt.app.ui.components.challengecreation
 
 import android.app.Application
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.AppContainer
@@ -15,12 +13,9 @@ import com.github.geohunt.app.data.repository.ImageRepository
 import com.github.geohunt.app.data.repository.LocationRepository
 import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.Challenge
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsViewModel
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.BitmapUtils.resizeBitmapToFit
-import com.github.geohunt.app.utility.Singleton
-import com.github.geohunt.app.utility.quantize
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

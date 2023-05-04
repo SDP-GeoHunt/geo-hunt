@@ -11,7 +11,7 @@ import com.github.geohunt.app.data.repository.ChallengeRepository
 import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.ui.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

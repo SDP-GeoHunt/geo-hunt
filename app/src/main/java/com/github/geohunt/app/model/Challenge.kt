@@ -1,6 +1,5 @@
 package com.github.geohunt.app.model
 
-import com.github.geohunt.app.model.database.api.Location
 import java.time.LocalDateTime
 
 /**

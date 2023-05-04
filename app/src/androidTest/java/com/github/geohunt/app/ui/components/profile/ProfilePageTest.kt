@@ -1,24 +1,10 @@
 package com.github.geohunt.app.ui.components.profile
 
 import android.app.Application
-import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import com.github.geohunt.app.mocks.MockAuthRepository
-import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.AuthRepositoryInterface
-import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
-import com.github.geohunt.app.data.repository.FollowRepositoryInterface
-import com.github.geohunt.app.data.repository.UserRepositoryInterface
-import com.github.geohunt.app.mocks.MockChallenge
-import com.github.geohunt.app.mocks.MockChallengeRepository
-import com.github.geohunt.app.mocks.MockFollowRepository
-import com.github.geohunt.app.mocks.MockUserRepository
+import com.github.geohunt.app.data.repository.*
+import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User

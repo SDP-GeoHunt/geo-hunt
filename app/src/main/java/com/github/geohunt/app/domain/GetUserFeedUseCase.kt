@@ -4,7 +4,7 @@ import com.github.geohunt.app.data.repository.AuthRepository
 import com.github.geohunt.app.data.repository.ChallengeRepository
 import com.github.geohunt.app.data.repository.FollowRepository
 import com.github.geohunt.app.model.Challenge
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.utility.aggregateFlows
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

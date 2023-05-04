@@ -20,17 +20,14 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.LocationRepository
 import com.github.geohunt.app.model.Challenge
-import com.github.geohunt.app.model.database.api.Location
-import com.google.android.gms.tasks.TaskCompletionSource
+import com.github.geohunt.app.model.Location
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.Matchers.equalTo
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
 import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)

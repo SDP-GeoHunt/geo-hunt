@@ -1,6 +1,6 @@
 package com.github.geohunt.app.model.points
 
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.points.PointCalculator.Companion.MAX_POINTS
 import com.github.geohunt.app.model.points.PointCalculator.Companion.MIN_POINTS
 import org.junit.Assert.assertEquals

@@ -7,7 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.LocationRepository
 import com.github.geohunt.app.model.Challenge.Difficulty
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before

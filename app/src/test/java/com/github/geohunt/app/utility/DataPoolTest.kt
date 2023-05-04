@@ -1,6 +1,5 @@
 package com.github.geohunt.app.utility
 
-import com.github.geohunt.app.model.DataPool
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.Before

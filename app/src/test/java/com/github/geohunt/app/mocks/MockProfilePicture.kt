@@ -1,7 +1,6 @@
 package com.github.geohunt.app.mocks
 
 import android.graphics.Bitmap
-import com.github.geohunt.app.model.LazyRef
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 

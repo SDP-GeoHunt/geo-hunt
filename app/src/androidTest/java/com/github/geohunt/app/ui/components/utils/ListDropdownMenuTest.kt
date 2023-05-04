@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.model.Challenge
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test

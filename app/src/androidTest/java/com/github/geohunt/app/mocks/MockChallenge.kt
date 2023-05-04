@@ -1,7 +1,7 @@
 package com.github.geohunt.app.mocks
 
 import com.github.geohunt.app.model.Challenge
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import java.time.LocalDateTime
 
 fun MockChallenge(

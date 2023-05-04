@@ -20,7 +20,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
-import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.ui.components.ZoomableImageView
@@ -95,30 +94,18 @@ fun NavigationController(
         }
 
         composable(Route.ActiveHunts.route) {
-            val user = Authenticator.authInstance.get().user
-
-            if (user == null) {
-                Text("You are not logged in. Weird :(")
-            } else {
-                ActiveHuntsScreen(
-                    openExploreTab = { navController.navigate(Route.Explore.route) }
-                )
-            }
+            ActiveHuntsScreen(
+                openExploreTab = { navController.navigate(Route.Explore.route) }
+            )
         }
 
         // Profile
         composable(Route.Profile.route) {
-            val user = Authenticator.authInstance.get().user
-
-            if (user == null) {
-                Text("You are not logged in. Weird :(")
-            } else {
-                ProfilePage(
-                    openLeaderboard = { navController.navigate(HiddenRoutes.Leaderboard.route) },
-                    openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
-                    onLogout = { logout() }
-                )
-            }
+            ProfilePage(
+                openLeaderboard = { navController.navigate(HiddenRoutes.Leaderboard.route) },
+                openProfileEdit = { navController.navigate(HiddenRoutes.EditProfile.route) },
+                onLogout = { logout() }
+            )
         }
 
         composable("${Route.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {

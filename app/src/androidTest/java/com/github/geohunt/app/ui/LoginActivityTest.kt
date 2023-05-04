@@ -13,10 +13,8 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.LoginActivity
 import com.github.geohunt.app.MainActivity
-import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.mocks.MockAuthRepository
 import com.github.geohunt.app.mocks.MockUserRepository
-import com.github.geohunt.app.model.database.api.User
 import com.github.geohunt.app.ui.screens.login.LoginViewModel
 import org.hamcrest.Matchers.*
 import org.junit.After
@@ -78,18 +76,5 @@ class LoginActivityTest {
         intended(hasComponent("com.firebase.ui.auth.KickoffActivity"))
 
         Intents.release()
-    }
-
-    class MockAuthenticator(override val user: User?,
-                            val authenticateCb: (a: ComponentActivity) -> CompletableFuture<User> = {
-                                CompletableFuture.completedFuture(null)
-                            }) : Authenticator {
-        override fun authenticate(activity: ComponentActivity): CompletableFuture<User> {
-            return authenticateCb(activity)
-        }
-
-        override fun signOut(activity: ComponentActivity): CompletableFuture<Void> {
-            TODO("Not yet implemented")
-        }
     }
 }

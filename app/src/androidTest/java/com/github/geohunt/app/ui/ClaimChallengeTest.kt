@@ -1,18 +1,13 @@
 package com.github.geohunt.app.ui
 import android.Manifest.permission
 import android.app.Application
-import android.app.VoiceInteractor.CompleteVoiceRequest
 import android.content.Context
 import android.graphics.Bitmap
 import android.provider.MediaStore
-import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -21,21 +16,15 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.LocationRepository
-import com.github.geohunt.app.model.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeViewModel
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.claims.SubmitClaimForm
 import com.github.geohunt.app.ui.components.claims.SubmitClaimViewModel
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.equalTo
 import org.junit.*
 import org.junit.runner.RunWith
-import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)
 class ClaimChallengeTest {

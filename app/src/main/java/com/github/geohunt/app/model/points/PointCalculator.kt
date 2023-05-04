@@ -1,8 +1,7 @@
 package com.github.geohunt.app.model.points
 
-import com.github.geohunt.app.model.database.api.Challenge.Difficulty
-import com.github.geohunt.app.model.database.api.Challenge.Difficulty.*
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.Challenge.Difficulty
 
 /**
  * Interface representing a Point calculator, it only has one method used to compute the points
@@ -25,9 +24,9 @@ interface PointCalculator {
          */
         fun fromDifficulty(difficulty: Difficulty): PointCalculator {
             return when (difficulty) {
-                EASY -> GaussianPointCalculator(0.20)
-                MEDIUM -> GaussianPointCalculator(0.15)
-                HARD -> GaussianPointCalculator(0.10)
+                Difficulty.EASY -> GaussianPointCalculator(0.20)
+                Difficulty.MEDIUM -> GaussianPointCalculator(0.15)
+                Difficulty.HARD -> GaussianPointCalculator(0.10)
             }
         }
 

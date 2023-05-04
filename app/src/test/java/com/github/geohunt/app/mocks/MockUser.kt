@@ -1,9 +1,6 @@
 package com.github.geohunt.app.mocks
 
 import android.graphics.Bitmap
-import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.User
 
 class MockUser(
     override var displayName: String? = null,
