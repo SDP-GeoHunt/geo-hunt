@@ -32,7 +32,7 @@ class ClaimRepository(
     private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = mapOf(
         Challenge.Difficulty.EASY to GaussianPointCalculator(0.20),
         Challenge.Difficulty.MEDIUM to GaussianPointCalculator(0.15),
-        Challenge.Difficulty.EASY to GaussianPointCalculator(0.10)
+        Challenge.Difficulty.HARD to GaussianPointCalculator(0.10)
     ).withDefault { GaussianPointCalculator(0.10) },
 ) : ClaimRepositoryInterface {
 

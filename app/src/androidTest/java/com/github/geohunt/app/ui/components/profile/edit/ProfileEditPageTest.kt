@@ -24,6 +24,7 @@ class ProfileEditPageTest {
         )
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun showsLoadingIfNotReadyYet() {
         val cf = CompletableFuture<Void?>()
@@ -42,8 +43,7 @@ class ProfileEditPageTest {
         }
         c.onNodeWithTag("progress").assertIsDisplayed()
         cf.complete(null)
-        c.waitForIdle()
-        c.onNodeWithTag("progress").assertDoesNotExist()
+        c.waitUntilDoesNotExist(hasTestTag("progress"), 10_000L)
     }
 
     @Test

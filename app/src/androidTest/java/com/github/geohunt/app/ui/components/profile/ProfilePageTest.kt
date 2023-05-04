@@ -1,8 +1,10 @@
 package com.github.geohunt.app.ui.components.profile
 
 import android.app.Application
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -67,6 +69,7 @@ class ProfilePageTest {
     }
 
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun showsLoadingIfNotReady() {
         val cfCanReturn = CompletableFuture<Unit>()
@@ -86,7 +89,7 @@ class ProfilePageTest {
 
         testRule.onNodeWithTag("progress").assertIsDisplayed()
         cfCanReturn.complete(null)
-        testRule.onNodeWithTag("progress").assertDoesNotExist()
+        testRule.waitUntilDoesNotExist(hasTestTag("progress"), 10_000L)
     }
 
     @Test
