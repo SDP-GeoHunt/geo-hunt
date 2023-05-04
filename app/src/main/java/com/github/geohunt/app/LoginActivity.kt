@@ -24,7 +24,7 @@ import com.github.geohunt.app.utility.replaceActivity
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels(factoryProducer = { LoginViewModel.Factory })
 
-    private val PREFERENCES_FILE = R.string.preferences_file.toString()
+    private val PREFERENCES_FILE = "preferences"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -65,7 +65,6 @@
     <string name="tutorial_second_screen_description">Explore the map and find challenges near you!</string>
     <string name="tutorial_third_screen_title">Complete challenges!</string>
     <string name="tutorial_third_screen_description">Complete challenges and earn points!</string>
-    <string name="preferences_file">preferences</string>
 
     <string name="active_hunts_black_part">Active</string>
     <string name="active_hunts_red_part">hunts</string>
