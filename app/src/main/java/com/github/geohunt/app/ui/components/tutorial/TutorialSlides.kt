@@ -18,17 +18,17 @@ class TutorialSlides(
         fun getData(): List<TutorialSlides>{
             return listOf(
                 TutorialSlides(
-                    R.drawable.tutorial_icon_1,
+                    R.drawable.tutorial_first_screen_icon,
                     R.string.tutorial_first_screen_title,
                     R.string.tutorial_first_screen_description
                 ),
                 TutorialSlides(
-                    R.drawable.tutorial_icon_2,
+                    R.drawable.tutorial_second_screen_icon,
                     R.string.tutorial_second_screen_title,
                     R.string.tutorial_second_screen_description
                 ),
                 TutorialSlides(
-                    R.drawable.tutorial_icon_3,
+                    R.drawable.tutorial_third_screen_icon,
                     R.string.tutorial_third_screen_title,
                     R.string.tutorial_third_screen_description
                 )
