@@ -1,7 +1,5 @@
 package com.github.geohunt.app.maps
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
@@ -27,11 +25,11 @@ class GoogleMapDisplayTest {
     val composeTestRule = createComposeRule()
 
     private val epflCoordinates = LatLng(46.51958, 6.56398)
-    private var mockTestChallengeDatabase : SnapshotStateList<Marker> = mutableStateListOf()
+    private var mockTestChallengeDatabase = mutableListOf<Marker>()
 
     @Before
     fun initializeMockChallengeDatabase() {
-        for (i in 1..3) {
+        for (i in 1..2) {
             mockTestChallengeDatabase.add(Marker(
                 title = "Event $i",
                 image = "",
@@ -39,6 +37,12 @@ class GoogleMapDisplayTest {
                 expiryDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
             )
         }
+        mockTestChallengeDatabase.add(Marker(
+            title = "Event 3",
+            image = "https://picsum.photos/300/300",
+            coordinates = LatLng(46.5195, 6.5634),
+            expiryDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
+        )
     }
 
     @Test

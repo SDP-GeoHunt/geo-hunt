@@ -25,8 +25,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.theme.geoHuntRed
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.maps.android.compose.MarkerInfoWindow
 import com.google.maps.android.compose.rememberMarkerState
 
@@ -44,7 +42,6 @@ fun DisplayMarkers(markers: List<Marker>) {
             state = rememberMarkerState(position = challenge.coordinates),
             title = challenge.title,
             snippet = challenge.expiryDate.toString(),
-            icon = BitmapDescriptorFactory.defaultMarker(geoHuntRed.red),
             tag = challenge.title,
         ) {
             Box(
