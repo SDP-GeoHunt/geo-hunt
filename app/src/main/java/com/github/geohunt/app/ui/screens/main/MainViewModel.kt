@@ -1,9 +1,12 @@
 package com.github.geohunt.app.ui.screens.main
 
 import android.content.Context
+import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
+import com.github.geohunt.app.R
 import com.github.geohunt.app.data.network.NetworkMonitor
 import com.github.geohunt.app.data.repository.AuthRepository
 import com.github.geohunt.app.data.repository.FollowRepository
@@ -60,8 +63,8 @@ class MainViewModel(
                     if (child.key != null) {
                         showNotification(
                             context = context,
-                            title = "New Challenge!",
-                            message = "Check out the new challenge"
+                            title = context.resources.getString(R.string.new_challenge_notification_title),
+                            message = context.resources.getString(R.string.new_challenge_notification_message)
                         )
                     }
                 }
