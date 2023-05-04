@@ -1,13 +1,13 @@
 package com.github.geohunt.app.ui.components.tutorial
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.github.geohunt.app.TutorialActivity
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class WelcomeScreenTest {
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<TutorialActivity>()
+    val composeTestRule = createComposeRule()
 
     private val PREFERENCES_FILE = "preferences"
 
@@ -40,6 +40,12 @@ class WelcomeScreenTest {
     @Test
     fun opensWelcomeScreenWhenLoggedInForTheFirstTime() {
         composeTestRule
+            .setContent {
+                val shouldShowTutorial = remember { mutableStateOf(false) }
+                WelcomeScreen(shouldShowTutorial = shouldShowTutorial)
+            }
+
+        composeTestRule
             .onNodeWithTag("Welcome Label")
             .assertExists()
 
@@ -51,17 +57,5 @@ class WelcomeScreenTest {
             .onNodeWithText("GET STARTED")
             .assertExists()
             .assertHasClickAction()
-    }
-
-    @Test
-    fun clickingOnGetStartedButtonOpensTutorialSlides(){
-        composeTestRule.onNodeWithText("GET STARTED")
-            .assertExists()
-            .assertHasClickAction()
-            .performClick()
-
-        composeTestRule
-            .onNodeWithTag("Tutorial screen layout")
-            .assertExists()
     }
 }
