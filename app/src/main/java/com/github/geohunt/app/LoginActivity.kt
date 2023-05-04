@@ -25,6 +25,7 @@ class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels(factoryProducer = { LoginViewModel.Factory })
 
     private val PREFERENCES_FILE = "preferences"
+    private val MY_PREFERENCE_MODE = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,7 @@ class LoginActivity : ComponentActivity() {
             onSuccessfulLogin()
         }
 
-        val settings = getSharedPreferences(PREFERENCES_FILE, 0)
+        val settings = getSharedPreferences(PREFERENCES_FILE, MY_PREFERENCE_MODE)
 
         // Check if the application is being launched for first time
         // and if so, display the tutorial
