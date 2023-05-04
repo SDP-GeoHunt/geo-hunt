@@ -1,5 +1,6 @@
 package com.github.geohunt.app.model
 
+import android.net.Uri
 import androidx.annotation.IntRange
 import java.time.LocalDateTime
 
@@ -15,6 +16,7 @@ data class Claim(
     val id: String,
     val parentChallengeId: String,
     val claimerId: String,
+    val photoUrl: String,
 
     val claimDate: LocalDateTime,
 

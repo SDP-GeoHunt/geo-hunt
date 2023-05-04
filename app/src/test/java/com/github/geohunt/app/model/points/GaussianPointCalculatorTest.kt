@@ -1,6 +1,6 @@
 package com.github.geohunt.app.model.points
 
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.points.PointCalculator.Companion.MAX_POINTS
 import com.github.geohunt.app.model.points.PointCalculator.Companion.MIN_POINTS
 import org.junit.Assert.assertEquals
@@ -17,9 +17,12 @@ class GaussianPointCalculatorTest {
     private val pointCalculator = GaussianPointCalculator(0.15)
     @Test
     fun calculatorGivesMaxPointsOnIdenticalLocation() {
-        val leukerbad = Location(46.37810088109651, 7.625535288545297)
+        assertEquals(MAX_POINTS, pointCalculator.computePoints(0.0))
+    }
 
-        assertEquals(MAX_POINTS, pointCalculator.computePoints(leukerbad, leukerbad), 1e-3)
+    @Test
+    fun calculatorGivesMinPointsOnFarLocation() {
+        assertEquals(MIN_POINTS, pointCalculator.computePoints(100.0))
     }
 
     @Test
@@ -28,16 +31,16 @@ class GaussianPointCalculatorTest {
         val lausanne = Location(46.51919259139398, 6.633433265031245)
         val pully = Location(46.50940191063235, 6.666380123092782)
 
-        assertEquals(MIN_POINTS, pointCalculator.computePoints(lausanne, pully), 1e-3)
+        assertEquals(pointCalculator.computePoints(2.75), MIN_POINTS)
 
         //Distance of 1.21 km
         val olympicMuseum = Location(46.50899750094015, 6.6338989782122315)
-        assertEquals(MIN_POINTS, pointCalculator.computePoints(lausanne, olympicMuseum), 1e-3)
+        assertEquals(pointCalculator.computePoints(1.21), MIN_POINTS)
 
         //Distance of 0.631 km
         //Delta has to be higher as function starts to increase around 600 meters with current hyper parameters
         val vigie = Location(46.52156105006732, 6.62389057575249)
-        assertEquals(MIN_POINTS, pointCalculator.computePoints(lausanne, vigie), 1e-2)
+        assertEquals(pointCalculator.computePoints(0.631), MIN_POINTS)
     }
 
     @Test
@@ -46,23 +49,16 @@ class GaussianPointCalculatorTest {
         //This is because we want the points to be within some general range of points
 
         //Distance of 4.6 m
-        val museeBolo = Location(46.51871132171965, 6.563740024427009)
-        val INF = Location(46.518751465143225, 6.563753435471584)
+        assertEquals(MAX_POINTS - 230, pointCalculator.computePoints(0.046))
 
-        assertEquals(MAX_POINTS - 125, pointCalculator.computePoints(museeBolo, INF), 125.0)
-
-        //Distance of 43 m
-        val INM = Location(46.51862118400189, 6.563185765613928)
-        assertEquals(MAX_POINTS - 125, pointCalculator.computePoints(museeBolo, INM), 125.0)
+        //Distance of 0.43 m
+        assertEquals(MAX_POINTS - 202, pointCalculator.computePoints(0.043))
     }
 
     @Test
     fun calculatorGivesHalfPointsOnMediumDistances() {
         //Distance of 152 m
-        val museeBolo = Location(46.51871132171965, 6.563740024427009)
-        val ornithorynque = Location(46.520090585931456, 6.5638286979646745)
-
-        assertEquals(MAX_POINTS / 2, pointCalculator.computePoints(museeBolo, ornithorynque), 500.0)
+        assertEquals(MAX_POINTS / 2, pointCalculator.computePoints(0.1766))
 
     }
 }

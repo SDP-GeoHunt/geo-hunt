@@ -1,6 +1,6 @@
 package com.github.geohunt.app.data.network.firebase.models
 
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 
 /**
  * Firebase JSON representation of a [com.github.geohunt.app.model.Challenge].

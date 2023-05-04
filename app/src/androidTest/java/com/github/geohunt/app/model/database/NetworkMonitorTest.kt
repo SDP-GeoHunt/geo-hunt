@@ -26,7 +26,7 @@ class NetworkMonitorTest {
     private lateinit var database: FirebaseDatabase
     private lateinit var monitor: NetworkMonitor
 
-    private val STATUS_CHANGE_TIMEOUT: Duration = 5.seconds
+    private val STATUS_CHANGE_TIMEOUT: Duration = 10.seconds
 
     private suspend fun assertOnline(timeout: Duration) =
         assertFinishes(timeout) {

@@ -145,7 +145,7 @@ fun ChallengeItem(
 
 @Composable
 fun RoundImageCard(
-    imageUrl: String,
+    imageUrl: String?,
     modifier: Modifier = Modifier
 ) {
     Card(shape = CircleShape, modifier = modifier) {
@@ -153,7 +153,7 @@ fun RoundImageCard(
             model = imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Fit,
-            modifier = Modifier.testTag(imageUrl)
+            modifier = Modifier.testTag(imageUrl ?: "")
         )
     }
 }

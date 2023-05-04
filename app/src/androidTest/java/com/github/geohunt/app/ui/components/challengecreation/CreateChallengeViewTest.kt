@@ -1,17 +1,15 @@
 package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest.permission
+import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.provider.MediaStore
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -19,23 +17,17 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
-import com.github.geohunt.app.mocks.BaseMockDatabase
-import com.github.geohunt.app.mocks.MockChallengeClass
-import com.github.geohunt.app.mocks.MockLazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
-import com.github.geohunt.app.sensor.LocationRequestState
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.TaskCompletionSource
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.greaterThanOrEqualTo
+import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.data.repository.LocationRepository
+import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.Location
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)
@@ -54,6 +46,9 @@ class CreateChallengeViewTest {
     @Before
     fun setup() {
         Intents.init()
+        AppContainer.getEmulatedFirebaseInstance(
+            androidx.test.core.app.ApplicationProvider.getApplicationContext() as Application
+        )
     }
 
     @After
@@ -62,142 +57,53 @@ class CreateChallengeViewTest {
     }
 
     @Test
-    fun testChallengeOnSuccess() {
-        testChallenge(locationRequestFailed = false, createChallengeFailed = false)
-    }
-
-    @Test
-    fun testChallengeOnLocationFailure() {
-        testChallenge(locationRequestFailed = true, createChallengeFailed = false)
-    }
-
-    @Test
-    fun testChallengeOnChallengeCreationFailure() {
-        testChallenge(locationRequestFailed = false, createChallengeFailed = true)
-    }
-
-    @Test
     fun testCreateChallengeLaunchIntent() {
         composeTestRule.setContent {
-            CreateNewChallenge(
-                database = object : BaseMockDatabase() {},
-                onChallengeCreated = {},
-                onFailure = {}
-            )
+            CreateNewChallenge()
         }
 
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
     }
 
-    private fun testChallenge(
-        locationRequestFailed : Boolean = false,
-        createChallengeFailed : Boolean = false
-    ) {
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testCreateChallenge() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val resultingBitmap = createTestBitmap(context)
         val future = CompletableFuture<Challenge>()
-        val resultingPhoto = createTestBitmap(context)
-        val futureLocation = CompletableFuture<Location>()
-        val futureChallenge = CompletableFuture<Challenge>()
-        val taskChallengeCompletionSource = TaskCompletionSource<Challenge>()
-        var counter = 0
 
-        val locationRequestStateFactory = @Composable {
-            object : LocationRequestState {
-                override val lastLocation: MutableState<Location?> = remember {
-                    mutableStateOf(null)
-                }
+        val mockedLocationFlow = MutableSharedFlow<Location>()
 
-                override fun requestLocation(): CompletableFuture<Location> {
-                    counter++
-                    futureLocation.thenAccept {
-                        lastLocation.value = it
-                    }
-                    return futureLocation
-                }
-            }
-        }
-
-        val mockDatabase = object: BaseMockDatabase() {
-            override fun createChallenge(
-                thumbnail: Bitmap,
-                location: Location,
-                difficulty: Challenge.Difficulty,
-                expirationDate: LocalDateTime?,
-                description: String?
-            ): Task<Challenge> {
-                val challenge = MockChallengeClass(
-                    cid = "cid",
-                    author = MockLazyRef<User>("uid") { TODO() },
-                    publishedDate = LocalDateTime.now(),
-                    expirationDate = expirationDate,
-                    thumbnail = MockLazyRef("iid") { TODO() },
-                    correctLocation = location,
-                    claims = listOf(),
-                    difficulty = difficulty,
-                    description = description
-                )
-                futureChallenge.complete(challenge)
-                return taskChallengeCompletionSource.task
-            }
-        }
-
-        LocationRequestState.defaultFactory.mocked(locationRequestStateFactory).use {
+        LocationRepository.DefaultLocationFlow.mocked(mockedLocationFlow).use {
             // Start the application
             composeTestRule.setContent {
                 CreateChallengeForm(
-                    bitmap = resultingPhoto,
-                    database = mockDatabase,
-                    onChallengeCreated = future::complete,
-                    onFailure = future::completeExceptionally
-                )
+                    bitmap = resultingBitmap,
+                    viewModel = viewModel<CreateChallengeViewModel>(factory = CreateChallengeViewModel.Factory).apply {
+                        this.withPhoto({ resultingBitmap }, future::completeExceptionally)
+                        this.startLocationUpdate(future::completeExceptionally)
+                    },
+                    onSuccess = future::complete,
+                    onFailure = future::completeExceptionally)
             }
 
-            composeTestRule.onNodeWithText("Create challenge")
-                .performScrollTo()
-                .assertIsDisplayed()
-                .assertIsNotEnabled()
+            // Wait for idle
+            composeTestRule.waitForIdle()
 
-            // Assert the request was launched
-            assertThat(counter, greaterThanOrEqualTo(1))
-
-            // Resolve the future
-            if (locationRequestFailed) {
-                futureLocation.completeExceptionally(IllegalStateException())
-                composeTestRule.waitForIdle()
-                assertThat(future.isCompletedExceptionally, equalTo(true))
-                return@use // no longer anything to test
+            runBlocking {
+                mockedLocationFlow.emit(mockedLocation)
             }
 
-            futureLocation.complete(mockedLocation)
+            composeTestRule.waitForIdle()
 
             // Ensure the button get updated
-            assertThat(futureChallenge.isDone, equalTo(false))
             composeTestRule.onNodeWithText("Create challenge")
                 .performScrollTo()
                 .assertIsDisplayed()
                 .assertIsEnabled()
                 .performClick()
 
-            composeTestRule.waitForIdle()
-
-            assertThat(futureChallenge.isDone, equalTo(true))
-            assertThat(futureChallenge.get().correctLocation, equalTo(mockedLocation))
-            assertThat(future.isDone, equalTo(false))
-
-            // Finally check that this was completed successfully
-            if (createChallengeFailed) {
-                taskChallengeCompletionSource.setException(IllegalStateException())
-                composeTestRule.waitForIdle()
-
-                assertThat(future.isCompletedExceptionally, equalTo(true))
-                return@use // no longer anything to test
-            }
-
-            taskChallengeCompletionSource.setResult(futureChallenge.get())
-            composeTestRule.waitForIdle()
-
-            assertThat(future.isDone, equalTo(true))
-            assertThat(future.get(), equalTo(futureChallenge.get()))
+            composeTestRule.waitUntilDoesNotExist(hasText("Create challenge"), 10_000L)
         }
     }
 

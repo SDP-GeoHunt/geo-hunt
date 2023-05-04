@@ -1,53 +1,56 @@
 package com.github.geohunt.app.ui.components.challengecreation
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import android.app.Application
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.github.geohunt.app.i18n.DateFormatUtils
-import com.github.geohunt.app.model.database.api.Challenge
+import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.data.repository.LocationRepository
+import com.github.geohunt.app.model.Challenge.Difficulty
+import com.github.geohunt.app.model.Location
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDate
 
 class ChallengeSettingsTest {
     @get:Rule
     val testRule = createComposeRule()
 
-    private fun setupComposable() {
-        val difficulty = mutableStateOf(Challenge.Difficulty.MEDIUM)
-        val date = mutableStateOf(LocalDate.of(2001, 7, 24))
-        setupComposable(difficulty, date)
-    }
+    // Random location that does not represent the state of the project
+    private val mockedLocation = Location(51.27658527780932, 30.21759376638171)
 
-    private fun setupComposable(selectedDifficulty: MutableState<Challenge.Difficulty>, selectedDate: MutableState<LocalDate?>) {
-        testRule.setContent {
-            ChallengeSettings(selectedDifficulty = selectedDifficulty, selectedDate = selectedDate)
-        }
+    @Before
+    fun setup() {
+        AppContainer.getEmulatedFirebaseInstance(
+            androidx.test.core.app.ApplicationProvider.getApplicationContext() as Application
+        )
     }
 
     @Test
     fun settingsTextsAreDisplayed() {
-        setupComposable()
+        val flow = MutableSharedFlow<Location>()
 
-        testRule.onNodeWithText("Difficulty", substring = true, useUnmergedTree = true).assertIsDisplayed()
-        testRule.onNodeWithText("Date", substring = true, useUnmergedTree = true).assertIsDisplayed()
-    }
+        LocationRepository.DefaultLocationFlow.mocked(flow).use {
+            testRule.setContent {
+                ChallengeSettings(
+                    difficulty = Difficulty.MEDIUM,
+                    setDifficultyCallback = {},
+                    expirationDate = null,
+                    setExpirationDate = {}
+                )
+            }
 
-    @Test
-    fun currentSelectionsAreDisplayed() {
-        val difficulty = mutableStateOf(Challenge.Difficulty.MEDIUM)
-        val date = mutableStateOf(LocalDate.of(2001, 7, 24))
-        setupComposable(difficulty, date)
+            runBlocking {
+                flow.emit(mockedLocation)
+            }
 
-        testRule.onNodeWithText(difficulty.value.toString()).assertIsDisplayed()
-        testRule.onNodeWithText(DateFormatUtils.formatDate(date.value)).assertIsDisplayed()
+            testRule.onNodeWithText("Difficulty", substring = true, useUnmergedTree = true)
+                .assertIsDisplayed()
 
-        difficulty.value = Challenge.Difficulty.HARD
-        date.value = null
-
-        testRule.onNodeWithText(difficulty.value.toString()).assertIsDisplayed()
-        testRule.onNodeWithText("Never").assertIsDisplayed()
+            testRule.onNodeWithText("Date", substring = true, useUnmergedTree = true)
+                .assertIsDisplayed()
+        }
     }
 }

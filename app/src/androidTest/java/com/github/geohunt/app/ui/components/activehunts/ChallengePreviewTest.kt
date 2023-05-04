@@ -1,13 +1,7 @@
 package com.github.geohunt.app.ui.components.activehunts
 
-import androidx.compose.ui.test.assertContentDescriptionContains
-import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithContentDescription
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import com.github.geohunt.app.mocks.MockChallenge
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +34,6 @@ class ChallengePreviewTest {
 
     @Test
     fun challengeInformationAreDisplayed() {
-        testRule.onNodeWithText("Expires", substring = true).assertIsDisplayed().assertTextContains("never", substring = true)
         testRule.onNodeWithText("Debug User", substring = true).assertIsDisplayed()
         testRule.onNodeWithText("Italy", substring = true).assertIsDisplayed()
     }

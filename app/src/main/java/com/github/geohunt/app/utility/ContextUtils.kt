@@ -22,12 +22,12 @@ fun Context.findActivity() : Activity {
     throw IllegalStateException("Context.findActivity should be called in the context of an Activity")
 }
 
-fun Context.createImageFile(): File {
+fun Context.createImageFile(suffix: String = ".jpg"): File {
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-    val imageFileName = "JPEG_" + timeStamp + "_"
+    val imageFileName = "GENERATED_" + timeStamp + "_"
     return File.createTempFile(
         imageFileName, /* prefix */
-        ".jpg", /* suffix */
+        suffix, /* suffix */
         externalCacheDir /* directory */
     )
 }
