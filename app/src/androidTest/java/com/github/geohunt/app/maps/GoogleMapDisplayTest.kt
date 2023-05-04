@@ -81,4 +81,15 @@ class GoogleMapDisplayTest {
             .onNodeWithText("2024-05-01T19:39:12")
             .assertIsDisplayed()
     }
+
+    @Test
+    fun markerInfoWindowImageFetchingDoesNotThrowException() {
+        composeTestRule.setContent {
+            MarkerInfoWindowContent(challenge = mockTestChallengeDatabase[2])
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Marker Image")
+            .assertExists()
+    }
 }
