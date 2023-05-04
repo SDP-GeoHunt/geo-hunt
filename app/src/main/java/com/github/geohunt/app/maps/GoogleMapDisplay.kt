@@ -10,7 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.maps.marker.DisplayMarkers
 import com.github.geohunt.app.maps.marker.Marker
-import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.ui.screens.maps.MapsViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
