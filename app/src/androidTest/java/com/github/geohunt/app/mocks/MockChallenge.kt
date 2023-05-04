@@ -1,27 +1,25 @@
 package com.github.geohunt.app.mocks
 
-import android.graphics.Bitmap
-import com.github.geohunt.app.model.LazyRef
-import com.github.geohunt.app.model.database.api.Challenge
-import com.github.geohunt.app.model.database.api.Claim
-import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.Location
 import java.time.LocalDateTime
 
-class MockChallenge(
-    override val cid: String = "1",
-    override val author: LazyRef<User> = MockLazyRef("1") { TODO() },
-    override val publishedDate: LocalDateTime = LocalDateTime.now(),
-    override val expirationDate: LocalDateTime? = null,
-    override val thumbnail: LazyRef<Bitmap> = MockLazyRef("1") { TODO() },
-    override val correctLocation: Location = Location(.0, .0),
-    override val claims: List<LazyRef<Claim>> = listOf(),
-    override val description: String? = null,
-    override val difficulty: Challenge.Difficulty = Challenge.Difficulty.MEDIUM,
-    override var likes: List<LazyRef<User>> = listOf()
-) : Challenge {
-
-    override val coarseLocation: Location
-        get() = correctLocation.getCoarseLocation()
-
-}
+fun MockChallenge(
+    id: String = "1",
+    authorId: String = "1",
+    photoUrl: String = "",
+    location: Location = Location(0.0, 0.0),
+    publishedDate: LocalDateTime = LocalDateTime.now(),
+    expirationDate: LocalDateTime? = null,
+    difficulty: Challenge.Difficulty = Challenge.Difficulty.MEDIUM,
+    description: String? = null
+) = Challenge(
+    id = id,
+    authorId = authorId,
+    photoUrl = photoUrl,
+    location = location,
+    publishedDate = publishedDate,
+    expirationDate = expirationDate,
+    difficulty = difficulty,
+    description = description
+)

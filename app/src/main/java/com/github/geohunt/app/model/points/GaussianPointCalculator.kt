@@ -1,6 +1,5 @@
 package com.github.geohunt.app.model.points
 
-import com.github.geohunt.app.model.database.api.Location
 import com.github.geohunt.app.model.points.PointCalculator.Companion.MAX_POINTS
 import com.github.geohunt.app.model.points.PointCalculator.Companion.MIN_POINTS
 import com.github.geohunt.app.utility.clamp
@@ -23,11 +22,10 @@ class GaussianPointCalculator(std: Double) : PointCalculator {
      * Main function of the PointCalculator, computes the amount of points a claim is worth.
      * Uses a gaussian distribution and the distance between the two Locations to compute
      * the points.
-     * @param l1 First location used to compute points
-     * @param l2 Second location used to compute points
+     * @param distance The distance to the real location
      */
-    override fun computePoints(l1: Location, l2: Location): Double {
-        val points = calculator(l1.distanceTo(l2)) * ratio
-        return clamp(MIN_POINTS, points, MAX_POINTS)
+    override fun computePoints(distance: Double): Long {
+        val points = calculator(distance) * ratio
+        return clamp(MIN_POINTS, points.toLong(), MAX_POINTS)
     }
 }

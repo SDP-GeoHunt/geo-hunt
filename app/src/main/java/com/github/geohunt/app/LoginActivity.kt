@@ -1,89 +1,70 @@
 package com.github.geohunt.app
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import com.github.geohunt.app.authentication.Authenticator
-import com.github.geohunt.app.ui.theme.GeoHuntTheme
-import com.github.geohunt.app.ui.theme.md_theme_light_primary
-import com.github.geohunt.app.ui.theme.seed
+import androidx.activity.viewModels
+import com.github.geohunt.app.ui.screens.GeoHuntScreen
+import com.github.geohunt.app.ui.screens.login.LoginScreen
+import com.github.geohunt.app.ui.screens.login.LoginViewModel
 import com.github.geohunt.app.utility.replaceActivity
 
+/**
+ * Main entry point of the application.
+ *
+ * If users are not logged in, they are asked to do by clicking on the "Sign in" button, which
+ * launches an authentication prompt.
+ *
+ * If they are already logged in, they are simply redirected to the [MainActivity].
+ *
+ * @see [LoginViewModel.login]
+ */
 class LoginActivity : ComponentActivity() {
+    private val viewModel: LoginViewModel by viewModels(factoryProducer = { LoginViewModel.Factory })
+
+    private val PREFERENCES_FILE = "preferences"
+    private val MY_PREFERENCE_MODE = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val authenticator: Authenticator = Authenticator.authInstance.get()
-
-        authenticator.user?.let { loggedIn() }
-
-        if (intent.hasExtra("login")) {
-            authenticator.authenticate(this@LoginActivity).thenAccept {
-                it?.let { loggedIn() }
-            }
+        // Check that the user is not already logged in
+        if (viewModel.isLoggedIn()) {
+            onSuccessfulLogin()
         }
 
-        setContent {
-            GeoHuntTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    LoginScreen(context = this@LoginActivity)
-                }
-            }
+        val settings = getSharedPreferences(PREFERENCES_FILE, MY_PREFERENCE_MODE)
+
+        // Check if the application is being launched for first time
+        // and if so, display the tutorial
+        if (settings.getBoolean("first_application_open", true)) {
+            val intent = Intent(this@LoginActivity, TutorialActivity::class.java)
+            replaceActivity(intent)
+            settings.edit().putBoolean("first_application_open", false).apply()
         }
-    }
 
-    private fun loggedIn() {
-        // prevent the user to go back to the login activity
-        // so we properly replace it
-        replaceActivity(Intent(this@LoginActivity, MainActivity::class.java))
-    }
-}
-
-@OptIn(ExperimentalTextApi::class)
-@Composable
-fun LoginScreen(context: Context) {
-    Column(
-        modifier = Modifier.padding(20.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(id = R.string.app_name),
-            textAlign = TextAlign.Center,
-            style = TextStyle(
-                brush = Brush.linearGradient(listOf(md_theme_light_primary, seed))
-            )
+        // Register the login launcher
+        val loginLauncher = viewModel.registerLoginPrompt(
+            this@LoginActivity,
+            onSuccess = { response ->
+                viewModel.acceptResponse(response, andThen = { onSuccessfulLogin() })
+            },
+            onFailure = {
+                Log.e("auth", "Authentication failed with error $it")
+            }
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(modifier = Modifier.testTag("signin-btn"), onClick = {
-            val intent = Intent(context, LoginActivity::class.java)
-            intent.putExtra("login", 1)
-            context.startActivity(intent)
-        }) {
-            Text(stringResource(id = R.string.sign_in))
+        setContent {
+            GeoHuntScreen {
+                LoginScreen(onSignInClick = { viewModel.launchLoginPrompt(loginLauncher) })
+            }
         }
+    }
+
+    private fun onSuccessfulLogin() {
+        // Prevent the user from going back to the login activity by destroying it
+        replaceActivity(Intent(this@LoginActivity, MainActivity::class.java))
     }
 }
