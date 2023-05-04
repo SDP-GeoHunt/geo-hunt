@@ -1,12 +1,12 @@
 package com.github.geohunt.app.ui.components.tutorial
 
-import android.content.SharedPreferences
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.github.geohunt.app.TutorialActivity
 import org.junit.After
 import org.junit.Before
@@ -22,15 +22,19 @@ class WelcomeScreenTest {
     private val PREFERENCES_FILE = "preferences"
 
     @Before
-    fun setup(){
-        val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
-        settings.edit().putBoolean("first_application_open", true).commit()
+    fun setup() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val settings = context.getSharedPreferences(PREFERENCES_FILE, 0)
+
+        settings.edit().putBoolean("first_application_open", true).apply()
     }
 
     @After
-    fun teardown(){
-        val settings: SharedPreferences = composeTestRule.activity.getSharedPreferences(PREFERENCES_FILE, 0)
-        settings.edit().putBoolean("first_application_open", false).commit()
+    fun teardown() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val settings = context.getSharedPreferences(PREFERENCES_FILE, 0)
+
+        settings.edit().putBoolean("first_application_open", false).apply()
     }
 
     @Test
