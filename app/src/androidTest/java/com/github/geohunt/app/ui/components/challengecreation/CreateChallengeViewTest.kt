@@ -68,6 +68,7 @@ class CreateChallengeViewTest {
         Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testCreateChallenge() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -105,11 +106,7 @@ class CreateChallengeViewTest {
                 .assertIsEnabled()
                 .performClick()
 
-            composeTestRule.waitForIdle()
-
-            // Ensure the button is now disabled
-            composeTestRule.onNodeWithText("Create challenge")
-                .assertDoesNotExist()
+            composeTestRule.waitUntilDoesNotExist(hasText("Create challenge"), 10_000L)
         }
     }
 
