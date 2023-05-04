@@ -5,9 +5,11 @@ import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.maps.marker.Marker
 import com.github.geohunt.app.maps.marker.MarkerDisplay
 import com.github.geohunt.app.model.database.api.Location
+import com.github.geohunt.app.ui.screens.home.HomeViewModel
 import com.github.geohunt.app.ui.screens.maps.MapsViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -34,6 +36,7 @@ private var challengeDatabase: List<Marker> = mutableListOf()
 fun GoogleMapDisplay(
     modifier: Modifier = Modifier,
     cameraPosition: CameraPosition = CameraPosition(epflCoordinates, 10f, 0f, 0f),
+    viewModel: MapsViewModel = viewModel(factory = MapsViewModel.Factory),
     content: @Composable () -> Unit = {}
 ) {
     val uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
@@ -55,18 +58,21 @@ fun GoogleMapDisplay(
             val longitude = coordinateCenter.longitude
 
             //val radius = 38000 / 2.0.pow((zoom - 3).toDouble()) * cos(latitude * PI / 180);
-            val radius = 1000.0 //TODO change this value later
+            val radius = 10.0 //TODO change this value later
             val location = Location(latitude, longitude)
             val neighboringSectors = location.getNeighboringSectors(radius)
 
             val markersList = remember { mutableStateListOf<Marker>() }
 
-            val mapsViewModel = MapsViewModel()
-            mapsViewModel.retrieveChallengesMultiHash(neighboringSectors)
+            //val mapsViewModel = MapsViewModel(
+            viewModel.retrieveChallengesMultiHash(neighboringSectors)
 
-            val challenges = mapsViewModel.challenges.collectAsStateWithLifecycle()
+            val challenges = viewModel.challenges.collectAsStateWithLifecycle()
+
 
             challenges.value?.forEach {
+                Log.d("MAPS SEEN CHALLENGES", it.toString())
+
                 val marker = Marker(
                     markerPosition = LatLng(it.location?.latitude ?: 0.0, it.location?.longitude ?: 0.0),
                     markerTitle = it.id ?: "",
@@ -78,6 +84,8 @@ fun GoogleMapDisplay(
 
                 markersList.add(marker)
             }
+
+            MarkerDisplay(items = markersList)
 
 
             /*for (sector in neighboringSectors) {
