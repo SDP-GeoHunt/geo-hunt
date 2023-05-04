@@ -6,7 +6,7 @@ import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.compose.MarkerState
 import java.time.LocalDateTime
 
-/*
+/* TODO UPDATE DOC LATER
  * Data class representing a marker that represents
  * a challenge on the map
  *
@@ -18,19 +18,8 @@ import java.time.LocalDateTime
  * @param state the state of the marker
  */
 data class Marker(
-    val markerPosition: LatLng,
-    val markerTitle: String,
-    val markerSnippet: String,
+    val title: String,
     val image: Bitmap,
-    val expiryDate: LocalDateTime,
-    val state : MarkerState = MarkerState(position = markerPosition),
-    ) : ClusterItem {
-    override fun getPosition(): LatLng =
-        markerPosition
-
-    override fun getTitle(): String =
-        markerTitle
-
-    override fun getSnippet(): String =
-        markerSnippet
-}
+    val coordinates: LatLng,
+    val expiryDate: LocalDateTime
+    )
