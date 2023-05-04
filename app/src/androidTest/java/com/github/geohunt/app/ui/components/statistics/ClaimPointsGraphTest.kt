@@ -12,7 +12,7 @@ class ClaimPointsGraphTest {
         val d1 = now.minusDays(2)
         val d2 = now.minusDays(4)
         val testDates = listOf(d1, d1, d2, d2)
-        val claims = testDates.map { MockClaim(time = it.atTime(12, 12), awardedPoints = 5L) }
+        val claims = testDates.map { MockClaim(claimDate = it.atTime(12, 12), awardedPoints = 5L) }
         val (dates, points) = createEntries(claims, DateGranularity.WEEK)
 
         //Check if dates got correctly grouped
@@ -34,7 +34,7 @@ class ClaimPointsGraphTest {
         val undisplayed2 = now.minusDays(14)
 
         val claims = listOf(undisplayed1, undisplayed2, d1, d2)
-                .map { MockClaim(time = it.atTime(12, 12), awardedPoints = 10L) }
+                .map { MockClaim(claimDate = it.atTime(12, 12), awardedPoints = 10L) }
 
         val (dates, points) = createEntries(claims, DateGranularity.WEEK)
 
