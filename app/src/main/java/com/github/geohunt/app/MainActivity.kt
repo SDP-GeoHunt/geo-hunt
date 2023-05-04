@@ -8,7 +8,6 @@ import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.ui.screens.GeoHuntScreen
 import com.github.geohunt.app.ui.screens.main.MainScreen
 import com.github.geohunt.app.ui.screens.main.MainViewModel
-import com.github.geohunt.app.utility.listenForNewNotification
 import com.github.geohunt.app.utility.replaceActivity
 
 /**
@@ -37,6 +36,6 @@ class MainActivity : ComponentActivity() {
                 })
             }
         }
-        listenForNewNotification(this@MainActivity)
+        viewModel.listenForNewNotification(this@MainActivity)
     }
 }

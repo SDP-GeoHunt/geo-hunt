@@ -34,29 +34,3 @@ fun showNotification(context: Context, title: String, message: String) {
 
     notificationManager.notify(0, builder.build())
 }
-
-fun listenForNewNotification(context: Context) {
-    val database = FirebaseDatabase.getInstance()
-    val challengesRef = database.getReference("challenges")
-
-    val challengesListener = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            snapshot.children.forEach { child ->
-                if (child.key != null) {
-                    showNotification(
-                        context = context,
-                        title = "New Challenge!",
-                        message = "Check out the new challenge"
-                    )
-                }
-            }
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            Log.w("ERROR:", "Failed to listen for challenges.", error.toException())
-        }
-    }
-
-    challengesRef.addValueEventListener(challengesListener)
-
-}
