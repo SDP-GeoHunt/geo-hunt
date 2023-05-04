@@ -36,5 +36,6 @@ class MainActivity : ComponentActivity() {
                 })
             }
         }
+        viewModel.listenForNewNotification(this@MainActivity)
     }
 }

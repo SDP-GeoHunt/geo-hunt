@@ -24,12 +24,25 @@ import com.github.geohunt.app.utility.replaceActivity
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels(factoryProducer = { LoginViewModel.Factory })
 
+    private val PREFERENCES_FILE = "preferences"
+    private val MY_PREFERENCE_MODE = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Check that the user is not already logged in
         if (viewModel.isLoggedIn()) {
             onSuccessfulLogin()
+        }
+
+        val settings = getSharedPreferences(PREFERENCES_FILE, MY_PREFERENCE_MODE)
+
+        // Check if the application is being launched for first time
+        // and if so, display the tutorial
+        if (settings.getBoolean("first_application_open", true)) {
+            val intent = Intent(this@LoginActivity, TutorialActivity::class.java)
+            replaceActivity(intent)
+            settings.edit().putBoolean("first_application_open", false).apply()
         }
 
         // Register the login launcher
