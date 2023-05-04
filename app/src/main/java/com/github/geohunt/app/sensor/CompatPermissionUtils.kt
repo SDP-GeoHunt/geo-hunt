@@ -129,7 +129,7 @@ fun rememberPermissionsState(vararg permissions: String): MultiplePermissionStat
 }
 
 
-private class MutableMultiplePermissionState : MultiplePermissionState {
+private class MutableMultiplePermissionState() : MultiplePermissionState {
 
     override lateinit var allAreGranted: MutableState<Boolean>
     override lateinit var permissions: MutableState<List<Permission>>

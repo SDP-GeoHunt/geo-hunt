@@ -15,13 +15,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.components.navigation.VisibileRoute
 import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.github.geohunt.app.ui.components.navigation.HiddenRoute
+import com.github.geohunt.app.ui.components.navigation.Route
 
 @Composable
-fun SettingsPage(onBack: () -> Any, navigate: (VisibileRoute) -> Any) {
+fun SettingsPage(onBack: () -> Any, navigate: (Route) -> Any) {
     Scaffold(
         topBar = {
             TopBarWithBackButton(

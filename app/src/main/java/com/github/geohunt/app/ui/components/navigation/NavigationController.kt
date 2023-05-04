@@ -19,34 +19,34 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
-import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.maps.GoogleMapDisplay
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
-import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
-import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePage
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.ui.components.claims.ClaimChallenge
+import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
 import com.github.geohunt.app.ui.screens.home.HomeScreen
-import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.settings.SettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsPage
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsViewModel
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 typealias ComposableFun = @Composable () -> Unit
 
-interface VisibileRoute {
+interface Route {
     val route: String
 }
 
-enum class VisibleRoute(val titleStringId: Int, override val route: String, val icon: ComposableFun): VisibileRoute {
+enum class VisibleRoute(val titleStringId: Int, override val route: String, val icon: ComposableFun): Route {
 
     Home(R.string.navigation_home, "home", { Icon(Icons.Sharp.Home, null) }),
     Explore(R.string.navigation_explore, "explore", { Icon(Icons.Sharp.Search, null) }),
@@ -61,7 +61,7 @@ enum class VisibleRoute(val titleStringId: Int, override val route: String, val 
     Profile(R.string.navigation_profile, "profile", { Icon(Icons.Sharp.Person, null) })
 }
 
-enum class HiddenRoute(override val route: String): VisibileRoute {
+enum class HiddenRoute(override val route: String): Route {
     EditProfile("settings/profile"),
     Settings("settings"),
     AppSettings("settings/app"),
@@ -115,15 +115,18 @@ fun NavigationController(
             ProfilePage(
                 openLeaderboard = { navController.navigate(HiddenRoute.Leaderboard.route) },
                 openProfileEdit = { navController.navigate(HiddenRoute.EditProfile.route) },
+                openSettings = { navController.navigate(HiddenRoute.Settings.route) },
                 onLogout = { logout() }
             )
         }
 
         composable("${VisibleRoute.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
             it.arguments?.getString("userId")?.let {
-                userId -> ProfilePage(ProfilePageViewModel(
+                userId -> ProfilePage(
+                ProfilePageViewModel(
                     container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, userId
-                ))
+                )
+            )
             }
         }
 
