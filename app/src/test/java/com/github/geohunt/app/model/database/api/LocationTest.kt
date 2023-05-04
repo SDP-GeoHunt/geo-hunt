@@ -1,5 +1,6 @@
 package com.github.geohunt.app.model.database.api
 
+import com.github.geohunt.app.model.Location
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.junit.Assert.assertEquals

@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.github.geohunt.app.model.database.api.User
+import com.github.geohunt.app.model.User
 
 /**
  * Creates the leaderboard view.
@@ -34,13 +34,15 @@ fun Leaderboard(
 
         // Note that the modifier argument can not be removed, as [Modifier.weight] is an extension
         // method only available in a [ColumnScope] or [RowScope]
-        LeaderboardList(users = users, Modifier.weight(1.0f))
+        // TODO: Integrate with view model
+        LeaderboardList(users = users, emptyMap<User, Long>().withDefault { 0 }, Modifier.weight(1.0f))
 
         // Bottom "You" item
         LeaderboardListItem(
             position = users.indexOf(currentUser),
             user = currentUser,
-            isCurrent = true
+            isCurrent = true,
+            score = 0 // TODO
         )
     }
 }

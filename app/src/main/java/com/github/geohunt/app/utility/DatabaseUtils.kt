@@ -28,9 +28,3 @@ inline fun <reified T> DataSnapshot.toMap(): Map<String, T>
  */
 suspend inline fun <reified T> Query.queryAs(): T? = this.get().await().getValue<T>()
 
-/**
- * Converts a [DataSnapshot] object to the desired type [T].
- * @return the converted object of type [T], or null if the value cannot be converted.
- * @param T the desired type of the object to be converted.
- */
-inline fun <reified T> DataSnapshot.convertTo() : T? = this.getValue<T>()

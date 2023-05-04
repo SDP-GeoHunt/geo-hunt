@@ -90,7 +90,7 @@ class DateUtilsTest {
             startsWith("2023-01-01T08:59:45")
         )
 
-        assertThat(DateUtils.utcIso8601FromLocalNullable(null), equalTo("null"))
+        assertThat(DateUtils.utcIso8601FromLocalNullable(null), equalTo(null))
     }
 
     @Test
@@ -120,6 +120,6 @@ class DateUtilsTest {
         assertThat(time.minute, equalTo(now.minute))
         assertThat(time.second, equalTo(now.second))
 
-        assertThat(DateUtils.localNullableFromUtcIso8601("null"), nullValue())
+        assertThat(DateUtils.localNullableFromUtcIso8601(null), nullValue())
     }
 }
