@@ -21,7 +21,7 @@ class MapsViewModel(
     private val _challenges: MutableStateFlow<List<Challenge>?> = MutableStateFlow(null)
     val challenges: StateFlow<List<Challenge>?> = _challenges.asStateFlow()
 
-    fun retrieveChallengesMultiHash(sectorHashes: List<String>) {
+    fun updateFetchableChallenges(sectorHashes: List<String>) {
         val aggregateChallengeFlow = sectorHashes.map { sectorHash ->
             challengeRepository.getSectorChallenges(sectorHash)
         }.aggregateFlows()

@@ -1,7 +1,6 @@
 package com.github.geohunt.app.maps
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -9,12 +8,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.maps.marker.DisplayMarkers
 import com.github.geohunt.app.maps.marker.Marker
 import com.github.geohunt.app.model.database.api.Location
-import com.github.geohunt.app.ui.screens.home.HomeViewModel
 import com.github.geohunt.app.ui.screens.maps.MapsViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
-import kotlinx.coroutines.flow.forEach
 import java.time.LocalDateTime
 import java.time.Month
 import kotlin.math.PI
@@ -61,31 +58,31 @@ fun GoogleMapDisplay(
             val location = Location(latitude, longitude)
             val neighboringSectors = location.getNeighboringSectors(radius)
 
-            val markersList = remember { mutableStateListOf<Marker>() }
+            //val markersList = mutableListOf<Marker>()
+            val markers = remember { mutableStateListOf<Marker>() }
 
-            viewModel.retrieveChallengesMultiHash(neighboringSectors)
+            viewModel.updateFetchableChallenges(neighboringSectors)
 
             val challenges = viewModel.challenges.collectAsStateWithLifecycle()
 
 
             challenges.value?.forEach {
-                Log.d("MAPS SEEN CHALLENGES", it.toString())
+                //Log.d("MAPS SEEN CHALLENGES", it.toString())
 
                 val marker = Marker(
-                    title = it.id ?: "",
+                    title = it.id,
                     //TODO use string url a bit later
                     image = mockBitmap,
-                    coordinates = LatLng(it.location?.latitude ?: 0.0, it.location?.longitude ?: 0.0),
+                    coordinates = LatLng(it.location.latitude, it.location.longitude),
                     expiryDate = it.expirationDate ?: LocalDateTime.of(2024, Month.MAY, 1, 19, 0),
                 )
 
-                markersList.add(marker)
+                markers.add(marker)
             }
 
-            DisplayMarkers(markers = markersList)
+            DisplayMarkers(markers = markers)
 
             content()
-
         }
     }
 }
