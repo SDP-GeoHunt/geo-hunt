@@ -3,8 +3,6 @@ package com.github.geohunt.app.ui.components.navigation
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -25,7 +23,6 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.authentication.Authenticator
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.maps.GoogleMapDisplay
-import com.github.geohunt.app.model.database.Database
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
@@ -34,12 +31,11 @@ import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
 import com.github.geohunt.app.ui.screens.home.HomeScreen
-import com.github.geohunt.app.utility.findActivity
-import com.github.geohunt.app.utility.replaceActivity
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
-import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 typealias ComposableFun = @Composable () -> Unit
 
@@ -66,7 +62,6 @@ enum class HiddenRoutes(val route: String) {
 @Composable
 fun NavigationController(
     navController: NavHostController,
-    database: Database,
     modifier: Modifier = Modifier,
     logout: () -> Any
 ) {
@@ -140,11 +135,11 @@ fun NavigationController(
 
         // View image
         composable(
-            "image-view/{imageId}",
-            arguments = listOf(navArgument("imageId") { type = NavType.StringType })
+            "image-view/{imageUrl}",
+            arguments = listOf(navArgument("imageUrl") { type = NavType.StringType })
         ) { backStackEntry ->
-            val iid = backStackEntry.arguments?.getString("imageId")!!
-            ZoomableImageView(database = database, iid = iid) {
+            val url = backStackEntry.arguments?.getString("imageUrl")!!
+            ZoomableImageView(url = url) {
                 navController.popBackStack()
             }
         }
@@ -158,7 +153,7 @@ fun NavigationController(
 
             ChallengeView(
                 cid = cid,
-                fnViewImageCallback = { url -> navController.navigate("image-view/$url") },
+                fnViewImageCallback = { navController.navigate("image-view/${URLEncoder.encode(it, StandardCharsets.UTF_8.toString())}") },
                 fnClaimHuntCallback = { cid -> navController.navigate("claim-challenge/$cid") },
                 fnGoBackBtn = { navController.popBackStack() }
             )
