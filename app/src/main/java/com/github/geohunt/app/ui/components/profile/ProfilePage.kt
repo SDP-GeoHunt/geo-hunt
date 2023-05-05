@@ -38,12 +38,13 @@ fun ProfilePage(
     viewModel: ProfilePageViewModel = viewModel(factory = ProfilePageViewModel.Factory),
     openProfileEdit: OptionalCallback = null,
     openLeaderboard: OptionalCallback = null,
-    onLogout: OptionalCallback = null
+    onLogout: OptionalCallback = null,
+    openSettings: OptionalCallback = null,
 ) {
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val isMoreOptionsAvailable =
-        openProfileEdit != null || onLogout != null || openLeaderboard != null
+        openProfileEdit != null || onLogout != null || openLeaderboard != null || openSettings != null
 
     // Refreshing
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
@@ -51,6 +52,7 @@ fun ProfilePage(
         refreshing = isRefreshing,
         onRefresh = { viewModel.refresh() })
 
+    val isPrivate = viewModel.isPrivate.collectAsState()
     val user = viewModel.user.collectAsState()
     val challenges = viewModel.challenges.collectAsState()
     val claims = viewModel.claims.collectAsState()
@@ -67,46 +69,94 @@ fun ProfilePage(
                     rememberScrollState()
                 )
         ) {
-
             PullRefreshIndicator(
                 refreshing = isRefreshing, state = pullRefreshState, modifier = Modifier.align(
                     Alignment.TopCenter
                 )
             )
 
-            BottomDrawer(
-                gesturesEnabled = drawerState.isOpen,
+            val fullModifier = Modifier
+                .height(this@BoxWithConstraints.maxHeight)
+                .width(this@BoxWithConstraints.maxWidth)
+
+            SetupDrawer(
+                enabled = isMoreOptionsAvailable,
                 drawerState = drawerState,
                 drawerContent = {
-                    if (isMoreOptionsAvailable)
-                        SettingsDrawer(openProfileEdit, openLeaderboard, onLogout) {
-                            coroutineScope.async { drawerState.close() }
-                        }
+                    SettingsDrawer(
+                        openProfileEdit,
+                        openLeaderboard,
+                        onLogout,
+                        openSettings
+                    ) {
+                        coroutineScope.async { drawerState.close() }
+                    }
                 },
-                modifier = Modifier.height(this@BoxWithConstraints.maxHeight)
+                modifier = fullModifier
             ) {
                 if (error.value != null) {
-                    Text(text = "User does not exist.")
-                } else if (user.value == null) {
-                    Progress()
+                    ErrorFetchingPage(
+                        stringResource(id = R.string.error_fetching_page),
+                        fullModifier.testTag("error-profile")
+                    )
+                } else if (isPrivate.value) {
+                    ErrorFetchingPage(
+                        stringResource(id = R.string.private_profile_page),
+                        fullModifier.testTag("private-profile")
+                    )
                 } else {
-                    ProfilePageContent(
-                        user.value!!,
-                        challenges.value,
-                        hunts.value,
-                        score,
-                        // Do not show settings if seeing another profile
-                        if (viewModel.isSelf) { { coroutineScope.async {
-                            drawerState.open()
-                        } } } else null,
-                        if (viewModel.canFollow) { doesFollow.value } else null
-                    ) {
-                        if (viewModel.canFollow) {
-                            viewModel.toggleFollow()
+                    if (user.value == null) {
+                        Progress()
+                    } else {
+                        ProfilePageContent(
+                            user.value!!,
+                            challenges.value,
+                            hunts.value,
+                            score,
+                            // Do not show settings if seeing another profile
+                            if (viewModel.isSelf) {
+                                {
+                                    coroutineScope.async {
+                                        drawerState.open()
+                                    }
+                                }
+                            } else null,
+                            if (viewModel.canFollow) {
+                                doesFollow.value
+                            } else null
+                        ) {
+                            if (viewModel.canFollow) {
+                                viewModel.toggleFollow()
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun SetupDrawer(
+    enabled: Boolean,
+    drawerState: BottomDrawerState,
+    drawerContent: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit = {},
+) {
+    if (enabled) {
+        BottomDrawer(
+            gesturesEnabled = drawerState.isOpen,
+            drawerState = drawerState,
+            drawerContent = { drawerContent() },
+            modifier = modifier
+        ) {
+            content()
+        }
+    } else {
+        Column(modifier) {
+            content()
         }
     }
 }
@@ -120,7 +170,7 @@ fun ProfilePageContent(
     score: Long?,
     onSettingsClick: (() -> Any)?,
     isFollowed: Boolean? = null,
-    toggleFollow: (() -> Any)? = null
+    toggleFollow: (() -> Any)? = null,
 ) {
     Column {
         Row {
@@ -218,5 +268,18 @@ private fun Progress() {
         modifier = Modifier.fillMaxSize()
     ) {
         CircularProgressIndicator(modifier = Modifier.testTag("progress"))
+    }
+}
+
+@Composable
+private fun ErrorFetchingPage(string: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = string,
+            textAlign = TextAlign.Center
+        )
     }
 }

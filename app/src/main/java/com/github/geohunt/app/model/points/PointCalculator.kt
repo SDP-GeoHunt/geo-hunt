@@ -1,6 +1,5 @@
 package com.github.geohunt.app.model.points
 
-import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Challenge.Difficulty
 
 /**

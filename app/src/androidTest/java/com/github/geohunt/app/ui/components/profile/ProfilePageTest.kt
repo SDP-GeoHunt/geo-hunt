@@ -3,11 +3,13 @@ package com.github.geohunt.app.ui.components.profile
 import android.app.Application
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.github.geohunt.app.data.exceptions.UserNotFoundException
 import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
+import com.github.geohunt.app.model.database.api.ProfileVisibility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -38,6 +40,7 @@ class ProfilePageTest {
         user: UserRepositoryInterface? = MockUserRepository(appContainer!!.user),
         challenge: ChallengeRepositoryInterface? = null,
         follow: FollowRepositoryInterface? = MockFollowRepository(),
+        visibility: ProfileVisibilityRepositoryInterface? = MockProfileVisibilityRepository(),
         uid: String = "1"
     ): ProfilePageViewModel {
         return ProfilePageViewModel(
@@ -45,6 +48,7 @@ class ProfilePageTest {
             userRepository = user ?: appContainer!!.user,
             challengeRepository = challenge ?: appContainer!!.challenges,
             followRepository = follow ?: appContainer!!.follow,
+            profileVisibilityRepository = visibility ?: appContainer!!.profileVisibilities,
             uid = uid
         )
     }
@@ -202,6 +206,41 @@ class ProfilePageTest {
             ProfilePage(viewModel = vm)
         }
         testRule.onNodeWithTag("follow-btn").assertDoesNotExist()
+    }
+
+
+    @Test
+    fun doesNotShowProfileIfPrivate() {
+        val vm = createViewModel(
+            visibility = object: MockProfileVisibilityRepository() {
+                override suspend fun getProfileVisibility(uid: String): Flow<ProfileVisibility> {
+                    assert(uid == "2")
+                    return flowOf(ProfileVisibility.PRIVATE)
+                }
+            },
+            uid = "2"
+        )
+        testRule.setContent {
+            ProfilePage(vm)
+        }
+        testRule.onNodeWithTag("private-profile").assertIsDisplayed()
+    }
+
+    @Test
+    fun showsErrorIfUserDoNotExists() {
+        val vm = createViewModel(
+            uid = "-",
+            user = object: MockUserRepository() {
+                override suspend fun getUser(id: String): User {
+                    if (id == "-") throw UserNotFoundException("-")
+                    return super.getUser(id)
+                }
+            }
+        )
+        testRule.setContent {
+            ProfilePage(vm)
+        }
+        testRule.onNodeWithTag("error-profile").assertIsDisplayed()
     }
 
     /* Test fails for unknown reason

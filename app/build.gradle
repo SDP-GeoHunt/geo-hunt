@@ -3,6 +3,7 @@ plugins {
     id 'jacoco'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 android {
@@ -149,6 +150,14 @@ dependencies {
 
     // Tutorial implementation
     implementation 'com.google.accompanist:accompanist-pager:0.30.1'
+
+    // Permissions
+    implementation "com.google.accompanist:accompanist-permissions:0.30.1"
+
+    // Settings
+    implementation "androidx.datastore:datastore:1.0.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2"
+    implementation "com.github.alorma:compose-settings-ui:0.26.0"
 
     // Permissions
     implementation "com.google.accompanist:accompanist-permissions:0.30.1"

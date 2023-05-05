@@ -1,6 +1,5 @@
 package com.github.geohunt.app.model
 
-import android.net.Uri
 import androidx.annotation.IntRange
 import java.time.LocalDateTime
 

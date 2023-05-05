@@ -32,15 +32,15 @@ class TestNavigation {
 
     @Test
     fun startRouteIsHome() {
-        assert(Route.Home.route == navController.currentBackStackEntry?.destination?.route)
+        assert(VisibleRoute.Home.route == navController.currentBackStackEntry?.destination?.route)
     }
 
     @Test
     fun clickingOnButtonSelectsIt() {
-        for (route in Route.values()) {
+        for (route in VisibleRoute.values()) {
             // Skip Route.Create because too hard to test
             // Skip Maps because of issue
-            if (route == Route.Create || route == Route.Explore) {
+            if (route == VisibleRoute.Create || route == VisibleRoute.Explore) {
                 continue
             }
 
@@ -52,9 +52,9 @@ class TestNavigation {
 
     @Test
     fun clickingOnButtonRedirects() {
-        for (route in Route.values()) {
+        for (route in VisibleRoute.values()) {
             // Skip Route.Create because too hard to test
-            if (route == Route.Create || route == Route.ActiveHunts || route == Route.Profile) {
+            if (route == VisibleRoute.Create || route == VisibleRoute.ActiveHunts || route == VisibleRoute.Profile) {
                 continue
             }
 
@@ -64,4 +64,5 @@ class TestNavigation {
             assert(navController.currentBackStackEntry?.destination?.route == route.route)
         }
     }
-}*/
+}
+*/
