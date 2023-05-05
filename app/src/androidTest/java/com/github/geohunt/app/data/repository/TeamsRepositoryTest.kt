@@ -5,6 +5,7 @@ import com.github.geohunt.app.mocks.MockUserRepository
 import com.github.geohunt.app.model.database.FirebaseEmulator
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -35,7 +36,7 @@ class TeamsRepositoryTest {
         )
     }
 
-    /*
+
     @Test
     fun joiningATeamEmitsOnFlow() = runTest {
         val repo = TeamsRepository(
@@ -43,17 +44,41 @@ class TeamsRepositoryTest {
             MockUserRepository()
         )
         val createdTeam = repo.createTeam("1")
-        val flow = repo.getTeam("1")
-        flow.collect {
-            it.teamId
-        }
-        Thread.sleep(10000)
-        assert(!flow.single().membersUid.contains("2"))
+        val flow = repo.getTeam(createdTeam.teamId)
+        val firstInstance = flow.first()
+        assert(!firstInstance.membersUid.contains("2"))
         repo.joinTeam(createdTeam.teamId, "2")
-        assert(flow.single().membersUid.contains("2"))
+        val secondInstance = flow.first()
+        assert(secondInstance.membersUid.contains("2"))
     }
 
-     */
+    @Test
+    fun joiningTeamAsLoggedUserJoinsProperly() = runTest {
+        val repo = TeamsRepository(
+            bountyReference = database.getReference("bounty/test-bounty"),
+            MockUserRepository()
+        )
+        val createdTeam = repo.createTeam("2")
+        repo.joinTeam(createdTeam.teamId, "1")
+        val t = repo.getTeam(createdTeam.teamId).first()
+        assert(t.membersUid.contains("1"))
+    }
+
+    @Test
+    fun creatingATeamEmitsOnFlow() = runTest {
+        val repo = TeamsRepository(
+            bountyReference = database.getReference("bounty/test-bounty"),
+            MockUserRepository()
+        )
+        val flow = repo.getTeams()
+        val firstInstance = flow.first()
+        val nbOfTeamsInFirstInstance = firstInstance.size
+        repo.createTeam("1")
+        val secondInstance = flow.first()
+        assert(secondInstance.size == nbOfTeamsInFirstInstance + 1)
+        assert(secondInstance.subtract(firstInstance).size == 1)
+    }
+
 
 
     private suspend fun <T> getFromDb(r: FirebaseDatabase, p: String, c: Class<T>): T {

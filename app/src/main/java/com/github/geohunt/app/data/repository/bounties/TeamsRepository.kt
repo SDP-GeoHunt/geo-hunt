@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 /**
@@ -25,12 +26,15 @@ class TeamsRepository(
 
     override suspend fun joinTeam(teamId: String, userId: String) {
         withContext(ioDispatcher) {
-            teams.child(teamId).child("members").child(userId).setValue(true)
+            return@withContext teams.child(teamId).child("members")
+                    .child(userId)
+                    .setValue(true)
+                    .await()
         }
     }
 
     override suspend fun joinTeam(teamId: String) {
-        joinTeam(teamId, userRepository.getCurrentUser().id)
+        return joinTeam(teamId, userRepository.getCurrentUser().id)
     }
 
     override suspend fun getTeam(teamId: String): Flow<Team> {
