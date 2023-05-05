@@ -113,7 +113,11 @@
     <string name="private_word">Private</string>
     <string name="private_desc">Your profile will be visible only by you.</string>
     <string name="update_profile_visibility_failed">Failed to update profile visibility.</string>
+
+
+    <string name="statistics_title">Statistics</string>
+    <string name="statistics_empty_screen_text">You haven\'t claimed enough challenges yet</string>
+    
     <string name="new_challenge_notification_title">New Challenge!</string>
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
-
 </resources>
