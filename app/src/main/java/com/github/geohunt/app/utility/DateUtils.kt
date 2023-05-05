@@ -21,6 +21,10 @@ object DateUtils {
     private fun fromIso8601(iso8601: String) : Instant {
         val formatter = DateTimeFormatter.ISO_INSTANT
             .withZone(ZoneOffset.UTC)
+
+        if (iso8601 == "") {
+            return Instant.MIN
+        }
         return Instant.from(formatter.parse(iso8601))
     }
 
@@ -30,6 +34,11 @@ object DateUtils {
     }
 
     private fun serverToLocalDate(date: Instant) : LocalDateTime {
+        // if the date is invalid, return the minimum date
+        if (date == Instant.MIN) {
+            return LocalDateTime.MIN
+        }
+
         return date.atOffset(ZoneOffset.UTC).atZoneSameInstant(getSystemZoneId()).toLocalDateTime()
     }
 

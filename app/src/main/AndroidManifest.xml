@@ -59,7 +59,7 @@
             android:label="@string/title_main_activity"
             android:theme="@style/GeoHunt">
         </activity>
-        
+
         <activity android:name=".TutorialActivity"
             android:exported="true"
             android:label="@string/title_activity_tutorial"
