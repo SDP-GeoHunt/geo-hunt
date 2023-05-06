@@ -120,4 +120,10 @@
     
     <string name="new_challenge_notification_title">New Challenge!</string>
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
+
+    <!-- home feed/bounty selector -->
+    <string name="feed">Feed</string>
+    <string name="bounty">Bounty</string>
+    <string name="bounties">Bounties</string>
+    <string name="join">Join</string>
 </resources>

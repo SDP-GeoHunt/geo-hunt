@@ -11,6 +11,7 @@ import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.utility.DateUtils
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.CoroutineDispatcher
@@ -25,18 +26,21 @@ import java.time.LocalDateTime
 /**
  * Contains methods related to the creation and retrieval of challenges.
  *
+ * @param bounty This is the reference to the bounty, if it is related to a bounty.
+ *
  * @see [Challenge]
  * @see [FirebaseChallenge]
  */
 class ChallengeRepository(
-    private val userRepository: UserRepository,
+    private val userRepository: UserRepositoryInterface,
     private val imageRepository: ImageRepository,
-    private val authRepository: AuthRepository,
-    private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val authRepository: AuthRepositoryInterface,
+    database: FirebaseDatabase = FirebaseDatabase.getInstance(),
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    bounty: DatabaseReference? = null
 ): ChallengeRepositoryInterface {
-    private val challenges = database.getReference("challenges")
-    private val posts = database.getReference("posts")
+    private val challenges = (bounty ?: database.reference).child("challenges")
+    private val posts = (bounty ?: database.reference).child("posts")
 
     /**
      * Converts the [FirebaseChallenge] model to the external model, ready for use in the UI layer.
@@ -136,7 +140,7 @@ class ChallengeRepository(
     ): Challenge {
         authRepository.requireLoggedIn()
 
-        val currentUser = authRepository.getCurrentUser()
+        @Suppress("DEPRECATION") val currentUser = authRepository.getCurrentUser()
 
         val coarseHash = location.getCoarseHash()
         val challengeRef = challenges.child(coarseHash).push()
@@ -179,5 +183,15 @@ class ChallengeRepository(
     override fun getClaimsFromUser(uid: String): List<Claim> {
         // TODO
         return listOf()
+    }
+
+    override suspend fun getChallenges(): List<Challenge> {
+        return challenges.get().await().run {
+            children.flatMap { quadrantRef ->
+                quadrantRef.children.mapNotNull {
+                    it.getValue(FirebaseChallenge::class.java)?.asExternalModel(it.key!!)
+                }
+            }
+        }
     }
 }

@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.AuthRepository
-import com.github.geohunt.app.data.repository.ChallengeRepository
+import com.github.geohunt.app.data.repository.*
+import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
 import com.github.geohunt.app.domain.GetUserFeedUseCase
+import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.model.Location
@@ -16,20 +16,35 @@ import com.github.geohunt.app.ui.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    override val authRepository: AuthRepository,
-    val getUserFeedUseCase: GetUserFeedUseCase,
-    val challengeRepository: ChallengeRepository
+    override val authRepository: AuthRepositoryInterface,
+    private val getUserFeedUseCase: GetUserFeedUseCase,
+    private val challengeRepository: ChallengeRepositoryInterface,
+    private val bountiesRepository: BountiesRepositoryInterface
 ): AuthViewModel(authRepository) {
     private val _challengeFeed: MutableStateFlow<List<Challenge>?> = MutableStateFlow(null)
     val challengeFeed: StateFlow<List<Challenge>?> = _challengeFeed.asStateFlow()
+
+    // Bounties
+    private val _bountyList: MutableStateFlow<List<Bounty>?> = MutableStateFlow(null)
+    val bountyList = _bountyList.asStateFlow()
+
+    // Bounties challenges
+    private val _bountyChallenges: MutableMap<String, MutableStateFlow<List<Challenge>?>> = mutableMapOf()
+    val bountyChallenges = _bountyChallenges.mapValues { it.value.asStateFlow() }
+
+    // Bounties teams number
+    private val _nbParticipating: MutableMap<String, MutableStateFlow<Int?>> = mutableMapOf()
+    val nbParticipating = _nbParticipating.mapValues { it.value.asStateFlow() }
 
     private val authorCache: MutableMap<Challenge, MutableStateFlow<User?>> = mutableMapOf()
 
     init {
         fetchChallengeFeed()
+        refreshBounties()
     }
 
     private fun fetchChallengeFeed() {
@@ -43,6 +58,31 @@ class HomeViewModel(
             getUserFeedUseCase.getDiscoverFeed(Location(46.51958, 6.56398)).collect {
                 _challengeFeed.value = it
             }
+        }
+    }
+
+    private val _areBountiesRefreshing = MutableStateFlow(true)
+    val areBountiesRefreshing = _areBountiesRefreshing.asStateFlow()
+
+    fun refreshBounties() {
+        viewModelScope.launch {
+            _areBountiesRefreshing.value = true
+            _bountyList.value = bountiesRepository.getBounties()
+            // For each bounties, get the challenges to show them
+            _bountyList.value!!.forEach {
+                // Fetch challenges
+                _bountyChallenges.putIfAbsent(it.bid, MutableStateFlow(null))
+                _bountyChallenges[it.bid]!!.value = bountiesRepository.getChallengeRepository(it).getChallenges()
+
+                // Fetch the number of people participating
+                _nbParticipating.putIfAbsent(it.bid, MutableStateFlow(null))
+                _nbParticipating[it.bid]!!.value = bountiesRepository.getTeamRepository(it)
+                    .getTeams()
+                    .first()
+                    .sumOf { it.membersUid.size }
+
+            }
+            _areBountiesRefreshing.value = false
         }
     }
 
@@ -68,7 +108,8 @@ class HomeViewModel(
                 HomeViewModel(
                     container.auth,
                     container.feedUseCase,
-                    container.challenges
+                    container.challenges,
+                    container.bounties
                 )
             }
         }

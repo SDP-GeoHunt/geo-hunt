@@ -62,6 +62,7 @@ enum class VisibleRoute(val titleStringId: Int, override val route: String, val 
 }
 
 enum class HiddenRoute(override val route: String): Route {
+    ViewBounty("bounty"),
     EditProfile("settings/profile"),
     Settings("settings"),
     AppSettings("settings/app"),
@@ -80,7 +81,7 @@ fun NavigationController(
 
     NavHost(navController, startDestination = VisibleRoute.Home.route, modifier = modifier) {
         composable(VisibleRoute.Home.route) {
-            HomeScreen()
+            HomeScreen(navigate = { navController.navigate(it) })
         }
         composable(VisibleRoute.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)

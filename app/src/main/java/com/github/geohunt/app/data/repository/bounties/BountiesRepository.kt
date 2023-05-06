@@ -2,8 +2,7 @@ package com.github.geohunt.app.data.repository.bounties
 
 import com.github.geohunt.app.data.exceptions.BountyNotFoundException
 import com.github.geohunt.app.data.network.firebase.models.FirebaseBountyMetadata
-import com.github.geohunt.app.data.repository.AuthRepositoryInterface
-import com.github.geohunt.app.data.repository.UserRepositoryInterface
+import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.User
@@ -20,6 +19,7 @@ import java.time.LocalDateTime
 class BountiesRepository(
     private val userRepository: UserRepositoryInterface,
     private val authRepository: AuthRepositoryInterface,
+    private val imageRepository: ImageRepository,
     private val database: FirebaseDatabase,
     private val storage: FirebaseStorage,
     private val ioDispatcher : CoroutineDispatcher = Dispatchers.IO
@@ -29,11 +29,22 @@ class BountiesRepository(
     private val bountiesByUidRef = database.getReference("bounties/byUser")
     private val bountiesTeam = database.getReference("bounties/teams")
 
-    private val teamsRepositoryByBid = DataPool<String, TeamsRepository> { bid ->
+    private val teamsRepositories = DataPool<String, TeamsRepository> { bid ->
         TeamsRepository(
             bountiesTeam.child(bid),
             userRepository,
             ioDispatcher = ioDispatcher
+        )
+    }
+
+    private val challengesRepositories = DataPool<String, ChallengeRepository> { bid ->
+        ChallengeRepository(
+            userRepository = userRepository,
+            authRepository = authRepository,
+            bounty = database.getReference("bounties/$bid"),
+            imageRepository = imageRepository,
+            ioDispatcher = ioDispatcher,
+            database = database
         )
     }
 
@@ -83,7 +94,9 @@ class BountiesRepository(
         }
     }
 
-    override fun getTeamRepository(bounty: Bounty) : TeamsRepositoryInterface = teamsRepositoryByBid.get(bounty.bid)
+    override fun getTeamRepository(bounty: Bounty) : TeamsRepositoryInterface = teamsRepositories.get(bounty.bid)
+
+    override fun getChallengeRepository(bounty: Bounty): ChallengeRepositoryInterface = challengesRepositories.get(bounty.bid)
 
     override suspend fun getBountyCreatedBy(user: User): List<Bounty> = withContext(ioDispatcher) {
         bountiesByUidRef.child(user.id)
