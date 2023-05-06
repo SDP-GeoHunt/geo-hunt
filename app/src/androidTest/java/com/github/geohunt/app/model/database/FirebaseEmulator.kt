@@ -13,4 +13,10 @@ object FirebaseEmulator {
     fun getEmulatedFirebase(): FirebaseDatabase {
         return FirebaseDatabase.getInstance("http://10.0.2.2:9000/?ns=geohunt-1-default-rtdb")
     }
+
+    fun getEmulatedStorage() : FirebaseStorage {
+        val storageInstance = FirebaseStorage.getInstance("gs://geohunt-1.appspot.com")
+        storageInstance.useEmulator("10.0.2.2", 9199)
+        return storageInstance
+    }
 }
