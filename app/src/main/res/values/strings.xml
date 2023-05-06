@@ -126,4 +126,5 @@
     <string name="bounty">Bounty</string>
     <string name="bounties">Bounties</string>
     <string name="join">Join</string>
+    <string name="no_bounties">No available bounties at the moment.</string>
 </resources>

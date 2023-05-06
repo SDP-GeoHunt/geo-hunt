@@ -16,8 +16,8 @@ import com.github.geohunt.app.ui.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 class HomeViewModel(
     override val authRepository: AuthRepositoryInterface,
@@ -33,12 +33,16 @@ class HomeViewModel(
     val bountyList = _bountyList.asStateFlow()
 
     // Bounties challenges
-    private val _bountyChallenges: MutableMap<String, MutableStateFlow<List<Challenge>?>> = mutableMapOf()
-    val bountyChallenges = _bountyChallenges.mapValues { it.value.asStateFlow() }
+    private val _bountyChallenges: MutableStateFlow<Map<String, List<Challenge>>> = MutableStateFlow(mapOf())
+    val bountyChallenges = _bountyChallenges.asStateFlow()
 
     // Bounties teams number
-    private val _nbParticipating: MutableMap<String, MutableStateFlow<Int?>> = mutableMapOf()
-    val nbParticipating = _nbParticipating.mapValues { it.value.asStateFlow() }
+    private val _nbParticipating: MutableStateFlow<Map<String, Int>> = MutableStateFlow(mapOf())
+    val nbParticipating = _nbParticipating.asStateFlow()
+
+    // Refreshing state
+    private val _areBountiesRefreshing = MutableStateFlow(true)
+    val areBountiesRefreshing = _areBountiesRefreshing.asStateFlow()
 
     private val authorCache: MutableMap<Challenge, MutableStateFlow<User?>> = mutableMapOf()
 
@@ -61,15 +65,12 @@ class HomeViewModel(
         }
     }
 
-    private val _areBountiesRefreshing = MutableStateFlow(true)
-    val areBountiesRefreshing = _areBountiesRefreshing.asStateFlow()
-
     fun refreshBounties() {
         viewModelScope.launch {
             _areBountiesRefreshing.value = true
-            _bountyList.value = bountiesRepository.getBounties()
+            /*val bountyList = bountiesRepository.getBounties()
             // For each bounties, get the challenges to show them
-            _bountyList.value!!.forEach {
+            bountyList.forEach {
                 // Fetch challenges
                 _bountyChallenges.putIfAbsent(it.bid, MutableStateFlow(null))
                 _bountyChallenges[it.bid]!!.value = bountiesRepository.getChallengeRepository(it).getChallenges()
@@ -82,6 +83,17 @@ class HomeViewModel(
                     .sumOf { it.membersUid.size }
 
             }
+            _bountyList.value = bountyList*/
+            // MOCK
+            val mockedChallengelIst =listOf(
+                Challenge("1", "1", "https://picsum.photos/600/600", Location(1.0, 1.0), description = "caca", publishedDate = LocalDateTime.now(), difficulty = Challenge.Difficulty.EASY, expirationDate = null),
+                Challenge("1", "1", "https://picsum.photos/600/800", Location(1.0, 1.0), description = "caca", publishedDate = LocalDateTime.now(), difficulty = Challenge.Difficulty.EASY, expirationDate = null),
+                Challenge("1", "1", "https://picsum.photos/600/1000", Location(1.0, 1.0), description = "caca", publishedDate = LocalDateTime.now(), difficulty = Challenge.Difficulty.EASY, expirationDate = null),
+            )
+            _bountyChallenges.value = mapOf("1" to mockedChallengelIst)
+            _bountyList.value = listOf(Bounty("1", "1", LocalDateTime.MIN, LocalDateTime.MAX, location = Location(1.0, 1.0)))
+            _nbParticipating.value = mapOf("1" to 69)
+
             _areBountiesRefreshing.value = false
         }
     }
