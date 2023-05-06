@@ -4,6 +4,7 @@ import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.User
+import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
 interface BountiesRepositoryInterface {
@@ -30,6 +31,8 @@ interface BountiesRepositoryInterface {
      * Get the bounty created by a given user
      */
     suspend fun getBountyCreatedBy(user: User) : List<Bounty>
+
+    suspend fun getBounties() : List<Bounty>
 
     suspend fun getBountyById(bid: String) : Bounty
 }

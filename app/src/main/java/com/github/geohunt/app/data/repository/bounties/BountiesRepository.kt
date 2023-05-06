@@ -14,7 +14,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
-import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 
@@ -26,12 +25,13 @@ class BountiesRepository(
     private val ioDispatcher : CoroutineDispatcher = Dispatchers.IO
 ) : BountiesRepositoryInterface {
 
-    private val bountiesRef = database.getReference("bounties")
-    private val bountiesByUidRef = database.getReference("bountiesByUid")
+    private val bountiesMetadataRef = database.getReference("bounties/meta")
+    private val bountiesByUidRef = database.getReference("bounties/byUser")
+    private val bountiesTeam = database.getReference("bounties/teams")
 
     private val teamsRepositoryByBid = DataPool<String, TeamsRepository> { bid ->
         TeamsRepository(
-            getRefByBid(bid),
+            bountiesTeam.child(bid),
             userRepository,
             ioDispatcher = ioDispatcher
         )
@@ -48,7 +48,7 @@ class BountiesRepository(
     private fun getRefByBid(bid: String) : DatabaseReference {
         val coarseHash = bid.substring(0, Location.COARSE_HASH_SIZE)
         val elementId = bid.substring(Location.COARSE_HASH_SIZE)
-        return bountiesRef.child(coarseHash).child(elementId)
+        return bountiesMetadataRef.child(coarseHash).child(elementId)
     }
 
     override suspend fun createBounty(
@@ -62,7 +62,7 @@ class BountiesRepository(
             val currentUser = userRepository.getCurrentUser()
 
             val coarseHash = location.getCoarseHash()
-            val bountyRef = bountiesRef.child(coarseHash).push()
+            val bountyRef = bountiesMetadataRef.child(coarseHash).push()
             val bid = coarseHash + bountyRef.key!!
 
             val metadata = FirebaseBountyMetadata(
@@ -95,6 +95,18 @@ class BountiesRepository(
                 bountyIds.map {
                     async { getBountyById(it) }
                 }.awaitAll()
+            }
+    }
+
+    override suspend fun getBounties(): List<Bounty> = withContext(ioDispatcher) {
+        bountiesMetadataRef.get()
+            .await()
+            .run {
+                children.flatMap { quadrantRef ->
+                    quadrantRef.children.mapNotNull {
+                        it.getValue<FirebaseBountyMetadata>()?.asExternalModel(quadrantRef.key!! + it.key!!)
+                    }
+                }
             }
     }
 
