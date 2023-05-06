@@ -94,9 +94,9 @@ class BountiesRepository(
         }
     }
 
-    override fun getTeamRepository(bounty: Bounty) : TeamsRepositoryInterface = teamsRepositories.get(bounty.bid)
+    override fun getTeamRepository(bountyId: String) : TeamsRepositoryInterface = teamsRepositories.get(bountyId)
 
-    override fun getChallengeRepository(bounty: Bounty): ChallengeRepositoryInterface = challengesRepositories.get(bounty.bid)
+    override fun getChallengeRepository(bountyId: String): ChallengeRepositoryInterface = challengesRepositories.get(bountyId)
 
     override suspend fun getBountyCreatedBy(user: User): List<Bounty> = withContext(ioDispatcher) {
         bountiesByUidRef.child(user.id)

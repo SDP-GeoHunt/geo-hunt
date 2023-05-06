@@ -31,6 +31,7 @@ import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
+import com.github.geohunt.app.ui.screens.bounty.ViewBountyPage
 import com.github.geohunt.app.ui.screens.home.HomeScreen
 import com.github.geohunt.app.ui.settings.SettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
@@ -199,6 +200,15 @@ fun NavigationController(
                 profileVisibilityRepository = container.profileVisibilities
             )
             PrivacySettingsPage(onBack = { navController.popBackStack() }, viewModel)
+        }
+
+        // Bounties
+        composable(
+            "${HiddenRoute.ViewBounty}/{bountyId}",
+            arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
+        ) {
+            val bid = it.arguments?.getString("bountyId")!!
+            ViewBountyPage(bid, onBack = { navController.popBackStack() })
         }
     }
 }

@@ -15,7 +15,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 /**
- * Creates a teams repository for the specific bounty.
+ * Team repository for a specific bounty.
  */
 class TeamsRepository(
     bountyReference: DatabaseReference,
@@ -37,13 +37,21 @@ class TeamsRepository(
         return joinTeam(teamId, userRepository.getCurrentUser().id)
     }
 
-    override suspend fun getTeam(teamId: String): Flow<Team> {
+    override fun getTeam(teamId: String): Flow<Team> {
         return teams.child(teamId).snapshots
                 .map { snapshotToTeam(it) }
                 .flowOn(ioDispatcher)
     }
 
-    override suspend fun getTeams(): Flow<List<Team>> {
+    override suspend fun getUserTeam(): Flow<Team> = getUserTeam(userRepository.getCurrentUser().id)
+
+    override fun getUserTeam(userId: String): Flow<Team> {
+        return getTeams().map {
+            it.first { team -> team.membersUid.contains(userId) }
+        }
+    }
+
+    override fun getTeams(): Flow<List<Team>> {
         return teams.snapshots
                 .map { it -> it.children.map { snapshotToTeam(it) } }
                 .flowOn(ioDispatcher)

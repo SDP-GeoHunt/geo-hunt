@@ -24,12 +24,22 @@ interface BountiesRepositoryInterface {
     /**
      * Retrieves the team repository corresponding for the bounty
      */
-    fun getTeamRepository(bounty: Bounty) : TeamsRepositoryInterface
+    fun getTeamRepository(bountyId: String): TeamsRepositoryInterface
+
+    /**
+     * Retrieves the team repository corresponding for the bounty
+     */
+    fun getTeamRepository(bounty: Bounty) : TeamsRepositoryInterface = getTeamRepository(bounty.bid)
 
     /**
      * Retrieves the challenge repository for the given bounty
      */
-    fun getChallengeRepository(bounty: Bounty): ChallengeRepositoryInterface
+    fun getChallengeRepository(bounty: Bounty): ChallengeRepositoryInterface = getChallengeRepository(bounty.bid)
+
+    /**
+     * Retrieves the challenge repository for the given bounty
+     */
+    fun getChallengeRepository(bountyId: String): ChallengeRepositoryInterface
 
     /**
      * Get the bounty created by a given user
