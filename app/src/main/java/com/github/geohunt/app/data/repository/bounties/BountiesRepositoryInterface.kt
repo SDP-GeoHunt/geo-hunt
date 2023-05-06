@@ -1,10 +1,10 @@
 package com.github.geohunt.app.data.repository.bounties
 
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
+import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.User
-import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
 interface BountiesRepositoryInterface {
@@ -22,10 +22,24 @@ interface BountiesRepositoryInterface {
     ) : Bounty
 
     /**
-     * Retrieve the team repository corresponding with the current
-     * bounty
+     * Retrieves the team repository corresponding for the bounty
      */
-    fun getTeamRepository(bounty: Bounty) : TeamsRepositoryInterface
+    fun getTeamRepository(bountyId: String): TeamsRepositoryInterface
+
+    /**
+     * Retrieves the team repository corresponding for the bounty
+     */
+    fun getTeamRepository(bounty: Bounty) : TeamsRepositoryInterface = getTeamRepository(bounty.bid)
+
+    /**
+     * Retrieves the challenge repository for the given bounty
+     */
+    fun getChallengeRepository(bounty: Bounty): ChallengeRepositoryInterface = getChallengeRepository(bounty.bid)
+
+    /**
+     * Retrieves the challenge repository for the given bounty
+     */
+    fun getChallengeRepository(bountyId: String): ChallengeRepositoryInterface
 
     /**
      * Get the bounty created by a given user
@@ -35,4 +49,5 @@ interface BountiesRepositoryInterface {
     suspend fun getBounties() : List<Bounty>
 
     suspend fun getBountyById(bid: String) : Bounty
+
 }

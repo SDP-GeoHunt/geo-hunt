@@ -23,14 +23,14 @@ interface TeamsRepositoryInterface {
     /**
      * Returns the list of teams that are in the bounty
      */
-    suspend fun getTeams(): Flow<List<Team>>
+    fun getTeams(): Flow<List<Team>>
 
     /**
      * Returns the team by the teamId
      *
      * @param teamId The team's id
      */
-    suspend fun getTeam(teamId: String): Flow<Team>
+    fun getTeam(teamId: String): Flow<Team>
 
     /**
      * Creates a new team for the bounty with the given user
@@ -47,4 +47,14 @@ interface TeamsRepositoryInterface {
      * @param teamLeaderUid The team leader's user id
      */
     suspend fun createTeam(teamLeaderUid: String): Team
+
+    /**
+     * Returns the team in which the user with the given userId is enrolled.
+     */
+    fun getUserTeam(userId: String): Flow<Team>
+
+    /**
+     * Returns the team in which the authenticated user is enrolled.
+     */
+    suspend fun getUserTeam(): Flow<Team>
 }
