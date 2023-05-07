@@ -127,4 +127,7 @@
     <string name="bounties">Bounties</string>
     <string name="join">Join</string>
     <string name="no_bounties">No available bounties at the moment.</string>
+    <string name="begins_in">Begins in %1$s</string>
+    <string name="ends_in">Ends in %1$s</string>
+    <string name="km_away">%1$dkm away</string>
 </resources>

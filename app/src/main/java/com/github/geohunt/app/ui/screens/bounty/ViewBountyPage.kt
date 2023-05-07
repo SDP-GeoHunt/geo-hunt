@@ -10,4 +10,6 @@ fun ViewBountyPage(
     viewModel: ViewBountyViewModel = viewModel(factory = ViewBountyViewModel.getFactory(bountyId))
 ) {
 
+
+
 }

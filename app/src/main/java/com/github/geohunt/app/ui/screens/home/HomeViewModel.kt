@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     override val authRepository: AuthRepositoryInterface,
+    private val userRepository: UserRepositoryInterface,
     private val getUserFeedUseCase: GetUserFeedUseCase,
     private val challengeRepository: ChallengeRepositoryInterface,
     private val bountiesRepository: BountiesRepositoryInterface
@@ -31,6 +32,10 @@ class HomeViewModel(
     // Bounties
     private val _bountyList: MutableStateFlow<List<Bounty>?> = MutableStateFlow(null)
     val bountyList = _bountyList.asStateFlow()
+
+    // Bounties authors
+    private val _bountyAuthors: MutableStateFlow<Map<String, User>> = MutableStateFlow(mapOf())
+    val bountyAuthors = _bountyAuthors.asStateFlow()
 
     // Bounties challenges
     private val _bountyChallenges: MutableStateFlow<Map<String, List<Challenge>>> = MutableStateFlow(mapOf())
@@ -79,6 +84,10 @@ class HomeViewModel(
                 _nbParticipating.value = _nbParticipating.value +
                         (it.bid to bountiesRepository.getTeamRepository(it).getTeams().first().sumOf { it.membersUid.size })
 
+                // Get author
+                _bountyAuthors.value = _bountyAuthors.value +
+                        (it.bid to userRepository.getUser(it.adminUid))
+
             }
             _bountyList.value = bountyList
             _areBountiesRefreshing.value = false
@@ -106,6 +115,7 @@ class HomeViewModel(
 
                 HomeViewModel(
                     container.auth,
+                    container.user,
                     container.feedUseCase,
                     container.challenges,
                     container.bounties
