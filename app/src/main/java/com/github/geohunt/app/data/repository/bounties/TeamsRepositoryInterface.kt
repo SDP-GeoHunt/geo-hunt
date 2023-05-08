@@ -1,11 +1,12 @@
 package com.github.geohunt.app.data.repository.bounties
 
+import com.github.geohunt.app.data.exceptions.TeamNotFoundException
+import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.model.User
 import kotlinx.coroutines.flow.Flow
 
 interface TeamsRepositoryInterface {
-
 
     /**
      * Joins the user to the team
@@ -61,4 +62,15 @@ interface TeamsRepositoryInterface {
      * null if the user is enrolled in no teams.
      */
     suspend fun getUserTeam(): Flow<Team?>
+
+    /**
+     * Get the team of the current user
+     */
+    @Throws(UserNotLoggedInException::class, TeamNotFoundException::class)
+    suspend fun getUserTeamAsync() : Team
+
+    /**
+     * Returns the score of the specified team
+     */
+    fun getTeamScore(team: Team) : Flow<Long>
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 data class Claim(
     val id: String,
     val parentChallengeId: String,
-    val claimerId: String,
+    val claimerId: String, // Either userId or teamId depending on the context
     val photoUrl: String,
 
     val claimDate: LocalDateTime,
