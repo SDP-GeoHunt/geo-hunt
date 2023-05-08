@@ -50,11 +50,15 @@ interface TeamsRepositoryInterface {
 
     /**
      * Returns the team in which the user with the given userId is enrolled.
+     *
+     * null if the user is enrolled in no teams.
      */
-    fun getUserTeam(userId: String): Flow<Team>
+    fun getUserTeam(userId: String): Flow<Team?>
 
     /**
      * Returns the team in which the authenticated user is enrolled.
+     *
+     * null if the user is enrolled in no teams.
      */
-    suspend fun getUserTeam(): Flow<Team>
+    suspend fun getUserTeam(): Flow<Team?>
 }
