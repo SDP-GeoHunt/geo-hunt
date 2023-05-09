@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
@@ -95,13 +96,17 @@ class BountyRepositoriesIntegrationTest {
         // the challenge
         var tid = ""
         mockAuth.loggedAs("2").run {
+            @Suppress("DEPRECATION")
             tid = repo.getTeamRepository(bounty)
                 .createTeam(mockAuth.getCurrentUser())
                 .teamId
 
             // When creating a team, become part of the team
-            val team = repo.getTeamRepository(bounty).getUserTeamAsync()
-            assertThat(team.teamId, equalTo(tid))
+            val team = repo.getTeamRepository(bounty).getUserTeam().first()
+
+            assert(team != null)
+
+            assertThat(team!!.teamId, equalTo(tid))
             assertThat(team.leaderUid, equalTo("2"))
             assertThat(team.membersUid, equalTo(listOf("2")))
 
@@ -113,7 +118,7 @@ class BountyRepositoriesIntegrationTest {
             )
 
             assertThat(repo.getClaimRepository(bounty).getClaimsOf(team).size, equalTo(1))
-            assertThat(repo.getTeamRepository(bounty).getUserTeamAsync().score, equalTo(5000))
+            assertThat(repo.getTeamRepository(bounty).getUserTeam().first()?.score, equalTo(5000))
         }
 
     }

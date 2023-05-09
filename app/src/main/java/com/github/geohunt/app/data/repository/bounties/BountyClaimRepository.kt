@@ -6,9 +6,7 @@ import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.network.firebase.models.FirebaseClaim
 import com.github.geohunt.app.data.network.firebase.models.asExternalModel
-import com.github.geohunt.app.data.repository.AuthRepositoryInterface
 import com.github.geohunt.app.data.repository.ImageRepository
-import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
@@ -17,8 +15,8 @@ import com.github.geohunt.app.model.points.GaussianPointCalculator
 import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 
@@ -47,7 +45,8 @@ class BountyClaimRepository(
         challenge: Challenge,
         location: Location
     ): Claim = withContext(ioDispatcher) {
-        val currentTeam = teamRepository.getUserTeamAsync()
+        val currentTeam = teamRepository.getUserTeam().first()!!
+
 
         val claimRef = claims.child(challenge.id).push()
         val claimId = challenge.id + "/" + claimRef.key!!
