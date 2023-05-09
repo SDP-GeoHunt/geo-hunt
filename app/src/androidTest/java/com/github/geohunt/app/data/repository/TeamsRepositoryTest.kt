@@ -38,7 +38,7 @@ class TeamsRepositoryTest {
 
 
     @Test
-    fun joiningATeamEmitsOnFlow() = runTest {
+    fun joiningATeamEmitsOnSpecificTeamFlow() = runTest {
         val repo = TeamsRepository(
             bountyReference = database.getReference("bounty/test-bounty"),
             MockUserRepository()

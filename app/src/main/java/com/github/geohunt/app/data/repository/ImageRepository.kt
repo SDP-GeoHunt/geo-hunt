@@ -3,7 +3,6 @@ package com.github.geohunt.app.data.repository
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
-import android.text.style.BulletSpan
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.model.Challenge
@@ -16,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.lang.IllegalStateException
 
 /**
  * Contains methods related to local and remote images retrieval, including uploading to
@@ -36,12 +34,13 @@ class ImageRepository(
     enum class ImageType {
         PROFILE_PICTURE,
         CLAIM_PHOTO,
+        BOUNTY_CLAIM_PHOTO,
         CHALLENGE_PHOTO;
-
         override fun toString(): String = when(this) {
             PROFILE_PICTURE -> "profile"
             CHALLENGE_PHOTO -> "challenge"
             CLAIM_PHOTO -> "claim"
+            BOUNTY_CLAIM_PHOTO -> "bounty-claim"
         }
     }
 
@@ -89,6 +88,9 @@ class ImageRepository(
 
     suspend fun uploadClaimPhoto(photo: LocalPicture, id: String) =
         uploadImage(photo, ImageType.CLAIM_PHOTO, id)
+
+    suspend fun uploadBountyClaimPhoto(photo: LocalPicture, id: String, bid: String) =
+        uploadImage(photo, ImageType.BOUNTY_CLAIM_PHOTO, "$id-$bid")
 
     fun getChallengePhoto(challenge: Challenge): String = challenge.photoUrl
 

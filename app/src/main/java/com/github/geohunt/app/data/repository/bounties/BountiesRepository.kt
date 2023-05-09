@@ -48,6 +48,16 @@ class BountiesRepository(
         )
     }
 
+    private val claimRepositories = DataPool<String, BountyClaimRepository> { bid ->
+        BountyClaimRepository(
+            bountyReference = database.getReference("bounties/$bid"),
+            bid = bid,
+            teamRepository = teamsRepositories.get(bid),
+            imageRepository = imageRepository,
+            ioDispatcher = ioDispatcher
+        )
+    }
+
     private fun FirebaseBountyMetadata.asExternalModel(bid: String) = Bounty(
         bid = bid,
         adminUid = adminUid!!,
@@ -97,6 +107,8 @@ class BountiesRepository(
     override fun getTeamRepository(bountyId: String) : TeamsRepositoryInterface = teamsRepositories.get(bountyId)
 
     override fun getChallengeRepository(bountyId: String): ChallengeRepositoryInterface = challengesRepositories.get(bountyId)
+
+    override fun getClaimRepository(bountyId: String): BountyClaimRepositoryInterface = claimRepositories.get(bountyId)
 
     override suspend fun getBountyCreatedBy(user: User): List<Bounty> = withContext(ioDispatcher) {
         bountiesByUidRef.child(user.id)

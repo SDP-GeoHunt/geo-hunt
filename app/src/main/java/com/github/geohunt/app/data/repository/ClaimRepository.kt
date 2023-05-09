@@ -5,6 +5,7 @@ import com.github.geohunt.app.data.exceptions.ClaimNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.network.firebase.models.FirebaseClaim
+import com.github.geohunt.app.data.network.firebase.models.asExternalModel
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
@@ -35,16 +36,6 @@ class ClaimRepository(
         Challenge.Difficulty.HARD to GaussianPointCalculator(0.10)
     ).withDefault { GaussianPointCalculator(0.10) },
 ) : ClaimRepositoryInterface {
-
-    private fun FirebaseClaim.asExternalModel(id: String): Claim = Claim(
-        id = id,
-        parentChallengeId = cid!!,
-        claimerId = uid!!,
-        claimDate = DateUtils.localFromUtcIso8601(time!!),
-        distance = distance,
-        awardedPoints = awardedPoints,
-        photoUrl = photoUrl!!
-    )
 
     /**
      * Retrieve a list of all claims id for a specific user, useful when lazy loading

@@ -31,6 +31,7 @@ class BountiesRepositoryTest {
         repo = BountiesRepository(
             MockUserRepository(),
             MockAuthRepository(),
+            ImageRepository(storage),
             database = database,
             storage = storage
         )

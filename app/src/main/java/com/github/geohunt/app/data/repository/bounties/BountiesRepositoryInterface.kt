@@ -42,6 +42,16 @@ interface BountiesRepositoryInterface {
     fun getChallengeRepository(bountyId: String): ChallengeRepositoryInterface
 
     /**
+     * Retrieves the claim repository for the given bounty
+     */
+    fun getClaimRepository(bounty: Bounty) : BountyClaimRepositoryInterface = getClaimRepository(bounty.bid)
+
+    /**
+     * Retrieves the claim repository for the given bounty
+     */
+    fun getClaimRepository(bountyId: String) : BountyClaimRepositoryInterface
+
+    /**
      * Get the bounty created by a given user
      */
     suspend fun getBountyCreatedBy(user: User) : List<Bounty>
