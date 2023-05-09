@@ -25,7 +25,7 @@ import com.github.geohunt.app.model.Challenge
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun challengesImageSlider(challenges: List<Challenge>?): Pair<Int, PagerState>? {
+fun challengesImageSlider(challenges: List<Challenge>?, modifier: Modifier = Modifier): Pair<Int, PagerState>? {
     if (challenges == null) return null
     if (challenges.isEmpty()) return null
 
@@ -38,7 +38,7 @@ fun challengesImageSlider(challenges: List<Challenge>?): Pair<Int, PagerState>? 
     )
     val pagerState = rememberPagerState()
 
-    Column {
+    Column(modifier) {
         HorizontalPager(pageCount = challenges.size, state = pagerState) {
             val dimensionModifier = (firstImagePainter.state as? AsyncImagePainter.State.Success)
                 ?.painter?.intrinsicSize?.let { size ->

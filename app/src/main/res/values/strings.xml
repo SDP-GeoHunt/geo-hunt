@@ -130,4 +130,9 @@
     <string name="begins_in">Begins in %1$s</string>
     <string name="ends_in">Ends in %1$s</string>
     <string name="km_away">%1$dkm away</string>
+
+    <string name="team_title">Team %1$d</string>
+    <string name="create_team">Create team</string>
+    <string name="join_team">Join team</string>
+    <string name="leave_team">Leave team</string>
 </resources>
