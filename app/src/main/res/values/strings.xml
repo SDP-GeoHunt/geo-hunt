@@ -57,6 +57,8 @@
     <string name="challenge_settings_date">Date</string>
     <string name="challenge_settings_date_never">Never</string>
 
+    <string name="range_date">Date</string>
+
     // Strings defined for the tutorial
     <string name="title_activity_tutorial">TutorialActivity</string>
     <string name="tutorial_first_screen_title"> Create your own challenges!</string>
