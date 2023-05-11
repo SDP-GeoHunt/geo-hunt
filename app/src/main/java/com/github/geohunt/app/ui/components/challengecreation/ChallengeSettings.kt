@@ -43,7 +43,7 @@ fun ChallengeSettings(
             verticalArrangement = Arrangement.SpaceBetween) {
         DifficultySelect(difficulty, setDifficultyCallback)
 
-        DateSelect(expirationDate, setExpirationDate)
+        DateSelect(expirationDate, setExpirationDate, R.string.challenge_settings_date)
     }
 }
 
@@ -69,22 +69,24 @@ private fun DifficultySelect(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DateSelect(expirationDate: LocalDate?, setExpirationDateCallback: (LocalDate?) -> Unit) {
+fun DateSelect(date: LocalDate?,
+               setDateCallback: (LocalDate?) -> Unit,
+               stringDescriptorId: Int) {
     val state = UseCaseState(
             embedded = false,
-            onDismissRequest = { setExpirationDateCallback(null) }
+            onDismissRequest = { setDateCallback(null) }
     )
 
     CalendarDialog(state = state,
-            selection = CalendarSelection.Date { setExpirationDateCallback(it) },
+            selection = CalendarSelection.Date { setDateCallback(it) },
             config = calendarConfig())
 
     Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
-        SettingsText(text = stringResource(id = R.string.challenge_settings_date))
+        SettingsText(text = stringResource(id = stringDescriptorId))
 
-        TextField(value = nullableDateToString(date = expirationDate),
+        TextField(value = nullableDateToString(date = date),
                 onValueChange = {},
                 readOnly = true,
                 enabled = false,

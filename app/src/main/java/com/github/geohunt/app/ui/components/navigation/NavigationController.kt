@@ -27,6 +27,7 @@ import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.ui.components.bounties.CreateNewBounty
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
@@ -46,7 +47,9 @@ interface Route {
     val route: String
 }
 
-enum class VisibleRoute(val titleStringId: Int, override val route: String, val icon: ComposableFun): Route {
+enum class VisibleRoute(val titleStringId: Int,
+                        override val route: String,
+                        val icon: ComposableFun): Route {
 
     Home(R.string.navigation_home, "home", { Icon(Icons.Sharp.Home, null) }),
     Explore(R.string.navigation_explore, "explore", { Icon(Icons.Sharp.Search, null) }),
@@ -66,7 +69,9 @@ enum class HiddenRoute(override val route: String): Route {
     Settings("settings"),
     AppSettings("settings/app"),
     PrivacySettings("settings/privacy"),
-    Leaderboard("leaderboard")
+    Leaderboard("leaderboard"),
+    CreateChallenge("create-challenge"),
+    CreateBounty("create-bounty")
 }
 
 @Composable
@@ -90,7 +95,7 @@ fun NavigationController(
                 cameraPosition = epflCameraPosition
             )
         }
-        composable(VisibleRoute.Create.route) {
+        composable(HiddenRoute.CreateChallenge.route) {
             CreateNewChallenge(
                 onFailure = {
                     Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
@@ -100,6 +105,20 @@ fun NavigationController(
                 onSuccess = {
                     navController.popBackStack()
                     navController.navigate("challenge-view/${it.id}")
+                }
+            )
+        }
+
+        composable(HiddenRoute.CreateBounty.route) {
+            CreateNewBounty(
+                onFailure = {
+                    Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Fail to create challenge: $it")
+                    navController.popBackStack()
+                },
+                onSuccess = { bounty ->
+                    navController.popBackStack()
+//                    navController.navigate("challenge-view/${it.id}")
                 }
             )
         }

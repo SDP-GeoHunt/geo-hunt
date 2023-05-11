@@ -13,7 +13,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun NavigationBar(navController: NavController) {
+fun NavigationBar(navController: NavController, onCreatePressed: () -> Unit = {}) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.surface
     ) {
@@ -25,12 +25,17 @@ fun NavigationBar(navController: NavController) {
                 selected = currentRoute?.hierarchy?.any { it.route == route.route } == true,
                 modifier = Modifier.testTag("navbtn-" + route.route),
                 onClick = {
-                    navController.navigate(route.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
+                    if (route == VisibleRoute.Create) {
+                        onCreatePressed()
+                    }
+                    else {
+                        navController.navigate(route.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 },
                 icon = route.icon
