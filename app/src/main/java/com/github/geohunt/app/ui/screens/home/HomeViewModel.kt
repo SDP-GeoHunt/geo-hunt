@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+open class HomeViewModel(
     override val authRepository: AuthRepositoryInterface,
     private val userRepository: UserRepositoryInterface,
     private val getUserFeedUseCase: GetUserFeedUseCase,
@@ -31,7 +31,7 @@ class HomeViewModel(
 
     // Bounties
     private val _bountyList: MutableStateFlow<List<Bounty>?> = MutableStateFlow(null)
-    val bountyList = _bountyList.asStateFlow()
+    open val bountyList = _bountyList.asStateFlow()
 
     // Bounties authors
     private val _bountyAuthors: MutableStateFlow<Map<String, User>> = MutableStateFlow(mapOf())
@@ -51,46 +51,60 @@ class HomeViewModel(
 
     private val authorCache: MutableMap<Challenge, MutableStateFlow<User?>> = mutableMapOf()
 
+    // Did fail
+    private val _initFailException = MutableStateFlow<Throwable?>(null)
+    val initFailException = _initFailException.asStateFlow()
+
     init {
         fetchChallengeFeed()
         refreshBounties()
     }
 
-    private fun fetchChallengeFeed() {
+    open fun fetchChallengeFeed() {
         viewModelScope.launch {
-            val followList = getUserFeedUseCase.getFollowList()
+            try {
+                val followList = getUserFeedUseCase.getFollowList()
 
-            getUserFeedUseCase.getFollowFeed(followList).collect {
-                _challengeFeed.value = it
-            }
+                getUserFeedUseCase.getFollowFeed(followList).collect {
+                    _challengeFeed.value = it
+                }
 
-            getUserFeedUseCase.getDiscoverFeed(Location(46.51958, 6.56398)).collect {
-                _challengeFeed.value = it
+                getUserFeedUseCase.getDiscoverFeed(Location(46.51958, 6.56398)).collect {
+                    _challengeFeed.value = it
+                }
+            } catch (e: Exception) {
+                _initFailException.value = e
             }
         }
     }
 
-    fun refreshBounties() {
+    open fun refreshBounties() {
         viewModelScope.launch {
-            _areBountiesRefreshing.value = true
-            val bountyList = bountiesRepository.getBounties()
-            // For each bounties, get the challenges to show them
-            bountyList.forEach {
-                // Fetch challenges
-                _bountyChallenges.value = _bountyChallenges.value +
-                        (it.bid to bountiesRepository.getChallengeRepository(it).getChallenges())
+            try {
+                _areBountiesRefreshing.value = true
+                val bountyList = bountiesRepository.getBounties()
+                // For each bounties, get the challenges to show them
+                bountyList.forEach {
+                    // Fetch challenges
+                    _bountyChallenges.value = _bountyChallenges.value +
+                            (it.bid to bountiesRepository.getChallengeRepository(it)
+                                .getChallenges())
 
-                // Fetch the number of people participating
-                _nbParticipating.value = _nbParticipating.value +
-                        (it.bid to bountiesRepository.getTeamRepository(it).getTeams().first().sumOf { it.membersUid.size })
+                    // Fetch the number of people participating
+                    _nbParticipating.value = _nbParticipating.value +
+                            (it.bid to bountiesRepository.getTeamRepository(it).getTeams().first()
+                                .sumOf { it.membersUid.size })
 
-                // Get author
-                _bountyAuthors.value = _bountyAuthors.value +
-                        (it.bid to userRepository.getUser(it.adminUid))
+                    // Get author
+                    _bountyAuthors.value = _bountyAuthors.value +
+                            (it.bid to userRepository.getUser(it.adminUid))
 
+                }
+                _bountyList.value = bountyList
+                _areBountiesRefreshing.value = false
+            } catch(e: Exception) {
+                _initFailException.value = e
             }
-            _bountyList.value = bountyList
-            _areBountiesRefreshing.value = false
         }
     }
 

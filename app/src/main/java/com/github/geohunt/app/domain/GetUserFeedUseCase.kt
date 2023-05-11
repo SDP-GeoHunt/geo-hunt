@@ -1,8 +1,8 @@
 package com.github.geohunt.app.domain
 
-import com.github.geohunt.app.data.repository.AuthRepository
-import com.github.geohunt.app.data.repository.ChallengeRepository
-import com.github.geohunt.app.data.repository.FollowRepository
+import com.github.geohunt.app.data.repository.AuthRepositoryInterface
+import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
+import com.github.geohunt.app.data.repository.FollowRepositoryInterface
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.utility.aggregateFlows
@@ -17,9 +17,9 @@ import kotlinx.coroutines.flow.map
  * feed to discover locations around him.
  */
 class GetUserFeedUseCase(
-    val authRepository: AuthRepository,
-    val challengeRepository: ChallengeRepository,
-    val followRepository: FollowRepository
+    val authRepository: AuthRepositoryInterface,
+    val challengeRepository: ChallengeRepositoryInterface,
+    val followRepository: FollowRepositoryInterface
 ) {
     suspend fun getFollowList(): List<String> = followRepository.getFollowList().first()
 
