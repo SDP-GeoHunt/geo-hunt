@@ -13,6 +13,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -21,8 +22,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.Bounty
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.ui.components.bounties.viewmodel.CreateBountyViewModel
 import com.github.geohunt.app.ui.components.challengecreation.*
+import com.github.geohunt.app.ui.components.utils.LocationPicker
 import com.ireward.htmlcompose.HtmlText
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -55,12 +58,18 @@ fun CreateNewBounty(
 
             val expirationDate = viewModel.expirationDate.collectAsState()
             val startingDate = viewModel.startingDate.collectAsState()
+            val location = viewModel.location.collectAsState()
+            val name = viewModel.name.collectAsState()
 
             BountySetting(
                 startingDate = startingDate.value,
                 expirationDate = expirationDate.value,
+                location = location.value,
+                name = name.value,
                 setStartingDate = viewModel::withStartingDate,
-                setExpirationDate = viewModel::withExpirationDate
+                setExpirationDate = viewModel::withExpirationDate,
+                setLocation = viewModel::withLocation,
+                setName = viewModel::withName
             )
 
             Spacer(Modifier.height(15.dp))
@@ -76,7 +85,10 @@ fun CreateNewBounty(
             Spacer(Modifier.height(15.dp))
 
             Button(
-                enabled = expirationDate.value != null && startingDate.value != null,
+                enabled = expirationDate.value != null &&
+                          startingDate.value != null &&
+                          location.value != null &&
+                          name.value.isNotEmpty(),
                 onClick = { viewModel.create(onFailure, onSuccess) }) {
                 Text(text = "Create")
             }
@@ -89,12 +101,15 @@ fun CreateNewBounty(
 private fun BountySetting(
     startingDate: LocalDate?,
     expirationDate: LocalDate?,
+    location: Location?,
+    name: String,
     setStartingDate: (LocalDate) -> Unit,
     setExpirationDate: (LocalDate) -> Unit,
+    setLocation: (Location) -> Unit,
+    setName: (String) -> Unit,
 ) {
     Column(modifier = Modifier
-        .fillMaxWidth()
-        .height(120.dp)
+        .fillMaxSize()
         .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.SpaceBetween) {
 
@@ -109,15 +124,15 @@ private fun BountySetting(
                 setExpirationDate(second)
             })
 
-        Row(modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
+        SettingLine(text = stringResource(R.string.name)) {
+            TextField(value = name, onValueChange = setName, placeholder = {
+                Text("Bounty Name")
+            }, singleLine = true)
+        }
 
-            Text(
-                text = stringResource(id = R.string.range_date),
-                fontSize = 19.sp
-            )
+        Spacer(modifier = Modifier.height(5.dp))
 
+        SettingLine(text = stringResource(id = R.string.range_date)) {
             val dateString = startingDate?.run { expirationDate?.run {
                 "from ${DateFormatUtils.formatDate(startingDate)} to ${DateFormatUtils.formatDate(expirationDate)}"
             } } ?: ""
@@ -128,6 +143,27 @@ private fun BountySetting(
                 enabled = false,
                 modifier = Modifier.clickable { state.show() })
         }
+        
+        Spacer(modifier = Modifier.height(5.dp))
+
+        SettingLine(text = stringResource(R.string.location)) {
+            LocationPicker(location = location, setLocation = setLocation)
+        }
+    }
+}
+
+@Composable
+private fun SettingLine(text: String, content: @Composable () -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically) {
+
+        Text(
+            text = text,
+            fontSize = 19.sp
+        )
+
+        content()
     }
 }
 

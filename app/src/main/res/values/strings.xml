@@ -122,4 +122,6 @@
     
     <string name="new_challenge_notification_title">New Challenge!</string>
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
+    <string name="location">Location</string>
+    <string name="name">Name</string>
 </resources>
