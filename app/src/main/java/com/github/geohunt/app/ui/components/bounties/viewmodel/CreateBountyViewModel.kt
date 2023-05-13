@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.ImageRepository
@@ -42,6 +43,14 @@ class CreateBountyViewModel(
 
     private val _location: MutableStateFlow<Location?> = MutableStateFlow(null)
     val location : StateFlow<Location?> = _location
+
+    private val _name : MutableStateFlow<String> = MutableStateFlow("")
+    val name : StateFlow<String> = _name
+
+    fun withName(name: String) {
+        if (name.length > R.integer.bounty_name_maximum_character) return
+        _name.value = name
+    }
 
     fun withLocation(location: Location) {
         _location.value = location
