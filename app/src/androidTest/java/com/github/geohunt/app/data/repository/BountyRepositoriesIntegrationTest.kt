@@ -52,6 +52,7 @@ class BountyRepositoriesIntegrationTest {
         runBlocking {
             mockAuth.loggedAs("1").run {
                 bounty = repo.createBounty(
+                    "bounty_name",
                     startingDate = LocalDateTime.now(),
                     expirationDate = LocalDateTime.now().plusDays(2),
                     location = mockLocation

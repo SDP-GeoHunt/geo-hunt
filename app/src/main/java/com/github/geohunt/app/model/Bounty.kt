@@ -13,6 +13,7 @@ import java.time.LocalDateTime
  */
 data class Bounty(
     val bid: String,
+    val name: String,
     val adminUid: String,
     val startingDate: LocalDateTime,
     val expirationDate: LocalDateTime,

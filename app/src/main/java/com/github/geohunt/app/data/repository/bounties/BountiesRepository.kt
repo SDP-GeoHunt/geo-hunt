@@ -63,6 +63,7 @@ class BountiesRepository(
 
     private fun FirebaseBountyMetadata.asExternalModel(bid: String) = Bounty(
         bid = bid,
+        name = name!!,
         adminUid = adminUid!!,
         startingDate = DateUtils.localFromUtcIso8601(startingDate!!),
         expirationDate = DateUtils.localFromUtcIso8601(expirationDate!!),
@@ -76,6 +77,7 @@ class BountiesRepository(
     }
 
     override suspend fun createBounty(
+        name: String,
         startingDate: LocalDateTime,
         expirationDate: LocalDateTime,
         location: Location
@@ -90,6 +92,7 @@ class BountiesRepository(
             val bid = coarseHash + bountyRef.key!!
 
             val metadata = FirebaseBountyMetadata(
+                name = name,
                 adminUid = currentUser.id,
                 startingDate = DateUtils.utcIso8601FromLocal(startingDate),
                 expirationDate = DateUtils.utcIso8601FromLocal(expirationDate),
