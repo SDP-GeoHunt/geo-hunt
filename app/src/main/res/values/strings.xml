@@ -124,4 +124,5 @@
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
     <string name="location">Location</string>
     <string name="name">Name</string>
+    <string name="create_bounty_button">Create bounty</string>
 </resources>

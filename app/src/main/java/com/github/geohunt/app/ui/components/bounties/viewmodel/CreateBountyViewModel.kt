@@ -74,10 +74,12 @@ class CreateBountyViewModel(
                onSuccess: (Bounty) -> Unit) {
         viewModelScope.launch(exceptionHandler(onFailure)) {
             val bounty = bountyRepository.createBounty(
+                name = name.value,
                 startingDate = startingDate.value!!.atStartOfDay(),
                 expirationDate = expirationDate.value!!.atStartOfDay(),
                 location = _location.value!!
             )
+            onSuccess(bounty)
         }
     }
 

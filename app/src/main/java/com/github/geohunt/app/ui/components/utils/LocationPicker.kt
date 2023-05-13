@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -58,6 +59,7 @@ private fun LocationDialog(
 
                 GoogleMap(
                     modifier = Modifier
+                        .testTag("gg-map-component")
                         .padding(2.dp, 5.dp)
                         .weight(1.0f),
                     cameraPositionState = CameraPositionState(position = CameraPosition(
@@ -96,7 +98,7 @@ fun LocationPicker(location: Location?, setLocation: (Location) -> Unit) {
         onValueChange = {},
         readOnly = true,
         enabled = false,
-        modifier = Modifier.clickable { showLocationDialog = true })
+        modifier = Modifier.testTag("location-picker-field").clickable { showLocationDialog = true })
 
     if (showLocationDialog) {
         LocationDialog(location = location, setLocation = setLocation) {

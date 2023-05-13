@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,7 +55,7 @@ fun CreateNewBounty(
                 fontSize = 35.sp
             )
 
-            Spacer(Modifier.height(35.dp))
+            Spacer(Modifier.height(55.dp))
 
             val expirationDate = viewModel.expirationDate.collectAsState()
             val startingDate = viewModel.startingDate.collectAsState()
@@ -89,8 +90,9 @@ fun CreateNewBounty(
                           startingDate.value != null &&
                           location.value != null &&
                           name.value.isNotEmpty(),
+                modifier = Modifier.testTag("create-btn"),
                 onClick = { viewModel.create(onFailure, onSuccess) }) {
-                Text(text = "Create")
+                Text(text = stringResource(R.string.create_bounty_button))
             }
         }
     }
@@ -113,10 +115,7 @@ private fun BountySetting(
         .padding(horizontal = 10.dp),
         verticalArrangement = Arrangement.SpaceBetween) {
 
-        val state = UseCaseState(
-            embedded = false,
-            onDismissRequest = {}
-        )
+        val state = UseCaseState(embedded = false, onDismissRequest = {})
 
         CalendarDialog(state = state,
             selection = CalendarSelection.Period { first, second ->
@@ -127,7 +126,7 @@ private fun BountySetting(
         SettingLine(text = stringResource(R.string.name)) {
             TextField(value = name, onValueChange = setName, placeholder = {
                 Text("Bounty Name")
-            }, singleLine = true)
+            }, singleLine = true, modifier = Modifier.testTag("bounty-name-field"))
         }
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -141,7 +140,7 @@ private fun BountySetting(
                 onValueChange = {},
                 readOnly = true,
                 enabled = false,
-                modifier = Modifier.clickable { state.show() })
+                modifier = Modifier.testTag("date-field").clickable { state.show() })
         }
         
         Spacer(modifier = Modifier.height(5.dp))
