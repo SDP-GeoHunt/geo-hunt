@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
-class MockTeamRepository(
+open class MockTeamRepository(
     private val teams: List<Team> = listOf()
 ): TeamsRepositoryInterface {
     override suspend fun joinTeam(teamId: String, userId: String) {

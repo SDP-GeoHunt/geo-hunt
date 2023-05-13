@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.screens.bounty
+package com.github.geohunt.app.ui.screens.view_bounty
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
@@ -58,7 +58,7 @@ class ViewBountyViewModel(
     fun leaveCurrentTeam() {
         _isBusy.value = true
         viewModelScope.launch {
-            teamsRepository.createTeam()
+            teamsRepository.leaveTeam()
 
             _isBusy.value = false
         }

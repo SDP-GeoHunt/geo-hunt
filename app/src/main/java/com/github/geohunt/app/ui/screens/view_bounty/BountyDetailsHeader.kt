@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.screens.bounty
+package com.github.geohunt.app.ui.screens.view_bounty
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
