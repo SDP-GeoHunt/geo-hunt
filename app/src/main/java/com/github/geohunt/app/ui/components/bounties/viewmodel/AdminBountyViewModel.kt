@@ -38,6 +38,15 @@ class AdminBountyViewModel(
     private var teamRepository: TeamsRepositoryInterface? = null
     private var challengeRepository: ChallengeRepositoryInterface? = null
 
+    fun setBountyName(name: String) {
+        require(bounty_.value != null)
+
+        viewModelScope.launch {
+            bountiesRepository.renameBounty(bounty_.value!!, name)
+            refresh()
+        }
+    }
+
     fun withBusinessId(bid: String, onFailure: (Throwable) -> Unit) {
         reset()
         bid_.value = bid
@@ -63,6 +72,7 @@ class AdminBountyViewModel(
 
         viewModelScope.launch(onFailure) {
             challenges_.value = challengeRepository!!.getChallenges()
+            bounty_.value = bountiesRepository.getBountyById(bounty_.value!!.bid)
         }
     }
 

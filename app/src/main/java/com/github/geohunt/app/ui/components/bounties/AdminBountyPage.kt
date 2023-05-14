@@ -1,7 +1,7 @@
 package com.github.geohunt.app.ui.components.bounties
 
-import android.graphics.Paint.Align
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
@@ -10,10 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,8 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.geohunt.app.i18n.DateFormatUtils
@@ -34,8 +33,6 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.ui.components.bounties.viewmodel.AdminBountyViewModel
 import com.github.geohunt.app.ui.screens.home.HorizontalDivider
-import com.github.geohunt.app.utility.DateUtils
-import java.text.DateFormat
 import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.toSuffixedString
 import java.time.LocalDateTime
@@ -59,7 +56,8 @@ fun AdminBountyPage(
         AdminBountyPageUI(
             bounty = bountyState.value!!,
             teams = teamsState.value,
-            challenges = challengesState.value
+            challenges = challengesState.value,
+            setName = viewModel::setBountyName
         )
     } else {
         CircularProgressIndicator()
@@ -69,10 +67,19 @@ fun AdminBountyPage(
 @Composable
 private fun AdminBountyPageUI(
     bounty: Bounty,
+    setName: (String) -> Unit,
     teams: List<Team>,
     challenges: List<Challenge>
 ) {
     val memberCount = teams.sumOf { it.membersUid.size }
+    var showPopup by remember { mutableStateOf(false) }
+
+    if (showPopup) {
+        RenameBountyPopup(bounty) { newNameOpt ->
+            showPopup = false
+            newNameOpt?.apply { setName(this) }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -88,8 +95,14 @@ private fun AdminBountyPageUI(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Icon(
-                Icons.Default.AdminPanelSettings,
+            IconButton(onClick = { showPopup = true }) {
+                Icon(Icons.Default.Edit,
+                    contentDescription = "edit")
+            }
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Icon(Icons.Default.AdminPanelSettings,
                 contentDescription = "admin"
             )
         }
@@ -126,6 +139,49 @@ private fun AdminBountyPageUI(
 
         DisplayChallenges(challenges)
     }
+}
+
+@Composable
+private fun RenameBountyPopup(bounty: Bounty, onDismiss: (String?) -> Unit) {
+    var name by remember(bounty) {
+        mutableStateOf(bounty.name)
+    }
+
+    AlertDialog(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp, 20.dp),
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        title = {
+            Text(text = "Renaming bounty",
+                fontSize = 25.sp)
+        },
+        text = {
+            Column {
+                Spacer(modifier = Modifier.height(20.dp))
+
+                TextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    placeholder = { Text("<Name of Bounty>") },
+                )
+            }
+        },
+        buttons = {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Button({ onDismiss(name.takeIf { name != bounty.name }) }) {
+                    Text(text = "Ok")
+                }
+                
+                Spacer(modifier = Modifier.width(15.dp))
+
+                Button(onClick = { onDismiss(null) }) {
+                    Text(text = "Cancel")
+                }
+            }
+        },
+        onDismissRequest = { onDismiss(null) }
+    )
 }
 
 @Composable

@@ -129,6 +129,12 @@ class BountiesRepository(
             }
     }
 
+    override suspend fun renameBounty(bounty: Bounty, name: String) {
+        getRefByBid(bounty.bid).child("metadata").child("name")
+            .setValue(name)
+            .await()
+    }
+
     override suspend fun getBounties(): List<Bounty> = withContext(ioDispatcher) {
         bountiesMetadataRef.get()
             .await()

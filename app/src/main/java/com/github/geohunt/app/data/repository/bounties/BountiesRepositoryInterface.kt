@@ -57,6 +57,8 @@ interface BountiesRepositoryInterface {
      */
     suspend fun getBountyCreatedBy(user: User) : List<Bounty>
 
+    suspend fun renameBounty(bounty: Bounty, name: String)
+
     suspend fun getBounties() : List<Bounty>
 
     suspend fun getBountyById(bid: String) : Bounty
