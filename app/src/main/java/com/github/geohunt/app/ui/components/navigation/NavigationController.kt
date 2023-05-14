@@ -27,6 +27,7 @@ import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.ui.components.bounties.AdminBountyPage
 import com.github.geohunt.app.ui.components.bounties.CreateNewBounty
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
@@ -118,7 +119,7 @@ fun NavigationController(
                 },
                 onSuccess = { bounty ->
                     navController.popBackStack()
-//                    navController.navigate("challenge-view/${it.id}")
+                    navController.navigate("bounty-admin-page/${bounty.bid}")
                 }
             )
         }
@@ -199,6 +200,19 @@ fun NavigationController(
                     navController.navigate("challenge-view/$cid")
                 }
             )
+        }
+
+        // Bounty
+        composable(
+            "bounty-admin-page/{bountyId}",
+            arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val bid = backStackEntry.arguments?.getString("bountyId")!!
+            AdminBountyPage(bid, onFailure = {
+                Toast.makeText(context, "Something went wrong, failed to display bounty admin page", Toast.LENGTH_LONG).show()
+                Log.e("GeoHunt", "Failure within bounty admin page: $it")
+                navController.popBackStack()
+            })
         }
 
         // Settings

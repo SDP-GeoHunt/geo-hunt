@@ -48,8 +48,7 @@ class CreateBountyViewModel(
     val name : StateFlow<String> = _name
 
     fun withName(name: String) {
-        if (name.length > R.integer.bounty_name_maximum_character) return
-        _name.value = name
+        _name.value = name.take(R.integer.bounty_name_maximum_character)
     }
 
     fun withLocation(location: Location) {

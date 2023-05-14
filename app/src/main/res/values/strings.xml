@@ -23,6 +23,10 @@
     <string name="navigation.profile">Profile</string>
     <string name="title_main_activity">GeoHunt</string>
     <string name="title_activity_login">Login</string>
+    <string name="date_range_formatting">from %s to %s</string>
+    <string name="start_in_formatter">Starts %s</string>
+    <string name="end_in_formatter">Ends %s</string>
+    <string name="already_terminated">terminated</string>
 
     <string name="sign_in">Sign in</string>
 
@@ -125,4 +129,16 @@
     <string name="location">Location</string>
     <string name="name">Name</string>
     <string name="create_bounty_button">Create bounty</string>
+
+    <plurals name="teams_count">
+        <item quantity="zero">no teams</item>
+        <item quantity="one">1 team</item>
+        <item quantity="other">%d teams</item>
+    </plurals>
+
+    <plurals name="members_count">
+        <item quantity="zero">no member</item>
+        <item quantity="one">1 member</item>
+        <item quantity="other">%d members</item>
+    </plurals>
 </resources>

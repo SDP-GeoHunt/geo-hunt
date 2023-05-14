@@ -52,6 +52,21 @@ fun CreateMenuPopup(
                     navController.navigate(HiddenRoute.CreateBounty.route)
                 }
             )
+
+            ListItem(
+                    text = { Text("Debug - View Bounty") },
+            icon = {
+                Icon(
+                    Icons.Default.PestControl,
+                    contentDescription = "Debug Icon"
+                )
+            },
+
+            modifier = Modifier.clickable {
+                scope.launch { state.hide() }
+                navController.navigate("bounty-admin-page/98d755ad-NVP5y7V0SyObpqi226o")
+            }
+            )
         }
     }) {
         content()
