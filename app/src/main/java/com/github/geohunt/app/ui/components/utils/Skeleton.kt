@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui.components.utils
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.LinearEasing
@@ -15,8 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -104,7 +101,6 @@ fun <T> SkeletonLoading(
  * @param onClick An optional onClick handler.
  * @param contentDescription The image description for assistive technologies.
  */
-@SuppressLint("UnusedCrossfadeTargetStateParameter")
 @Composable
 fun SkeletonLoadingImage(
     url: String?,
@@ -114,7 +110,6 @@ fun SkeletonLoadingImage(
     onClick: (() -> Unit)? = null,
     contentDescription: String
 ) {
-    val isLoaded by remember { mutableStateOf(false) }
     val sizeModifier = modifier.size(width = width, height = height)
 
     Crossfade(url) {
@@ -182,6 +177,7 @@ fun SkeletonLoadingProfilePicture(
         width = size,
         height = size,
         modifier = modifier.clip(CircleShape),
+        onClick = onClick,
         contentDescription = contentDescription
     )
 }
