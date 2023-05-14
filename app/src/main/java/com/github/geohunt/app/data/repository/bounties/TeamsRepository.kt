@@ -73,12 +73,13 @@ class TeamsRepository(
                 .flowOn(ioDispatcher)
     }
 
-    override suspend fun createTeam(teamLeaderUid: String): Team {
+    override suspend fun createTeam(name: String, teamLeaderUid: String): Team {
         return withContext(ioDispatcher) {
             val newTeamReference = teams.push()
             val teamId = newTeamReference.key!!
 
             // set the leader
+            newTeamReference.child("name").setValue(name)
             newTeamReference.child("score").setValue(0)
             newTeamReference.child("teamLeader").setValue(teamLeaderUid)
 
@@ -86,6 +87,7 @@ class TeamsRepository(
 
             Team(
                 teamId = teamId,
+                name = name,
                 membersUid = listOf(teamLeaderUid),
                 leaderUid = teamLeaderUid,
                 score = 0
@@ -107,6 +109,7 @@ class TeamsRepository(
     private fun snapshotToTeam(s: DataSnapshot): Team {
         return Team(
             teamId = s.key!!,
+            name = s.child("name").getValue(String::class.java)!!,
             membersUid = s.child("members").toMap<Boolean>().filterValues { it }.keys.toList(),
             leaderUid = s.child("teamLeader").getValue(String::class.java) ?: "",
             score = s.child("score").getValue(Long::class.java) ?: 0
