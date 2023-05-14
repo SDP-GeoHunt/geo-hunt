@@ -99,7 +99,7 @@ class BountyRepositoriesIntegrationTest {
         mockAuth.loggedAs("2").run {
             @Suppress("DEPRECATION")
             tid = repo.getTeamRepository(bounty)
-                .createTeam(mockAuth.getCurrentUser())
+                .createTeam("name", mockAuth.getCurrentUser())
                 .teamId
 
             // When creating a team, become part of the team
