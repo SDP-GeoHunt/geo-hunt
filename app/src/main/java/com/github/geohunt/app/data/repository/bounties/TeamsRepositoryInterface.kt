@@ -37,17 +37,19 @@ interface TeamsRepositoryInterface {
      * Creates a new team for the bounty with the given user
      * as the team leader.
      *
+     * @param name the name of the team
      * @param teamLeader The team leader
      */
-    suspend fun createTeam(teamLeader: User): Team = createTeam(teamLeader.id)
+    suspend fun createTeam(name: String, teamLeader: User): Team = createTeam(name, teamLeader.id)
 
     /**
      * Creates a new team for the bounty with the given user
      * as the team leader.
      *
+     * @param name the name of the team
      * @param teamLeaderUid The team leader's user id
      */
-    suspend fun createTeam(teamLeaderUid: String): Team
+    suspend fun createTeam(name: String, teamLeaderUid: String): Team
 
     /**
      * Returns the team in which the user with the given userId is enrolled.
