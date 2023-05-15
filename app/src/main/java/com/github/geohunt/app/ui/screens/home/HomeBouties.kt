@@ -43,12 +43,7 @@ fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Any) {
 
             Box(modifier = fm) {
                 when (bounties) {
-                    null -> CircularProgressIndicator(
-                        modifier = fm
-                            .align(Alignment.Center)
-                            .height(48.dp)
-                            .testTag("loading-bounties")
-                    )
+                    null -> { }
                     listOf<Bounty>() -> {
                         Text(
                             stringResource(id = R.string.no_bounties),
@@ -61,11 +56,12 @@ fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Any) {
                             items(bounties!!) { bounty ->
                                 HomeBountyCard(
                                     vm.bountyAuthors.map { it[bounty.bid] },
+                                    bounty.name,
                                     bounty.expirationDate,
                                     vm.bountyChallenges.map { it[bounty.bid] },
                                     vm.nbParticipating.map { it[bounty.bid] },
                                 ) {
-                                    navigate("${HiddenRoute.ViewBounty.route}/${bounty.bid}")
+                                    navigate("${HiddenRoute.JoinBounty.route}/${bounty.bid}")
                                 }
                             }
                         }

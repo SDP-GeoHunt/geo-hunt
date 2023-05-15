@@ -129,6 +129,7 @@
     <string name="no_bounties">No available bounties at the moment.</string>
     <string name="begins_in">Begins in %1$s</string>
     <string name="ends_in">Ends in %1$s</string>
+    <string name="expired_since">Expired since %1$s</string>
     <string name="km_away">%1$dkm away</string>
 
     <string name="team_title">Team %1$d</string>
@@ -137,4 +138,6 @@
     <string name="create_team">Create team</string>
     <string name="join_team">Join team</string>
     <string name="leave_team">Leave team</string>
+    <string name="delete_team">Delete team</string>
+    <string name="select_team_for_bounty">Select team for %1$s</string>
 </resources>

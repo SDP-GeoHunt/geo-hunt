@@ -61,8 +61,8 @@ class HomeBountiesTest {
             HomeBounties(vm =
                 createViewModel(
                     listOf(
-                        Bounty("1", "1", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0)),
-                        Bounty("1", "1", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0))
+                        Bounty("1", "1", "1", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0)),
+                        Bounty("1", "1", "1", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0))
                     )
                 )
             ) {}

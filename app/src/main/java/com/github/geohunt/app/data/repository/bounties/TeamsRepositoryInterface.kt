@@ -100,4 +100,18 @@ interface TeamsRepositoryInterface {
      * Returns the score of the specified team
      */
     fun getTeamScore(team: Team) : Flow<Long>
+
+    /**
+     * Deletes the given team in the database. Fails silently if already deleted.
+     *
+     * @param team The team to delete
+     */
+    suspend fun deleteTeam(team: Team) = deleteTeam(team.teamId)
+
+    /**
+     * Deletes the team with the given team id. Fails silently if already deleted.
+     *
+     * @param teamId The team's id to delete
+     */
+    suspend fun deleteTeam(teamId: String)
 }

@@ -98,6 +98,10 @@ class TeamsRepository(
         }
     }
 
+    override suspend fun deleteTeam(teamId: String) {
+        teams.child(teamId).removeValue().await()
+    }
+
     /**
      * Atomically update of the score
      */

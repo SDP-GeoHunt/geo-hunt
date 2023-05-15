@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.UserRepositoryInterface
+import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Team
@@ -27,10 +28,14 @@ import kotlinx.coroutines.launch
  */
 class ViewBountyViewModel(
     bountyId: String,
+    bountiesRepository: BountiesRepositoryInterface,
     challengeRepository: ChallengeRepositoryInterface,
     userRepository: UserRepositoryInterface,
     private val teamsRepository: TeamsRepositoryInterface
 ): ViewModel() {
+
+    private val _bountyName: MutableStateFlow<String?> = MutableStateFlow(null)
+    val bountyName = _bountyName.asStateFlow()
 
     private val _teams: MutableStateFlow<List<Team>?> = MutableStateFlow(null)
     val teams = _teams.asStateFlow()
@@ -46,6 +51,9 @@ class ViewBountyViewModel(
 
     private val _users: MutableStateFlow<Map<String, List<User>>> = MutableStateFlow(mapOf())
     val users = _users.asStateFlow()
+
+    private val _canDeleteTeams: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+    val canDeleteTeams = _canDeleteTeams.asStateFlow()
 
     fun joinTeam(teamId: String) {
         _isBusy.value = true
@@ -73,16 +81,33 @@ class ViewBountyViewModel(
         }
     }
 
+    fun deleteTeam(team: Team) {
+        _isBusy.value = true
+        viewModelScope.launch  {
+            teamsRepository.deleteTeam(team)
+            _isBusy.value = false
+        }
+    }
+
     init {
         viewModelScope.launch {
-            run {
+            _bountyName.value = bountiesRepository.getBountyById(bountyId).name
+
+            launch {
                 teamsRepository.getTeams().collect { listTeams ->
                     val teamsUsers = listTeams.associate {
                         Pair(it.teamId, it.membersUid.map { member -> userRepository.getUser(member) })
                     }
 
+                    _canDeleteTeams.value = listTeams.filter { it.leaderUid == userRepository.getCurrentUser().id }.map { it.teamId }
                     _teams.value = listTeams
                     _users.value = teamsUsers
+                }
+            }
+
+            launch {
+                teamsRepository.getUserTeam().collect {
+                    _currentTeam.value = it
                 }
             }
 
@@ -100,6 +125,7 @@ class ViewBountyViewModel(
 
                     ViewBountyViewModel(
                         bountyId = bountyId,
+                        bountiesRepository = container.bounties,
                         challengeRepository = container.bounties.getChallengeRepository(bountyId),
                         userRepository = container.user,
                         teamsRepository = container.bounties.getTeamRepository(bountyId)

@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.navigation
 
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -13,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.R
 
 @Composable
-fun TopBarWithBackButton(onBack: () -> Any, title: String) {
+fun TopBarWithBackButton(onBack: () -> Any, title: String, rightContent: @Composable () () -> Unit = {}) {
     TopAppBar {
         IconButton(
             onClick = { onBack() },
@@ -23,5 +24,9 @@ fun TopBarWithBackButton(onBack: () -> Any, title: String) {
         }
 
         Text(title)
+
+        Spacer(Modifier.weight(1f))
+
+        rightContent()
     }
 }

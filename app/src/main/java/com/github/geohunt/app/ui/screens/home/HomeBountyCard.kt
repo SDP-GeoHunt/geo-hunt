@@ -34,6 +34,7 @@ import java.time.LocalDateTime
 @Composable
 fun HomeBountyCard(
     author: Flow<User?>,
+    name: String,
     expiresIn: LocalDateTime,
     challengesFlows: Flow<List<Challenge>?>,
     nbMembersFlow: Flow<Int?>,
@@ -46,7 +47,7 @@ fun HomeBountyCard(
     Card(modifier = Modifier.padding(16.dp).testTag("bounty-card"), elevation = 4.dp) {
         Column {
 
-            BountyDetailsHeader(author, expiresIn)
+            BountyDetailsHeader(author, expiresIn, name)
 
             Divider()
 
