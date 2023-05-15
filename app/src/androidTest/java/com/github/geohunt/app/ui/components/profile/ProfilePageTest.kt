@@ -38,7 +38,7 @@ class ProfilePageTest {
     private fun createViewModel(
         auth: AuthRepositoryInterface? = MockAuthRepository(),
         user: UserRepositoryInterface? = MockUserRepository(appContainer!!.user),
-        challenge: ChallengeRepositoryInterface? = null,
+        challenge: ChallengeRepositoryInterface? = MockChallengeRepository(),
         follow: FollowRepositoryInterface? = MockFollowRepository(),
         visibility: ProfileVisibilityRepositoryInterface? = MockProfileVisibilityRepository(),
         claims: ClaimRepositoryInterface? = MockClaimRepository(),
