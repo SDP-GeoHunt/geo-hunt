@@ -31,6 +31,7 @@ class ClaimRepository(
     private val imageRepository: ImageRepository,
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val scoreRepository: ScoreRepository,
+    private val activeHuntsRepository: ActiveHuntsRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = mapOf(
         Challenge.Difficulty.EASY to GaussianPointCalculator(0.20),
@@ -77,7 +78,7 @@ class ClaimRepository(
     }
 
     /**
-     * Get all claims of a specific user [user]. If one of his claim is not within the database
+     * Get all claims of a specific user id [uid]. If one of his claim is not within the database
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
@@ -165,7 +166,8 @@ class ClaimRepository(
         awaitAll(
             claimRef.setValue(claimEntry).asDeferred(),
             claimByUser.setValue(claimId).asDeferred(),
-            async { scoreRepository.incrementUserScore(currentUser, awardedPoints) }
+            async { scoreRepository.incrementUserScore(currentUser, awardedPoints) },
+            async { activeHuntsRepository.leaveHunt(challenge) }
         )
 
         // Finally convert to external model
