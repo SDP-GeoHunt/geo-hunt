@@ -6,10 +6,8 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import coil.Coil
 import coil.ImageLoader
 import coil.request.CachePolicy
-import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.mocks.mockUser
-import com.github.geohunt.app.model.User
-import com.github.geohunt.app.ui.components.leaderboard.Leaderboard
+import com.github.geohunt.app.ui.components.leaderboard.UserLeaderboard
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.github.geohunt.app.utils.ImageIdlingResource
 import org.junit.After
@@ -55,7 +53,7 @@ class LeaderboardTest {
             )
 
             GeoHuntTheme {
-                Leaderboard(users = mockUsers, currentUser = mockUsers[youIndex])
+                UserLeaderboard(users = mockUsers, currentUser = mockUsers[youIndex])
             }
         }
     }

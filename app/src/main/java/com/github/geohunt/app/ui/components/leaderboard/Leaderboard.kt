@@ -5,20 +5,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.github.geohunt.app.model.User
+
+
+typealias DisplayIcon = (@Composable () -> Unit)?
+data class LeaderboardEntry(
+        val displayName: String,
+        val score: Long,
+        val displayIcon: DisplayIcon
+)
 
 /**
  * Creates the leaderboard view.
  * 
  * The top 3 users are given special styling (see [LeaderboardPodiumItem]).
  *
- * @param users The users of the leaderboard, ranked by score.
- * @param currentUser The current user viewing the leaderboard, as seen in the bottom of the screen.
+ * @param entries The entries of the leaderboard, ranked by score.
+ * @param currentIndex The index of the current entry, as seen in the bottom of the screen.
  */
 @Composable
 fun Leaderboard(
-    users: List<User>,
-    currentUser: User
+    entries: List<LeaderboardEntry>,
+    currentIndex: Int
 ) {
     Column {
         // Wrap in a column to have minimal spacing with the chips
@@ -35,14 +42,13 @@ fun Leaderboard(
         // Note that the modifier argument can not be removed, as [Modifier.weight] is an extension
         // method only available in a [ColumnScope] or [RowScope]
         // TODO: Integrate with view model
-        LeaderboardList(users = users, emptyMap<User, Long>().withDefault { 0 }, Modifier.weight(1.0f))
+        LeaderboardList(entries = entries, Modifier.weight(1.0f))
 
         // Bottom "You" item
         LeaderboardListItem(
-            position = users.indexOf(currentUser),
-            user = currentUser,
+            position = currentIndex,
+            entry = entries[currentIndex],
             isCurrent = true,
-            score = 0 // TODO
         )
     }
 }

@@ -13,8 +13,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.User
-import com.github.geohunt.app.ui.components.user.ProfileIcon
 import com.github.geohunt.app.ui.theme.Lobster
 import com.github.geohunt.app.ui.theme.geoHuntRed
 
@@ -23,11 +21,11 @@ import com.github.geohunt.app.ui.theme.geoHuntRed
  * The position argument affects the exact UI of the item, including the background color and the
  * height of the item.
  *
- * @param user The user info that is printed on the screen.
+ * @param entry The entry that is printed on the screen.
  * @param position A number between 0 and 2 indicating the user's ranking.
  */
 @Composable
-fun LeaderboardPodiumItem(user: User, score: Long, position: Int) {
+fun LeaderboardPodiumItem(entry: LeaderboardEntry, position: Int) {
     require(position in 0..2) { "Position in PodiumItem should be in 0..2" }
 
     val height = arrayOf(100. dp, 70. dp, 70. dp)[position]
@@ -41,7 +39,8 @@ fun LeaderboardPodiumItem(user: User, score: Long, position: Int) {
             .height(height)
             .fillMaxWidth()
     ) {
-        ProfileIcon(user = user)
+        //We only display the icon if there is one
+        entry.displayIcon?.invoke()
 
         Column(
             verticalArrangement = Arrangement.Center
@@ -54,13 +53,13 @@ fun LeaderboardPodiumItem(user: User, score: Long, position: Int) {
                 modifier = Modifier.height(38. dp).padding(top = 3. dp)
             )
             Text(
-                user.name,
+                entry.displayName,
                 fontSize = 18. sp,
                 color = Color.White
             )
 
             if (position == 0) {
-                LeaderboardScore(score, color = Color.White)
+                LeaderboardScore(entry.score, color = Color.White)
             }
         }
 
@@ -73,7 +72,7 @@ fun LeaderboardPodiumItem(user: User, score: Long, position: Int) {
             verticalArrangement = Arrangement.Center
         ) {
             if (position != 0) {
-                LeaderboardScore(score, color = Color.White)
+                LeaderboardScore(entry.score, color = Color.White)
             } else {
                 Icon(
                     painter = painterResource(R.drawable.baseline_local_fire_department_24),
