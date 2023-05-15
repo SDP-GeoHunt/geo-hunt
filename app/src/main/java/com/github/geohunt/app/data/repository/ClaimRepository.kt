@@ -16,6 +16,7 @@ import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
@@ -29,6 +30,7 @@ class ClaimRepository(
     private val authRepository: AuthRepository,
     private val imageRepository: ImageRepository,
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
+    private val scoreRepository: ScoreRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = mapOf(
         Challenge.Difficulty.EASY to GaussianPointCalculator(0.20),
@@ -71,9 +73,7 @@ class ClaimRepository(
     override suspend fun getScore(user: User) : Long {
         require(user.id.isNotEmpty())
 
-        return withContext(ioDispatcher) {
-            getClaims(user).sumOf { it.awardedPoints }
-        }
+        return scoreRepository.getScore(user)
     }
 
     /**
@@ -148,6 +148,7 @@ class ClaimRepository(
 
         // Compute the distance to the target
         val distance = location.distanceTo(challenge.location)
+        val awardedPoints = pointCalculatorMap[challenge.difficulty]!!.computePoints(distance)
 
         // Upload the entry to Firebase's Realtime Database
         val claimEntry = FirebaseClaim(
@@ -157,13 +158,14 @@ class ClaimRepository(
             cid = challenge.id,
             location = location,
             distance = (distance.toLong() + 1),
-            awardedPoints = pointCalculatorMap[challenge.difficulty]!!.computePoints(distance)
+            awardedPoints = awardedPoints
         )
 
         // Upload the entry
         awaitAll(
             claimRef.setValue(claimEntry).asDeferred(),
-            claimByUser.setValue(claimId).asDeferred()
+            claimByUser.setValue(claimId).asDeferred(),
+            async { scoreRepository.incrementUserScore(currentUser, awardedPoints) }
         )
 
         // Finally convert to external model

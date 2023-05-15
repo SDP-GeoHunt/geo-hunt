@@ -30,9 +30,10 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
     val auth = AuthRepository()
     val user = UserRepository(image, auth, dbInstance)
 
+    val score = ScoreRepository(database, auth)
     val challenges = ChallengeRepository(user, image, auth, dbInstance)
     val activeHunts = ActiveHuntsRepository(auth, dbInstance)
-    val claims = ClaimRepository(auth, image, dbInstance)
+    val claims = ClaimRepository(auth, image, dbInstance, score)
     val follow = FollowRepository(auth, dbInstance)
 
     val feedUseCase = GetUserFeedUseCase(auth, challenges, follow)

@@ -29,7 +29,7 @@ interface ClaimRepositoryInterface {
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
-    suspend fun getClaims(user: User) : List<Claim>
+    suspend fun getClaims(user: User): List<Claim>
 
     /**
      * Retrieve a list of all claims associated with the current challenges
