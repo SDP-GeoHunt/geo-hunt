@@ -55,7 +55,6 @@ fun ProfilePage(
     val isPrivate = viewModel.isPrivate.collectAsState()
     val user = viewModel.user.collectAsState()
     val challenges = viewModel.challenges.collectAsState()
-    val claims = viewModel.claims.collectAsState()
     val hunts = viewModel.claimedChallenges.collectAsState()
     val score = viewModel.score.collectAsState()
     val error = viewModel.didFail.collectAsState()
