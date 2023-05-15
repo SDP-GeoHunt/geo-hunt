@@ -42,12 +42,12 @@ class ClaimRepository(
     /**
      * Retrieve a list of all claims id for a specific user, useful when lazy loading
      */
-    override suspend fun getClaimId(user: User): List<String> {
-        require(user.id.isNotEmpty())
+    override suspend fun getClaimId(uid: String): List<String> {
+        require(uid.isNotEmpty())
 
         return withContext(ioDispatcher) {
             database.getReference("claimsByUser")
-                .child(user.id)
+                .child(uid)
                 .get()
                 .await()
                 .run {
@@ -81,11 +81,11 @@ class ClaimRepository(
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
-    override suspend fun getClaims(user: User) : List<Claim> {
-        require(user.id.isNotEmpty())
+    override suspend fun getClaims(uid: String) : List<Claim> {
+        require(uid.isNotEmpty())
 
         return withContext(ioDispatcher) {
-            getClaimId(user).run {
+            getClaimId(uid).run {
                 map { claimId ->
                     database.getReference("claims/$claimId").get().asDeferred()
                 }.awaitAll().zip(this).map {

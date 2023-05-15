@@ -124,7 +124,7 @@ fun NavigationController(
             it.arguments?.getString("userId")?.let {
                 userId -> ProfilePage(
                 ProfilePageViewModel(
-                    container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, userId
+                    container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, container.claims, container.score, userId
                 )
             )
             }

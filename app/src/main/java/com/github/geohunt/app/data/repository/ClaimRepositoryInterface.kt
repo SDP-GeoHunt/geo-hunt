@@ -12,7 +12,11 @@ interface ClaimRepositoryInterface {
     /**
      * Retrieve a list of all claims id for a specific user, useful when lazy loading
      */
-    suspend fun getClaimId(user: User): List<String>
+    suspend fun getClaimId(user: User): List<String> {
+        return getClaimId(user.id)
+    }
+
+    suspend fun getClaimId(uid: String): List<String>
 
     /**
      * Check whether the currently logged user claim the given challenges
@@ -29,7 +33,11 @@ interface ClaimRepositoryInterface {
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
-    suspend fun getClaims(user: User): List<Claim>
+    suspend fun getClaims(user: User): List<Claim> {
+        return getClaims(user.id)
+    }
+
+    suspend fun getClaims(uid: String): List<Claim>
 
     /**
      * Retrieve a list of all claims associated with the current challenges

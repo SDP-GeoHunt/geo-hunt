@@ -70,21 +70,6 @@ interface ChallengeRepositoryInterface {
     ): Challenge
 
     /**
-     * Returns all the claims done by a specific user
-     *
-     * @param user The user
-     */
-    fun getClaimsFromUser(user: User) = getClaimsFromUser(user.id)
-
-
-    /**
-     * Returns all the claims done by a specific user id
-     *
-     * @param uid The user id
-     */
-    fun getClaimsFromUser(uid: String): List<Claim>
-
-    /**
      * Get all the challenges for the challenge repository.
      *
      * This should be used only in the context of bounties to avoid
