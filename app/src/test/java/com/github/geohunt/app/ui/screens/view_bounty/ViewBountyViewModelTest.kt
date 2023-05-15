@@ -41,9 +41,9 @@ class ViewBountyViewModelTest {
     @Test
     fun fetchesTheTeamCorrectly() = runTest {
         val fakeTeams = listOf(
-            Team(leaderUid = "1", membersUid = listOf("1", "2", "3"), teamId = "1", score = 100),
-            Team(leaderUid = "1", membersUid = listOf("1", "2", "3"), teamId = "2", score = 100),
-            Team(leaderUid = "1", membersUid = listOf("1", "2", "3"), teamId = "3", score = 100)
+            Team(leaderUid = "1", name="a", membersUid = listOf("1", "2", "3"), teamId = "1", score = 100),
+            Team(leaderUid = "1", name="b", membersUid = listOf("1", "2", "3"), teamId = "2", score = 100),
+            Team(leaderUid = "1", name="c", membersUid = listOf("1", "2", "3"), teamId = "3", score = 100)
         )
         val teamsRepository = object: MockTeamRepository() {
             override fun getTeams(): Flow<List<Team>> {
@@ -60,8 +60,8 @@ class ViewBountyViewModelTest {
     @Test
     fun fetchesTeamMembersCorrectly() = runTest {
         val fakeTeams = listOf(
-            Team(leaderUid = "1", membersUid = listOf("1", "2", "3"), teamId = "1", score = 100),
-            Team(leaderUid = "1", membersUid = listOf("1", "2"), teamId = "2", score = 100)
+            Team(leaderUid = "1", membersUid = listOf("1", "2", "3"), teamId = "1", score = 100, name = "a"),
+            Team(leaderUid = "1", membersUid = listOf("1", "2"), teamId = "2", score = 100, name = "b")
         )
         val teamsRepository = object: MockTeamRepository() {
             override fun getTeams(): Flow<List<Team>> {
@@ -111,13 +111,13 @@ class ViewBountyViewModelTest {
     fun createTeamTriggersCreateTeamOfRepository() = runTest {
         val cf = MutableStateFlow(false)
         val fakeTeamRepository = object: MockTeamRepository() {
-            override suspend fun createTeam(): Team {
+            override suspend fun createTeam(name: String): Team {
                 cf.value = true
-                return Team("1", listOf(), "1", 0)
+                return Team("1", "a", listOf(), "1", 0)
             }
         }
         val vm = createFakeViewModel(teamsRepository = fakeTeamRepository)
-        vm.createOwnTeam()
+        vm.createOwnTeam("a")
         cf.first { it }
     }
 

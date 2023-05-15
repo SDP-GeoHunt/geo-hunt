@@ -64,10 +64,10 @@ class ViewBountyViewModel(
         }
     }
 
-    fun createOwnTeam() {
+    fun createOwnTeam(name: String) {
         _isBusy.value = true
         viewModelScope.launch {
-            teamsRepository.createTeam()
+            teamsRepository.createTeam(name)
 
             _isBusy.value = false
         }

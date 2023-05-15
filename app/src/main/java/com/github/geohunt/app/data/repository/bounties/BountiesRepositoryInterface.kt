@@ -16,6 +16,7 @@ interface BountiesRepositoryInterface {
      */
     @Throws(UserNotLoggedInException::class)
     suspend fun createBounty(
+        name: String,
         startingDate: LocalDateTime,
         expirationDate: LocalDateTime,
         location: Location

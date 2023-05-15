@@ -33,11 +33,11 @@ open class MockTeamRepository(
         return flowOf(teams.first { it.teamId == teamId } )
     }
 
-    override suspend fun createTeam(teamLeaderUid: String): Team {
+    override suspend fun createTeam(name: String, teamLeaderUid: String): Team {
         TODO("Not yet implemented")
     }
 
-    override suspend fun createTeam(): Team {
+    override suspend fun createTeam(name: String): Team {
         TODO("Not yet implemented")
     }
 

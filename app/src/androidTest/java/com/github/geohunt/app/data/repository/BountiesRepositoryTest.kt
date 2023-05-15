@@ -39,12 +39,14 @@ class BountiesRepositoryTest {
     @Test
     fun createsProperlyABounty() = runTest {
         val bounty = repo.createBounty(
+            "bounty_name",
             startingDate = LocalDateTime.now(),
             expirationDate = LocalDateTime.now().plusDays(2),
             location = mockLocation
         )
 
         val bounty2 = repo.getBountyById(bounty.bid)
+        assertThat(bounty.name, equalTo("bounty_name"))
         assertThat(bounty.bid, equalTo(bounty2.bid))
         assertThat(bounty.location, equalTo(bounty2.location))
         assertThat(bounty.expirationDate, equalTo(bounty2.expirationDate))
@@ -56,6 +58,7 @@ class BountiesRepositoryTest {
     @Test
     fun testBountyByUser() = runTest {
         val bounty = repo.createBounty(
+            "bounty_name",
             startingDate = LocalDateTime.now(),
             expirationDate = LocalDateTime.now().plusDays(2),
             location = mockLocation

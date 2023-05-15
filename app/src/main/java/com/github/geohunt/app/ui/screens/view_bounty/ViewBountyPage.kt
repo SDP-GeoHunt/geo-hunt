@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Logout
@@ -21,6 +23,8 @@ import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,7 +33,6 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.GoBackBtn
-import com.github.geohunt.app.ui.components.profile.button.FlatLongButton
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -60,12 +63,30 @@ fun ViewBountyPage(
             currentTeam = currentTeam
         )
 
-        FlatLongButton(
-            icon = Icons.Default.Add,
-            text = stringResource(id = R.string.create_team),
-            onClick = { viewModel.createOwnTeam() },
+        TeamCreator(
+            createTeam = { viewModel.createOwnTeam(it) },
             disabled = isBusy
         )
+    }
+}
+
+@Composable
+fun TeamCreator(createTeam: (String) -> Unit, disabled: Boolean) {
+    val name = remember { mutableStateOf("") }
+    Row {
+        TextField(
+            value = name.value, onValueChange = { name.value = it },
+            singleLine = true,
+            placeholder = { Text(text = stringResource(id = R.string.enter_team_name)) },
+            label = { Text(text = stringResource(id = R.string.team_name)) },
+            enabled = !disabled
+        )
+        TextButton(
+            onClick = { createTeam(name.value) },
+            enabled = !disabled
+        ) {
+            Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.create_team))
+        }
     }
 }
 
@@ -83,10 +104,10 @@ fun TeamsSelector(
     LazyColumn {
         items(teams) { team ->
             if (team == currentTeam)
-                TeamSelector(teams.indexOf(team), users = users[team.teamId], { leaveTeam() }, disabled, true)
+                TeamSelector(team.name, users = users[team.teamId], { leaveTeam() }, disabled, true)
             else
                 TeamSelector(
-                    teams.indexOf(team),
+                    team.name,
                     users = users[team.teamId],
                     { join(team) },
                     disabled || currentTeam != null, // Disable if the user is already inside a team
@@ -98,7 +119,7 @@ fun TeamsSelector(
 
 @Composable
 fun TeamSelector(
-    number: Int,
+    name: String,
     users: List<User>?,
     join: () -> Any,
     disabled: Boolean,
@@ -107,7 +128,7 @@ fun TeamSelector(
     Column {
         Row {
             Icon(Icons.Default.Person3, contentDescription = null)
-            Text(stringResource(id = R.string.team_title, number))
+            Text(name)
             Spacer(Modifier.weight(1f))
 
             IconButton(onClick = { join() }, enabled = !disabled) {

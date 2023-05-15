@@ -132,6 +132,8 @@
     <string name="km_away">%1$dkm away</string>
 
     <string name="team_title">Team %1$d</string>
+    <string name="team_name">Team name</string>
+    <string name="enter_team_name">Enter the new team\'s name</string>
     <string name="create_team">Create team</string>
     <string name="join_team">Join team</string>
     <string name="leave_team">Leave team</string>
