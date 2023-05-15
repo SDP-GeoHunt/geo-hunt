@@ -9,7 +9,7 @@ interface ScoreRepositoryInterface {
 
     suspend fun getScore(uid: String): Long
 
-    suspend fun getTopNUsers(n: Int): List<String>
+    suspend fun getTopNUsers(n: Int): List<Pair<String, Long>>
 
     suspend fun incrementUserScore(user: User, increment: Long)
 }

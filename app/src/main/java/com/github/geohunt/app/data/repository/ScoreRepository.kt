@@ -10,7 +10,6 @@ import kotlinx.coroutines.withContext
 
 class ScoreRepository(
         database: FirebaseDatabase = FirebaseDatabase.getInstance(),
-        private val authRepository: AuthRepository,
         private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): ScoreRepositoryInterface {
     private val scoreRef = database.getReference("scores")
@@ -19,8 +18,13 @@ class ScoreRepository(
         scoreRef.child(uid).get().await().getValue(Long::class.java) ?: 0
     }
 
-    override suspend fun getTopNUsers(n: Int): List<String> {
-        TODO("Not yet implemented")
+    override suspend fun getTopNUsers(n: Int): List<Pair<String, Long>> = withContext(ioDispatcher) {
+        scoreRef
+                .orderByValue()
+                .limitToLast(n)
+                .get().await().run {
+                    children.map { it.key!! to (it.getValue(Long::class.java) ?: 0) }
+                }
     }
 
     override suspend fun incrementUserScore(user: User, increment: Long): Unit = withContext(ioDispatcher) {
