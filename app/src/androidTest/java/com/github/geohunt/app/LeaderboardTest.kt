@@ -7,7 +7,7 @@ import coil.Coil
 import coil.ImageLoader
 import coil.request.CachePolicy
 import com.github.geohunt.app.mocks.mockUser
-import com.github.geohunt.app.ui.components.leaderboard.UserLeaderboard
+import com.github.geohunt.app.ui.screens.userleaderboard.UserLeaderboard
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.github.geohunt.app.utils.ImageIdlingResource
 import org.junit.After

@@ -8,8 +8,8 @@ open class MockScoreRepository: ScoreRepositoryInterface {
         return 0L
     }
 
-    override suspend fun getTopNUsers(n: Int): List<String> {
-        TODO("Not yet implemented")
+    override suspend fun getTopNUsers(n: Int): List<Pair<String, Long>> {
+        return listOf()
     }
 
     override suspend fun incrementUserScore(user: User, increment: Long) {

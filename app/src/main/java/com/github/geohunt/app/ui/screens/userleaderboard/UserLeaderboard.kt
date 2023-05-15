@@ -1,7 +1,9 @@
-package com.github.geohunt.app.ui.components.leaderboard
+package com.github.geohunt.app.ui.screens.userleaderboard
 
 import androidx.compose.runtime.Composable
 import com.github.geohunt.app.model.User
+import com.github.geohunt.app.ui.components.leaderboard.Leaderboard
+import com.github.geohunt.app.ui.components.leaderboard.LeaderboardEntry
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 @Composable
