@@ -15,8 +15,8 @@ class ScoreRepository(
 ): ScoreRepositoryInterface {
     private val scoreRef = database.getReference("scores")
 
-    override suspend fun getScore(user: User): Long = withContext(ioDispatcher) {
-        scoreRef.child(user.id).get().await().getValue(Long::class.java) ?: 0
+    override suspend fun getScore(uid: String): Long = withContext(ioDispatcher) {
+        scoreRef.child(uid).get().await().getValue(Long::class.java) ?: 0
     }
 
     override suspend fun getTopNUsers(n: Int): List<String> {
