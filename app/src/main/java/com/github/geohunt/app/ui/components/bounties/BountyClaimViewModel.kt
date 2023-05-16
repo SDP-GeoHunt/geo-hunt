@@ -61,8 +61,6 @@ class BountyClaimViewModel(
     fun start(cid: String, onFailure: (Throwable) -> Unit = {}) {
         reset()
         viewModelScope.launch(exceptionHandler(onFailure)) {
-            //val challengeRepositoryForBounty = bountiesRepository.getChallengeRepository(bid)
-
             _challenge.value = challengeRepository.getChallenge(cid)
             _submittingState.value = State.AWAITING_CAMERA
         }

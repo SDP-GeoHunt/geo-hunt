@@ -27,6 +27,7 @@ import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.ui.components.bounties.BountyClaimChallenge
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
@@ -198,6 +199,32 @@ fun NavigationController(
                 profileVisibilityRepository = container.profileVisibilities
             )
             PrivacySettingsPage(onBack = { navController.popBackStack() }, viewModel)
+        }
+
+        // Bounties
+        // Open a claim for a given bounty's challenge
+        composable(
+            "bounty-claim-challenge/{bountyId}-{challengeId}",
+            arguments = listOf(
+                navArgument("bountyId") { type = NavType.StringType },
+                navArgument("challengeId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val bid = backStackEntry.arguments?.getString("bountyId")!!
+            val cid = backStackEntry.arguments?.getString("challengeId")!!
+
+            BountyClaimChallenge(
+                bid = bid,
+                cid = cid,
+                onFailure = {
+                    Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Fail to create challenge: $it")
+                    navController.popBackStack()
+                },
+                onClaimSubmitted = {
+                    navController.popBackStack()
+                    navController.navigate("challenge-view/$cid")
+                }
+            )
         }
     }
 }
