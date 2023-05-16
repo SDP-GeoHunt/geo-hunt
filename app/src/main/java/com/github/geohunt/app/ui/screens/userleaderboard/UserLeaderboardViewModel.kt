@@ -11,6 +11,7 @@ import com.github.geohunt.app.data.repository.ScoreRepositoryInterface
 import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.leaderboard.LeaderboardEntry
+import com.github.geohunt.app.ui.components.leaderboard.LeaderboardInformation
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,6 +39,14 @@ class UserLeaderboardViewModel(
         }
     }
 
+    private fun toEntry(user: User, score: Long): LeaderboardEntry {
+        return LeaderboardEntry(
+                displayName = user.name,
+                score = score,
+                displayIcon = { ProfileIcon(user = user) }
+        )
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
@@ -53,12 +62,3 @@ class UserLeaderboardViewModel(
     }
 }
 
-data class LeaderboardInformation(val entries: List<LeaderboardEntry>, val userIndex: Int)
-
-fun toEntry(user: User, score: Long): LeaderboardEntry {
-    return LeaderboardEntry(
-            displayName = user.name,
-            score = score,
-            displayIcon = { ProfileIcon(user = user) }
-    )
-}

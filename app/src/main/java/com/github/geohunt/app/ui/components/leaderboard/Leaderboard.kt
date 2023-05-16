@@ -6,27 +6,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-
-typealias DisplayIcon = (@Composable () -> Unit)?
-data class LeaderboardEntry(
-        val displayName: String,
-        val score: Long,
-        val displayIcon: DisplayIcon
-)
-
 /**
  * Creates the leaderboard view.
  * 
  * The top 3 users are given special styling (see [LeaderboardPodiumItem]).
  *
- * @param entries The entries of the leaderboard, ranked by score.
- * @param currentIndex The index of the current entry, as seen in the bottom of the screen.
+ * @param leaderboardInformation the data class containing all the information about the Leaderboard
+ *  * The entries to display
+ *  * The position of given user in the leaderboard (or -1 if he isn't in the leaderboard,
+ *  he won't get displayed)
  */
 @Composable
 fun Leaderboard(
-    entries: List<LeaderboardEntry>,
-    currentIndex: Int
+    leaderboardInformation: LeaderboardInformation
 ) {
+    val entries = leaderboardInformation.entries
+    val currentIndex = leaderboardInformation.userIndex
     Column {
         // Wrap in a column to have minimal spacing with the chips
         Column(
