@@ -148,7 +148,8 @@ class BountyClaimViewModel(
                         challengeRepository = container.bounties.getChallengeRepository(bountyId),
                         bountiesRepository = container.bounties,
                         bountyClaimRepositoryInterface = container.bounties.getClaimRepository(bountyId),
-                        bountyTeamsRepository = container.bounties.getTeamRepository(bountyId)                    )
+                        bountyTeamsRepository = container.bounties.getTeamRepository(bountyId)
+                    )
                 }
             }
         }

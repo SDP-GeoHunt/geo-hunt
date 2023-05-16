@@ -204,7 +204,7 @@ fun NavigationController(
         // Bounties
         // Open a claim for a given bounty's challenge
         composable(
-            "bounty-claim-challenge/{bountyId}-{challengeId}",
+            "bounty-claim-challenge/{bountyId}/{challengeId}",
             arguments = listOf(
                 navArgument("bountyId") { type = NavType.StringType },
                 navArgument("challengeId") { type = NavType.StringType })
