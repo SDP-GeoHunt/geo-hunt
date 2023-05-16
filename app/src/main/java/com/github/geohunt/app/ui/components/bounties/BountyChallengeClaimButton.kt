@@ -29,10 +29,11 @@ fun BountyChallengeClaimButton(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(false) }
+    var isClaimedRemember by remember { mutableStateOf(isClaimed) }
 
     Button(
         onClick = {
-            if (!isClaimed) {
+            if (!isClaimedRemember) {
                 coroutineScope.launch {
                     try {
                         isLoading = true
@@ -48,6 +49,7 @@ fun BountyChallengeClaimButton(
                             Log.e("Location Request", "Failed to get location", e)
                         } finally {
                             isLoading = false
+                            isClaimedRemember = true
                         }
                     } catch (e: Exception) {
                         // Handle any other exceptions
@@ -57,11 +59,11 @@ fun BountyChallengeClaimButton(
                 }
             }
         },
-        colors = ButtonDefaults.buttonColors(backgroundColor = if (isClaimed) Color.Gray else Color.Blue),
-        enabled = !isClaimed,
+        colors = ButtonDefaults.buttonColors(backgroundColor = if (isClaimed) Color.Gray else Color.Red),
+        enabled = !isClaimedRemember,
         modifier = Modifier.padding(16.dp)
     ) {
         // Display the text based on the isLoading state
-        Text(if (isLoading) "Loading..." else if (isClaimed) "Challenge Claimed" else "Claim Challenge")
+        Text(if (isLoading) "Loading..." else if (isClaimedRemember) "Challenge Claimed" else "Claim Challenge")
     }
 }
