@@ -63,7 +63,7 @@ class TeamsRepositoryTest {
             MockUserRepository()
         )
         val createdTeam = repo.createTeam("name", "2")
-        repo.joinTeam(createdTeam.teamId, "1")
+        repo.joinTeam(createdTeam.teamId)
         val t = repo.getTeam(createdTeam.teamId).first()
         assert(t.membersUid.contains("1"))
         // Clean

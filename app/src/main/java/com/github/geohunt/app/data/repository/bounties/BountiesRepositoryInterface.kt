@@ -57,8 +57,16 @@ interface BountiesRepositoryInterface {
      */
     suspend fun getBountyCreatedBy(user: User) : List<Bounty>
 
+    /**
+     * Returns all the bounties.
+     */
     suspend fun getBounties() : List<Bounty>
 
+    /**
+     * Returns a specific bounty
+     *
+     * @param bid The bounty's id
+     */
     suspend fun getBountyById(bid: String) : Bounty
 
 }
