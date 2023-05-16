@@ -17,6 +17,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * The view model of the user leaderboard
+ * @param scoreRepository a score repository from which all the scores will be taken
+ * @param userRepository a user repository, complementary information about the entries will get fetched here
+ */
 class UserLeaderboardViewModel(
         scoreRepository: ScoreRepositoryInterface,
         userRepository: UserRepositoryInterface
@@ -29,7 +34,7 @@ class UserLeaderboardViewModel(
     init {
         viewModelScope.launch {
             val currentUser = userRepository.getCurrentUser().id
-            val topUsers = scoreRepository.getTopNUsers(n).reversed()
+            val topUsers = scoreRepository.getTopNUsers(n)
             val entries = topUsers.map {
                 toEntry(user = userRepository.getUser(it.first), score = it.second)
             }

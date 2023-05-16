@@ -16,6 +16,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+/**
+ * The leaderboard for teams in a specific bounty
+ * @param teamsRepository the teams repository corresponding to the current bounty,
+ *  all the information needed to create entries will be fetched here
+ */
 class TeamLeaderboardViewModel(
         teamsRepository: TeamsRepositoryInterface
 ): ViewModel() {

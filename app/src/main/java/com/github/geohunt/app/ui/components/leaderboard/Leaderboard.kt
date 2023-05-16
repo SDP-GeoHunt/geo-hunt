@@ -36,7 +36,6 @@ fun Leaderboard(
 
         // Note that the modifier argument can not be removed, as [Modifier.weight] is an extension
         // method only available in a [ColumnScope] or [RowScope]
-        // TODO: Integrate with view model
         LeaderboardList(entries = entries, Modifier.weight(1.0f))
 
         // Bottom "You" item
