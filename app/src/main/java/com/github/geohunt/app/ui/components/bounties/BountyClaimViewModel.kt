@@ -12,8 +12,8 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.data.repository.bounties.BountiesRepository
-import com.github.geohunt.app.data.repository.bounties.BountyClaimRepository
-import com.github.geohunt.app.data.repository.bounties.TeamsRepository
+import com.github.geohunt.app.data.repository.bounties.BountyClaimRepositoryInterface
+import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
@@ -31,8 +31,8 @@ class BountyClaimViewModel(
     private val locationRepository: LocationRepository,
     private val challengeRepository: ChallengeRepositoryInterface,
     private val bountiesRepository: BountiesRepository,
-    private val bountyClaimRepository: BountyClaimRepository,
-    private val bountyTeamsRepository: TeamsRepository,
+    private val bountyClaimRepositoryInterface: BountyClaimRepositoryInterface,
+    private val bountyTeamsRepository: TeamsRepositoryInterface,
 
     ) : ViewModel() {
 
@@ -80,7 +80,7 @@ class BountyClaimViewModel(
             val file = imageRepository.preprocessImage(photoState.value!!, fileFactory)
             _submittingState.value = State.CLAIMING
 
-            val claim = bountyClaimRepository.claimChallenge(
+            val claim = bountyClaimRepositoryInterface.claimChallenge(
                 LocalPicture(file),
                 challenge.value!!,
                 location.value!!,
@@ -136,24 +136,6 @@ class BountyClaimViewModel(
             callback(throwable)
         }
 
-    /*companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
-                val container = AppContainer.getInstance(application)
-
-                BountyClaimViewModel(
-                    container.image,
-                    container.location,
-                    container.bountiesRepository,
-                    container.getBountyClaimRepository(bid),
-                    //container.claims,
-                    container.teamsRepository,
-                )
-            }
-        }
-    }*/
-
     companion object {
         fun getFactory(bountyId: String): ViewModelProvider.Factory {
             return viewModelFactory {
@@ -167,9 +149,8 @@ class BountyClaimViewModel(
                         locationRepository = container.location,
                         challengeRepository = container.bounties.getChallengeRepository(bountyId),
                         bountiesRepository = container.bounties,
-                        bountyClaimRepository = container.getBountyClaimRepository(bountyId),
-                        bountyTeamsRepository = container.teamsRepository
-                    )
+                        bountyClaimRepositoryInterface = container.bounties.getClaimRepository(bountyId),
+                        bountyTeamsRepository = container.bounties.getTeamRepository(bountyId)                    )
                 }
             }
         }
