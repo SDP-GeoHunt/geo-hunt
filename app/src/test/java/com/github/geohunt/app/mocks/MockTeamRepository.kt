@@ -42,7 +42,7 @@ open class MockTeamRepository(
     }
 
     override fun getUserTeam(userId: String): Flow<Team?> {
-        return flowOf(teams.first { it.membersUid.contains(userId) })
+        return flowOf(teams.firstOrNull { it.membersUid.contains(userId) })
     }
 
     override suspend fun getUserTeam(): Flow<Team?> {
@@ -51,5 +51,9 @@ open class MockTeamRepository(
 
     override fun getTeamScore(team: Team): Flow<Long> {
         return getTeam(team.teamId).map { it.score }
+    }
+
+    override suspend fun deleteTeam(teamId: String) {
+        TODO("Not yet implemented")
     }
 }

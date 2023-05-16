@@ -1,8 +1,10 @@
 package com.github.geohunt.app.ui.screens.home
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.github.geohunt.app.mocks.MockChallenge
 import kotlinx.coroutines.flow.flowOf
@@ -20,11 +22,13 @@ class HomeBountyCardTest {
     fun nbChallengesTextShowsLoadingIfNotReadyYet() {
         c.setContent {
             HomeBountyCard(
+                name = "test",
                 author = flowOf(null),
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(null),
                 nbMembersFlow = flowOf(null),
-                join = {})
+                isInside = false,
+                onClick = {})
         }
 
         c.onNodeWithTag("challenges-#").assertTextEquals("…")
@@ -34,11 +38,13 @@ class HomeBountyCardTest {
     fun showsCorrectNbChallengesIfReady() {
         c.setContent {
             HomeBountyCard(
+                name = "test",
                 author = flowOf(null),
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(listOf(MockChallenge(), MockChallenge(), MockChallenge())), // three challenges
                 nbMembersFlow = flowOf(null),
-                join = {})
+                isInside = false,
+                onClick = {})
         }
 
         c.onNodeWithTag("challenges-#").assertTextEquals("3")
@@ -48,11 +54,13 @@ class HomeBountyCardTest {
     fun nbMembersTextShowsLoadingIfNotReadyYet() {
         c.setContent {
             HomeBountyCard(
+                name = "test",
+                isInside = false,
                 author = flowOf(null),
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(null),
                 nbMembersFlow = flowOf(null),
-                join = {})
+                onClick = {})
         }
 
         c.onNodeWithTag("members-#").assertTextEquals("…")
@@ -62,11 +70,13 @@ class HomeBountyCardTest {
     fun showsCorrectNbMembersIfReady() {
         c.setContent {
             HomeBountyCard(
+                name = "test",
+                isInside = false,
                 author = flowOf(null),
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(null), // three challenges
                 nbMembersFlow = flowOf(421),
-                join = {})
+                onClick = {})
         }
 
         c.onNodeWithTag("members-#").assertTextEquals("421")
@@ -77,13 +87,45 @@ class HomeBountyCardTest {
         val cf = CompletableFuture<Void?>()
         c.setContent {
             HomeBountyCard(
+                isInside = false,
+                name = "test",
                 author = flowOf(null),
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(null), // three challenges
                 nbMembersFlow = flowOf(421),
-                join = { cf.complete(null) })
+                onClick = { cf.complete(null) })
         }
         c.onNodeWithTag("join-btn").performClick()
         cf.get(2, TimeUnit.SECONDS)
+    }
+
+    @Test
+    fun showsName() {
+        c.setContent {
+            HomeBountyCard(
+                isInside = false,
+                name = "Bounty name",
+                author = flowOf(null),
+                expiresIn = LocalDateTime.MAX,
+                challengesFlows = flowOf(null), // three challenges
+                nbMembersFlow = flowOf(421),
+                onClick = { })
+        }
+        c.onNodeWithText("Bounty name").assertIsDisplayed()
+    }
+
+    @Test
+    fun showsSeeButtonInsteadOfJoinIfInside() {
+        c.setContent {
+            HomeBountyCard(
+                isInside = true,
+                name = "Bounty name",
+                author = flowOf(null),
+                expiresIn = LocalDateTime.MAX,
+                challengesFlows = flowOf(null), // three challenges
+                nbMembersFlow = flowOf(421),
+                onClick = { })
+        }
+        c.onNodeWithText("See").assertIsDisplayed()
     }
 }

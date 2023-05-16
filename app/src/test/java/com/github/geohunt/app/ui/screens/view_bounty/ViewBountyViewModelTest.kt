@@ -3,11 +3,14 @@ package com.github.geohunt.app.ui.screens.view_bounty
 import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
+import com.github.geohunt.app.mocks.MockBountiesRepositories
 import com.github.geohunt.app.mocks.MockChallenge
 import com.github.geohunt.app.mocks.MockChallengeRepository
 import com.github.geohunt.app.mocks.MockTeamRepository
 import com.github.geohunt.app.mocks.MockUserRepository
+import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.test_utils.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ViewBountyViewModelTest {
@@ -28,6 +32,11 @@ class ViewBountyViewModelTest {
     ): ViewBountyViewModel {
         return ViewBountyViewModel(
             "1",
+            bountiesRepository = object: MockBountiesRepositories() {
+                override suspend fun getBountyById(bid: String): Bounty {
+                    return Bounty("1", "hello", "1", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0))
+                }
+            },
             challengeRepository = challengeRepository,
             userRepository = userRepository,
             teamsRepository = teamsRepository

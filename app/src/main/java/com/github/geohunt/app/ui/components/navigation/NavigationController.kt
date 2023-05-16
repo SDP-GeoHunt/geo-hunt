@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Home
@@ -63,7 +64,8 @@ enum class VisibleRoute(val titleStringId: Int, override val route: String, val 
 }
 
 enum class HiddenRoute(override val route: String): Route {
-    JoinBounty("bounty"),
+    SelectTeamForBounty("select-team-for-bounty"),
+    BountyView("bounty-view"),
     EditProfile("settings/profile"),
     Settings("settings"),
     AppSettings("settings/app"),
@@ -204,11 +206,19 @@ fun NavigationController(
 
         // Bounties
         composable(
-            "${HiddenRoute.JoinBounty.route}/{bountyId}",
+            "${HiddenRoute.SelectTeamForBounty.route}/{bountyId}",
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
             ViewBountyPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {})
+        }
+
+        composable(
+            "${HiddenRoute.BountyView.route}/{bountyId}",
+            arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
+        ) {
+            val bid = it.arguments?.getString("bountyId")!!
+            Text(text = "ok")
         }
     }
 }

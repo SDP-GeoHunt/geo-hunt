@@ -38,7 +38,8 @@ fun HomeBountyCard(
     expiresIn: LocalDateTime,
     challengesFlows: Flow<List<Challenge>?>,
     nbMembersFlow: Flow<Int?>,
-    join: () -> Any
+    isInside: Boolean,
+    onClick: () -> Any
 ) {
 
     val challenges by challengesFlows.collectAsState(initial = null)
@@ -81,8 +82,8 @@ fun HomeBountyCard(
                 }
 
                 Spacer(Modifier.weight(1f))
-                TextButton(onClick = { join() }, modifier = Modifier.testTag("join-btn")) {
-                    Text(stringResource(id = R.string.join))
+                TextButton(onClick = { onClick() }, modifier = Modifier.testTag("join-btn")) {
+                    Text(stringResource(id = if (isInside) R.string.see else R.string.join))
                 }
             }
         }

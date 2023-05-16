@@ -1,6 +1,7 @@
 package com.github.geohunt.app.ui.screens.home
 
 import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
+import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
 import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.mocks.MockAuthRepository
@@ -29,19 +30,13 @@ class HomeViewModelTest {
         var mainCoroutineRule = MainCoroutineRule()
 
 
-        private fun createFakeViewModel(): HomeViewModel {
-            val authRep = MockAuthRepository()
-            val userRep = MockUserRepository()
-            val chalRep = MockChallengeRepository()
-            val followRep = MockFollowRepository()
-
-
-            val bountiesRep = object: MockBountiesRepositories() {
+        private fun createFakeViewModel(
+            bountiesRep: BountiesRepositoryInterface = object: MockBountiesRepositories() {
                 override suspend fun getBounties(): List<Bounty> {
                     return listOf(
-                        Bounty("1", "1", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0)),
-                        Bounty("2", "2", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0)),
-                        Bounty("3", "3", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0))
+                        Bounty("1", "a", "1", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0)),
+                        Bounty("2", "a", "2", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0)),
+                        Bounty("3", "a", "3", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0))
                     )
                 }
 
@@ -50,9 +45,15 @@ class HomeViewModelTest {
                 }
 
                 override fun getTeamRepository(bountyId: String): TeamsRepositoryInterface {
-                    return MockTeamRepository(listOf(Team("1", listOf("1", "2", "3"), "1", 1000)))
+                    return MockTeamRepository(listOf(Team("1", "teamName", listOf("1", "2", "3"), "1", 1000)))
                 }
             }
+        ): HomeViewModel {
+            val authRep = MockAuthRepository()
+            val userRep = MockUserRepository()
+            val chalRep = MockChallengeRepository()
+            val followRep = MockFollowRepository()
+
 
             val getUserFeedUseCase = GetUserFeedUseCase(authRep, chalRep, followRep)
             return HomeViewModel(
@@ -93,6 +94,42 @@ class HomeViewModelTest {
             val authors = model.bountyAuthors.first()
             assert(authors.size == 3) // 3 bounties
             assert(authors.all { it.value.id == it.key }) // bountyId = adminUid
+        }
+
+        @OptIn(ExperimentalCoroutinesApi::class)
+        @Test
+        fun showsOnlyInsideAndNotExpiredBounties() = runTest {
+            val model = createFakeViewModel(
+                bountiesRep = object: MockBountiesRepositories() {
+                    override suspend fun getBounties(): List<Bounty> {
+                        return listOf(
+                            Bounty("1", "a", "1", LocalDateTime.MIN, LocalDateTime.MIN, Location(0.0, 0.0)),
+                            Bounty("2", "a", "2", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0)),
+                            Bounty("3", "a", "3", LocalDateTime.MAX, LocalDateTime.MAX, Location(0.0, 0.0))
+                        )
+                    }
+
+                    override fun getTeamRepository(bountyId: String): TeamsRepositoryInterface {
+                        return if (bountyId == "1")
+                            MockTeamRepository(listOf(Team("1", "teamName", listOf("1", "2", "3"), "1", 1000)))
+                        else
+                            MockTeamRepository()
+                    }
+
+                    override fun getChallengeRepository(bountyId: String): ChallengeRepositoryInterface {
+                        return MockChallengeRepository()
+                    }
+                }
+            )
+
+            val bountyList = model.bountyList.first { it != null }!!
+            val bountyIds = bountyList.map { it.bid }
+            assert(bountyIds.contains("1"))
+            assert(bountyIds.contains("2"))
+            assert(!bountyIds.contains("3"))
+
+            val inside = model.isAlreadyInsideBounties.value
+            assert(inside.map { it.bid } == listOf("1"))
         }
     }
 }

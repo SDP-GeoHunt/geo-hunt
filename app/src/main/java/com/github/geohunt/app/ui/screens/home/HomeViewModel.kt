@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 open class HomeViewModel(
     override val authRepository: AuthRepositoryInterface,
@@ -48,6 +49,10 @@ open class HomeViewModel(
     // Refreshing state
     private val _areBountiesRefreshing = MutableStateFlow(true)
     val areBountiesRefreshing = _areBountiesRefreshing.asStateFlow()
+
+    // Is already inside
+    private val _isAlreadyInsideBounties = MutableStateFlow<List<Bounty>>(listOf())
+    val isAlreadyInsideBounties = _isAlreadyInsideBounties.asStateFlow()
 
     private val authorCache: MutableMap<Challenge, MutableStateFlow<User?>> = mutableMapOf()
 
@@ -82,9 +87,21 @@ open class HomeViewModel(
         viewModelScope.launch {
             try {
                 _areBountiesRefreshing.value = true
+
                 val bountyList = bountiesRepository.getBounties()
+                    .filter {
+                        val userTeam = bountiesRepository.getTeamRepository(it).getUserTeam().first()
+                        val now = LocalDateTime.now()
+
+                        // Disgusting, but working!
+                        if (userTeam != null) { _isAlreadyInsideBounties.value += it }
+
+                        userTeam != null || (it.expirationDate.isAfter(now) && it.startingDate.isBefore(now))
+                    }
+
                 // For each bounties, get the challenges to show them
                 bountyList.forEach {
+
                     // Fetch challenges
                     _bountyChallenges.value = _bountyChallenges.value +
                             (it.bid to bountiesRepository.getChallengeRepository(it)

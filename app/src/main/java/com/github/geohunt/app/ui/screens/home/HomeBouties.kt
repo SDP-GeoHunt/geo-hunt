@@ -30,6 +30,7 @@ fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Any) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing.value,
         onRefresh = { vm.refreshBounties() })
+    val isInsideBounties by vm.isAlreadyInsideBounties.collectAsState()
 
     BoxWithConstraints {
         Box(
@@ -54,14 +55,17 @@ fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Any) {
                     else -> {
                         LazyColumn {
                             items(bounties!!) { bounty ->
+                                val isInside = isInsideBounties.map { it.bid }.contains(bounty.bid)
                                 HomeBountyCard(
                                     vm.bountyAuthors.map { it[bounty.bid] },
                                     bounty.name,
                                     bounty.expirationDate,
                                     vm.bountyChallenges.map { it[bounty.bid] },
                                     vm.nbParticipating.map { it[bounty.bid] },
+                                    isInside
                                 ) {
-                                    navigate("${HiddenRoute.JoinBounty.route}/${bounty.bid}")
+                                    if (isInside) navigate("${HiddenRoute.BountyView.route}/${bounty.bid}")
+                                    else navigate("${HiddenRoute.SelectTeamForBounty.route}/${bounty.bid}")
                                 }
                             }
                         }

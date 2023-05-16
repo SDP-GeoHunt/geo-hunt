@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 
 open class MockBountiesRepositories(): BountiesRepositoryInterface {
     override suspend fun createBounty(
+        name: String,
         startingDate: LocalDateTime,
         expirationDate: LocalDateTime,
         location: Location,
