@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.bounties
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,26 +45,25 @@ internal fun ColumnScope.DisplayChallenges(
         }
     }
 
+
     for (challenge in challenges) {
+        Spacer(modifier = Modifier.height(10.dp))
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .aspectRatio(1.61f, false)
                 .padding(10.dp, 5.dp)
         ) {
-            Column {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(challenge.photoUrl)
-                        .build(),
-                    contentDescription = "challenge"
-                )
-
-                IconButton(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = { /*TODO*/ }) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete challenge")
-                }
-            }
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data("https://picsum.photos/200/300") // challenge.photoUrl)
+                    .crossfade(true)
+                    .build(),
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                contentDescription = "challenge"
+            )
         }
     }
 }

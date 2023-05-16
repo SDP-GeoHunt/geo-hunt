@@ -44,7 +44,7 @@ class BountiesRepository(
         ChallengeRepository(
             userRepository = userRepository,
             authRepository = authRepository,
-            bounty = database.getReference("bounties/$bid"),
+            bounty = database.getReference("bounties/challenges/$bid"),
             imageRepository = imageRepository,
             ioDispatcher = ioDispatcher,
             database = database
