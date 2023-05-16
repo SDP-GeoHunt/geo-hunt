@@ -135,7 +135,8 @@ class BountiesRepository(
             .run {
                 children.flatMap { quadrantRef ->
                     quadrantRef.children.mapNotNull {
-                        it.getValue<FirebaseBountyMetadata>()?.asExternalModel(quadrantRef.key!! + it.key!!)
+                        it.child("metadta")
+                            .getValue<FirebaseBountyMetadata>()?.asExternalModel(quadrantRef.key!! + it.key!!)
                     }
                 }
             }
