@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.datastore.dataStore
+import com.github.geohunt.app.data.repository.bounties.BountiesRepository
+import com.github.geohunt.app.data.repository.bounties.BountyClaimRepository
+import com.github.geohunt.app.data.repository.bounties.TeamsRepository
 import com.github.geohunt.app.data.settings.AppSettingsSerializer
 import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.sensor.SharedLocationManager
@@ -20,7 +23,7 @@ import java.lang.IllegalStateException
  * [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) is added to
  * the codebase.
  */
-class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInstance: FirebaseStorage, application: Application) {
+class AppContainer private constructor(private val dbInstance: FirebaseDatabase, storageInstance: FirebaseStorage, application: Application) {
     val database = Firebase.database
     val location: LocationRepository = LocationRepository(
         SharedLocationManager(application.applicationContext)
@@ -43,6 +46,14 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
 
     // Profile visibilities
     val profileVisibilities = ProfileVisibilityRepository(database)
+
+    val bounties = BountiesRepository(user, auth, image, dbInstance, storageInstance)
+
+    val teamsRepository = TeamsRepository(dbInstance.reference.child("bounties"), user)
+
+    fun getBountyClaimRepository(bid: String): BountyClaimRepository {
+        return BountyClaimRepository(dbInstance.reference.child("bounties"), bid, teamsRepository, image)
+    }
 
 
     companion object {
