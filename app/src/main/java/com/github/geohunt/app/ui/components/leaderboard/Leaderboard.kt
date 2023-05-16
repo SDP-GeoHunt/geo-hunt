@@ -45,10 +45,12 @@ fun Leaderboard(
         LeaderboardList(entries = entries, Modifier.weight(1.0f))
 
         // Bottom "You" item
-        LeaderboardListItem(
-            position = currentIndex,
-            entry = entries[currentIndex],
-            isCurrent = true,
-        )
+        if(currentIndex != -1) {
+            LeaderboardListItem(
+                    position = currentIndex,
+                    entry = entries[currentIndex],
+                    isCurrent = true,
+            )
+        }
     }
 }

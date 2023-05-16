@@ -1,25 +1,16 @@
 package com.github.geohunt.app.ui.screens.userleaderboard
 
 import androidx.compose.runtime.Composable
-import com.github.geohunt.app.model.User
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.ui.components.leaderboard.Leaderboard
-import com.github.geohunt.app.ui.components.leaderboard.LeaderboardEntry
-import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 @Composable
-fun UserLeaderboard(users: List<User>, currentUser: User) {
-    val currentIndex = users.indexOf(currentUser)
+fun UserLeaderboard(viewModel: UserLeaderboardViewModel = viewModel(factory = UserLeaderboardViewModel.Factory)) {
+    val leaderboardInformation = viewModel.leaderboardInformation.collectAsState()
+
     Leaderboard(
-            entries = users.map { toEntry(it) },
-            currentIndex = currentIndex
-    )
-}
-
-@Composable
-fun toEntry(user: User): LeaderboardEntry {
-    return LeaderboardEntry(
-            displayName = user.name,
-            score = 0L,
-            displayIcon = { ProfileIcon(user = user) }
+            entries = leaderboardInformation.value.entries,
+            currentIndex = leaderboardInformation.value.userIndex
     )
 }
