@@ -3,14 +3,13 @@ package com.github.geohunt.app.ui.components.challengecreation
 import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.firebase.ui.auth.AuthUI
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
-import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.ChallengeRepository
-import com.github.geohunt.app.data.repository.ImageRepository
-import com.github.geohunt.app.data.repository.LocationRepository
+import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
@@ -26,7 +25,7 @@ import java.time.LocalDate
 class CreateChallengeViewModel(
     private val imageRepository: ImageRepository,
     private val locationRepository: LocationRepository,
-    private val challengeRepository: ChallengeRepository
+    private val challengeRepository: ChallengeRepositoryInterface
 ) : ViewModel() {
 
     enum class State {
@@ -135,7 +134,8 @@ class CreateChallengeViewModel(
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
+                val application =
+                    this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
                 val container = AppContainer.getInstance(application)
 
                 CreateChallengeViewModel(
@@ -144,6 +144,23 @@ class CreateChallengeViewModel(
                     container.challenges
                 )
             }
+        }
+    }
+
+    class BountyFactory(private val bid : String) : ViewModelProvider.NewInstanceFactory() {
+
+        // This masterpiece is sponsored by developer.android.com
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+            // Get the Application object from extras
+            val application = extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!
+            val container = AppContainer.getInstance(application)
+
+            return CreateChallengeViewModel(
+                container.image,
+                container.location,
+                container.bounty.getChallengeRepository(bid)
+            ) as T
         }
     }
 }

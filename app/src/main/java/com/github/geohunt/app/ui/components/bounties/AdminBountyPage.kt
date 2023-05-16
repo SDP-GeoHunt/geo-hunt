@@ -41,6 +41,7 @@ import java.time.LocalDateTime
 fun AdminBountyPage(
     bid: String,
     onFailure: (Throwable) -> Unit = {},
+    onCreateChallenge: () -> Unit = {},
     viewModel: AdminBountyViewModel = viewModel(factory = AdminBountyViewModel.Factory)
 ) {
     val bountyState = viewModel.bounty.collectAsState()
@@ -57,7 +58,8 @@ fun AdminBountyPage(
             bounty = bountyState.value!!,
             teams = teamsState.value,
             challenges = challengesState.value,
-            setName = viewModel::setBountyName
+            setName = viewModel::setBountyName,
+            onCreateChallenge = onCreateChallenge
         )
     } else {
         CircularProgressIndicator()
@@ -69,7 +71,8 @@ private fun AdminBountyPageUI(
     bounty: Bounty,
     setName: (String) -> Unit,
     teams: List<Team>,
-    challenges: List<Challenge>
+    challenges: List<Challenge>,
+    onCreateChallenge: () -> Unit,
 ) {
     val memberCount = teams.sumOf { it.membersUid.size }
     var showPopup by remember { mutableStateOf(false) }
@@ -95,7 +98,7 @@ private fun AdminBountyPageUI(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(onClick = { showPopup = true }) {
+            IconButton(onClick = { showPopup = true }, modifier = Modifier.align(Alignment.CenterVertically)) {
                 Icon(Icons.Default.Edit,
                     contentDescription = "edit")
             }
@@ -103,17 +106,15 @@ private fun AdminBountyPageUI(
             Spacer(modifier = Modifier.width(5.dp))
 
             Icon(Icons.Default.AdminPanelSettings,
+                modifier = Modifier.align(Alignment.CenterVertically),
                 contentDescription = "admin"
             )
         }
 
         Row(modifier = Modifier.padding(20.dp, 0.dp)) {
-            val firstComponent =
-                formatTimeStuff(start = bounty.startingDate, end = bounty.expirationDate)
-            val secondComponent =
-                pluralStringResource(id = R.plurals.teams_count, count = teams.size, teams.size)
-            val thirdComponent =
-                pluralStringResource(id = R.plurals.members_count, count = memberCount, memberCount)
+            val firstComponent = formatTimeStuff(start = bounty.startingDate, end = bounty.expirationDate)
+            val secondComponent = pluralStringResource(id = R.plurals.teams_count, count = teams.size, teams.size)
+            val thirdComponent = pluralStringResource(id = R.plurals.members_count, count = memberCount, memberCount)
 
             Text(
                 text = "$firstComponent - $secondComponent - $thirdComponent",
@@ -137,51 +138,8 @@ private fun AdminBountyPageUI(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        DisplayChallenges(challenges)
+        DisplayChallenges(challenges, onCreateChallenge)
     }
-}
-
-@Composable
-private fun RenameBountyPopup(bounty: Bounty, onDismiss: (String?) -> Unit) {
-    var name by remember(bounty) {
-        mutableStateOf(bounty.name)
-    }
-
-    AlertDialog(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp, 20.dp),
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        title = {
-            Text(text = "Renaming bounty",
-                fontSize = 25.sp)
-        },
-        text = {
-            Column {
-                Spacer(modifier = Modifier.height(20.dp))
-
-                TextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    placeholder = { Text("<Name of Bounty>") },
-                )
-            }
-        },
-        buttons = {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Button({ onDismiss(name.takeIf { name != bounty.name }) }) {
-                    Text(text = "Ok")
-                }
-                
-                Spacer(modifier = Modifier.width(15.dp))
-
-                Button(onClick = { onDismiss(null) }) {
-                    Text(text = "Cancel")
-                }
-            }
-        },
-        onDismissRequest = { onDismiss(null) }
-    )
 }
 
 @Composable
@@ -269,56 +227,7 @@ private fun ColumnScope.DisplayTeams(
     }
 }
 
-@Composable
-private fun ColumnScope.DisplayChallenges(
-    challenges: List<Challenge>
-) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "Challenges",
-            fontSize = 22.sp,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier
-                .padding(25.dp, 2.dp)
-        )
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        IconButton(
-            modifier = Modifier.padding(10.dp, 0.dp),
-            onClick = { /*TODO*/ }
-        ) {
-            Icon(
-                Icons.Default.AddCircle,
-                tint = MaterialTheme.colors.primary,
-                contentDescription = "Add challenge"
-            )
-        }
-    }
-
-    for (challenge in challenges) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp, 5.dp)
-        ) {
-            Column {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(challenge.photoUrl)
-                        .build(),
-                    contentDescription = "challenge"
-                )
-
-                IconButton(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = { /*TODO*/ }) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete challenge")
-                }
-            }
-        }
-    }
-}
 
 @Composable
 private fun formatTimeStuff(start: LocalDateTime, end: LocalDateTime): String {
