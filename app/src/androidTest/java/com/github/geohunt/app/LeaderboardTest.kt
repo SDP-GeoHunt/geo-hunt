@@ -1,5 +1,6 @@
 package com.github.geohunt.app
 
+import androidx.compose.material.Text
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -36,7 +37,7 @@ class LeaderboardTest {
 
     private val mockUsers = List(names.size) { i -> mockUser(id = "dn$i", displayName = names[i]) }
 
-    private val mockEntries = mockUsers.mapIndexed { index, user -> LeaderboardEntry(user.name, index.toLong(), null) }
+    private val mockEntries = mockUsers.mapIndexed { index, user -> LeaderboardEntry(user.name, index.toLong()) { Text(user.name.reversed()) } }
     @get:Rule
     val testRule = createComposeRule()
 
@@ -100,6 +101,15 @@ class LeaderboardTest {
             siblings
                 .filter(hasText("${i.toLong().toSuffixedString()} pts"))
                 .assertCountEquals(1)
+
+            //If we are checking the current user this will be displayed twice
+            if(i == youIndex) {
+                testRule.onAllNodesWithText(user.name.reversed()).assertCountEquals(2)
+            }
+            else {
+                // Check that the composable profile icon is called
+                testRule.onNodeWithText(user.name.reversed()).assertIsDisplayed()
+            }
         }
     }
 
