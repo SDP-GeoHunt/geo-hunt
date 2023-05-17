@@ -26,7 +26,6 @@ class UserLeaderboardViewModel(
         scoreRepository: ScoreRepositoryInterface,
         userRepository: UserRepositoryInterface
 ): ViewModel() {
-    private val n = 100
 
     private val _leaderboardInformation = MutableStateFlow(LeaderboardInformation(listOf(), -1))
     val leaderboardInformation = _leaderboardInformation.asStateFlow()
@@ -34,7 +33,7 @@ class UserLeaderboardViewModel(
     init {
         viewModelScope.launch {
             val currentUser = userRepository.getCurrentUser().id
-            val topUsers = scoreRepository.getTopNUsers(n)
+            val topUsers = scoreRepository.getTopNUsers(N)
             val entries = topUsers.map {
                 toEntry(user = userRepository.getUser(it.first), score = it.second)
             }
@@ -48,11 +47,15 @@ class UserLeaderboardViewModel(
         return LeaderboardEntry(
                 displayName = user.name,
                 score = score,
-                displayIcon = { ProfileIcon(user = user) }
+                displayIcon = user.profilePictureUrl?.let{ { ProfileIcon(user = user) } }
         )
     }
 
     companion object {
+        /**
+         * The amount of entries we want our leaderboard to display
+         */
+        const val N = 100
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
