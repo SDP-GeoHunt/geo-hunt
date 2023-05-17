@@ -1,31 +1,47 @@
 package com.github.geohunt.app.ui.screens.bounty
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(viewModel: ChatViewModel) {
-    val messages by viewModel.messages.observeAsState(initial = emptyList())
+fun ChatScreen(viewModel: ChatViewModel = viewModel(factory = ChatViewModel.Factory)) {
+    val messages = viewModel.messages.collectAsStateWithLifecycle()
+    var messageContent by remember { mutableStateOf("") }
 
-    Column {
-        LazyColumn {
-            items(messages) { message ->
-                Text(text = "${message.timestamp}: ${message.content}") // adjust this to include sender info or other format as needed
+    Column (
+        modifier = Modifier.fillMaxSize()
+    ) {
+        when (messages.value) {
+            null -> Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+            else ->
+                LazyColumn {
+                    items(messages.value!!) { message ->
+                        Text(text = "${message.senderUid}: ${message.content}")
+                    }
+                }
         }
-
-        var messageContent by remember { mutableStateOf("") }
         TextField(
             value = messageContent,
             onValueChange = { messageContent = it },
             label = { Text("Message") }
         )
-        Button(onClick = { viewModel.sendMessage(messageContent) }) {
+        Button (onClick = { viewModel.sendMessage(messageContent) }) {
             Text("Send")
         }
     }

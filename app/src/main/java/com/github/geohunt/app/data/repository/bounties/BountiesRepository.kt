@@ -40,6 +40,13 @@ class BountiesRepository(
         )
     }
 
+    private val messagesRepository = DataPool<String, MessagesRepository> { bid ->
+        MessagesRepository(
+            bountiesTeam.child(bid),
+            ioDispatcher = ioDispatcher
+        )
+    }
+
     private val challengesRepositories = DataPool<String, ChallengeRepository> { bid ->
         ChallengeRepository(
             userRepository = userRepository,
@@ -111,6 +118,8 @@ class BountiesRepository(
     }
 
     override fun getTeamRepository(bountyId: String) : TeamsRepositoryInterface = teamsRepositories.get(bountyId)
+
+    override fun getMessageRepository(bountyId: String): MessagesRepositoryInterface = messagesRepository.get(bountyId)
 
     override fun getChallengeRepository(bountyId: String): ChallengeRepositoryInterface = challengesRepositories.get(bountyId)
 

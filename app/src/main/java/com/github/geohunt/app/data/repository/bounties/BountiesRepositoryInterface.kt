@@ -28,6 +28,11 @@ interface BountiesRepositoryInterface {
     fun getTeamRepository(bountyId: String): TeamsRepositoryInterface
 
     /**
+     * Retrieves the message repository corresponding for the bounty
+     */
+    fun getMessageRepository(bountyId: String): MessagesRepositoryInterface
+
+    /**
      * Retrieves the team repository corresponding for the bounty
      */
     fun getTeamRepository(bounty: Bounty) : TeamsRepositoryInterface = getTeamRepository(bounty.bid)
