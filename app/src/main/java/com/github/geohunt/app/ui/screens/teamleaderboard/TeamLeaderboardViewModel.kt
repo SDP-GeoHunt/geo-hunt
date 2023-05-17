@@ -27,6 +27,8 @@ class TeamLeaderboardViewModel(
     private val _leaderboardInformation = MutableStateFlow(LeaderboardInformation(listOf(), -1))
     val leaderboardInformation = _leaderboardInformation.asStateFlow()
 
+    //Note that we allow ourselves to fetch every team of a bounty since bounties are on a
+    //way smaller scale than Users/UserLeaderboard for example
     init {
         viewModelScope.launch {
             val userTeamId = teamsRepository.getUserTeamAsync().teamId
