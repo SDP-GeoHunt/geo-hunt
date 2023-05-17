@@ -1,99 +1,77 @@
 package com.github.geohunt.app.ui.screens.teamprogress
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.geohunt.app.ui.components.teamprogress.TeamProgressMembersCarousel
-import com.github.geohunt.app.ui.components.teamprogress.TeamProgressTopAppBar
-import com.github.geohunt.app.ui.theme.GeoHuntTheme
+import com.github.geohunt.app.ui.screens.teamprogress.TeamProgressViewModel.TeamStatus
+import com.github.geohunt.app.ui.utils.pagination.FinitePagedList
 
 /**
  * Creates the team progress screen.
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Preview
 @Composable
 fun TeamProgressScreen(
-    onBack: () -> Unit,
-    onLeaderboard: () -> Unit,
-    onChat: () -> Unit,
-    onInvite: () -> Unit,
-    viewModel: TeamProgressViewModel = viewModel(factory = TeamProgressViewModel.Factory)
+    onBack: () -> Unit = {},
+    onLeaderboard: () -> Unit = {},
+    onChat: () -> Unit = {},
+    onInvite: () -> Unit = {},
+    bountyId: String = "98d755ad-NVP5y7V0SyObpqi226o",
+    viewModel: TeamProgressViewModel = viewModel(factory = TeamProgressViewModel.getFactory(bountyId))
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val teamStatus = viewModel.teamStatus.collectAsStateWithLifecycle()
 
-    GeoHuntTheme {
-        Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = { TeamProgressTopAppBar(
-                // Try to limit team name to 20 characters, otherwise it is truncated in the app bar,
-                // which is generally bad UX. The current work-around is to have ellipsis (...)
-                // when the team name is too long.
-                teamName = "Team name",
+    when(teamStatus.value) {
+        TeamStatus.LOADING_TEAM -> EmptyTeamProgressScreen(
+            title = "Loading...",
+            onBack = onBack
+        ) {
+            CircularProgressIndicator()
+        }
+
+        TeamStatus.ERROR_NO_TEAM -> EmptyTeamProgressScreen(
+            title = "Error",
+            onBack = onBack
+        ) {
+            Box(modifier = Modifier
+                .padding(it)
+                .fillMaxSize()) {
+                Text(
+                    "It seems that you are not registered in a team yet. " +
+                            "Create your team on the bounty page by clicking the back button.",
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .align(Alignment.Center)
+                )
+            }
+        }
+
+        TeamStatus.LOADED_TEAM -> {
+            val teamName = viewModel.teamName.collectAsStateWithLifecycle()
+            val challenges = viewModel.challenges.collectAsStateWithLifecycle()
+            val hunters = viewModel.hunters.collectAsStateWithLifecycle()
+
+            TeamProgressScreenContent(
                 onBack = onBack,
                 onLeaderboard = onLeaderboard,
                 onChat = onChat,
                 onInvite = onInvite,
-                newMessagesState = viewModel.newMessages,
-                scrollBehavior = scrollBehavior
-            )}
-        ) { padding ->
-            LazyColumn(
-                Modifier
-                    .padding(padding)
-                    .fillMaxWidth()) {
-                item {
-                    Column(Modifier.padding(horizontal = 16.dp)) {
-                        Text(
-                            "${viewModel.teamMembers.size} members",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        TeamProgressMembersCarousel(teamMembers = viewModel.teamMembers)
-                    }
-                }
-
-                stickyHeader {
-                    Surface {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                "Challenges",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-
-                            Spacer(Modifier.weight(1.0f))
-
-                            Text(
-                                "14/68 claimed",
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                        }
-                    }
-                }
-
-                items(100) {
-                    Text("text $it")
-                }
-            }
+                teamName = teamName.value!!,
+                teamMembers = viewModel.teamMembers,
+                hunters = hunters.value ?: FinitePagedList.empty(),
+                newMessages = viewModel.newMessages,
+                locationState = viewModel.currentLocation,
+                challenges = challenges.value
+            )
         }
     }
 }

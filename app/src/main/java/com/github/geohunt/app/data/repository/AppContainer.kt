@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.datastore.dataStore
+import com.github.geohunt.app.data.repository.bounties.BountiesRepository
 import com.github.geohunt.app.data.settings.AppSettingsSerializer
 import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.sensor.SharedLocationManager
@@ -21,7 +22,6 @@ import java.lang.IllegalStateException
  * the codebase.
  */
 class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInstance: FirebaseStorage, application: Application) {
-    val database = Firebase.database
     val location: LocationRepository = LocationRepository(
         SharedLocationManager(application.applicationContext)
     )
@@ -34,6 +34,7 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
     val activeHunts = ActiveHuntsRepository(auth, dbInstance)
     val claims = ClaimRepository(auth, image, dbInstance)
     val follow = FollowRepository(auth, dbInstance)
+    val bounties = BountiesRepository(user, auth, image, dbInstance, storageInstance)
 
     val feedUseCase = GetUserFeedUseCase(auth, challenges, follow)
 
@@ -42,7 +43,7 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
     val appSettingsRepository = AppSettingsRepositoryImpl(application.dataStore)
 
     // Profile visibilities
-    val profileVisibilities = ProfileVisibilityRepository(database)
+    val profileVisibilities = ProfileVisibilityRepository(dbInstance)
 
 
     companion object {
