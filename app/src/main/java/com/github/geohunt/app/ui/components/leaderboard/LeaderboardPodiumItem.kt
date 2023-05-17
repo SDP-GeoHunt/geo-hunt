@@ -3,7 +3,10 @@ package com.github.geohunt.app.ui.components.leaderboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -39,8 +42,18 @@ fun LeaderboardPodiumItem(entry: LeaderboardEntry, position: Int) {
             .height(height)
             .fillMaxWidth()
     ) {
-        //We only display the icon if there is one
-        entry.displayIcon?.invoke()
+        if (entry.displayIcon != null) {
+            //We only display the icon if there is one
+            entry.displayIcon.invoke()
+        }
+        else {
+            Icon(
+                Icons.Rounded.Star,
+                contentDescription = "Leaderboard position",
+                modifier = Modifier.aspectRatio(1f).padding(8.dp).clip(CircleShape),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
 
         Column(
             verticalArrangement = Arrangement.Center
