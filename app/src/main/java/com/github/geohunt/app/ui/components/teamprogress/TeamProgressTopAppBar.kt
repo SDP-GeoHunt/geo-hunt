@@ -4,7 +4,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
-import androidx.compose.material.icons.outlined.GroupAdd
 import androidx.compose.material.icons.outlined.Leaderboard
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -15,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,14 +59,20 @@ fun TeamProgressTopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = onLeaderboard) {
+            IconButton(
+                onClick = onLeaderboard,
+                modifier = Modifier.testTag("Open leaderboard")
+            ) {
                 Icon(
                     Icons.Outlined.Leaderboard,
-                    contentDescription = "Leaderboard"
+                    contentDescription = "Open leaderboard"
                 )
             }
 
-            IconButton(onClick = onChat) {
+            IconButton(
+                onClick = onChat,
+                modifier = Modifier.testTag("Open chat")
+            ) {
                 BadgedBox(badge = {
                     if (newMessages.value > 0) {
                         val badgeContent = when {

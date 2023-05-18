@@ -8,8 +8,8 @@ import com.github.geohunt.app.data.network.firebase.models.FirebaseChallenge
 import com.github.geohunt.app.data.network.firebase.toList
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
-import com.github.geohunt.app.model.User
 import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.model.User
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase

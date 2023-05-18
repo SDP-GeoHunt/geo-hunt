@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.geohunt.app.model.Challenge
@@ -104,7 +105,7 @@ fun TeamProgressScreenContent(
             if (challenges == null) {
                 item {
                     Box(Modifier.fillMaxSize()) {
-                        CircularProgressIndicator(Modifier.align(Alignment.Center))
+                        CircularProgressIndicator(Modifier.align(Alignment.Center).testTag("loadingChallenges"))
                     }
                 }
             } else {

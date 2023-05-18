@@ -13,7 +13,7 @@ open class MockActiveHuntRepository : ActiveHuntsRepositoryInterface {
     }
 
     override fun getHunters(challenge: Challenge): Flow<List<String>> {
-        TODO("Not yet implemented")
+        return flowOf()
     }
 
     override fun getActiveHunts(): Flow<List<String>> {
