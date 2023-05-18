@@ -41,9 +41,6 @@ class TeamsRepository(
         }
     }
 
-    override suspend fun joinTeam(teamId: String) {
-        return joinTeam(teamId, userRepository.getCurrentUser().id)
-
     override suspend fun leaveTeam(userId: String) {
         val team = getUserTeam(userId).first() ?: return
 
