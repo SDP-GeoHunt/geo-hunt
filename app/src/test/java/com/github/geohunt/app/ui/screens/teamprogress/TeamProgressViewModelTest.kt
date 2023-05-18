@@ -88,7 +88,6 @@ class TeamProgressViewModelTest {
         viewModel = TeamProgressViewModel(
             authRepository = mockAuth,
             userRepository = mock(),
-            activeHuntsRepository = mock(),
             locationRepository = mockLocationRepository,
             bountiesRepository = mockBountiesRepository,
             bountyId = ""

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.github.geohunt.app.data.repository.ActiveHuntsRepositoryInterface
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.AuthRepositoryInterface
 import com.github.geohunt.app.data.repository.LocationRepository
@@ -13,6 +12,7 @@ import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.AuthViewModel
 import com.github.geohunt.app.ui.utils.pagination.DynamicPagedList
@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
@@ -29,7 +30,6 @@ import kotlinx.coroutines.launch
 class TeamProgressViewModel(
     override val authRepository: AuthRepositoryInterface,
     val userRepository: UserRepositoryInterface,
-    val activeHuntsRepository: ActiveHuntsRepositoryInterface,
     val locationRepository: LocationRepository,
     val bountiesRepository: BountiesRepositoryInterface,
     val bountyId: String
@@ -70,10 +70,10 @@ class TeamProgressViewModel(
     private val _currentLocation: MutableStateFlow<Location?> = MutableStateFlow(null)
     val currentLocation: StateFlow<Location?> = _currentLocation.asStateFlow()
 
-    private val _hunters: MutableStateFlow<DynamicPagedList<List<String>>?> = MutableStateFlow(null)
-    val hunters: StateFlow<DynamicPagedList<List<String>>?> = _hunters.asStateFlow()
+    private val _claimState: MutableStateFlow<DynamicPagedList<Boolean>?> = MutableStateFlow(null)
+    val claimState: StateFlow<DynamicPagedList<Boolean>?> = _claimState.asStateFlow()
 
-    private suspend fun fetchTeamMembers() {
+    private suspend fun fetchTeamStatus(): Team? {
         _teamStatus.value = TeamStatus.LOADING_TEAM
         when(val team = teamRepository.getUserTeam().first()) {
             null -> _teamStatus.value = TeamStatus.ERROR_NO_TEAM
@@ -87,16 +87,20 @@ class TeamProgressViewModel(
                 )
 
                 _teamStatus.value = TeamStatus.LOADED_TEAM
+                return team
             }
         }
+        return null
     }
 
-    private suspend fun fetchChallenges() {
+    private suspend fun fetchChallenges(team: Team) {
         val challenges = challengeRepository.getChallenges()
 
-        _hunters.value = DynamicPagedList(
+        _claimState.value = DynamicPagedList(
             list = challenges,
-            fetcher = { challenge -> activeHuntsRepository.getHunters(challenge) },
+            fetcher = { challenge -> claimRepository.getRealtimeClaimsOf(team).map {
+                claims -> claims.any { it.parentChallengeId == challenge.id }
+            } },
             coroutineScope = viewModelScope
         )
         _challenges.value = challenges
@@ -112,8 +116,11 @@ class TeamProgressViewModel(
 
     init {
         viewModelScope.launch {
-            fetchTeamMembers()
-            fetchChallenges()
+            val team = fetchTeamStatus()
+
+            if (team != null) {
+                fetchChallenges(team)
+            }
         }
 
         // Location is fetched in a separate coroutine since it collect indefinitely
@@ -128,9 +135,8 @@ class TeamProgressViewModel(
 
                 TeamProgressViewModel(
                     authRepository = container.auth,
-                    activeHuntsRepository = container.activeHunts,
-                    locationRepository = container.location,
                     userRepository = container.user,
+                    locationRepository = container.location,
                     bountiesRepository = container.bounties,
                     bountyId = bountyId
                 )

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -26,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
-import com.github.geohunt.app.ui.components.teamprogress.ConfirmHuntAlert
+import com.github.geohunt.app.ui.components.teamprogress.ConfirmClaimAlert
 import com.github.geohunt.app.ui.components.utils.SkeletonLoading
 import com.github.geohunt.app.ui.components.utils.SkeletonLoadingImage
 import com.github.geohunt.app.ui.theme.geoHuntRed
@@ -35,19 +37,20 @@ import com.github.geohunt.app.utility.quantize
 @Composable
 fun BountyChallengeCard(
     challenge: Challenge?,
-    numberOfHunters: Int,
-    onHunt: (Challenge) -> Unit,
     currentLocation: Location?,
+    onClaim: (Challenge) -> Unit,
+    isEnabled: Boolean,
+    isClaimed: Boolean,
     modifier: Modifier = Modifier
 ) {
     val showAlertDialog = remember { mutableStateOf(false) }
-    ConfirmHuntAlert(
+    ConfirmClaimAlert(
         showAlert = showAlertDialog.value,
         onConfirm = {
             if (challenge != null) {
-                onHunt(challenge)
-                showAlertDialog.value = false
+                onClaim(challenge)
             }
+            showAlertDialog.value = false
         },
         onCancel = {
             showAlertDialog.value = false
@@ -69,81 +72,55 @@ fun BountyChallengeCard(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.distance),
-                        modifier = Modifier.size(24.dp),
-                        contentDescription = "Location icon"
-                    )
+            Icon(
+                painter = painterResource(id = R.drawable.distance),
+                modifier = Modifier.size(24.dp),
+                contentDescription = "Location icon"
+            )
 
-                    SkeletonLoading(
-                        value = challenge,
-                        width = 80.dp,
-                        height = 20.dp
-                    ) {
-                        val distance = when(currentLocation) {
-                            null -> "Unknown distance"
-                            else -> currentLocation.distanceTo(it.location).quantize(0.1).toString() + " km"
-                        }
-
-                        Text(distance, style = MaterialTheme.typography.labelMedium)
-                    }
+            SkeletonLoading(
+                value = challenge,
+                width = 80.dp,
+                height = 20.dp
+            ) {
+                val distance = when (currentLocation) {
+                    null -> "Unknown distance"
+                    else -> currentLocation.distanceTo(it.location).quantize(0.1)
+                        .toString() + " km"
                 }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.target_arrow),
-                        modifier = Modifier.size(24.dp),
-                        contentDescription = "Hunters icon"
-                    )
-
-                    SkeletonLoading(
-                        value = challenge,
-                        width = 120.dp,
-                        height = 20.dp
-                    ) {
-                        Text(
-                            when(numberOfHunters) {
-                                0 -> "Not hunted yet."
-                                else -> "Hunted by $numberOfHunters members"
-                            },
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-                }
+                Text(distance, style = MaterialTheme.typography.labelMedium)
             }
 
             Spacer(Modifier.weight(1.0f))
 
-            Button(
-                onClick = {
-                    if (challenge != null) {
-                        if (numberOfHunters > 0) {
-                            showAlertDialog.value = true
-                        } else {
-                            onHunt(challenge)
-                        }
+            when {
+                isClaimed -> {
+                    Icon(
+                        Icons.Default.Check,
+                        contentDescription = "Checkmark",
+                        tint = Color.Green
+                    )
+
+                    Text("Claimed")
+                }
+                else -> {
+                    Button(
+                        onClick = {
+                            if (challenge != null) {
+                                onClaim(challenge)
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = geoHuntRed,
+                            contentColor = Color.White
+                        ),
+                        enabled = challenge != null && isEnabled,
+                        modifier = Modifier.width(width = 110.dp)
+                    ) {
+                        Text("Claim")
                     }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = geoHuntRed,
-                    contentColor = Color.White
-                ),
-                enabled = challenge != null,
-                modifier = Modifier.width(width = 110.dp)
-            ) {
-                Icon(
-                    painter = painterResource(
-                        id = R.drawable.target_arrow
-                    ),
-                    contentDescription = "Hunt icon",
-                    tint = Color.White
-                )
-
-                Spacer(Modifier.weight(1.0f))
-
-                Text("Hunt")
+                }
             }
         }
     }

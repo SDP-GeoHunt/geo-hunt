@@ -40,11 +40,11 @@ fun TeamProgressScreenContent(
     onBack: () -> Unit,
     onLeaderboard: () -> Unit,
     onChat: () -> Unit,
-    onHunt: (Challenge) -> Unit,
+    onClaim: (Challenge) -> Unit,
 
     teamName: String,
     teamMembers: FinitePagedList<User>,
-    hunters: FinitePagedList<List<String>>,
+    claimState: FinitePagedList<Boolean>,
     newMessages: StateFlow<Int>,
     locationState: StateFlow<Location?>,
     challenges: List<Challenge>?
@@ -110,16 +110,17 @@ fun TeamProgressScreenContent(
                 }
             } else {
                 itemsIndexed(challenges) { index, challenge ->
-                    val challengeHunters = hunters.get(index).collectAsStateWithLifecycle()
+                    val isClaimed = claimState.get(index).collectAsStateWithLifecycle()
 
                     BountyChallengeCard(
                         challenge = challenge,
-                        numberOfHunters = challengeHunters.value?.size ?: 0,
                         currentLocation = currentLocation.value,
+                        isEnabled = isClaimed.value == null,
+                        isClaimed = isClaimed.value == true,
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                             .fillMaxWidth(),
-                        onHunt = onHunt
+                        onClaim = onClaim
                     )
                 }
             }

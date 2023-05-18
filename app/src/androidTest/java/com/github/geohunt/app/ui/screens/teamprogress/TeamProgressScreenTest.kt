@@ -19,7 +19,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.ImageRepository
 import com.github.geohunt.app.data.repository.bounties.BountiesRepository
-import com.github.geohunt.app.mocks.MockActiveHuntRepository
 import com.github.geohunt.app.mocks.MockAuthRepository
 import com.github.geohunt.app.mocks.MockUserRepository
 import com.github.geohunt.app.model.database.FirebaseEmulator
@@ -27,7 +26,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.kotlin.timeout
 
 @OptIn(ExperimentalTestApi::class, ExperimentalCoroutinesApi::class)
 class TeamProgressScreenTest {
@@ -59,9 +57,8 @@ class TeamProgressScreenTest {
 
             TeamProgressViewModel(
                 authRepository = mockAuth,
-                activeHuntsRepository = MockActiveHuntRepository(),
-                locationRepository = container.location,
                 userRepository = mockUserRepo,
+                locationRepository = container.location,
                 bountiesRepository = bountiesRepository,
                 bountyId = bountyId
             )
@@ -172,7 +169,7 @@ class TeamProgressScreenTest {
         testRule.waitUntilExactlyOneExists(hasText("km", substring = true), timeoutMillis = DEFAULT_TIMEOUT)
 
         // Check if the button is shown
-        val button = testRule.onNodeWithText("Hunt", useUnmergedTree = true)
+        val button = testRule.onNodeWithText("Claim", useUnmergedTree = true)
         button.assertExists()
         button.onParent().assertHasClickAction()
     }

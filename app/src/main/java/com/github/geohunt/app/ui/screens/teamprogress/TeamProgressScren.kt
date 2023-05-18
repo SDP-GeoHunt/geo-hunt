@@ -55,16 +55,16 @@ fun TeamProgressScreen(
         TeamStatus.LOADED_TEAM -> {
             val teamName = viewModel.teamName.collectAsStateWithLifecycle()
             val challenges = viewModel.challenges.collectAsStateWithLifecycle()
-            val hunters = viewModel.hunters.collectAsStateWithLifecycle()
+            val hunters = viewModel.claimState.collectAsStateWithLifecycle()
 
             TeamProgressScreenContent(
                 onBack = onBack,
                 onLeaderboard = onLeaderboard,
                 onChat = onChat,
-                onHunt = {},
+                onClaim = {},
                 teamName = teamName.value!!,
                 teamMembers = viewModel.teamMembers,
-                hunters = hunters.value ?: FinitePagedList.empty(),
+                claimState = hunters.value ?: FinitePagedList.empty(),
                 newMessages = viewModel.newMessages,
                 locationState = viewModel.currentLocation,
                 challenges = challenges.value

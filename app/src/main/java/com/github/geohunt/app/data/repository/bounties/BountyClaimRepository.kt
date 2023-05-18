@@ -14,8 +14,12 @@ import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 
@@ -97,4 +101,14 @@ class BountyClaimRepository(
             .map { async { getClaimById(it) } }
             .awaitAll()
     }
+
+    override fun getRealtimeClaimsOf(team: Team): Flow<List<Claim>> =
+        claimIdByTeamId.child(team.teamId)
+            .snapshots
+            .map { list ->
+                list.children
+                    .mapNotNull { it.getValue(String::class.java) }
+                    .map { getClaimById(it) }
+            }
+            .flowOn(ioDispatcher)
 }
