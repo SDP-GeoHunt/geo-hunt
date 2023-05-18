@@ -71,7 +71,10 @@ enum class HiddenRoute(override val route: String): Route {
     Settings("settings"),
     AppSettings("settings/app"),
     PrivacySettings("settings/privacy"),
-    Leaderboard("leaderboard")
+    Leaderboard("leaderboard"),
+    BountyClaimChallenge("bounty-claim-challenge"),
+    ChallengeView("challenge-view"),
+
 }
 
 @Composable
@@ -225,7 +228,7 @@ fun NavigationController(
         // Bounties
         // Open a claim for a given bounty's challenge
         composable(
-            "bounty-claim-challenge/{bountyId}/{challengeId}",
+            "${HiddenRoute.BountyClaimChallenge.route}/{bountyId}/{challengeId}",
             arguments = listOf(
                 navArgument("bountyId") { type = NavType.StringType },
                 navArgument("challengeId") { type = NavType.StringType })
@@ -243,7 +246,7 @@ fun NavigationController(
                 },
                 onClaimSubmitted = {
                     navController.popBackStack()
-                    navController.navigate("challenge-view/$cid")
+                    navController.navigate("${HiddenRoute.ChallengeView.route}/$cid")
                 }
             )
         }

@@ -28,7 +28,7 @@ class BountyClaimViewModel(
     private val imageRepository: ImageRepository,
     private val locationRepository: LocationRepository,
     private val challengeRepository: ChallengeRepositoryInterface,
-    private val bountyClaimRepositoryInterface: BountyClaimRepositoryInterface,
+    private val bountyClaimRepository: BountyClaimRepositoryInterface,
     ) : ViewModel() {
 
     enum class State {
@@ -73,7 +73,7 @@ class BountyClaimViewModel(
             val file = imageRepository.preprocessImage(photoState.value!!, fileFactory)
             _submittingState.value = State.CLAIMING
 
-            val claim = bountyClaimRepositoryInterface.claimChallenge(
+            val claim = bountyClaimRepository.claimChallenge(
                 LocalPicture(file),
                 challenge.value!!,
                 location.value!!,
@@ -159,7 +159,7 @@ class BountyClaimViewModel(
                         imageRepository = container.image,
                         locationRepository = container.location,
                         challengeRepository = container.bounties.getChallengeRepository(bountyId),
-                        bountyClaimRepositoryInterface = container.bounties.getClaimRepository(bountyId)
+                        bountyClaimRepository = container.bounties.getClaimRepository(bountyId)
                     )
                 }
             }

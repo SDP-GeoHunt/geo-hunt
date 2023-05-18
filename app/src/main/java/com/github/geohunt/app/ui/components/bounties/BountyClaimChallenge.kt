@@ -63,7 +63,7 @@ fun BountyChallengeSubmitClaimForm(
                     modifier = Modifier
                         .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
                         .fillMaxSize(0.5f),
-                    contentDescription = "Photo just taken of the claim"
+                    contentDescription = stringResource(id = R.string.photo_of_the_claim_taken),
                 )
 
                 Spacer(Modifier.height(15.dp))
