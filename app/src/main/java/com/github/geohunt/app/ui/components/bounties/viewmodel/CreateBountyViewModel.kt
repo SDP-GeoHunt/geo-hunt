@@ -1,35 +1,21 @@
 package com.github.geohunt.app.ui.components.bounties.viewmodel
 
 import android.app.Application
-import android.view.View
-import androidx.compose.runtime.MutableState
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.R
-import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.ImageRepository
-import com.github.geohunt.app.data.repository.LocationRepository
 import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
-import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.Bounty
-import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
-import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeViewModel
-import com.github.geohunt.app.ui.components.utils.PhotoPipelineBaseViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.io.File
-import java.time.DateTimeException
 import java.time.LocalDate
-import java.time.LocalDateTime
-import kotlin.math.exp
 
 class CreateBountyViewModel(
     private val bountyRepository: BountiesRepositoryInterface
