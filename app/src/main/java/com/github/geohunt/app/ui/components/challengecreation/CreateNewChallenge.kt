@@ -70,17 +70,19 @@ fun CreateChallengeForm(
 
                 Spacer(Modifier.height(15.dp))
 
-                val difficulty = viewModel.selectedDifficulty.collectAsState()
-                val expirationDate = viewModel.expirationDate.collectAsState()
+                if (viewModel.displaySetting) {
+                    val difficulty = viewModel.selectedDifficulty.collectAsState()
+                    val expirationDate = viewModel.expirationDate.collectAsState()
 
-                ChallengeSettings(
-                    difficulty = difficulty.value,
-                    setDifficultyCallback = viewModel::withDifficulty,
-                    expirationDate = expirationDate.value,
-                    setExpirationDate = viewModel::withExpirationDate
-                )
+                    ChallengeSettings(
+                        difficulty = difficulty.value,
+                        setDifficultyCallback = viewModel::withDifficulty,
+                        expirationDate = expirationDate.value,
+                        setExpirationDate = viewModel::withExpirationDate
+                    )
 
-                Spacer(Modifier.height(15.dp))
+                    Spacer(Modifier.height(15.dp))
+                }
 
                 HtmlText(
                     text = stringResource(id = R.string.challenge_create_agree_community_link),

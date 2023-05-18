@@ -25,7 +25,8 @@ import java.time.LocalDate
 class CreateChallengeViewModel(
     private val imageRepository: ImageRepository,
     private val locationRepository: LocationRepository,
-    private val challengeRepository: ChallengeRepositoryInterface
+    private val challengeRepository: ChallengeRepositoryInterface,
+    val displaySetting: Boolean,
 ) : ViewModel() {
 
     enum class State {
@@ -141,7 +142,8 @@ class CreateChallengeViewModel(
                 CreateChallengeViewModel(
                     container.image,
                     container.location,
-                    container.challenges
+                    container.challenges,
+                    true
                 )
             }
         }
@@ -159,7 +161,8 @@ class CreateChallengeViewModel(
             return CreateChallengeViewModel(
                 container.image,
                 container.location,
-                container.bounty.getChallengeRepository(bid)
+                container.bounty.getChallengeRepository(bid),
+                false
             ) as T
         }
     }

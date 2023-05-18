@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -90,6 +91,7 @@ private fun AdminBountyPageUI(
             .fillMaxWidth()
             .verticalScroll(rememberScrollState())
             .padding(5.dp, 10.dp)
+            .testTag("admin-bounty-page-loaded")
     ) {
         Row(modifier = Modifier.padding(10.dp, 0.dp)) {
             Text(

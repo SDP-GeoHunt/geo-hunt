@@ -78,14 +78,9 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
         fun getEmulatedFirebaseInstance(
             application: Application
         ): AppContainer {
-            val dbInstance = FirebaseDatabase.getInstance()
-            val storageInstance = FirebaseStorage.getInstance()
-            try {
-                dbInstance.useEmulator("10.0.2.2", 9000)
-                storageInstance.useEmulator("10.0.2.2", 9199)
-            } catch(e: IllegalStateException) {
-                Log.w("GeoHuntDebug", "Failed to use the emulator: $e")
-            }
+            val dbInstance = FirebaseDatabase.getInstance("http://10.0.2.2:9000/?ns=geohunt-1-default-rtdb")
+            val storageInstance = FirebaseStorage.getInstance("gs://geohunt-1.appspot.com")
+            storageInstance.useEmulator("10.0.2.2", 9199)
             return getInstance({ dbInstance }, { storageInstance }, application)
         }
 
