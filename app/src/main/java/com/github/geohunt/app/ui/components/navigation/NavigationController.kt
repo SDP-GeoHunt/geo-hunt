@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -21,16 +20,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
-import com.github.geohunt.app.maps.GoogleMapDisplay
-import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
-import com.github.geohunt.app.ui.components.ZoomableImageView
-import com.github.geohunt.app.ui.components.challenge.ChallengeView
-import com.github.geohunt.app.ui.components.profile.ProfilePage
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.maps.GoogleMapDisplay
+import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.bounties.BountyClaimChallenge
+import com.github.geohunt.app.ui.components.challenge.ChallengeView
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
+import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
@@ -42,6 +39,8 @@ import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsPage
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsViewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
