@@ -175,16 +175,6 @@ class ChallengeRepository(
         return challengeEntry.asExternalModel(challengeId)
     }
 
-    /**
-     * Returns all the claims done by a specific user id
-     *
-     * @param uid The user id
-     */
-    override fun getClaimsFromUser(uid: String): List<Claim> {
-        // TODO
-        return listOf()
-    }
-
     override suspend fun getChallenges(): List<Challenge> {
         return challenges.get().await().run {
             children.flatMap { quadrantRef ->

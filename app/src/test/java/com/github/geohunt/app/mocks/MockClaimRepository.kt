@@ -14,6 +14,10 @@ open class MockClaimRepository : ClaimRepositoryInterface {
         return emptyList()
     }
 
+    override suspend fun getClaimId(uid: String): List<String> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun doesClaim(challenge: Challenge): Boolean {
         return false
     }
@@ -24,6 +28,10 @@ open class MockClaimRepository : ClaimRepositoryInterface {
 
     override suspend fun getClaims(user: User): List<Claim> {
         return emptyList()
+    }
+
+    override suspend fun getClaims(uid: String): List<Claim> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getChallengeClaims(challenge: Challenge): List<Claim> {
