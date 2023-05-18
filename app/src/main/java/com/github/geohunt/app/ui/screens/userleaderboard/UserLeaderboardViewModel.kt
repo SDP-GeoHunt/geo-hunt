@@ -33,7 +33,7 @@ class UserLeaderboardViewModel(
     init {
         viewModelScope.launch {
             val currentUser = userRepository.getCurrentUser().id
-            val topUsers = scoreRepository.getTopNUsers(N)
+            val topUsers = scoreRepository.getTopNUsers(nbUsersFetched)
             val entries = topUsers.map {
                 toEntry(user = userRepository.getUser(it.first), score = it.second)
             }
@@ -55,7 +55,7 @@ class UserLeaderboardViewModel(
         /**
          * The amount of entries we want our leaderboard to display
          */
-        const val N = 100
+        const val nbUsersFetched = 100
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application

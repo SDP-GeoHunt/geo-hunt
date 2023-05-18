@@ -45,7 +45,7 @@ class UserLeaderboardViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun modelOnlyReturnsNEntries() = runTest{
-        val n = UserLeaderboardViewModel.N
+        val n = UserLeaderboardViewModel.nbUsersFetched
         val users = (0L .. n + 1).map { mockUser("$it", "u$it") }
 
         //Create a mock repository containing n + 2 users
