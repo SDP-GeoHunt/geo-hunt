@@ -1,7 +1,6 @@
 package com.github.geohunt.app.ui.components.bounties
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -157,7 +156,6 @@ fun BountyClaimChallenge(
     val cameraLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.TakePicture()
     ) {
-        Log.i("GeoHunt", "Returning from camera")
         if (!it) {
             onFailure(RuntimeException("Failed to take photo at ${file.absolutePath}"))
         }

@@ -11,9 +11,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.*
-import com.github.geohunt.app.data.repository.bounties.BountiesRepository
 import com.github.geohunt.app.data.repository.bounties.BountyClaimRepositoryInterface
-import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
@@ -30,10 +28,7 @@ class BountyClaimViewModel(
     private val imageRepository: ImageRepository,
     private val locationRepository: LocationRepository,
     private val challengeRepository: ChallengeRepositoryInterface,
-    private val bountiesRepository: BountiesRepository,
     private val bountyClaimRepositoryInterface: BountyClaimRepositoryInterface,
-    private val bountyTeamsRepository: TeamsRepositoryInterface,
-
     ) : ViewModel() {
 
     enum class State {
@@ -117,6 +112,24 @@ class BountyClaimViewModel(
         }
     }
 
+    fun injectLocationUpdate(location: Location) {
+        require(_submittingState.value == State.AWAITING_LOCATION_PERMISSION)
+
+        _submittingState.value = State.READY_TO_CLAIM
+        _location.value = location
+    }
+
+    fun injectPhoto(bitmap: Bitmap) {
+        require(_submittingState.value == State.AWAITING_CAMERA)
+
+        _submittingState.value = State.AWAITING_LOCATION_PERMISSION
+        _photoState.value = bitmap
+    }
+
+    fun injectChallenge(challenge: Challenge) {
+        _challenge.value = challenge
+    }
+
     override fun onCleared() {
         super.onCleared()
         reset()
@@ -146,9 +159,7 @@ class BountyClaimViewModel(
                         imageRepository = container.image,
                         locationRepository = container.location,
                         challengeRepository = container.bounties.getChallengeRepository(bountyId),
-                        bountiesRepository = container.bounties,
-                        bountyClaimRepositoryInterface = container.bounties.getClaimRepository(bountyId),
-                        bountyTeamsRepository = container.bounties.getTeamRepository(bountyId)
+                        bountyClaimRepositoryInterface = container.bounties.getClaimRepository(bountyId)
                     )
                 }
             }

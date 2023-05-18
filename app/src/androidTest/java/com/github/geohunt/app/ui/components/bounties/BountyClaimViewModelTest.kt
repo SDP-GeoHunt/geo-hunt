@@ -1,26 +1,32 @@
 package com.github.geohunt.app.ui.components.bounties
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.rule.GrantPermissionRule
+import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.ImageRepository
 import com.github.geohunt.app.data.repository.bounties.BountiesRepository
 import com.github.geohunt.app.mocks.MockAuthRepository
 import com.github.geohunt.app.mocks.MockUserRepository
 import com.github.geohunt.app.model.Bounty
+import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.database.FirebaseEmulator
+import com.github.geohunt.app.utility.BitmapUtils
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import kotlinx.coroutines.withContext
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.io.File
 import java.time.LocalDateTime
 
 class BountyClaimViewModelTest {
@@ -43,6 +49,8 @@ class BountyClaimViewModelTest {
 
     private lateinit var viewModel: BountyClaimViewModel
 
+    private lateinit var listOfChallenges : List<Challenge>
+
     @Before
     fun setup() {
         database = FirebaseEmulator.getEmulatedFirebase()
@@ -55,6 +63,17 @@ class BountyClaimViewModelTest {
             storage = storage
         )
 
+        runBlocking {
+            mockAuth.loggedAs("1").run {
+                bounty = repo.createBounty(
+                    "bounty_name",
+                    startingDate = LocalDateTime.now(),
+                    expirationDate = LocalDateTime.now().plusDays(200),
+                    location = mockLocation
+                )
+            }
+        }
+
         composeTestRule.setContent {
             val bountyId = "bounty_name"
             val newViewModel: BountyClaimViewModel = viewModel(factory = BountyClaimViewModel.getFactory(bountyId))
@@ -62,17 +81,32 @@ class BountyClaimViewModelTest {
             viewModel = newViewModel
         }
 
+        // Add some challenges to the bounty
         runBlocking {
-            mockAuth.loggedAs("1").run {
-                bounty = repo.createBounty(
-                    "bounty_name",
-                    startingDate = LocalDateTime.now(),
-                    expirationDate = LocalDateTime.now().plusDays(2),
-                    location = mockLocation
-                )
+            val file = withContext(Dispatchers.IO) {
+                File.createTempFile("test", ".png").apply {
+                    BitmapUtils.saveToFile(Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888),
+                        this,
+                        Bitmap.CompressFormat.PNG,
+                        80)
+                }
             }
-        }
 
+            repo.getChallengeRepository(bounty).createChallenge(
+                photo = LocalPicture(Uri.fromFile(file)),
+                location = mockLocation
+            )
+            repo.getChallengeRepository(bounty).createChallenge(
+                photo = LocalPicture(Uri.fromFile(file)),
+                location = mockLocation
+            )
+            repo.getChallengeRepository(bounty).createChallenge(
+                photo = LocalPicture(Uri.fromFile(file)),
+                location = mockLocation
+            )
+
+            listOfChallenges = repo.getChallengeRepository(bounty).getChallenges()
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -87,7 +121,7 @@ class BountyClaimViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun testSubmittingPhotoMakesSubmittingStateToAwaitingLocationPermission() = runBlockingTest {
-        viewModel.start("test_challenge_id")
+        viewModel.start(listOfChallenges[0].id)
         viewModel.withPhoto({ Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) })
 
         assertEquals(BountyClaimViewModel.State.AWAITING_LOCATION_PERMISSION, viewModel.submittingState.value)
@@ -96,7 +130,7 @@ class BountyClaimViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun testResettingViewModelNullifiesValues() = runBlockingTest {
-        viewModel.start("test_challenge_id")
+        viewModel.start(listOfChallenges[0].id)
         viewModel.withPhoto({ Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) })
 
         viewModel.reset()
@@ -109,10 +143,58 @@ class BountyClaimViewModelTest {
     @ExperimentalCoroutinesApi
     @Test
     fun testStartLocationUpdateMakesSubmittingStateAwaitingLocation() = runBlockingTest {
-        viewModel.start("test_challenge_id")
+        viewModel.start(listOfChallenges[0].id)
         viewModel.withPhoto({ Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) })
 
         viewModel.startLocationUpdate()
         assertEquals(BountyClaimViewModel.State.AWAITING_LOCATION, viewModel.submittingState.value)
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun testSubmittingClaimWithUninitializedLocationThrowsErrorWhenClaiming() = runBlockingTest {
+        var file: File
+
+        runBlocking {
+            file = withContext(Dispatchers.IO) {
+                File.createTempFile("test", ".png").apply {
+                    BitmapUtils.saveToFile(Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888),
+                        this,
+                        Bitmap.CompressFormat.PNG,
+                        80)
+                }
+            }
+        }
+
+        viewModel.start(listOfChallenges[0].id)
+        assertEquals(BountyClaimViewModel.State.AWAITING_CAMERA, viewModel.submittingState.value)
+
+        viewModel.withPhoto(file)
+        assertEquals(BountyClaimViewModel.State.AWAITING_LOCATION_PERMISSION, viewModel.submittingState.value)
+
+        viewModel.startLocationUpdate()
+
+        val fileFactory: (String) -> File = { File(it) }
+        assertThrows(IllegalArgumentException::class.java) {
+            viewModel.claim(fileFactory)
+        }
+    }
+
+    @Test
+    fun testSubmittingClaimFinishesClaimingCorrectly() = runBlockingTest {
+        viewModel.start(listOfChallenges[0].id)
+        assertEquals(BountyClaimViewModel.State.AWAITING_CAMERA, viewModel.submittingState.value)
+
+        val challenge = listOfChallenges[0]
+        viewModel.injectChallenge(challenge)
+
+        viewModel.injectPhoto(Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888))
+        assertEquals(BountyClaimViewModel.State.AWAITING_LOCATION_PERMISSION, viewModel.submittingState.value)
+
+        viewModel.injectLocationUpdate(mockLocation)
+        assertEquals(BountyClaimViewModel.State.READY_TO_CLAIM, viewModel.submittingState.value)
+
+        val fileFactory: (String) -> File = { File(it) }
+        viewModel.claim(fileFactory)
     }
 }
