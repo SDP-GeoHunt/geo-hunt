@@ -68,7 +68,7 @@ class TeamProgressViewModelTest {
     }
 
     private val mockTeamRepository: TeamsRepository = mock {
-        onBlocking { getUserTeamAsync() } doReturn fakeTeam
+        onBlocking { getUserTeam() } doReturn flowOf(fakeTeam)
     }
     private val mockChallengeRepository: ChallengeRepository = mock {
         onBlocking { getChallenges() } doReturn listOf(fakeChallenge)
@@ -109,7 +109,7 @@ class TeamProgressViewModelTest {
     @Test
     fun teamIsFetchedOnInit() = runTest {
         advanceUntilIdle()
-        verify(mockTeamRepository).getUserTeamAsync()
+        verify(mockTeamRepository).getUserTeam()
     }
 
     @Test

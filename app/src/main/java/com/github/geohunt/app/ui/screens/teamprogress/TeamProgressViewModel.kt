@@ -20,6 +20,7 @@ import com.github.geohunt.app.ui.utils.pagination.StaticPagedList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
@@ -74,20 +75,19 @@ class TeamProgressViewModel(
 
     private suspend fun fetchTeamMembers() {
         _teamStatus.value = TeamStatus.LOADING_TEAM
-        try {
-            val team = teamRepository.getUserTeamAsync()
+        when(val team = teamRepository.getUserTeam().first()) {
+            null -> _teamStatus.value = TeamStatus.ERROR_NO_TEAM
+            else -> {
+                _teamName.value = team.name
+                _teamMembers = StaticPagedList(
+                    list = team.membersUid,
+                    fetcher = { userRepository.getUser(it) },
+                    coroutineScope = viewModelScope,
+                    prefetchSize = 10
+                )
 
-            _teamName.value = team.name
-            _teamMembers = StaticPagedList(
-                list = team.membersUid,
-                fetcher = { userRepository.getUser(it) },
-                coroutineScope = viewModelScope,
-                prefetchSize = 10
-            )
-
-            _teamStatus.value = TeamStatus.LOADED_TEAM
-        } catch(_: NoSuchElementException) {
-            _teamStatus.value = TeamStatus.ERROR_NO_TEAM
+                _teamStatus.value = TeamStatus.LOADED_TEAM
+            }
         }
     }
 
