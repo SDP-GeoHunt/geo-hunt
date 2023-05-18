@@ -192,14 +192,4 @@ class ChallengeRepository(
             }
         }
     }
-
-    override suspend fun getChallenges(): List<Challenge> {
-        return challenges.get().await().run {
-            children.flatMap { quadrantRef ->
-                quadrantRef.children.mapNotNull {
-                    it.getValue(FirebaseChallenge::class.java)?.asExternalModel(quadrantRef.key!! + it.key!!)
-                }
-            }
-        }
-    }
 }
