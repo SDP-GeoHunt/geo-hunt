@@ -1,21 +1,17 @@
 package com.github.geohunt.app.ui.components.bounties
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -23,20 +19,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils
+import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.ui.components.bounties.viewmodel.AdminBountyViewModel
 import com.github.geohunt.app.ui.screens.home.HorizontalDivider
-import com.github.geohunt.app.R
-import com.github.geohunt.app.i18n.toSuffixedString
 import java.time.LocalDateTime
 
 @Composable
@@ -101,7 +92,10 @@ private fun AdminBountyPageUI(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(onClick = { showPopup = true }, modifier = Modifier.align(Alignment.CenterVertically)) {
+            IconButton(onClick = { showPopup = true },
+                modifier = Modifier
+                    .testTag("edit-btn")
+                    .align(Alignment.CenterVertically)) {
                 Icon(Icons.Default.Edit,
                     contentDescription = "edit")
             }

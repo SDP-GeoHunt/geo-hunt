@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -35,6 +36,7 @@ internal fun RenameBountyPopup(bounty: Bounty, onDismiss: (String?) -> Unit) {
                     value = name,
                     onValueChange = { name = it },
                     placeholder = { Text("<Name of Bounty>") },
+                    modifier = Modifier.testTag("rename-field")
                 )
             }
         },
