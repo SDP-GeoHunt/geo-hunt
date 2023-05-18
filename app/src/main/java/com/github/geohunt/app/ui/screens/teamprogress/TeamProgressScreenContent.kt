@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui.screens.teamprogress
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +30,6 @@ import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.bounties.BountyChallengeCard
 import com.github.geohunt.app.ui.components.teamprogress.TeamProgressMembersCarousel
 import com.github.geohunt.app.ui.components.teamprogress.TeamProgressTopAppBar
-import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.github.geohunt.app.ui.utils.pagination.FinitePagedList
 import kotlinx.coroutines.flow.StateFlow
 
@@ -53,77 +51,75 @@ fun TeamProgressScreenContent(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val currentLocation = locationState.collectAsStateWithLifecycle()
 
-    GeoHuntTheme {
-        Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = { TeamProgressTopAppBar(
-                // Try to limit team name to 20 characters, otherwise it is truncated in the app bar,
-                // which is generally bad UX. The current work-around is to have ellipsis (...)
-                // when the team name is too long.
-                teamName = teamName,
-                onBack = onBack,
-                onLeaderboard = onLeaderboard,
-                onChat = onChat,
-                newMessagesState = newMessages,
-                scrollBehavior = scrollBehavior
-            ) }
-        ) { padding ->
-            LazyColumn(
-                Modifier
-                    .padding(padding)
-                    .fillMaxWidth()) {
-                item {
-                    Column(Modifier.padding(horizontal = 16.dp)) {
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = { TeamProgressTopAppBar(
+            // Try to limit team name to 20 characters, otherwise it is truncated in the app bar,
+            // which is generally bad UX. The current work-around is to have ellipsis (...)
+            // when the team name is too long.
+            teamName = teamName,
+            onBack = onBack,
+            onLeaderboard = onLeaderboard,
+            onChat = onChat,
+            newMessagesState = newMessages,
+            scrollBehavior = scrollBehavior
+        ) }
+    ) { padding ->
+        LazyColumn(
+            Modifier
+                .padding(padding)
+                .fillMaxWidth()) {
+            item {
+                Column(Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        "${teamMembers.size()} members",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+
+                    TeamProgressMembersCarousel(teamMembers = teamMembers)
+                }
+            }
+
+            stickyHeader {
+                Surface {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            "${teamMembers.size()} members",
+                            "Challenges",
                             style = MaterialTheme.typography.titleLarge
                         )
 
-                        TeamProgressMembersCarousel(teamMembers = teamMembers)
+                        Spacer(Modifier.weight(1.0f))
+
+                        /*Text(
+                            "14/68 claimed",
+                            style = MaterialTheme.typography.labelLarge
+                        )*/
                     }
                 }
+            }
 
-                stickyHeader {
-                    Surface {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                "Challenges",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-
-                            Spacer(Modifier.weight(1.0f))
-
-                            /*Text(
-                                "14/68 claimed",
-                                style = MaterialTheme.typography.labelLarge
-                            )*/
-                        }
+            if (challenges == null) {
+                item {
+                    Box(Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(Modifier.align(Alignment.Center))
                     }
                 }
+            } else {
+                itemsIndexed(challenges) { index, challenge ->
+                    val challengeHunters = hunters.get(index).collectAsStateWithLifecycle()
 
-                if (challenges == null) {
-                    item {
-                        Box(Modifier.fillMaxSize()) {
-                            CircularProgressIndicator(Modifier.align(Alignment.Center))
-                        }
-                    }
-                } else {
-                    itemsIndexed(challenges) { index, challenge ->
-                        val challengeHunters = hunters.get(index).collectAsStateWithLifecycle()
-
-                        BountyChallengeCard(
-                            challenge = challenge,
-                            numberOfHunters = challengeHunters.value?.size ?: 0,
-                            currentLocation = currentLocation.value,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .fillMaxWidth(),
-                            onHunt = onHunt
-                        )
-                    }
+                    BountyChallengeCard(
+                        challenge = challenge,
+                        numberOfHunters = challengeHunters.value?.size ?: 0,
+                        currentLocation = currentLocation.value,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .fillMaxWidth(),
+                        onHunt = onHunt
+                    )
                 }
             }
         }
