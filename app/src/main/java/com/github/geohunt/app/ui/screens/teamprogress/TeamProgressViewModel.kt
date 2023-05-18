@@ -73,24 +73,26 @@ class TeamProgressViewModel(
     private val _claimState: MutableStateFlow<DynamicPagedList<Boolean>?> = MutableStateFlow(null)
     val claimState: StateFlow<DynamicPagedList<Boolean>?> = _claimState.asStateFlow()
 
-    private suspend fun fetchTeamStatus(): Team? {
+    private suspend fun fetchTeamStatus() {
         _teamStatus.value = TeamStatus.LOADING_TEAM
-        when(val team = teamRepository.getUserTeam().first()) {
-            null -> _teamStatus.value = TeamStatus.ERROR_NO_TEAM
-            else -> {
-                _teamName.value = team.name
-                _teamMembers = StaticPagedList(
-                    list = team.membersUid,
-                    fetcher = { userRepository.getUser(it) },
-                    coroutineScope = viewModelScope,
-                    prefetchSize = 10
-                )
+        teamRepository.getUserTeam().collect { team ->
+            when (team) {
+                null -> _teamStatus.value = TeamStatus.ERROR_NO_TEAM
+                else -> {
+                    _teamName.value = team.name
+                    _teamMembers = StaticPagedList(
+                        list = team.membersUid,
+                        fetcher = { userRepository.getUser(it) },
+                        coroutineScope = viewModelScope,
+                        prefetchSize = 10
+                    )
 
-                _teamStatus.value = TeamStatus.LOADED_TEAM
-                return team
+                    _teamStatus.value = TeamStatus.LOADED_TEAM
+
+                    fetchChallenges(team)
+                }
             }
         }
-        return null
     }
 
     private suspend fun fetchChallenges(team: Team) {
@@ -116,11 +118,7 @@ class TeamProgressViewModel(
 
     init {
         viewModelScope.launch {
-            val team = fetchTeamStatus()
-
-            if (team != null) {
-                fetchChallenges(team)
-            }
+            fetchTeamStatus()
         }
 
         // Location is fetched in a separate coroutine since it collect indefinitely
