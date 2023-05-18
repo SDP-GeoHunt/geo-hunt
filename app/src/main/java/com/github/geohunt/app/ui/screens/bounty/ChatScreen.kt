@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,60 +24,77 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.model.Message
 import com.github.geohunt.app.model.User
+import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
 import kotlinx.coroutines.flow.StateFlow
+import com.github.geohunt.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
-    viewModel: ChatViewModel = viewModel(factory = ChatViewModel.factory(bountyId = "98d755ad-NVP5y7V0SyObpqi226o"))
+    onBack : () -> Any,
+    bountyId: String,
+    viewModel: ChatViewModel = viewModel(factory = ChatViewModel.factory(bountyId = bountyId))
 ) {
 
     val messageState = viewModel.messages.collectAsStateWithLifecycle()
-    var inputValue by remember { mutableStateOf("") }
 
-    Column(Modifier.fillMaxSize().padding(bottom = 20.dp),) {
-        Box(
-            modifier = modifier,
-            contentAlignment = Alignment.Center
-        ) {
-            when (messageState.value) {
-                null -> Box(modifier = Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                else -> {
-                    val messageItems = messageState.value!!.asReversed()
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth(),
-                        reverseLayout = true,
-                    ) {
-                        items(messageItems) { message ->
-                            MessageCard(
-                                message,
-                                viewModel::getUser,
-                                viewModel.isMessageMine(message)
-                            )
+    Scaffold(topBar = { TopBarWithBackButton(onBack = { onBack }, title = stringResource(id = R.string.team_chat_title)) },
+    bottomBar = { MessageInput(sendMessage = viewModel::sendMessage) }) {
+        padding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(padding),) {
+            Box(
+                modifier = modifier,
+                contentAlignment = Alignment.Center
+            ) {
+                when (messageState.value) {
+                    null -> Box(modifier = Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                    else -> {
+                        val messageItems = messageState.value!!.sortedByDescending { it.timestamp }
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            reverseLayout = true,
+                        ) {
+                            items(messageItems) { message ->
+                                MessageCard(
+                                    message,
+                                    viewModel::getUser,
+                                    viewModel.isMessageMine(message)
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-        Row (modifier = Modifier
-            .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween) {
-            TextField(
-                modifier = Modifier.weight(1f),
-                value = inputValue,
-                onValueChange = { inputValue = it },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            )
-            Button(
-                modifier = Modifier.height(56.dp),
-                onClick = { viewModel.sendMessage(inputValue); inputValue = ""},
-                enabled = inputValue.isNotBlank(),
-            ) {
-                Text("Send")
-            }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable 
+fun MessageInput(sendMessage : (String) -> Unit) {
+    var inputValue by remember { mutableStateOf("") }
+    
+    Row (modifier = Modifier
+        .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween) {
+        TextField(
+            modifier = Modifier.weight(1f),
+            value = inputValue,
+            onValueChange = { inputValue = it },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+        )
+        Button(
+            modifier = Modifier.height(56.dp),
+            onClick = { sendMessage(inputValue); inputValue = ""},
+            enabled = inputValue.isNotBlank(),
+        ) {
+            Text("Send")
         }
     }
 }

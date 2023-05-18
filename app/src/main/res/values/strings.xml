@@ -120,4 +120,5 @@
     
     <string name="new_challenge_notification_title">New Challenge!</string>
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
+    <string name="team_chat_title">Team Chat</string>
 </resources>
