@@ -11,7 +11,6 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.Team
-import com.github.geohunt.app.model.points.GaussianPointCalculator
 import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
@@ -25,11 +24,7 @@ class BountyClaimRepository(
     private val bid: String,
     private val teamRepository: TeamsRepository,
     private val imageRepository: ImageRepository,
-    private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = mapOf(
-        Challenge.Difficulty.EASY to GaussianPointCalculator(0.20),
-        Challenge.Difficulty.MEDIUM to GaussianPointCalculator(0.15),
-        Challenge.Difficulty.HARD to GaussianPointCalculator(0.10)
-    ).withDefault { GaussianPointCalculator(0.10) },
+    private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = PointCalculator.defaultCalculators,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BountyClaimRepositoryInterface {
     private val claims = bountyReference.child("claims")
@@ -53,7 +48,7 @@ class BountyClaimRepository(
 
         // First upload the image to Firebase storage
         // This ensures that the database doesn't contain nonexistent image data
-        val photoUrl : Uri = imageRepository.uploadBountyClaimPhoto(photo, claimId, bid)
+        val photoUrl: Uri = imageRepository.uploadBountyClaimPhoto(photo, claimId, bid)
 
         // Compute the distance to the target
         val distance = location.distanceTo(challenge.location)
@@ -61,12 +56,11 @@ class BountyClaimRepository(
         // Upload the entry to Firebase's Realtime Database
         val claimEntry = FirebaseClaim(
             currentTeam.teamId,
-
             time = DateUtils.utcIso8601Now(),
             photoUrl = photoUrl.toString(),
             cid = challenge.id,
             location = location,
-            distance = (distance.toLong() + 1),
+            distance = distance.toLong(),
             awardedPoints = pointCalculatorMap[challenge.difficulty]!!.computePoints(distance)
         )
 

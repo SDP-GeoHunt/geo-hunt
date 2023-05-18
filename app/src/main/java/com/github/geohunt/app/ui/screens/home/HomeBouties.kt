@@ -75,7 +75,7 @@ fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Any) {
                 PullRefreshIndicator(
                     refreshing = isRefreshing.value,
                     state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    modifier = Modifier.align(Alignment.TopCenter).testTag("loading-bounties")
                 )
             }
         }
