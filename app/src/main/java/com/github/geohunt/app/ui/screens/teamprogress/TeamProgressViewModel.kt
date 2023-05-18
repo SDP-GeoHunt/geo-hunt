@@ -7,7 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.AuthRepositoryInterface
-import com.github.geohunt.app.data.repository.LocationRepository
+import com.github.geohunt.app.data.repository.LocationRepositoryInterface
 import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
 import com.github.geohunt.app.model.Challenge
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 class TeamProgressViewModel(
     override val authRepository: AuthRepositoryInterface,
     val userRepository: UserRepositoryInterface,
-    val locationRepository: LocationRepository,
+    val locationRepository: LocationRepositoryInterface,
     val bountiesRepository: BountiesRepositoryInterface,
     val bountyId: String
 ): AuthViewModel(authRepository) {

@@ -26,7 +26,7 @@ import java.io.File
 class BountyClaimViewModel(
     private val bountyId: String,
     private val imageRepository: ImageRepository,
-    private val locationRepository: LocationRepository,
+    private val locationRepository: LocationRepositoryInterface,
     private val challengeRepository: ChallengeRepositoryInterface,
     private val bountyClaimRepository: BountyClaimRepositoryInterface,
     ) : ViewModel() {

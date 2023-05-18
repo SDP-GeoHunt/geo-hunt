@@ -23,7 +23,7 @@ import java.io.File
 
 class SubmitClaimViewModel(
     private val imageRepository: ImageRepository,
-    private val locationRepository: LocationRepository,
+    private val locationRepository: LocationRepositoryInterface,
     private val challengeRepository: ChallengeRepository,
     private val claimRepository: ClaimRepository
 ) : ViewModel() {
