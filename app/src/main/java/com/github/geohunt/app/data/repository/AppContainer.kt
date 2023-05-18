@@ -10,8 +10,6 @@ import com.github.geohunt.app.data.settings.AppSettingsSerializer
 import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.sensor.SharedLocationManager
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.lang.IllegalStateException
 
@@ -23,7 +21,6 @@ import java.lang.IllegalStateException
  * the codebase.
  */
 class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInstance: FirebaseStorage, application: Application) {
-    val database = Firebase.database
     val location: LocationRepository = LocationRepository(
         SharedLocationManager(application.applicationContext)
     )
@@ -32,20 +29,23 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
     val auth = AuthRepository()
     val user = UserRepository(image, auth, dbInstance)
 
+    val score = ScoreRepository(dbInstance)
     val challenges = ChallengeRepository(user, image, auth, dbInstance)
     val activeHunts = ActiveHuntsRepository(auth, dbInstance)
-    val claims = ClaimRepository(auth, image, dbInstance)
+    val claims = ClaimRepository(auth, image, dbInstance, score, activeHunts)
     val follow = FollowRepository(auth, dbInstance)
-    val bounties = BountiesRepository(user, auth, image, dbInstance, storageInstance)
+    val bounty = BountiesRepository(user, auth, image, dbInstance, storageInstance)
 
     val feedUseCase = GetUserFeedUseCase(auth, challenges, follow)
+
+    val bounties = BountiesRepository(user, auth, image, dbInstance, storageInstance)
 
     // Settings
     private val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
     val appSettingsRepository = AppSettingsRepositoryImpl(application.dataStore)
 
     // Profile visibilities
-    val profileVisibilities = ProfileVisibilityRepository(database)
+    val profileVisibilities = ProfileVisibilityRepository(dbInstance)
 
 
     companion object {
@@ -79,14 +79,9 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
         fun getEmulatedFirebaseInstance(
             application: Application
         ): AppContainer {
-            val dbInstance = FirebaseDatabase.getInstance()
-            val storageInstance = FirebaseStorage.getInstance()
-            try {
-                dbInstance.useEmulator("10.0.2.2", 9000)
-                storageInstance.useEmulator("10.0.2.2", 9199)
-            } catch(e: IllegalStateException) {
-                Log.w("GeoHuntDebug", "Failed to use the emulator: $e")
-            }
+            val dbInstance = FirebaseDatabase.getInstance("http://10.0.2.2:9000/?ns=geohunt-1-default-rtdb")
+            val storageInstance = FirebaseStorage.getInstance("gs://geohunt-1.appspot.com")
+            storageInstance.useEmulator("10.0.2.2", 9199)
             return getInstance({ dbInstance }, { storageInstance }, application)
         }
 

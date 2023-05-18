@@ -23,6 +23,10 @@
     <string name="navigation.profile">Profile</string>
     <string name="title_main_activity">GeoHunt</string>
     <string name="title_activity_login">Login</string>
+    <string name="date_range_formatting">from %s to %s</string>
+    <string name="start_in_formatter">Starts %s</string>
+    <string name="end_in_formatter">Ends %s</string>
+    <string name="already_terminated">terminated</string>
 
     <string name="sign_in">Sign in</string>
 
@@ -56,6 +60,8 @@
     <string name="challenge_settings_difficulty">Difficulty</string>
     <string name="challenge_settings_date">Date</string>
     <string name="challenge_settings_date_never">Never</string>
+
+    <string name="range_date">Date</string>
 
     // Strings defined for the tutorial
     <string name="title_activity_tutorial">TutorialActivity</string>
@@ -121,4 +127,50 @@
     <string name="new_challenge_notification_title">New Challenge!</string>
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
     <string name="team_chat_title">Team Chat</string>
+
+    <!-- Bounty -->
+    <string name="claim_bounty_challenge_button">Submit Claim</string>
+    <string name="photo_of_the_claim_taken">Photo just taken of the claim</string>
+
+    <!-- home feed/bounty selector -->
+    <string name="feed">Feed</string>
+    <string name="bounty">Bounty</string>
+    <string name="bounties">Bounties</string>
+    <string name="join">Join</string>
+    <string name="no_bounties">No available bounties at the moment.</string>
+    <string name="begins_in">Begins in %1$s</string>
+    <string name="ends_in">Ends in %1$s</string>
+    <string name="expired_since">Expired since %1$s</string>
+    <string name="km_away">%1$dkm away</string>
+
+    <string name="team_title">Team %1$d</string>
+    <string name="team_name">Team name</string>
+    <string name="enter_team_name">Enter the new team\'s name</string>
+    <string name="create_team">Create team</string>
+    <string name="join_team">Join team</string>
+    <string name="leave_team">Leave team</string>
+    <string name="delete_team">Delete team</string>
+    <string name="select_team_for_bounty">Select team for %1$s</string>
+    <string name="see">See</string>
+    <string name="location">Location</string>
+    <string name="name">Name</string>
+    <string name="create_bounty_button">Create bounty</string>
+    <string name="Ok">Ok</string>
+    <string name="Cancel">Cancel</string>
+    <string name="renaming_bounty_popup_title">Renaming bounty</string>
+    <string name="renaming_bounty_placeholder"><![CDATA[<Name of Bounty>]]></string>
+    <string name="pick_location_popup_title">Pick a location</string>
+    <string name="location_picker_placeholder"><![CDATA[<Select>]]></string>
+
+    <plurals name="teams_count">
+        <item quantity="zero">no teams</item>
+        <item quantity="one">1 team</item>
+        <item quantity="other">%d teams</item>
+    </plurals>
+
+    <plurals name="members_count">
+        <item quantity="zero">no member</item>
+        <item quantity="one">1 member</item>
+        <item quantity="other">%d members</item>
+    </plurals>
 </resources>

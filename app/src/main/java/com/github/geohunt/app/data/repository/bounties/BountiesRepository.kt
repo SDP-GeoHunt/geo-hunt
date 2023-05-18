@@ -9,6 +9,8 @@ import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.model.points.GaussianPointCalculator
 import com.github.geohunt.app.model.points.PointCalculator
+import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.model.User
 import com.github.geohunt.app.utility.DataPool
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
@@ -51,7 +53,7 @@ class BountiesRepository(
         ChallengeRepository(
             userRepository = userRepository,
             authRepository = authRepository,
-            bounty = database.getReference("bounties/$bid"),
+            bounty = database.getReference("bounties/challenges/$bid"),
             imageRepository = imageRepository,
             ioDispatcher = ioDispatcher,
             database = database
@@ -138,13 +140,20 @@ class BountiesRepository(
             }
     }
 
+    override suspend fun renameBounty(bounty: Bounty, name: String) {
+        getRefByBid(bounty.bid).child("metadata").child("name")
+            .setValue(name)
+            .await()
+    }
+
     override suspend fun getBounties(): List<Bounty> = withContext(ioDispatcher) {
         bountiesMetadataRef.get()
             .await()
             .run {
                 children.flatMap { quadrantRef ->
                     quadrantRef.children.mapNotNull {
-                        it.getValue<FirebaseBountyMetadata>()?.asExternalModel(quadrantRef.key!! + it.key!!)
+                        it.child("metadata")
+                            .getValue<FirebaseBountyMetadata>()?.asExternalModel(quadrantRef.key!! + it.key!!)
                     }
                 }
             }

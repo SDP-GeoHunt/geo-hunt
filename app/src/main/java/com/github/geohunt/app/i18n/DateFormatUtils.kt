@@ -16,6 +16,7 @@ import java.time.temporal.ChronoUnit
  */
 object DateFormatUtils {
     private val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    private val simpleDateFormatter = DateTimeFormatter.ofPattern("dd/MM")
 
     /**
      * Formats given LocalDateTime into a string
@@ -25,6 +26,14 @@ object DateFormatUtils {
      */
     fun formatDate(dateTime: LocalDateTime): String {
         return formatDate(dateTime.toLocalDate())
+    }
+
+    @Composable
+    fun formatRange(start: LocalDateTime, end: LocalDateTime) : String {
+        return stringResource(id = R.string.date_range_formatting,
+            simpleDateFormatter.format(start),
+            simpleDateFormatter.format(end)
+        )
     }
 
     /**

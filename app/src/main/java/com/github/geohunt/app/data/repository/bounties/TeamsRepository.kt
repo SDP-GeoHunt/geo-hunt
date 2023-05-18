@@ -12,6 +12,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
@@ -29,7 +30,11 @@ class TeamsRepository(
 
     override suspend fun joinTeam(teamId: String, userId: String) {
         withContext(ioDispatcher) {
-            return@withContext teams.child(teamId).child("members")
+            if (getUserTeam(userId).first() != null) {
+                return@withContext
+            }
+
+            teams.child(teamId).child("members")
                     .child(userId)
                     .setValue(true)
                     .await()
@@ -38,6 +43,13 @@ class TeamsRepository(
 
     override suspend fun joinTeam(teamId: String) {
         return joinTeam(teamId, userRepository.getCurrentUser().id)
+
+    override suspend fun leaveTeam(userId: String) {
+        val team = getUserTeam(userId).first() ?: return
+
+        withContext(ioDispatcher) {
+            teams.child(team.teamId).child("members").child(userId).removeValue()
+        }
     }
 
     override fun getTeam(teamId: String): Flow<Team> {
@@ -73,6 +85,11 @@ class TeamsRepository(
                 .flowOn(ioDispatcher)
     }
 
+
+    override suspend fun createTeam(name: String): Team {
+        return createTeam(name, userRepository.getCurrentUser().id)
+    }
+
     override suspend fun createTeam(name: String, teamLeaderUid: String): Team {
         return withContext(ioDispatcher) {
             val newTeamReference = teams.push()
@@ -95,6 +112,10 @@ class TeamsRepository(
         }
     }
 
+    override suspend fun deleteTeam(teamId: String) {
+        teams.child(teamId).removeValue().await()
+    }
+
     /**
      * Atomically update of the score
      */
@@ -111,8 +132,20 @@ class TeamsRepository(
             teamId = s.key!!,
             name = s.child("name").getValue(String::class.java)!!,
             membersUid = s.child("members").toMap<Boolean>().filterValues { it }.keys.toList(),
-            leaderUid = s.child("teamLeader").getValue(String::class.java) ?: "",
+            leaderUid = s.child("teamLeader").getValue(String::class.java)!!,
             score = s.child("score").getValue(Long::class.java) ?: 0
         )
     }
+
+    /*
+     * Aliases
+     */
+    override suspend fun joinTeam(teamId: String) {
+        return joinTeam(teamId, userRepository.getCurrentUser().id)
+    }
+
+    override suspend fun leaveTeam() {
+        return leaveTeam(userRepository.getCurrentUser().id)
+    }
+    
 }

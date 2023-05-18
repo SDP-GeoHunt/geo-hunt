@@ -38,9 +38,11 @@ class ProfilePageTest {
     private fun createViewModel(
         auth: AuthRepositoryInterface? = MockAuthRepository(),
         user: UserRepositoryInterface? = MockUserRepository(appContainer!!.user),
-        challenge: ChallengeRepositoryInterface? = null,
+        challenge: ChallengeRepositoryInterface? = MockChallengeRepository(),
         follow: FollowRepositoryInterface? = MockFollowRepository(),
         visibility: ProfileVisibilityRepositoryInterface? = MockProfileVisibilityRepository(),
+        claims: ClaimRepositoryInterface? = MockClaimRepository(),
+        score: ScoreRepositoryInterface? = MockScoreRepository(),
         uid: String = "1"
     ): ProfilePageViewModel {
         return ProfilePageViewModel(
@@ -49,6 +51,8 @@ class ProfilePageTest {
             challengeRepository = challenge ?: appContainer!!.challenges,
             followRepository = follow ?: appContainer!!.follow,
             profileVisibilityRepository = visibility ?: appContainer!!.profileVisibilities,
+            claimRepository = claims ?: appContainer!!.claims,
+            scoreRepository = score ?: appContainer!!.score,
             uid = uid
         )
     }
@@ -80,19 +84,17 @@ class ProfilePageTest {
     @Test
     fun showsSumOfClaimsAsScore() {
             val vm = createViewModel(
-            challenge = object: MockChallengeRepository() {
-                override fun getClaimsFromUser(uid: String): List<Claim> {
-                    return listOf(
-                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 100),
-                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 69)
-                    )
+            score = object: MockScoreRepository() {
+                override suspend fun getScore(uid: String): Long {
+                    return 169L
                 }
             },
-
         )
+
         testRule.setContent {
             ProfilePage(viewModel = vm)
         }
+
         testRule.onNodeWithText("169").assertExists()
     }
 
@@ -107,8 +109,8 @@ class ProfilePageTest {
     @Test
     fun showsNumberOfHunts() {
         val vm = createViewModel(
-            challenge = object: MockChallengeRepository() {
-                override fun getClaimsFromUser(uid: String): List<Claim> {
+            claims = object: MockClaimRepository() {
+                override suspend fun getClaims(uid: String): List<Claim> {
                     return listOf(
                         Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 100),
                         Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 69)
@@ -131,10 +133,12 @@ class ProfilePageTest {
                 override fun getPosts(userId: String): Flow<List<Challenge>> {
                     return flowOf(listOf(MockChallenge(), MockChallenge(), MockChallenge()))
                 }
-                override fun getClaimsFromUser(uid: String): List<Claim> {
+            },
+            claims = object: MockClaimRepository() {
+                override suspend fun getClaims(uid: String): List<Claim> {
                     return listOf(
-                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 100),
-                        Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 69)
+                            Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 100),
+                            Claim("1", "1", "1", photoUrl, LocalDateTime.MIN, 1, 69)
                     )
                 }
             }

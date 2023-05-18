@@ -22,6 +22,8 @@ open class ProfilePageViewModel(
     private val challengeRepository: ChallengeRepositoryInterface,
     private val followRepository: FollowRepositoryInterface,
     private val profileVisibilityRepository: ProfileVisibilityRepositoryInterface,
+    private val claimRepository: ClaimRepositoryInterface,
+    private val scoreRepository: ScoreRepositoryInterface,
     @Suppress("DEPRECATION") private val uid: String = authRepository.getCurrentUser().id,
 ): ViewModel() {
     private val _user = MutableStateFlow<User?>(null)
@@ -34,7 +36,9 @@ open class ProfilePageViewModel(
     private val _claimedChallenges = MutableStateFlow<List<Challenge>?>(null)
     val claims = _claims.asStateFlow()
     val claimedChallenges = _claimedChallenges.asStateFlow()
-    val score = _claims.asStateFlow().map { it?.sumOf { it.awardedPoints } }
+
+    private val _score = MutableStateFlow<Long?>(null)
+    val score = _score.asStateFlow()
 
     @Suppress("DEPRECATION")
     private val authedUid = authRepository.getCurrentUser().id
@@ -104,8 +108,9 @@ open class ProfilePageViewModel(
 
                 _user.value = userRepository.getUser(uid)
                 _challenges.value = challengeRepository.getPosts(uid).first()
-                _claims.value = challengeRepository.getClaimsFromUser(uid)
+                _claims.value = claimRepository.getClaims(uid)
                 _claimedChallenges.value = _claims.value!!.map { challengeRepository.getChallenge(it.parentChallengeId) }
+                _score.value = scoreRepository.getScore(uid)
             } catch (e: UserNotFoundException) {
                 _didFail.value = e
             }
@@ -133,7 +138,9 @@ open class ProfilePageViewModel(
                     container.user,
                     container.challenges,
                     container.follow,
-                    container.profileVisibilities
+                    container.profileVisibilities,
+                    container.claims,
+                    container.score
                 )
             }
         }
