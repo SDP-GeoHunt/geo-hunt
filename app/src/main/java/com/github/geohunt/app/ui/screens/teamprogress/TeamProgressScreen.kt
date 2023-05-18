@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.ui.screens.teamprogress.TeamProgressViewModel.TeamStatus
 import com.github.geohunt.app.ui.utils.pagination.FinitePagedList
 
@@ -20,8 +21,9 @@ import com.github.geohunt.app.ui.utils.pagination.FinitePagedList
 @Composable
 fun TeamProgressScreen(
     onBack: () -> Unit,
-    onLeaderboard: (String) -> Unit,
-    onChat: (String) -> Unit,
+    onLeaderboard: () -> Unit,
+    onChat: () -> Unit,
+    onClaim: (Challenge) -> Unit,
     bountyId: String,
     viewModel: TeamProgressViewModel = viewModel(factory = TeamProgressViewModel.getFactory(bountyId))
 ) {
@@ -59,9 +61,9 @@ fun TeamProgressScreen(
 
             TeamProgressScreenContent(
                 onBack = onBack,
-                onLeaderboard = { onLeaderboard(bountyId) },
-                onChat = { onChat(bountyId) },
-                onClaim = {},
+                onLeaderboard = onLeaderboard,
+                onChat = onChat,
+                onClaim = onClaim,
                 teamName = teamName.value!!,
                 teamMembers = viewModel.teamMembers,
                 claimState = hunters.value ?: FinitePagedList.empty(),
