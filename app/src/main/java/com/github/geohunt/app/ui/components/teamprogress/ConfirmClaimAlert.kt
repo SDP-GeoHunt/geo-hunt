@@ -5,6 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.github.geohunt.app.R
 import com.github.geohunt.app.ui.theme.geoHuntRed
 
 @Composable
@@ -18,17 +20,17 @@ fun ConfirmClaimAlert(
             onDismissRequest = {},
             confirmButton = {
                 TextButton(onClick = onConfirm, colors = ButtonDefaults.textButtonColors(contentColor = geoHuntRed)) {
-                    Text("Confirm")
+                    Text(stringResource(id = R.string.confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onCancel) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             },
-            title = { Text("Confirm claim") },
+            title = { Text(stringResource(id = R.string.claim_confirmation_alert_title)) },
             text = {
-                Text("Are you sure you want to claim this challenge ?")
+                Text(stringResource(id = R.string.claim_confirmation_alert_text))
             }
         )
     }

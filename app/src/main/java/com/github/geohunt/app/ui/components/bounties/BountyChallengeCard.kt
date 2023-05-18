@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
@@ -84,7 +85,7 @@ fun BountyChallengeCard(
                 height = 20.dp
             ) {
                 val distance = when (currentLocation) {
-                    null -> "Unknown distance"
+                    null -> stringResource(id = R.string.unknown_distance)
                     else -> currentLocation.distanceTo(it.location).quantize(0.1)
                         .toString() + " km"
                 }
@@ -118,7 +119,7 @@ fun BountyChallengeCard(
                         enabled = challenge != null && isEnabled,
                         modifier = Modifier.width(width = 110.dp)
                     ) {
-                        Text("Claim")
+                        Text(stringResource(id = R.string.claim))
                     }
                 }
             }

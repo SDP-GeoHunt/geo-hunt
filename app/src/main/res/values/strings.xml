@@ -110,6 +110,16 @@
     <string name="system">System</string>
     <string name="theme_desc">The theme used by the application</string>
 
+    <!-- buttons -->
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="claim">Claim</string>
+
+    <!-- team progress -->
+    <string name="claim_confirmation_alert_title">Confirm claim</string>
+    <string name="claim_confirmation_alert_text">Are you sure you want to claim this challenge ?</string>
+    <string name="unknown_distance">Unknown distance</string>
+
     <!-- profile visibility -->
     <string name="profile_visibility">Profile visibility</string>
     <string name="public_word">Public</string>
