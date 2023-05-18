@@ -6,12 +6,15 @@ import com.github.geohunt.app.data.repository.bounties.BountyClaimRepositoryInte
 import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.model.User
 import java.time.LocalDateTime
 
 open class MockBountyRepository : BountiesRepositoryInterface {
     var name: String = "<Bounty-Name>"
-    var teamRepo = MockTeamRepository()
+    var teamRepo = MockTeamRepository(listOf(
+        Team("t1", "<Team Name>", listOf("1"), "1", 1000)
+    ))
     var mockChallenge = MockChallengeRepository()
 
     override suspend fun createBounty(

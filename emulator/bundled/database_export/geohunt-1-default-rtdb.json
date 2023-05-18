@@ -68,5 +68,47 @@
             "displayName": "dn2",
             "profilePictureUrl": "null"
         }
+    },
+    "bounties": {
+        "challenges": {
+            "testBountyId": {
+                "challenges": {
+                    "testChal": {
+                        "llengeId": {
+                            "authorId": "1",
+                            "difficulty": "MEDIUM",
+                            "location": {
+                                "latitude": 0.0,
+                                "longitude": 0.0
+                            },
+                            "photoUrl": "",
+                            "publishedDate": "2023-05-16T15:04:42.674815Z"
+                        }
+                    }
+                }
+            }
+        },
+        "meta": {
+            "testBoun": {
+                "tyId": {
+                    "adminUid": "1",
+                    "name": "Test bounty"
+                }
+            }
+        },
+        "teams": {
+            "testBountyId": {
+                "teams": {
+                    "testTeamId": {
+                        "name": "Test team",
+                        "members": {
+                            "1": true
+                        },
+                        "score": 1000,
+                        "teamLeader": "1"
+                    }
+                }
+            }
+        }
     }
 }

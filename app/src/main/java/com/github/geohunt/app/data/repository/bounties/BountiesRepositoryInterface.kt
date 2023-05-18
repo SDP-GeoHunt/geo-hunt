@@ -57,10 +57,22 @@ interface BountiesRepositoryInterface {
      */
     suspend fun getBountyCreatedBy(user: User) : List<Bounty>
 
+    /**
+     * Rename the given bounty to something else, can only be called
+     * by the owner of the bounty
+     */
     suspend fun renameBounty(bounty: Bounty, name: String)
 
+    /**
+     * Returns all the bounties.
+     */
     suspend fun getBounties() : List<Bounty>
 
+    /**
+     * Returns a specific bounty
+     *
+     * @param bid The bounty's id
+     */
     suspend fun getBountyById(bid: String) : Bounty
 
 }

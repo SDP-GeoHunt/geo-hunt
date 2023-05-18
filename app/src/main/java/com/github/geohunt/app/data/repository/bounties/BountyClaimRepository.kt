@@ -25,11 +25,7 @@ class BountyClaimRepository(
     private val bid: String,
     private val teamRepository: TeamsRepository,
     private val imageRepository: ImageRepository,
-    private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = mapOf(
-        Challenge.Difficulty.EASY to GaussianPointCalculator(0.20),
-        Challenge.Difficulty.MEDIUM to GaussianPointCalculator(0.15),
-        Challenge.Difficulty.HARD to GaussianPointCalculator(0.10)
-    ).withDefault { GaussianPointCalculator(0.10) },
+    private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = PointCalculator.defaultCalculators,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BountyClaimRepositoryInterface {
     private val claims = bountyReference.child("claims")
@@ -61,12 +57,11 @@ class BountyClaimRepository(
         // Upload the entry to Firebase's Realtime Database
         val claimEntry = FirebaseClaim(
             currentTeam.teamId,
-
             time = DateUtils.utcIso8601Now(),
             photoUrl = photoUrl.toString(),
             cid = challenge.id,
             location = location,
-            distance = (distance.toLong() + 1),
+            distance = distance.toLong(),
             awardedPoints = pointCalculatorMap[challenge.difficulty]!!.computePoints(distance)
         )
 
