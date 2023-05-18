@@ -15,6 +15,7 @@ import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
@@ -28,6 +29,8 @@ class ClaimRepository(
     private val authRepository: AuthRepository,
     private val imageRepository: ImageRepository,
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
+    private val scoreRepository: ScoreRepository,
+    private val activeHuntsRepository: ActiveHuntsRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = PointCalculator.defaultCalculators,
 ) : ClaimRepositoryInterface {
@@ -35,12 +38,12 @@ class ClaimRepository(
     /**
      * Retrieve a list of all claims id for a specific user, useful when lazy loading
      */
-    override suspend fun getClaimId(user: User): List<String> {
-        require(user.id.isNotEmpty())
+    override suspend fun getClaimId(uid: String): List<String> {
+        require(uid.isNotEmpty())
 
         return withContext(ioDispatcher) {
             database.getReference("claimsByUser")
-                .child(user.id)
+                .child(uid)
                 .get()
                 .await()
                 .run {
@@ -66,21 +69,19 @@ class ClaimRepository(
     override suspend fun getScore(user: User) : Long {
         require(user.id.isNotEmpty())
 
-        return withContext(ioDispatcher) {
-            getClaims(user).sumOf { it.awardedPoints }
-        }
+        return scoreRepository.getScore(user)
     }
 
     /**
-     * Get all claims of a specific user [user]. If one of his claim is not within the database
+     * Get all claims of a specific user id [uid]. If one of his claim is not within the database
      * due to some internal issues then throws [ClaimNotFoundException]. Notice that this function
      * does not check whether the provided user exists or not !!
      */
-    override suspend fun getClaims(user: User) : List<Claim> {
-        require(user.id.isNotEmpty())
+    override suspend fun getClaims(uid: String) : List<Claim> {
+        require(uid.isNotEmpty())
 
         return withContext(ioDispatcher) {
-            getClaimId(user).run {
+            getClaimId(uid).run {
                 map { claimId ->
                     database.getReference("claims/$claimId").get().asDeferred()
                 }.awaitAll().zip(this).map {
@@ -143,6 +144,7 @@ class ClaimRepository(
 
         // Compute the distance to the target
         val distance = location.distanceTo(challenge.location)
+        val awardedPoints = pointCalculatorMap[challenge.difficulty]!!.computePoints(distance)
 
         // Upload the entry to Firebase's Realtime Database
         val claimEntry = FirebaseClaim(
@@ -152,13 +154,15 @@ class ClaimRepository(
             cid = challenge.id,
             location = location,
             distance = (distance.toLong() + 1),
-            awardedPoints = pointCalculatorMap[challenge.difficulty]!!.computePoints(distance)
+            awardedPoints = awardedPoints
         )
 
         // Upload the entry
         awaitAll(
             claimRef.setValue(claimEntry).asDeferred(),
-            claimByUser.setValue(claimId).asDeferred()
+            claimByUser.setValue(claimId).asDeferred(),
+            async { scoreRepository.incrementUserScore(currentUser, awardedPoints) },
+            async { activeHuntsRepository.leaveHunt(challenge) }
         )
 
         // Finally convert to external model

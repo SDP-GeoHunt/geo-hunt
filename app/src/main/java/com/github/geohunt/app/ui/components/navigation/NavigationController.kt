@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -35,6 +36,7 @@ import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
 import com.github.geohunt.app.ui.screens.bounty_team_select.BountyTeamSelectPage
 import com.github.geohunt.app.ui.screens.home.HomeScreen
+import com.github.geohunt.app.ui.screens.userleaderboard.UserLeaderboard
 import com.github.geohunt.app.ui.settings.SettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
@@ -91,12 +93,15 @@ fun NavigationController(
             HomeScreen(navigate = { navController.navigate(it) })
         }
         composable(VisibleRoute.Explore.route) {
-            val epflCoordinates = LatLng(46.519585, 6.5684919)
+            /*val epflCoordinates = LatLng(46.519585, 6.5684919)
             val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
             GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
                 cameraPosition = epflCameraPosition
-            )
+            )*/
+            Button(onClick = { navController.navigate("challenge-view/95a5a7d8-NUXh1ljKFT--eAv8d-c") }) {
+                Text("OK")
+            }
         }
         composable(VisibleRoute.Create.route) {
             CreateNewChallenge(
@@ -128,11 +133,15 @@ fun NavigationController(
             )
         }
 
+        composable(HiddenRoute.Leaderboard.route) {
+            UserLeaderboard()
+        }
+
         composable("${VisibleRoute.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
             it.arguments?.getString("userId")?.let {
                 userId -> ProfilePage(
                 ProfilePageViewModel(
-                    container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, userId
+                    container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, container.claims, container.score, userId
                 )
             )
             }

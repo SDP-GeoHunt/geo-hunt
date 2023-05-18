@@ -10,21 +10,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.geohunt.app.model.User
-import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 /**
  * Draws a leaderboard list item.
  *
  * @param position The position of the user in the leaderboard.
- * @param user The user in the ranking.
+ * @param entry The leaderboard entry in the ranking.
  * @param isCurrent Whether the item corresponds to the current user shown at the bottom of the screen
  */
 @Composable
 fun LeaderboardListItem(
     position: Int,
-    user: User,
-    score: Long,
+    entry: LeaderboardEntry,
     isCurrent: Boolean = false
 ) {
     require(position >= 0) { "position should be non-negative."}
@@ -54,15 +51,15 @@ fun LeaderboardListItem(
             color = textColor
         )
 
-        ProfileIcon(user = user)
+        entry.displayIcon?.invoke()
 
         when {
             isCurrent -> Text("You", color = textColor, fontWeight = FontWeight.SemiBold)
-            else -> Text(user.name, color = textColor)
+            else -> Text(entry.displayName, color = textColor)
         }
 
         Spacer(Modifier.weight(1.0f))
 
-        LeaderboardScore(score = score, color = textColor)
+        LeaderboardScore(score = entry.score, color = textColor)
     }
 }
