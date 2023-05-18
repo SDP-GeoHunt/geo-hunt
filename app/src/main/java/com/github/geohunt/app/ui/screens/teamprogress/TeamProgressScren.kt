@@ -20,8 +20,8 @@ import com.github.geohunt.app.ui.utils.pagination.FinitePagedList
 @Composable
 fun TeamProgressScreen(
     onBack: () -> Unit,
-    onLeaderboard: () -> Unit,
-    onChat: () -> Unit,
+    onLeaderboard: (String) -> Unit,
+    onChat: (String) -> Unit,
     bountyId: String,
     viewModel: TeamProgressViewModel = viewModel(factory = TeamProgressViewModel.getFactory(bountyId))
 ) {
@@ -59,8 +59,8 @@ fun TeamProgressScreen(
 
             TeamProgressScreenContent(
                 onBack = onBack,
-                onLeaderboard = onLeaderboard,
-                onChat = onChat,
+                onLeaderboard = { onLeaderboard(bountyId) },
+                onChat = { onChat(bountyId) },
                 onClaim = {},
                 teamName = teamName.value!!,
                 teamMembers = viewModel.teamMembers,
