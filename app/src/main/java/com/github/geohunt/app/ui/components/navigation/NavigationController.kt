@@ -3,7 +3,6 @@ package com.github.geohunt.app.ui.components.navigation
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -15,22 +14,23 @@ import androidx.compose.material.icons.sharp.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
-import com.github.geohunt.app.maps.GoogleMapDisplay
-import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
-import com.github.geohunt.app.ui.components.ZoomableImageView
-import com.github.geohunt.app.ui.components.challenge.ChallengeView
-import com.github.geohunt.app.ui.components.profile.ProfilePage
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.ui.components.ZoomableImageView
+import com.github.geohunt.app.ui.components.bounties.AdminBountyPage
 import com.github.geohunt.app.ui.components.bounties.BountyClaimChallenge
+import com.github.geohunt.app.ui.components.bounties.CreateNewBounty
+import com.github.geohunt.app.ui.components.challenge.ChallengeView
+import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeViewModel
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
+import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
@@ -51,7 +51,9 @@ interface Route {
     val route: String
 }
 
-enum class VisibleRoute(val titleStringId: Int, override val route: String, val icon: ComposableFun): Route {
+enum class VisibleRoute(val titleStringId: Int,
+                        override val route: String,
+                        val icon: ComposableFun): Route {
 
     Home(R.string.navigation_home, "home", { Icon(Icons.Sharp.Home, null) }),
     Explore(R.string.navigation_explore, "explore", { Icon(Icons.Sharp.Search, null) }),
@@ -74,6 +76,8 @@ enum class HiddenRoute(override val route: String): Route {
     AppSettings("settings/app"),
     PrivacySettings("settings/privacy"),
     Leaderboard("leaderboard"),
+    CreateChallenge("create-challenge"),
+    CreateBounty("create-bounty"),
     BountyClaimChallenge("bounty-claim-challenge"),
     ChallengeView("challenge-view"),
 
@@ -87,6 +91,11 @@ fun NavigationController(
 ) {
     val context = LocalContext.current
     val container: AppContainer = AppContainer.getInstance(LocalContext.current.applicationContext as Application)
+    val onFailure : (Throwable) -> Unit = {
+        Toast.makeText(context, "Something went wrong, failed to perform the operation", Toast.LENGTH_LONG).show()
+        Log.e("GeoHunt", "Failure encountered: $it")
+        navController.popBackStack()
+    }
 
     NavHost(navController, startDestination = VisibleRoute.Home.route, modifier = modifier) {
         composable(VisibleRoute.Home.route) {
@@ -103,17 +112,35 @@ fun NavigationController(
                 Text("OK")
             }
         }
-        composable(VisibleRoute.Create.route) {
+        composable(HiddenRoute.CreateChallenge.route) {
             CreateNewChallenge(
-                onFailure = {
-                    Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
-                    Log.e("GeoHunt", "Fail to create challenge: $it")
-                    navController.popBackStack()
-                },
+                onFailure = onFailure,
                 onSuccess = {
                     navController.popBackStack()
                     navController.navigate("challenge-view/${it.id}")
                 }
+            )
+        }
+
+        composable(HiddenRoute.CreateBounty.route) {
+            CreateNewBounty(
+                onFailure = onFailure,
+                onSuccess = { bounty ->
+                    navController.popBackStack()
+                    navController.navigate("bounty-admin-page/${bounty.bid}")
+                }
+            )
+        }
+
+        composable(
+            "create-challenge-bounty/{bountyId}",
+            arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
+        ) {
+            val bid = it.arguments?.getString("bountyId")!!
+            CreateNewChallenge(
+                onFailure = onFailure,
+                onSuccess = { navController.popBackStack() },
+                viewModel = viewModel(factory = CreateChallengeViewModel.BountyFactory(bid))
             )
         }
 
@@ -140,10 +167,10 @@ fun NavigationController(
         composable("${VisibleRoute.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
             it.arguments?.getString("userId")?.let {
                 userId -> ProfilePage(
-                ProfilePageViewModel(
-                    container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, container.claims, container.score, userId
+                    ProfilePageViewModel(
+                        container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, container.claims, container.score, userId
+                    )
                 )
-            )
             }
         }
 
@@ -187,16 +214,23 @@ fun NavigationController(
             val cid = backStackEntry.arguments?.getString("challengeId")!!
             ClaimChallenge(
                 cid = cid,
-                onFailure = {
-                    Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
-                    Log.e("GeoHunt", "Fail to create challenge: $it")
-                    navController.popBackStack()
-                },
+                onFailure = onFailure,
                 onClaimSubmitted = {
                     navController.popBackStack()
                     navController.navigate("challenge-view/$cid")
                 }
             )
+        }
+
+        // Bounty
+        composable(
+            "bounty-admin-page/{bountyId}",
+            arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val bid = backStackEntry.arguments?.getString("bountyId")!!
+            AdminBountyPage(bid, onFailure = onFailure, onCreateChallenge = {
+                navController.navigate("create-challenge-bounty/$bid")
+            })
         }
 
         // Settings
