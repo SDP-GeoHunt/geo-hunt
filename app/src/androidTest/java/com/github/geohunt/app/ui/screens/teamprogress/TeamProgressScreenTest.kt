@@ -164,8 +164,7 @@ class TeamProgressScreenTest {
         testRule.waitUntilDoesNotExist(hasText("Loading", substring = true), timeoutMillis = DEFAULT_TIMEOUT)
         testRule.waitUntilDoesNotExist(hasTestTag("loadingChallenges"), timeoutMillis = DEFAULT_TIMEOUT)
 
-        // Check if location and hunters are displayed
-        testRule.onNodeWithText("Not hunted yet", substring = true).assertIsDisplayed()
+        // Check if location is displayed
         testRule.waitUntilExactlyOneExists(hasText("km", substring = true), timeoutMillis = DEFAULT_TIMEOUT)
 
         // Check if the button is shown

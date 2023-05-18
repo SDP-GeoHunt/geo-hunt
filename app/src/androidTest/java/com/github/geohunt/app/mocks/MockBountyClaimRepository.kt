@@ -6,6 +6,8 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.Team
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDateTime
 
 class MockBountyClaimRepository : BountyClaimRepositoryInterface {
@@ -42,5 +44,9 @@ class MockBountyClaimRepository : BountyClaimRepositoryInterface {
     override suspend fun getClaimsOf(team: Team): List<Claim> {
         // return an empty list or a list of default claims
         return emptyList()
+    }
+
+    override fun getRealtimeClaimsOf(team: Team): Flow<List<Claim>> {
+        return flowOf(listOf())
     }
 }

@@ -115,7 +115,7 @@ fun TeamProgressScreenContent(
                     BountyChallengeCard(
                         challenge = challenge,
                         currentLocation = currentLocation.value,
-                        isEnabled = isClaimed.value == null,
+                        isEnabled = isClaimed.value != null,
                         isClaimed = isClaimed.value == true,
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 8.dp)
