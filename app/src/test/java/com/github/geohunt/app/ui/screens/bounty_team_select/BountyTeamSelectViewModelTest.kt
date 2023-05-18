@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.screens.view_bounty
+package com.github.geohunt.app.ui.screens.bounty_team_select
 
 import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.UserRepositoryInterface
@@ -24,13 +24,13 @@ import org.junit.Test
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ViewBountyViewModelTest {
+class BountyTeamSelectViewModelTest {
     private fun createFakeViewModel(
         challengeRepository: ChallengeRepositoryInterface = MockChallengeRepository(),
         userRepository: UserRepositoryInterface = MockUserRepository(),
         teamsRepository: TeamsRepositoryInterface = MockTeamRepository()
-    ): ViewBountyViewModel {
-        return ViewBountyViewModel(
+    ): BountyTeamSelectViewModel {
+        return BountyTeamSelectViewModel(
             "1",
             bountiesRepository = object: MockBountiesRepositories() {
                 override suspend fun getBountyById(bid: String): Bounty {

@@ -32,7 +32,7 @@ import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
-import com.github.geohunt.app.ui.screens.view_bounty.ViewBountyPage
+import com.github.geohunt.app.ui.screens.bounty_team_select.BountyTeamSelectPage
 import com.github.geohunt.app.ui.screens.home.HomeScreen
 import com.github.geohunt.app.ui.settings.SettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
@@ -210,7 +210,7 @@ fun NavigationController(
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
-            ViewBountyPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {})
+            BountyTeamSelectPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {})
         }
 
         composable(

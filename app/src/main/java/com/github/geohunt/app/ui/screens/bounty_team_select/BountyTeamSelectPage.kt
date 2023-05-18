@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.screens.view_bounty
+package com.github.geohunt.app.ui.screens.bounty_team_select
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -44,11 +45,11 @@ import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ViewBountyPage(
+fun BountyTeamSelectPage(
     bountyId: String,
     onBack: () -> Any,
-    onSelectedTeam: () -> Any,
-    viewModel: ViewBountyViewModel = viewModel(factory = ViewBountyViewModel.getFactory(bountyId))
+    onSelectedTeam: (Team) -> Any,
+    viewModel: BountyTeamSelectViewModel = viewModel(factory = BountyTeamSelectViewModel.getFactory(bountyId))
 ) {
     val bountyName by viewModel.bountyName.collectAsState()
     val challenges by viewModel.challenges.collectAsState()
@@ -63,7 +64,7 @@ fun ViewBountyPage(
             id = R.string.select_team_for_bounty,
             bountyName ?: "…"
         ), {
-            IconButton(onClick = { onSelectedTeam() }, enabled = currentTeam != null) {
+            IconButton(onClick = { onSelectedTeam(currentTeam!!) }, enabled = currentTeam != null, modifier = Modifier.testTag("check-btn")) {
                 Icon(Icons.Default.Check, contentDescription = null)
             }
         })
@@ -119,11 +120,14 @@ fun TeamCreator(createTeam: (String) -> Unit, disabled: Boolean) {
                     singleLine = true,
                     placeholder = { Text(text = stringResource(id = R.string.enter_team_name)) },
                     label = { Text(text = stringResource(id = R.string.team_name)) },
-                    enabled = !disabled
+                    enabled = !disabled,
+                    modifier = Modifier.testTag("team-creator-field")
                 )
+
                 TextButton(
                     onClick = { createTeam(name.value); name.value = "" },
-                    enabled = !disabled
+                    enabled = !disabled && name.value != "",
+                    modifier = Modifier.testTag("team-creator-button")
                 ) {
                     Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.create_team))
                 }
@@ -165,15 +169,27 @@ fun TeamsSelector(
 
 }
 
+/**
+ * A team entry in the team selector
+ *
+ * @param name The team's name
+ * @param users the list of users, if any
+ * @param onAction A callback triggered if the user clicks to join/leave
+ * @param disabled If the entry should be disabled for any action
+ * @param isUserInside If the user is inside, the "leave" icon will be shown instead of "join" icon
+ * @param canDelete Whether the delete button will be displayed to the user.
+ *                  This wil not depend on "disabled".
+ * @param onDelete When the users ask to delete the team
+ */
 @Composable
 fun TeamSelector(
     name: String,
-    users: List<User>?,
-    join: () -> Any,
-    disabled: Boolean,
-    shouldShowLeaveBtn: Boolean,
-    canDelete: Boolean,
-    onDelete: () -> Any
+    users: List<User>? = listOf(),
+    onAction: () -> Any = {},
+    disabled: Boolean = false,
+    isUserInside: Boolean = false,
+    canDelete: Boolean = false,
+    onDelete: () -> Any = {}
 ) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -183,15 +199,28 @@ fun TeamSelector(
 
             if (canDelete) {
                 IconButton(onClick = { onDelete() }) {
-                    Icon(Icons.Default.Delete, contentDescription = stringResource(id = R.string.delete_team))
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = stringResource(id = R.string.delete_team),
+                        modifier = Modifier.testTag("delete-btn")
+                    )
                 }
                 Spacer(Modifier.size(4.dp))
             }
 
-            IconButton(onClick = { join() }, enabled = !disabled) {
-                when(shouldShowLeaveBtn) {
-                    false -> Icon(Icons.Default.PersonAdd, contentDescription = stringResource(id = R.string.join_team))
-                    true -> Icon(Icons.Default.Logout, contentDescription = stringResource(id = R.string.leave_team))
+            IconButton(onClick = { onAction() }, enabled = !disabled) {
+                when(isUserInside) {
+                    false -> Icon(
+                        Icons.Default.PersonAdd,
+                        contentDescription = stringResource(id = R.string.join_team),
+                        modifier = Modifier.testTag("join-btn")
+                    )
+
+                    true -> Icon(
+                        Icons.Default.Logout,
+                        contentDescription = stringResource(id = R.string.leave_team),
+                        modifier = Modifier.testTag("leave-btn")
+                    )
                 }
 
             }
@@ -199,7 +228,7 @@ fun TeamSelector(
 
         users?.let { users ->
             users.forEach {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.testTag("user-entry")) {
                     ProfileIcon(user = it, modifier = Modifier.size(64.dp))
                     Text(text = it.name)
                 }

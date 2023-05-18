@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.ui.screens.view_bounty.BountyDetailsHeader
-import com.github.geohunt.app.ui.screens.view_bounty.challengesImageSlider
+import com.github.geohunt.app.ui.screens.bounty_team_select.BountyDetailsHeader
+import com.github.geohunt.app.ui.screens.bounty_team_select.challengesImageSlider
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
@@ -89,3 +89,9 @@ fun HomeBountyCard(
         }
     }
 }
+
+@Composable
+internal fun InlineSeparator() {
+    Text("⋅", modifier = Modifier.padding(horizontal = 8.dp))
+}
+

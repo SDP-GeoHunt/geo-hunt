@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.ui.components.navigation.HiddenRoute
@@ -82,9 +81,3 @@ fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Any) {
     }
 
 }
-
-@Composable
-internal fun InlineSeparator() {
-    Text("⋅", modifier = Modifier.padding(horizontal = 8.dp))
-}
-

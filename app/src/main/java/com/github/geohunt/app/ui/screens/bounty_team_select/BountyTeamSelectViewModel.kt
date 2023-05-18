@@ -1,4 +1,4 @@
-package com.github.geohunt.app.ui.screens.view_bounty
+package com.github.geohunt.app.ui.screens.bounty_team_select
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
  * @param challengeRepository The challenge repository of the bounty
  * @param teamsRepository The team repository of the bounty
  */
-class ViewBountyViewModel(
+class BountyTeamSelectViewModel(
     bountyId: String,
     bountiesRepository: BountiesRepositoryInterface,
     challengeRepository: ChallengeRepositoryInterface,
@@ -123,7 +123,7 @@ class ViewBountyViewModel(
                     val application = this[APPLICATION_KEY] as Application
                     val container = AppContainer.getInstance(application)
 
-                    ViewBountyViewModel(
+                    BountyTeamSelectViewModel(
                         bountyId = bountyId,
                         bountiesRepository = container.bounties,
                         challengeRepository = container.bounties.getChallengeRepository(bountyId),

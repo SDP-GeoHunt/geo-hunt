@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.R
 
 @Composable
-fun TopBarWithBackButton(onBack: () -> Any, title: String, rightContent: @Composable () () -> Unit = {}) {
+fun TopBarWithBackButton(onBack: () -> Any, title: String, rightContent: @Composable () -> Unit = {}) {
     TopAppBar {
         IconButton(
             onClick = { onBack() },
