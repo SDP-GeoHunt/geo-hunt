@@ -5,7 +5,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Home
@@ -75,7 +74,7 @@ enum class VisibleRoute(val titleStringId: Int,
 
 enum class HiddenRoute(override val route: String): Route {
     BountyTeamChooser("bounty/team-select"),
-    BountyView("bounty/view"),
+    BountyTeamProgress("bounty/team-progress"),
     EditProfile("settings/profile"),
     Settings("settings"),
     AppSettings("settings/app"),
@@ -263,7 +262,7 @@ fun NavigationController(
         }
 
         composable(
-            "${HiddenRoute.BountyView.route}/{bountyId}",
+            "${HiddenRoute.BountyTeamProgress.route}/{bountyId}",
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
