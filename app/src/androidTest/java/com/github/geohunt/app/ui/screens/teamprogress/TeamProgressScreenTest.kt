@@ -3,7 +3,6 @@ package com.github.geohunt.app.ui.screens.teamprogress
 import android.app.Application
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -18,11 +17,16 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.ImageRepository
+import com.github.geohunt.app.data.repository.LocationRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.BountiesRepository
 import com.github.geohunt.app.mocks.MockAuthRepository
 import com.github.geohunt.app.mocks.MockUserRepository
+import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.database.FirebaseEmulator
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
@@ -41,6 +45,13 @@ class TeamProgressScreenTest {
             val mockAuth = MockAuthRepository()
             val mockUserRepo = MockUserRepository(mockAuth = mockAuth)
 
+            val mockLocation = Location(41.5, -0.5)
+            val mockLocationRepo = object : LocationRepositoryInterface {
+                override fun getLocations(coroutineScope: CoroutineScope): Flow<Location> {
+                    return flowOf(mockLocation)
+                }
+            }
+
             val storage = FirebaseEmulator.getEmulatedStorage()
 
             val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
@@ -58,7 +69,7 @@ class TeamProgressScreenTest {
             TeamProgressViewModel(
                 authRepository = mockAuth,
                 userRepository = mockUserRepo,
-                locationRepository = container.location,
+                locationRepository = mockLocationRepo,
                 bountiesRepository = bountiesRepository,
                 bountyId = bountyId
             )
