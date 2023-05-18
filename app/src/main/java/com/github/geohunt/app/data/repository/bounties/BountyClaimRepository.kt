@@ -56,12 +56,11 @@ class BountyClaimRepository(
         // Upload the entry to Firebase's Realtime Database
         val claimEntry = FirebaseClaim(
             currentTeam.teamId,
-
             time = DateUtils.utcIso8601Now(),
             photoUrl = photoUrl.toString(),
             cid = challenge.id,
             location = location,
-            distance = (distance.toLong() + 1),
+            distance = distance.toLong(),
             awardedPoints = pointCalculatorMap[challenge.difficulty]!!.computePoints(distance)
         )
 
