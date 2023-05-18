@@ -1,4 +1,38 @@
 {
+    "bounties": {
+        "byUser": {
+            "1": {
+                "98d755ad-NVP5y7V0SyObpqi226o": true
+            }
+        },
+        "meta": {
+            "98d755ad": {
+                "-NVP5y7V0SyObpqi226o": {
+                    "metadata": {
+                        "adminUid": "1",
+                        "expirationDate": "2023-05-22T22:00:00Z",
+                        "location": {
+                            "latitude": 46.516450,
+                            "longitude": 2.571498
+                        },
+                        "name": "Bounty's Cup",
+                        "startingDate": "2023-05-13T22:00:00Z"
+                    }
+                }
+            }
+        },
+        "teams": {
+            "98d755ad-NVP5y7V0SyObpqi226o": {
+                "teams": {
+                    "-NVVeeG9ztzPzjK3PGZn": {
+                        "name": "<Team-Name>",
+                        "score": 0,
+                        "teamLeader": "o18YSwuv2QTi4wd7UW53HJ0sAHK2"
+                    }
+                }
+            }
+        }
+    },
     "challenges": {
         "163f921c": {
             "-NQWln8MlqnVhArUIdwE": {

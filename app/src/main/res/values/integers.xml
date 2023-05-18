@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="maximum_number_of_pixel_per_photo">1048576</integer>
+    <integer name="bounty_name_maximum_character">20</integer>
 </resources>

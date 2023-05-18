@@ -1,6 +1,7 @@
 package com.github.geohunt.app.data.repository
 
 import android.net.Uri
+import android.util.Log
 import com.github.geohunt.app.data.exceptions.ChallengeNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.local.LocalPicture
@@ -37,7 +38,8 @@ class ChallengeRepository(
     private val authRepository: AuthRepositoryInterface,
     database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    bounty: DatabaseReference? = null
+    private val bounty: DatabaseReference? = null,
+    private val bid: String? = null
 ): ChallengeRepositoryInterface {
     private val challenges = (bounty ?: database.reference).child("challenges")
     private val posts = (bounty ?: database.reference).child("posts")
@@ -110,6 +112,8 @@ class ChallengeRepository(
      * Returns the lists of posted challenges of the user with the given ID.
      */
     override fun getPosts(userId: String): Flow<List<Challenge>> {
+        require(bid == null)
+
         return posts
             .child(userId)
             .snapshots
@@ -148,7 +152,9 @@ class ChallengeRepository(
 
         // First upload the image to Firebase Storage
         // This ensures that the database doesn't contain nonexistent image data
-        val photoUrl: Uri = imageRepository.uploadChallengePhoto(photo, coarseHash, challengeRef.key!!)
+        val photoUrl: Uri = bid?.run {
+            imageRepository.uploadBountyChallenge(photo, bid, coarseHash, challengeRef.key!!)
+        } ?: imageRepository.uploadChallengePhoto(photo, coarseHash, challengeRef.key!!)
 
         // Upload the entry to Firebase's Realtime Database
         val challengeEntry = FirebaseChallenge(
@@ -165,11 +171,13 @@ class ChallengeRepository(
             challengeRef.setValue(challengeEntry).await()
 
             // Add the post to the list of the user posts
-            posts
-                .child(currentUser.id)
-                .child(challengeId)
-                .setValue(true)
-                .await()
+            if (bid == null) {
+                posts
+                    .child(currentUser.id)
+                    .child(challengeId)
+                    .setValue(true)
+                    .await()
+            }
         }
 
         return challengeEntry.asExternalModel(challengeId)
