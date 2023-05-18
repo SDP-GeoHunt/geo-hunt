@@ -65,7 +65,7 @@ fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Any) {
                                     isInside
                                 ) {
                                     if (isInside) navigate("${HiddenRoute.BountyView.route}/${bounty.bid}")
-                                    else navigate("${HiddenRoute.SelectTeamForBounty.route}/${bounty.bid}")
+                                    else navigate("${HiddenRoute.BountyTeamChooser.route}/${bounty.bid}")
                                 }
                             }
                         }

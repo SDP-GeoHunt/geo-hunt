@@ -64,8 +64,8 @@ enum class VisibleRoute(val titleStringId: Int, override val route: String, val 
 }
 
 enum class HiddenRoute(override val route: String): Route {
-    SelectTeamForBounty("select-team-for-bounty"),
-    BountyView("bounty-view"),
+    BountyTeamChooser("bounty/team-select"),
+    BountyView("bounty/view"),
     EditProfile("settings/profile"),
     Settings("settings"),
     AppSettings("settings/app"),
@@ -206,7 +206,7 @@ fun NavigationController(
 
         // Bounties
         composable(
-            "${HiddenRoute.SelectTeamForBounty.route}/{bountyId}",
+            "${HiddenRoute.BountyTeamChooser.route}/{bountyId}",
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
