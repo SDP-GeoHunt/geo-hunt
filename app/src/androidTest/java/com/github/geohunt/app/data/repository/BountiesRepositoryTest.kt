@@ -10,8 +10,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.Matchers.contains
-import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.*
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDateTime
@@ -67,6 +66,6 @@ class BountiesRepositoryTest {
 
         val bounties = repo.getBountyCreatedBy(MockUserRepository().getCurrentUser())
 
-        assertThat(bounties.map{ it.bid }, contains(bounty.bid))
+        assertThat(bounties.map{ it.bid }, hasItem(bounty.bid))
     }
 }
