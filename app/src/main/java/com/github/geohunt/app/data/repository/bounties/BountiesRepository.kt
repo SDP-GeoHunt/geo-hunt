@@ -4,11 +4,8 @@ import com.github.geohunt.app.data.exceptions.BountyNotFoundException
 import com.github.geohunt.app.data.network.firebase.models.FirebaseBountyMetadata
 import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.model.Bounty
-import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.model.points.GaussianPointCalculator
-import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DataPool
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
@@ -135,7 +132,8 @@ class BountiesRepository(
             .run {
                 children.flatMap { quadrantRef ->
                     quadrantRef.children.mapNotNull {
-                        it.getValue<FirebaseBountyMetadata>()?.asExternalModel(quadrantRef.key!! + it.key!!)
+                        it.child("metadata")
+                            .getValue<FirebaseBountyMetadata>()?.asExternalModel(quadrantRef.key!! + it.key!!)
                     }
                 }
             }
