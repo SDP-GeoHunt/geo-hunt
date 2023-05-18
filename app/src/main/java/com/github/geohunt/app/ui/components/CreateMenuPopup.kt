@@ -16,7 +16,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun CreateMenuPopup(
     state: ModalBottomSheetState,
-    navController: NavController,
+    createChallenge: () -> Unit,
+    createBounty: () -> Unit,
     scope: CoroutineScope,
     content: @Composable () -> Unit
 ) {
@@ -34,7 +35,7 @@ fun CreateMenuPopup(
 
                 modifier = Modifier.clickable {
                     scope.launch { state.hide() }
-                    navController.navigate(HiddenRoute.CreateChallenge.route)
+                    createChallenge()
                 }
             )
 
@@ -49,23 +50,8 @@ fun CreateMenuPopup(
 
                 modifier = Modifier.clickable {
                     scope.launch { state.hide() }
-                    navController.navigate(HiddenRoute.CreateBounty.route)
+                    createBounty()
                 }
-            )
-
-            ListItem(
-                    text = { Text("Debug - View Bounty") },
-            icon = {
-                Icon(
-                    Icons.Default.PestControl,
-                    contentDescription = "Debug Icon"
-                )
-            },
-
-            modifier = Modifier.clickable {
-                scope.launch { state.hide() }
-                navController.navigate("bounty-admin-page/98d755ad-NVP5y7V0SyObpqi226o")
-            }
             )
         }
     }) {

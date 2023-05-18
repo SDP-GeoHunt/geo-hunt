@@ -109,7 +109,7 @@ private fun AdminBountyPageUI(
         }
 
         Row(modifier = Modifier.padding(20.dp, 0.dp)) {
-            val firstComponent = formatTimeStuff(start = bounty.startingDate, end = bounty.expirationDate)
+            val firstComponent = formatTimeRange(start = bounty.startingDate, end = bounty.expirationDate)
             val secondComponent = pluralStringResource(id = R.plurals.teams_count, count = teams.size, teams.size)
             val thirdComponent = pluralStringResource(id = R.plurals.members_count, count = memberCount, memberCount)
 
@@ -227,7 +227,7 @@ private fun ColumnScope.DisplayTeams(
 
 
 @Composable
-private fun formatTimeStuff(start: LocalDateTime, end: LocalDateTime): String {
+private fun formatTimeRange(start: LocalDateTime, end: LocalDateTime): String {
     val now = LocalDateTime.now()
 
     return when {

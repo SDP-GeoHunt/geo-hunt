@@ -15,10 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Location
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -47,7 +49,7 @@ private fun LocationDialog(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Text(
-                    "Pick a location",
+                    text = stringResource(R.string.pick_location_popup_title),
                     fontSize = 20.sp,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                         .padding(0.dp, 3.dp)
@@ -94,7 +96,7 @@ fun LocationPicker(location: Location?, setLocation: (Location) -> Unit) {
         mutableStateOf(false)
     }
 
-    TextField(value = location?.toString() ?: "<Select>",
+    TextField(value = location?.toString() ?: stringResource(R.string.location_picker_placeholder),
         onValueChange = {},
         readOnly = true,
         enabled = false,

@@ -150,6 +150,12 @@
     <string name="location">Location</string>
     <string name="name">Name</string>
     <string name="create_bounty_button">Create bounty</string>
+    <string name="Ok">Ok</string>
+    <string name="Cancel">Cancel</string>
+    <string name="renaming_bounty_popup_title">Renaming bounty</string>
+    <string name="renaming_bounty_placeholder"><![CDATA[<Name of Bounty>]]></string>
+    <string name="pick_location_popup_title">Pick a location</string>
+    <string name="location_picker_placeholder"><![CDATA[<Select>]]></string>
 
     <plurals name="teams_count">
         <item quantity="zero">no teams</item>

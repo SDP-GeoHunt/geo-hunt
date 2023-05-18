@@ -13,10 +13,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.github.geohunt.app.ui.components.CreateMenuPopup
+import com.github.geohunt.app.ui.components.navigation.HiddenRoute
 import com.github.geohunt.app.ui.components.navigation.NavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel, logout: () -> Any) {
     val navController = rememberNavController()
@@ -35,7 +37,11 @@ fun MainScreen(viewModel: MainViewModel, logout: () -> Any) {
         }
     }
 
-    CreateMenuPopup(modalState, navController, scope) {
+    CreateMenuPopup(modalState, {
+        navController.navigate(HiddenRoute.CreateChallenge.route)
+    }, {
+       navController.navigate(HiddenRoute.CreateBounty.route)
+    }, scope) {
         Scaffold(
             bottomBar = {
                 Surface(modifier = Modifier.shadow(9.dp)) {
