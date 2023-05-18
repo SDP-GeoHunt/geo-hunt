@@ -53,7 +53,7 @@ class BountyClaimRepository(
 
         // First upload the image to Firebase storage
         // This ensures that the database doesn't contain nonexistent image data
-        val photoUrl : Uri = imageRepository.uploadBountyClaimPhoto(photo, claimId, bid)
+        val photoUrl: Uri = imageRepository.uploadBountyClaimPhoto(photo, claimId, bid)
 
         // Compute the distance to the target
         val distance = location.distanceTo(challenge.location)

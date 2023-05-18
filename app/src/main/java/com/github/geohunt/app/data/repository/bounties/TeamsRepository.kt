@@ -118,7 +118,7 @@ class TeamsRepository(
             teamId = s.key!!,
             name = s.child("name").getValue(String::class.java)!!,
             membersUid = s.child("members").toMap<Boolean>().filterValues { it }.keys.toList(),
-            leaderUid = s.child("teamLeader").getValue(String::class.java) ?: "",
+            leaderUid = s.child("teamLeader").getValue(String::class.java)!!,
             score = s.child("score").getValue(Long::class.java) ?: 0
         )
     }
