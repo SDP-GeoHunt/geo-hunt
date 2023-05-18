@@ -33,6 +33,7 @@ import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
+import com.github.geohunt.app.ui.screens.bounty_team_select.BountyTeamSelectPage
 import com.github.geohunt.app.ui.screens.home.HomeScreen
 import com.github.geohunt.app.ui.screens.userleaderboard.UserLeaderboard
 import com.github.geohunt.app.ui.settings.SettingsPage
@@ -65,6 +66,8 @@ enum class VisibleRoute(val titleStringId: Int, override val route: String, val 
 }
 
 enum class HiddenRoute(override val route: String): Route {
+    BountyTeamChooser("bounty/team-select"),
+    BountyView("bounty/view"),
     EditProfile("settings/profile"),
     Settings("settings"),
     AppSettings("settings/app"),
@@ -83,7 +86,7 @@ fun NavigationController(
 
     NavHost(navController, startDestination = VisibleRoute.Home.route, modifier = modifier) {
         composable(VisibleRoute.Home.route) {
-            HomeScreen()
+            HomeScreen(navigate = { navController.navigate(it) })
         }
         composable(VisibleRoute.Explore.route) {
             /*val epflCoordinates = LatLng(46.519585, 6.5684919)
@@ -208,6 +211,23 @@ fun NavigationController(
                 profileVisibilityRepository = container.profileVisibilities
             )
             PrivacySettingsPage(onBack = { navController.popBackStack() }, viewModel)
+        }
+
+        // Bounties
+        composable(
+            "${HiddenRoute.BountyTeamChooser.route}/{bountyId}",
+            arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
+        ) {
+            val bid = it.arguments?.getString("bountyId")!!
+            BountyTeamSelectPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {})
+        }
+
+        composable(
+            "${HiddenRoute.BountyView.route}/{bountyId}",
+            arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
+        ) {
+            val bid = it.arguments?.getString("bountyId")!!
+            Text(text = "ok")
         }
     }
 }
