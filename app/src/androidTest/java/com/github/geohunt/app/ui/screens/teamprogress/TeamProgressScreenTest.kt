@@ -85,6 +85,7 @@ class TeamProgressScreenTest {
                 onBack = { isBackCalled = true },
                 onLeaderboard = {},
                 onChat = {},
+                onClaim = {},
                 bountyId = bountyId,
                 viewModel = viewModel(factory = testFactory)
             )
@@ -109,6 +110,7 @@ class TeamProgressScreenTest {
                 onLeaderboard = { isLeaderboardOpen = true },
                 onChat = {},
                 bountyId = bountyId,
+                onClaim = {},
                 viewModel = viewModel(factory = testFactory)
             )
         }
@@ -132,6 +134,7 @@ class TeamProgressScreenTest {
                 onLeaderboard = {},
                 onChat = { isChatOpened = true },
                 bountyId = bountyId,
+                onClaim = {},
                 viewModel = viewModel(factory = testFactory)
             )
         }
@@ -152,6 +155,7 @@ class TeamProgressScreenTest {
                 onBack = {},
                 onLeaderboard = {},
                 onChat = {},
+                onClaim = {},
                 bountyId = bountyId,
                 viewModel = viewModel(factory = testFactory)
             )
@@ -168,6 +172,7 @@ class TeamProgressScreenTest {
                 onBack = {},
                 onLeaderboard = {},
                 onChat = {},
+                onClaim = {},
                 bountyId = bountyId,
                 viewModel = viewModel(factory = testFactory)
             )
