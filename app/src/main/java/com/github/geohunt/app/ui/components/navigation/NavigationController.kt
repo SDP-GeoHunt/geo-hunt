@@ -28,6 +28,7 @@ import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.ui.components.bounties.BountyClaimChallenge
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
@@ -70,7 +71,10 @@ enum class HiddenRoute(override val route: String): Route {
     Settings("settings"),
     AppSettings("settings/app"),
     PrivacySettings("settings/privacy"),
-    Leaderboard("leaderboard")
+    Leaderboard("leaderboard"),
+    BountyClaimChallenge("bounty-claim-challenge"),
+    ChallengeView("challenge-view"),
+
 }
 
 @Composable
@@ -219,6 +223,32 @@ fun NavigationController(
         ) {
             val bid = it.arguments?.getString("bountyId")!!
             Text(text = "ok")
+        }
+
+        // Bounties
+        // Open a claim for a given bounty's challenge
+        composable(
+            "${HiddenRoute.BountyClaimChallenge.route}/{bountyId}/{challengeId}",
+            arguments = listOf(
+                navArgument("bountyId") { type = NavType.StringType },
+                navArgument("challengeId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val bid = backStackEntry.arguments?.getString("bountyId")!!
+            val cid = backStackEntry.arguments?.getString("challengeId")!!
+
+            BountyClaimChallenge(
+                bid = bid,
+                cid = cid,
+                onFailure = {
+                    Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Fail to create challenge: $it")
+                    navController.popBackStack()
+                },
+                onClaimSubmitted = {
+                    navController.popBackStack()
+                    navController.navigate("${HiddenRoute.ChallengeView.route}/$cid")
+                }
+            )
         }
     }
 }
