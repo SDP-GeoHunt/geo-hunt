@@ -18,5 +18,5 @@ interface MessagesRepositoryInterface {
      * @param teamId The id of the team to send the message to
      * @param message The message to send
      */
-    suspend fun sendMessage(teamId: String, message: Message): Message
+    suspend fun sendMessage(teamId: String, message: String) : Message
 }

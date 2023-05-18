@@ -126,7 +126,8 @@
     
     <string name="new_challenge_notification_title">New Challenge!</string>
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
-    <string name="team_chat_title">Team Chat</string>
+    <string name="team_chat_title">Team chat</string>
+    <string name="message_send_button">Send</string>
 
     <!-- Bounty -->
     <string name="claim_bounty_challenge_button">Submit Claim</string>

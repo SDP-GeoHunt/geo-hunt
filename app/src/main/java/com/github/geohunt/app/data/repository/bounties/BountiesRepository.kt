@@ -43,6 +43,7 @@ class BountiesRepository(
     private val messagesRepository = DataPool<String, MessagesRepository> { bid ->
         MessagesRepository(
             bountiesTeam.child(bid),
+            userRepository,
             ioDispatcher = ioDispatcher
         )
     }

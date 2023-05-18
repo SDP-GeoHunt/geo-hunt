@@ -27,6 +27,7 @@ import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
 import kotlinx.coroutines.flow.StateFlow
 import com.github.geohunt.app.R
+import androidx.compose.material.MaterialTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +35,7 @@ fun ChatScreen(
     modifier: Modifier = Modifier,
     onBack : () -> Any,
     bountyId: String,
-    viewModel: ChatViewModel = viewModel(factory = ChatViewModel.factory(bountyId = bountyId))
+    viewModel: TeamChatViewModel = viewModel(factory = TeamChatViewModel.factory(bountyId = bountyId))
 ) {
 
     val messageState = viewModel.messages.collectAsStateWithLifecycle()
@@ -45,7 +46,8 @@ fun ChatScreen(
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(padding),) {
+                .padding(padding),)
+        {
             Box(
                 modifier = modifier,
                 contentAlignment = Alignment.Center
@@ -85,6 +87,7 @@ fun MessageInput(sendMessage : (String) -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween) {
         TextField(
             modifier = Modifier.weight(1f),
+            singleLine = true,
             value = inputValue,
             onValueChange = { inputValue = it },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
@@ -94,7 +97,7 @@ fun MessageInput(sendMessage : (String) -> Unit) {
             onClick = { sendMessage(inputValue); inputValue = ""},
             enabled = inputValue.isNotBlank(),
         ) {
-            Text("Send")
+            Text(stringResource(id = R.string.message_send_button))
         }
     }
 }
@@ -102,31 +105,28 @@ fun MessageInput(sendMessage : (String) -> Unit) {
 @Composable
 fun MessageCard(
     messageItem: Message,
-    getUser : (Message) -> StateFlow<User?>,
+    getUser : (String) -> StateFlow<User?>,
     isMessageMine: Boolean?
 ) {
-    val user = getUser(messageItem).collectAsStateWithLifecycle()
+    val user = getUser(messageItem.senderUid).collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalAlignment = when (isMessageMine) {
-            true -> Alignment.End
-            else -> Alignment.Start
-        }
+        horizontalAlignment = if (isMessageMine == true) Alignment.End else Alignment.Start
     ) {
             Card(
                 modifier = Modifier
                     .widthIn(max = 340.dp),
                 shape = cardShapeFor(isMessageMine),
-                backgroundColor = if (isMessageMine == true) Color.Blue else Color.LightGray
+                backgroundColor = if (isMessageMine == true) MaterialTheme.colors.primary else MaterialTheme.colors.surface
             ) {
                 Text(
                     modifier = Modifier.padding(8.dp),
                     text = messageItem.content,
                     color = when (isMessageMine) {
-                        true -> Color.White
-                        else -> Color.Black
+                        true -> MaterialTheme.colors.onPrimary
+                        else -> MaterialTheme.colors.onSurface
                     },
                 )
             }

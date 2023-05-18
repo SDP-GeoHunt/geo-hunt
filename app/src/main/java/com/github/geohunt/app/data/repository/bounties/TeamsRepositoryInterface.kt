@@ -98,12 +98,6 @@ interface TeamsRepositoryInterface {
     suspend fun getUserTeam(): Flow<Team?>
 
     /**
-     * Get the team of the current user
-     */
-    @Throws(UserNotLoggedInException::class, TeamNotFoundException::class)
-    suspend fun getUserTeamAsync() : Team
-
-    /**
      * Returns the score of the specified team
      */
     fun getTeamScore(team: Team) : Flow<Long>

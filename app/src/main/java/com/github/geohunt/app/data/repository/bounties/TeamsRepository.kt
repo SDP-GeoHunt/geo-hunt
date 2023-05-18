@@ -57,14 +57,6 @@ class TeamsRepository(
 
     override suspend fun getUserTeam(): Flow<Team?> = getUserTeam(userRepository.getCurrentUser().id)
 
-    override suspend fun getUserTeamAsync(): Team = withContext(ioDispatcher) {
-        val uid = userRepository.getCurrentUser().id
-
-        teams.get().await().children
-            .map { snapshotToTeam(it) }
-            .first { it.membersUid.contains(uid) }
-    }
-
     override fun getTeamScore(team: Team): Flow<Long> =
         teams.child(team.teamId).child("score").snapshots
             .map { it.getValue(Long::class.java) ?: throw TeamNotFoundException(team.teamId) }

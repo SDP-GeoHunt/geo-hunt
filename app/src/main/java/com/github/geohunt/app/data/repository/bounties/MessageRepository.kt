@@ -1,5 +1,7 @@
 package com.github.geohunt.app.data.repository.bounties
 
+import com.github.geohunt.app.data.repository.UserRepository
+import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.model.Message
 import com.github.geohunt.app.model.Team
 import com.google.firebase.database.DataSnapshot
@@ -15,6 +17,7 @@ import kotlinx.coroutines.withContext
 
 class MessagesRepository(
     bountyReference: DatabaseReference,
+    private val userRepository: UserRepositoryInterface,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): MessagesRepositoryInterface {
     private val messages = bountyReference.child("messages")
@@ -25,11 +28,17 @@ class MessagesRepository(
             .flowOn(ioDispatcher)
     }
 
-    override suspend fun sendMessage(teamId: String, message: Message): Message {
+    override suspend fun sendMessage(teamId: String, message: String) : Message {
         return withContext(ioDispatcher) {
-            messages.child(teamId).child(message.messageId).setValue(message).await()
-            message
+            val newMessageReference = messages.push()
+            val messageId = newMessageReference.key!!
+            val senderUid = userRepository.getCurrentUser().id
+            val timestamp = System.currentTimeMillis()
+            val messageData = Message(messageId, senderUid, timestamp, message)
+            messages.child(teamId).child(messageId).setValue(messageData).await()
+            messageData
         }
+
     }
 
     private fun snapshotToMessage(s: DataSnapshot): Message {

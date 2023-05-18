@@ -9,16 +9,16 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.UserRepository
 import com.github.geohunt.app.data.repository.bounties.*
-import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Message
 import com.github.geohunt.app.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.*
 
-class ChatViewModel(
+class TeamChatViewModel(
     private val teamsRepository: TeamsRepositoryInterface,
     private val messagesRepository: MessagesRepositoryInterface,
     private val userRepository: UserRepository
@@ -27,10 +27,7 @@ class ChatViewModel(
     private val _messages: MutableStateFlow<List<Message>?> = MutableStateFlow(null)
     val messages: StateFlow<List<Message>?> = _messages.asStateFlow()
 
-    private val userCache: MutableMap<Message, MutableStateFlow<User?>> = mutableMapOf()
-
-//    private val _isMessageMine: MutableStateFlow<Boolean?> = MutableStateFlow(null)
-//    val isMessageMine: StateFlow<Boolean?> = _isMessageMine
+    private val userCache: MutableMap<String, MutableStateFlow<User?>> = mutableMapOf()
 
     private var currentUserId = ""
 
@@ -41,9 +38,11 @@ class ChatViewModel(
 
     private fun fetchMessages() {
         viewModelScope.launch {
-            val teamId = teamsRepository.getUserTeamAsync().teamId
-            messagesRepository.getTeamMessages(teamId).collect {
-                _messages.value = it
+            val teamId = teamsRepository.getUserTeam().first()?.teamId
+            if (teamId != null) {
+                messagesRepository.getTeamMessages(teamId).collect {
+                    _messages.value = it
+                }
             }
         }
     }
@@ -60,23 +59,22 @@ class ChatViewModel(
 
      fun sendMessage(content: String) {
          viewModelScope.launch {
-             val teamId = teamsRepository.getUserTeamAsync().teamId
-             val senderUid = userRepository.getCurrentUser().id
-             val timestamp = System.currentTimeMillis()
-             val message = Message(UUID.randomUUID().toString(), senderUid, timestamp, content)
-             messagesRepository.sendMessage(teamId, message)
+             val teamId = teamsRepository.getUserTeam().first()?.teamId
+             if (teamId != null) {
+                 messagesRepository.sendMessage(teamId, content)
+             }
          }
     }
 
-    fun getUser(message: Message) : StateFlow<User?> {
-        if (!userCache.contains(message)) {
-            userCache[message] = MutableStateFlow(null)
+    fun getUser(senderUid: String) : StateFlow<User?> {
+        if (!userCache.contains(senderUid)) {
+            userCache[senderUid] = MutableStateFlow(null)
             viewModelScope.launch {
-                userCache[message]!!.value = userRepository.getUser(message.senderUid)
+                userCache[senderUid]!!.value = userRepository.getUser(senderUid)
             }
         }
 
-        return userCache[message]!!.asStateFlow()
+        return userCache[senderUid]!!.asStateFlow()
     }
 
     companion object {
@@ -85,7 +83,7 @@ class ChatViewModel(
                 val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
                 val container = AppContainer.getInstance(application)
 
-                ChatViewModel(
+                TeamChatViewModel(
                     container.bounties.getTeamRepository(bountyId),
                     container.bounties.getMessageRepository(bountyId),
                     container.user,
