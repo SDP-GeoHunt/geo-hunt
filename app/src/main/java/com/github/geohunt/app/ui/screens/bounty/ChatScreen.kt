@@ -6,6 +6,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -17,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,51 +63,39 @@ import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun ChatScreen(
-    cid: String,
-) {
-    Column(Modifier.fillMaxSize()) {
-        val factory = MessageListViewModelFactory(cid)
-
-        MessageList(
-            factory = factory,
-            modifier = Modifier.weight(1f),
-        )
-        MessageInput(factory = factory)
-    }
-}
-
-@Composable
-fun MessageList(
     modifier: Modifier = Modifier,
     viewModel: ChatViewModel = viewModel(factory = ChatViewModel.factory(bountyId = "98d755ad-NVP5y7V0SyObpqi226o"))
 ) {
 
     val messageState = viewModel.messages.collectAsStateWithLifecycle()
 
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        when (messageState.value) {
-            null -> Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-            else -> {
-                val messageItems = messageState.value!!.asReversed()
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    reverseLayout = true,
-                ) {
-                    items(messageItems) { message ->
-                        MessageCard(
-                            message,
-                            viewModel.getUserName(message.senderUid),
-                            viewModel.isMessageMine(message)
-                        )
+    Column(Modifier.fillMaxSize()) {
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            when (messageState.value) {
+                null -> Box(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+                else -> {
+                    val messageItems = messageState.value!!.asReversed()
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        reverseLayout = true,
+                    ) {
+                        items(messageItems) { message ->
+                            MessageCard(
+                                message,
+                                viewModel.getUserName(message.senderUid),
+                                viewModel.isMessageMine(message)
+                            )
+                        }
                     }
                 }
             }
         }
+        MessageInput(viewModel::sendMessage)
     }
 }
 
@@ -156,14 +147,11 @@ fun cardShapeFor(isMessageMine: Boolean): Shape {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageInput(
-    factory: MessageListViewModelFactory,
-    messageInputViewModel: MessageInputViewModel = viewModel(factory = factory),
-) {
+fun MessageInput(sendMessage : (String) -> Unit) {
     var inputValue by remember { mutableStateOf("") }
 
     fun sendMessage() {
-        messageInputViewModel.sendMessage(inputValue)
+        sendMessage(inputValue)
         inputValue = ""
     }
 
@@ -180,10 +168,7 @@ fun MessageInput(
             onClick = { sendMessage() },
             enabled = inputValue.isNotBlank(),
         ) {
-            Icon(
-                imageVector = Icons.Default.Send,
-                contentDescription = stringResource(R.string.cd_button_send)
-            )
+            Text("Send")
         }
     }
     32
