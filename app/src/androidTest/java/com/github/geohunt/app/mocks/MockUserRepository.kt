@@ -7,18 +7,22 @@ import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.model.EditedUser
 import com.github.geohunt.app.model.User
 
-open class MockUserRepository(private val userRepository: UserRepository? = null): UserRepositoryInterface {
+open class MockUserRepository(
+    private val userRepository: UserRepository? = null,
+    private val mockAuth: MockAuthRepository? = null,
+): UserRepositoryInterface {
     override suspend fun createUserIfNew(identity: IdpResponse) {
         userRepository?.createUserIfNew(identity)
     }
 
     override suspend fun getCurrentUser(): User {
-        return MockAuthRepository.defaultLoggedUser
+        return mockAuth?.loggedUser ?: MockAuthRepository.defaultLoggedUser
     }
 
     override suspend fun getUser(id: String): User {
         if (id == "1") return User("1", "dn", null)
         if (id == "2") return User("2", "dn2", null)
+        if (id == "3") return User("3", "dn3", null)
         return userRepository?.getUser(id) ?: throw UserNotFoundException(id)
     }
 

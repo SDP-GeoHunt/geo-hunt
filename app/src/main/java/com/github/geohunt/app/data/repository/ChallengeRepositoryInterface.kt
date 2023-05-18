@@ -83,4 +83,12 @@ interface ChallengeRepositoryInterface {
      * @param uid The user id
      */
     fun getClaimsFromUser(uid: String): List<Claim>
+
+    /**
+     * Get all the challenges for the challenge repository.
+     *
+     * This should be used only in the context of bounties to avoid
+     * fetching a lot of challenges.
+     */
+    suspend fun getChallenges(): List<Challenge>
 }

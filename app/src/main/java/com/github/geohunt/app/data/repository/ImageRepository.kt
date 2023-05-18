@@ -36,12 +36,13 @@ class ImageRepository(
     enum class ImageType {
         PROFILE_PICTURE,
         CLAIM_PHOTO,
+        BOUNTY_CLAIM_PHOTO,
         CHALLENGE_PHOTO;
-
         override fun toString(): String = when(this) {
             PROFILE_PICTURE -> "profile"
             CHALLENGE_PHOTO -> "challenge"
             CLAIM_PHOTO -> "claim"
+            BOUNTY_CLAIM_PHOTO -> "bounty-claim"
         }
     }
 
@@ -89,6 +90,9 @@ class ImageRepository(
 
     suspend fun uploadClaimPhoto(photo: LocalPicture, id: String) =
         uploadImage(photo, ImageType.CLAIM_PHOTO, id)
+
+    suspend fun uploadBountyClaimPhoto(photo: LocalPicture, id: String, bid: String) =
+        uploadImage(photo, ImageType.BOUNTY_CLAIM_PHOTO, "$id-$bid")
 
     fun getChallengePhoto(challenge: Challenge): String = challenge.photoUrl
 

@@ -1,6 +1,6 @@
 package com.github.geohunt.app.model.points
 
-import com.github.geohunt.app.model.Challenge.Difficulty
+import com.github.geohunt.app.model.Challenge
 
 /**
  * Interface representing a Point calculator, it only has one method used to compute the points
@@ -18,16 +18,13 @@ interface PointCalculator {
     companion object {
 
         /**
-         * Converts a challenge difficulty to a predetermined PointCalculator
-         * @param difficulty the challenge difficulty to convert
+         * Default calculators
          */
-        fun fromDifficulty(difficulty: Difficulty): PointCalculator {
-            return when (difficulty) {
-                Difficulty.EASY -> GaussianPointCalculator(0.20)
-                Difficulty.MEDIUM -> GaussianPointCalculator(0.15)
-                Difficulty.HARD -> GaussianPointCalculator(0.10)
-            }
-        }
+        val defaultCalculators = mapOf(
+            Challenge.Difficulty.EASY to GaussianPointCalculator(0.20),
+            Challenge.Difficulty.MEDIUM to GaussianPointCalculator(0.15),
+            Challenge.Difficulty.HARD to GaussianPointCalculator(0.10)
+        ).withDefault { GaussianPointCalculator(0.10) }
 
         /**
          * The least amount of points possible.
