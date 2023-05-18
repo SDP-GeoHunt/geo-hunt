@@ -65,12 +65,11 @@ class BountyClaimChallengeTest {
     fun testClaimingBountyChallenge() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val bitmap = createTestBitmap(context)
-        val awaitingThingy = CompletableDeferred<Unit>()
+        val awaitingAnimation = CompletableDeferred<Unit>()
 
-        // Start the application
         composeTestRule.setContent {
             BountyChallengeSubmitClaimForm(bitmap = bitmap, state = BountyClaimViewModel.State.READY_TO_CLAIM) {
-                awaitingThingy.complete(Unit)
+                awaitingAnimation.complete(Unit)
             }
         }
 
@@ -79,7 +78,27 @@ class BountyClaimChallengeTest {
             .assertIsDisplayed()
             .performClick()
 
-        assertThat(awaitingThingy.isCompleted, equalTo(true))
+        assertThat(awaitingAnimation.isCompleted, equalTo(true))
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testClaimingBountyChallengeWithAwaitingLocation() = runTest {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val bitmap = createTestBitmap(context)
+
+        composeTestRule.setContent {
+            BountyChallengeSubmitClaimForm(bitmap = bitmap, state = BountyClaimViewModel.State.AWAITING_LOCATION) {
+            }
+        }
+
+        composeTestRule
+            .onNodeWithTag("CircularProgressIndicator")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithTag("AwaitingLocationText")
+            .assertIsDisplayed()
     }
 
     private fun createTestBitmap(context: Context) : Bitmap {

@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -85,13 +86,16 @@ fun BountyChallengeSubmitClaimForm(
         Column {
             CircularProgressIndicator(
                 modifier = Modifier.fillMaxSize(0.8f)
+                    .testTag("CircularProgressIndicator")
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
                 text = "Awaiting location",
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .testTag("AwaitingLocationText"),
                 style = TextStyle(fontSize = 20.sp),
                 textAlign = TextAlign.Center
             )
