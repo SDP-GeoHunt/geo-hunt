@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui.screens.teamprogress
 
-import android.app.Application
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.hasTestTag
@@ -11,11 +10,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.ImageRepository
 import com.github.geohunt.app.data.repository.LocationRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.BountiesRepository
@@ -27,7 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
@@ -39,33 +36,30 @@ class TeamProgressScreenTest {
     // Keys in the emulated RTDB
     private val bountyId = "testBountyId"
 
+    private val mockAuth = MockAuthRepository()
+    private val mockUserRepo = MockUserRepository(mockAuth = mockAuth)
+
+    private val mockLocation = Location(41.5, -0.5)
+    private val mockLocationRepo = object : LocationRepositoryInterface {
+        override fun getLocations(coroutineScope: CoroutineScope): Flow<Location> {
+            return flowOf(mockLocation)
+        }
+    }
+
+    private val storage = FirebaseEmulator.getEmulatedStorage()
+    private val testDispatcher = StandardTestDispatcher()
+
+    private val bountiesRepository = BountiesRepository(
+        userRepository = mockUserRepo,
+        authRepository = mockAuth,
+        database = FirebaseEmulator.getEmulatedFirebase(),
+        storage = storage,
+        imageRepository = ImageRepository(storage, ioDispatcher = testDispatcher),
+        ioDispatcher = testDispatcher
+    )
+
     private val testFactory = viewModelFactory {
         initializer {
-            FirebaseEmulator.init()
-            val mockAuth = MockAuthRepository()
-            val mockUserRepo = MockUserRepository(mockAuth = mockAuth)
-
-            val mockLocation = Location(41.5, -0.5)
-            val mockLocationRepo = object : LocationRepositoryInterface {
-                override fun getLocations(coroutineScope: CoroutineScope): Flow<Location> {
-                    return flowOf(mockLocation)
-                }
-            }
-
-            val storage = FirebaseEmulator.getEmulatedStorage()
-
-            val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
-            val container = AppContainer.getEmulatedFirebaseInstance(application)
-
-            val bountiesRepository = BountiesRepository(
-                userRepository = mockUserRepo,
-                authRepository = mockAuth,
-                database = FirebaseEmulator.getEmulatedFirebase(),
-                storage = storage,
-                imageRepository = ImageRepository(storage),
-                ioDispatcher = UnconfinedTestDispatcher()
-            )
-
             TeamProgressViewModel(
                 authRepository = mockAuth,
                 userRepository = mockUserRepo,
