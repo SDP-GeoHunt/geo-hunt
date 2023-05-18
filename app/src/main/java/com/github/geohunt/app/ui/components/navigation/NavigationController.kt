@@ -93,15 +93,12 @@ fun NavigationController(
             HomeScreen(navigate = { navController.navigate(it) })
         }
         composable(VisibleRoute.Explore.route) {
-            /*val epflCoordinates = LatLng(46.519585, 6.5684919)
+            val epflCoordinates = LatLng(46.519585, 6.5684919)
             val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
             GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
                 cameraPosition = epflCameraPosition
-            )*/
-            Button(onClick = { navController.navigate("challenge-view/95a5a7d8-NUXh1ljKFT--eAv8d-c") }) {
-                Text("OK")
-            }
+            )
         }
         composable(VisibleRoute.Create.route) {
             CreateNewChallenge(
