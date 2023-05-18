@@ -20,9 +20,9 @@ open class MockUserRepository(
     }
 
     override suspend fun getUser(id: String): User {
-        if (id == "1") return User("1", "dn", null)
-        if (id == "2") return User("2", "dn2", null)
-        if (id == "3") return User("3", "dn3", null)
+        if (id == "1") return user1
+        if (id == "2") return user2
+        if (id == "3") return user3
         return userRepository?.getUser(id) ?: throw UserNotFoundException(id)
     }
 
@@ -32,5 +32,11 @@ open class MockUserRepository(
 
     override fun getProfilePictureUrl(user: User): String? {
         return userRepository?.getProfilePictureUrl(user) ?: ""
+    }
+
+    companion object {
+        val user1 = User("1", "dn", null)
+        val user2 = User("2", "dn2", null)
+        val user3 = User("3", "dn3", null)
     }
 }

@@ -13,7 +13,7 @@ import org.junit.runner.Description
 // https://stackoverflow.com/questions/71807957/how-test-a-viewmodel-function-that-launch-a-viewmodelscope-coroutine-android-ko
 @ExperimentalCoroutinesApi
 class MainCoroutineRule(private val dispatcher: TestDispatcher = StandardTestDispatcher()) :
-        TestWatcher() {
+    TestWatcher() {
 
     override fun starting(description: Description) {
         super.starting(description)
