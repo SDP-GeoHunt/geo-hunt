@@ -10,7 +10,6 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.model.Location
-import com.github.geohunt.app.model.points.GaussianPointCalculator
 import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.FirebaseDatabase
@@ -33,11 +32,7 @@ class ClaimRepository(
     private val scoreRepository: ScoreRepository,
     private val activeHuntsRepository: ActiveHuntsRepository,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = mapOf(
-        Challenge.Difficulty.EASY to GaussianPointCalculator(0.20),
-        Challenge.Difficulty.MEDIUM to GaussianPointCalculator(0.15),
-        Challenge.Difficulty.HARD to GaussianPointCalculator(0.10)
-    ).withDefault { GaussianPointCalculator(0.10) },
+    private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = PointCalculator.defaultCalculators,
 ) : ClaimRepositoryInterface {
 
     /**
@@ -62,7 +57,7 @@ class ClaimRepository(
      */
     override suspend fun doesClaim(challenge: Challenge) : Boolean = withContext(ioDispatcher) {
         authRepository.requireLoggedIn()
-        val currentUser = authRepository.getCurrentUser()
+        @Suppress("DEPRECATION") val currentUser = authRepository.getCurrentUser()
 
         getClaims(currentUser)
             .any { it.parentChallengeId == challenge.id }
@@ -137,7 +132,7 @@ class ClaimRepository(
     ): Claim = withContext(ioDispatcher) {
         authRepository.requireLoggedIn()
 
-        val currentUser = authRepository.getCurrentUser()
+        @Suppress("DEPRECATION") val currentUser = authRepository.getCurrentUser()
 
         val claimRef = database.getReference("claims/${challenge.id}").push()
         val claimByUser = database.getReference("claimsByUser/${currentUser.id}").push() // Notice that the key here make no sense

@@ -32,8 +32,8 @@ class TeamLeaderboardViewModelTest {
                 return flowOf(fakeTeams)
             }
 
-            override suspend fun getUserTeamAsync(): Team {
-                return fakeTeams[0]
+            override suspend fun getUserTeam(): Flow<Team> {
+                return flowOf(fakeTeams[0])
             }
         }
 

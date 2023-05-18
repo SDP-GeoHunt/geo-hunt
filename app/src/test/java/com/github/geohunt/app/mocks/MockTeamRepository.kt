@@ -17,6 +17,14 @@ open class MockTeamRepository(
         TODO("Not yet implemented")
     }
 
+    override suspend fun leaveTeam() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun leaveTeam(userId: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun getTeams(): Flow<List<Team>> {
         return flowOf(teams)
     }
@@ -29,6 +37,10 @@ open class MockTeamRepository(
         TODO("Not yet implemented")
     }
 
+    override suspend fun createTeam(name: String): Team {
+        TODO("Not yet implemented")
+    }
+
 
     override fun getUserTeam(userId: String): Flow<Team?> {
         return flowOf(teams.firstOrNull { it.membersUid.contains(userId) })
@@ -38,11 +50,11 @@ open class MockTeamRepository(
         return getUserTeam("1")
     }
 
-    override suspend fun getUserTeamAsync(): Team {
-        TODO("Not yet implemented")
-    }
-
     override fun getTeamScore(team: Team): Flow<Long> {
         return getTeam(team.teamId).map { it.score }
+    }
+
+    override suspend fun deleteTeam(teamId: String) {
+        TODO("Not yet implemented")
     }
 }

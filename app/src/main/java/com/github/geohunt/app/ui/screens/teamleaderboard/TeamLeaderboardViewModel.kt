@@ -31,7 +31,7 @@ class TeamLeaderboardViewModel(
     //way smaller scale than Users/UserLeaderboard for example
     init {
         viewModelScope.launch {
-            val userTeamId = teamsRepository.getUserTeamAsync().teamId
+            val userTeamId = teamsRepository.getUserTeam().first()!!.teamId
             val teams = teamsRepository.getTeams().first()
             val sortedTeams = teams.sortedBy { it.score }.reversed()
             val userIndex = sortedTeams.indexOfFirst { it.teamId == userTeamId }
