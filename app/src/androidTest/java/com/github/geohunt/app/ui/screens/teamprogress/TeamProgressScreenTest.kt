@@ -27,6 +27,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.timeout
 
 @OptIn(ExperimentalTestApi::class, ExperimentalCoroutinesApi::class)
 class TeamProgressScreenTest {
@@ -103,7 +104,7 @@ class TeamProgressScreenTest {
                 viewModel = viewModel(factory = testFactory)
             )
         }
-        testRule.waitUntilDoesNotExist(hasText("Loading", substring = true), timeoutMillis = 10_000L)
+        testRule.waitUntilDoesNotExist(hasText("Loading", substring = true), timeoutMillis = DEFAULT_TIMEOUT)
 
         val leaderboardButton = testRule.onNodeWithTag("Open leaderboard", useUnmergedTree = true)
         leaderboardButton.assertExists()
@@ -126,7 +127,7 @@ class TeamProgressScreenTest {
                 viewModel = viewModel(factory = testFactory)
             )
         }
-        testRule.waitUntilDoesNotExist(hasText("Loading", substring = true), timeoutMillis = 10_000L)
+        testRule.waitUntilDoesNotExist(hasText("Loading", substring = true), timeoutMillis = DEFAULT_TIMEOUT)
 
         val openChatButton = testRule.onNodeWithTag("Open chat", useUnmergedTree = true)
         openChatButton.assertExists()
@@ -147,9 +148,9 @@ class TeamProgressScreenTest {
                 viewModel = viewModel(factory = testFactory)
             )
         }
-        testRule.waitUntilDoesNotExist(hasText("Loading", substring = true))
+        testRule.waitUntilDoesNotExist(hasText("Loading", substring = true), timeoutMillis = DEFAULT_TIMEOUT)
 
-        testRule.waitUntilExactlyOneExists(hasText("dn"))
+        testRule.waitUntilExactlyOneExists(hasText("dn"), timeoutMillis = DEFAULT_TIMEOUT)
     }
 
     @Test
@@ -163,16 +164,20 @@ class TeamProgressScreenTest {
                 viewModel = viewModel(factory = testFactory)
             )
         }
-        testRule.waitUntilDoesNotExist(hasText("Loading", substring = true))
-        testRule.waitUntilDoesNotExist(hasTestTag("loadingChallenges"), timeoutMillis = 10_000L)
+        testRule.waitUntilDoesNotExist(hasText("Loading", substring = true), timeoutMillis = DEFAULT_TIMEOUT)
+        testRule.waitUntilDoesNotExist(hasTestTag("loadingChallenges"), timeoutMillis = DEFAULT_TIMEOUT)
 
         // Check if location and hunters are displayed
         testRule.onNodeWithText("Not hunted yet", substring = true).assertIsDisplayed()
-        testRule.waitUntilExactlyOneExists(hasText("km", substring = true), timeoutMillis = 10_000L)
+        testRule.waitUntilExactlyOneExists(hasText("km", substring = true), timeoutMillis = DEFAULT_TIMEOUT)
 
         // Check if the button is shown
         val button = testRule.onNodeWithText("Hunt", useUnmergedTree = true)
         button.assertExists()
         button.onParent().assertHasClickAction()
+    }
+
+    companion object {
+        private const val DEFAULT_TIMEOUT = 10_000L
     }
 }
