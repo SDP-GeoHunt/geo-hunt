@@ -9,12 +9,13 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.UserRepository
 import com.github.geohunt.app.data.repository.bounties.*
+import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Message
+import com.github.geohunt.app.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.util.*
 
 class ChatViewModel(
@@ -26,14 +27,16 @@ class ChatViewModel(
     private val _messages: MutableStateFlow<List<Message>?> = MutableStateFlow(null)
     val messages: StateFlow<List<Message>?> = _messages.asStateFlow()
 
-    private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
-    private val userName: StateFlow<String?> = _userName
+    private val userCache: MutableMap<Message, MutableStateFlow<User?>> = mutableMapOf()
 
-    private val _isMessageMine: MutableStateFlow<Boolean?> = MutableStateFlow(null)
-    private val isMessageMine: StateFlow<Boolean?> = _isMessageMine
+//    private val _isMessageMine: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+//    val isMessageMine: StateFlow<Boolean?> = _isMessageMine
+
+    private var currentUserId = ""
 
     init {
         fetchMessages()
+        getCurrentUserId()
     }
 
     private fun fetchMessages() {
@@ -45,12 +48,14 @@ class ChatViewModel(
         }
     }
 
-    fun isMessageMine(message: Message) : Boolean {
+    private fun getCurrentUserId() {
         viewModelScope.launch {
-            val currentUserId = userRepository.getCurrentUser().id
-            _isMessageMine.value = currentUserId == message.senderUid
+            currentUserId = userRepository.getCurrentUser().id
         }
-        return isMessageMine.value!!
+    }
+
+    fun isMessageMine(message: Message) : Boolean {
+        return message.senderUid == currentUserId
     }
 
      fun sendMessage(content: String) {
@@ -63,12 +68,15 @@ class ChatViewModel(
          }
     }
 
-    fun getUserName(userId: String) : String {
-        viewModelScope.launch {
-            _userName.value = userRepository.getUser(userId).displayName!!
+    fun getUser(message: Message) : StateFlow<User?> {
+        if (!userCache.contains(message)) {
+            userCache[message] = MutableStateFlow(null)
+            viewModelScope.launch {
+                userCache[message]!!.value = userRepository.getUser(message.senderUid)
+            }
         }
 
-        return userName.value!!;
+        return userCache[message]!!.asStateFlow()
     }
 
     companion object {

@@ -6,18 +6,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
+import androidx.compose.material.Card
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -25,42 +22,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.model.Message
+import com.github.geohunt.app.model.User
 import kotlinx.coroutines.flow.StateFlow
 
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun ChatScreen(
-//    bountyId: String = "98d755ad-NVP5y7V0SyObpqi226o",
-//    viewModel: ChatViewModel = viewModel(factory = ChatViewModel.factory(bountyId = "98d755ad-NVP5y7V0SyObpqi226o"))
-//) {
-//    val messages = viewModel.messages.collectAsStateWithLifecycle()
-//    var messageContent by remember { mutableStateOf("") }
-//
-//    Column(
-//        modifier = Modifier.fillMaxSize()
-//    ) {
-//        when (messages.value) {
-//            null -> Box(modifier = Modifier.fillMaxSize()) {
-//                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-//            }
-//            else ->
-//                LazyColumn {
-//                    items(messages.value!!) { message ->
-//                        Text(text = "${viewModel.getUserName(message.senderUid)}: ${message.content}")
-//                    }
-//                }
-//        }
-//        TextField(
-//            value = messageContent,
-//            onValueChange = { messageContent = it },
-//            label = { Text("Message") }
-//        )
-//        Button(onClick = { viewModel.sendMessage(messageContent) }) {
-//            Text("Send")
-//        }
-//    }
-//}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
@@ -68,8 +33,9 @@ fun ChatScreen(
 ) {
 
     val messageState = viewModel.messages.collectAsStateWithLifecycle()
+    var inputValue by remember { mutableStateOf("") }
 
-    Column(Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize().padding(bottom = 20.dp),) {
         Box(
             modifier = modifier,
             contentAlignment = Alignment.Center
@@ -81,13 +47,13 @@ fun ChatScreen(
                 else -> {
                     val messageItems = messageState.value!!.asReversed()
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxWidth(),
                         reverseLayout = true,
                     ) {
                         items(messageItems) { message ->
                             MessageCard(
                                 message,
-                                viewModel.getUserName(message.senderUid),
+                                viewModel::getUser,
                                 viewModel.isMessageMine(message)
                             )
                         }
@@ -95,81 +61,71 @@ fun ChatScreen(
                 }
             }
         }
-        MessageInput(viewModel::sendMessage)
+        Row (modifier = Modifier
+            .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween) {
+            TextField(
+                modifier = Modifier.weight(1f),
+                value = inputValue,
+                onValueChange = { inputValue = it },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+            )
+            Button(
+                modifier = Modifier.height(56.dp),
+                onClick = { viewModel.sendMessage(inputValue); inputValue = ""},
+                enabled = inputValue.isNotBlank(),
+            ) {
+                Text("Send")
+            }
+        }
     }
 }
 
 @Composable
 fun MessageCard(
     messageItem: Message,
-    userName: String,
-    isMessageMine: Boolean
+    getUser : (Message) -> StateFlow<User?>,
+    isMessageMine: Boolean?
 ) {
+    val user = getUser(messageItem).collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalAlignment = when {
-            isMessageMine -> Alignment.End
+        horizontalAlignment = when (isMessageMine) {
+            true -> Alignment.End
             else -> Alignment.Start
         }
     ) {
-        Card(
-            modifier = Modifier
-                .widthIn(max = 340.dp)
-                .background(if (isMessageMine) MaterialTheme.colors.primary else MaterialTheme.colors.secondary),
-            shape = cardShapeFor(isMessageMine),
-        ) {
+            Card(
+                modifier = Modifier
+                    .widthIn(max = 340.dp),
+                shape = cardShapeFor(isMessageMine),
+                backgroundColor = if (isMessageMine == true) Color.Blue else Color.LightGray
+            ) {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = messageItem.content,
+                    color = when (isMessageMine) {
+                        true -> Color.White
+                        else -> Color.Black
+                    },
+                )
+            }
+        if (user.value != null) {
             Text(
-                modifier = Modifier.padding(8.dp),
-                text = messageItem.content,
-                color = when {
-                    isMessageMine -> MaterialTheme.colors.onPrimary
-                    else -> MaterialTheme.colors.onSecondary
-                },
+                text = user.value!!.name,
+                fontSize = 12.sp,
             )
         }
-        Text(
-            text = userName,
-            fontSize = 12.sp,
-        )
-    }
+        }
 }
 
 @Composable
-fun cardShapeFor(isMessageMine: Boolean): Shape {
+fun cardShapeFor(isMessageMine: Boolean?): Shape {
     val roundedCorners = RoundedCornerShape(16.dp)
-    return when {
-        isMessageMine -> roundedCorners.copy(bottomEnd = CornerSize(0))
+    return when (isMessageMine) {
+        true -> roundedCorners.copy(bottomEnd = CornerSize(0))
         else -> roundedCorners.copy(bottomStart = CornerSize(0))
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MessageInput(sendMessage : (String) -> Unit) {
-    var inputValue by remember { mutableStateOf("") }
-
-    fun sendMessage() {
-        sendMessage(inputValue)
-        inputValue = ""
-    }
-
-    Row {
-        TextField(
-            modifier = Modifier.weight(1f),
-            value = inputValue,
-            onValueChange = { inputValue = it },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions { sendMessage() },
-        )
-        Button(
-            modifier = Modifier.height(56.dp),
-            onClick = { sendMessage() },
-            enabled = inputValue.isNotBlank(),
-        ) {
-            Text("Send")
-        }
-    }
-    32
 }
