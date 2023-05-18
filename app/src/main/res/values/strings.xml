@@ -121,6 +121,10 @@
     <string name="new_challenge_notification_title">New Challenge!</string>
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
 
+    <!-- Bounty -->
+    <string name="claim_bounty_challenge_button">Submit Claim</string>
+    <string name="photo_of_the_claim_taken">Photo just taken of the claim</string>
+
     <!-- home feed/bounty selector -->
     <string name="feed">Feed</string>
     <string name="bounty">Bounty</string>
