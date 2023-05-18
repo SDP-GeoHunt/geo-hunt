@@ -1,5 +1,6 @@
 package com.github.geohunt.app.data.repository
 
+import com.github.geohunt.app.mocks.mockUser
 import com.github.geohunt.app.model.database.FirebaseEmulator
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,8 +44,9 @@ class ScoreRepositoryTest {
         val score2 = scoreRepository.getScore("1")
         Assert.assertEquals(110L, score2)
 
-        scoreRepository.incrementUserScore("2", 50L)
-        val score3 = scoreRepository.getScore("2")
+        val mockUser = mockUser("2")
+        scoreRepository.incrementUserScore(mockUser, 50L)
+        val score3 = scoreRepository.getScore(mockUser)
         Assert.assertEquals(50L, score3)
     }
 
