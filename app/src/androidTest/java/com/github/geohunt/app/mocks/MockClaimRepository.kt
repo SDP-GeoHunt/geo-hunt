@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 
 open class MockClaimRepository : ClaimRepositoryInterface {
 
-    override suspend fun getClaimId(user: User): List<String> {
+    override suspend fun getClaimId(uid: String): List<String> {
         return emptyList()
     }
 
@@ -22,7 +22,7 @@ open class MockClaimRepository : ClaimRepositoryInterface {
         return 0
     }
 
-    override suspend fun getClaims(user: User): List<Claim> {
+    override suspend fun getClaims(uid: String): List<Claim> {
         return emptyList()
     }
 

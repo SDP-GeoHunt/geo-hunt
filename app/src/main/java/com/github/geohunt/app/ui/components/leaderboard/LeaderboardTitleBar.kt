@@ -1,7 +1,6 @@
 package com.github.geohunt.app.ui.components.leaderboard
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,8 +25,8 @@ fun LeaderboardTitleBar() {
             fontFamily = Lobster
         )
 
-        Spacer(Modifier.weight(1.0f))
-
-        LeaderboardTimeFilter()
+        //Removed because it is too ambitious to implement with our current architecture (and time)
+        //Spacer(Modifier.weight(1.0f))
+        //LeaderboardTimeFilter()
     }
 }

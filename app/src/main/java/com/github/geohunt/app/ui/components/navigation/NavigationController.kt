@@ -3,7 +3,7 @@ package com.github.geohunt.app.ui.components.navigation
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -21,23 +21,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
-import com.github.geohunt.app.maps.GoogleMapDisplay
-import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
-import com.github.geohunt.app.ui.components.ZoomableImageView
-import com.github.geohunt.app.ui.components.challenge.ChallengeView
-import com.github.geohunt.app.ui.components.profile.ProfilePage
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.bounties.AdminBountyPage
+import com.github.geohunt.app.ui.components.bounties.BountyClaimChallenge
 import com.github.geohunt.app.ui.components.bounties.CreateNewBounty
+import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeViewModel
+import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
+import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
 import com.github.geohunt.app.ui.screens.bounty_team_select.BountyTeamSelectPage
 import com.github.geohunt.app.ui.screens.home.HomeScreen
+import com.github.geohunt.app.ui.screens.userleaderboard.UserLeaderboard
 import com.github.geohunt.app.ui.settings.SettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
@@ -78,7 +77,10 @@ enum class HiddenRoute(override val route: String): Route {
     PrivacySettings("settings/privacy"),
     Leaderboard("leaderboard"),
     CreateChallenge("create-challenge"),
-    CreateBounty("create-bounty")
+    CreateBounty("create-bounty"),
+    BountyClaimChallenge("bounty-claim-challenge"),
+    ChallengeView("challenge-view"),
+
 }
 
 @Composable
@@ -100,12 +102,15 @@ fun NavigationController(
             HomeScreen(navigate = { navController.navigate(it) })
         }
         composable(VisibleRoute.Explore.route) {
-            val epflCoordinates = LatLng(46.519585, 6.5684919)
+            /*val epflCoordinates = LatLng(46.519585, 6.5684919)
             val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
             GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
                 cameraPosition = epflCameraPosition
-            )
+            )*/
+            Button(onClick = { navController.navigate("challenge-view/95a5a7d8-NUXh1ljKFT--eAv8d-c") }) {
+                Text("OK")
+            }
         }
         composable(HiddenRoute.CreateChallenge.route) {
             CreateNewChallenge(
@@ -155,11 +160,15 @@ fun NavigationController(
             )
         }
 
+        composable(HiddenRoute.Leaderboard.route) {
+            UserLeaderboard()
+        }
+
         composable("${VisibleRoute.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
             it.arguments?.getString("userId")?.let {
                 userId -> ProfilePage(
                     ProfilePageViewModel(
-                        container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, userId
+                        container.auth, container.user, container.challenges, container.follow, container.profileVisibilities, container.claims, container.score, userId
                     )
                 )
             }
@@ -257,6 +266,32 @@ fun NavigationController(
         ) {
             val bid = it.arguments?.getString("bountyId")!!
             Text(text = "ok")
+        }
+
+        // Bounties
+        // Open a claim for a given bounty's challenge
+        composable(
+            "${HiddenRoute.BountyClaimChallenge.route}/{bountyId}/{challengeId}",
+            arguments = listOf(
+                navArgument("bountyId") { type = NavType.StringType },
+                navArgument("challengeId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val bid = backStackEntry.arguments?.getString("bountyId")!!
+            val cid = backStackEntry.arguments?.getString("challengeId")!!
+
+            BountyClaimChallenge(
+                bid = bid,
+                cid = cid,
+                onFailure = {
+                    Toast.makeText(context, "Something went wrong, failed to create challenge", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Fail to create challenge: $it")
+                    navController.popBackStack()
+                },
+                onClaimSubmitted = {
+                    navController.popBackStack()
+                    navController.navigate("${HiddenRoute.ChallengeView.route}/$cid")
+                }
+            )
         }
     }
 }

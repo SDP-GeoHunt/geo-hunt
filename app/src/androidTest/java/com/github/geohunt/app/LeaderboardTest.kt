@@ -1,5 +1,6 @@
 package com.github.geohunt.app
 
+import androidx.compose.material.Text
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
@@ -8,8 +9,9 @@ import coil.ImageLoader
 import coil.request.CachePolicy
 import com.github.geohunt.app.i18n.toSuffixedString
 import com.github.geohunt.app.mocks.mockUser
-import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.leaderboard.Leaderboard
+import com.github.geohunt.app.ui.components.leaderboard.LeaderboardEntry
+import com.github.geohunt.app.ui.components.leaderboard.LeaderboardInformation
 import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import com.github.geohunt.app.utils.ImageIdlingResource
 import org.junit.After
@@ -35,6 +37,7 @@ class LeaderboardTest {
 
     private val mockUsers = List(names.size) { i -> mockUser(id = "dn$i", displayName = names[i]) }
 
+    private val mockEntries = mockUsers.mapIndexed { index, user -> LeaderboardEntry(user.name, index.toLong()) { Text(user.name.reversed()) } }
     @get:Rule
     val testRule = createComposeRule()
 
@@ -55,7 +58,7 @@ class LeaderboardTest {
             )
 
             GeoHuntTheme {
-                Leaderboard(users = mockUsers, currentUser = mockUsers[youIndex])
+                Leaderboard(LeaderboardInformation(mockEntries, youIndex))
             }
         }
     }
@@ -65,7 +68,8 @@ class LeaderboardTest {
         testRule.unregisterIdlingResource(imageResources)
     }
 
-    @Test
+    //Removed from app for now
+    /*@Test
     fun timeDropdownCorrectlySelectsOption() {
         testRule.onNode(hasText("All time") and hasClickAction()).performClick()
         testRule.onNode(hasText("Monthly") and hasClickAction()).performClick()
@@ -73,7 +77,7 @@ class LeaderboardTest {
         // Check that the option was correctly selected
         testRule.onAllNodesWithText("All time").assertCountEquals(0)
         testRule.onAllNodesWithText("Monthly").assertCountEquals(1)
-    }
+    }*/
 
     @Test
     fun usersAppearExactlyOnceInLeaderboard() {
@@ -93,15 +97,19 @@ class LeaderboardTest {
                 .filter(hasText(position))
                 .assertCountEquals(1)
 
-            // Check that the image is printed once
+            // Check that the score is printed once
             siblings
-                .filter(hasContentDescription("${user.name} profile picture"))
+                .filter(hasText("${i.toLong().toSuffixedString()} pts"))
                 .assertCountEquals(1)
 
-            // Check that the score is printed once
-//            siblings
-//                .filter(hasText("${user.score.toSuffixedString()} pts"))
-//                .assertCountEquals(1)
+            //If we are checking the current user this will be displayed twice
+            if(i == youIndex) {
+                testRule.onAllNodesWithText(user.name.reversed()).assertCountEquals(2)
+            }
+            else {
+                // Check that the composable profile icon is called
+                testRule.onNodeWithText(user.name.reversed()).assertIsDisplayed()
+            }
         }
     }
 
@@ -118,7 +126,7 @@ class LeaderboardTest {
         val you = testRule.onNodeWithText("You", useUnmergedTree = true)
 
         you.assertIsDisplayed()
-//        you.onSiblings().filterToOne(hasTextExactly((youIndex + 1).toString())).assertIsDisplayed()
-//        you.onSiblings().filterToOne(hasTextExactly("${mockUsers[youIndex].score.toSuffixedString()} pts")).assertIsDisplayed()
+        you.onSiblings().filterToOne(hasTextExactly((youIndex + 1).toString())).assertIsDisplayed()
+        you.onSiblings().filterToOne(hasTextExactly("${youIndex.toLong().toSuffixedString()} pts")).assertIsDisplayed()
     }
 }

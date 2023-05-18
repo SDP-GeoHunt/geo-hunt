@@ -55,19 +55,18 @@ fun ProfilePage(
     val isPrivate = viewModel.isPrivate.collectAsState()
     val user = viewModel.user.collectAsState()
     val challenges = viewModel.challenges.collectAsState()
-    val claims = viewModel.claims.collectAsState()
     val hunts = viewModel.claimedChallenges.collectAsState()
-    val score = claims.value?.sumOf { it.awardedPoints }
+    val score = viewModel.score.collectAsState()
     val error = viewModel.didFail.collectAsState()
     val doesFollow = viewModel.doesFollow.collectAsState()
 
     BoxWithConstraints {
         Box(
             modifier = Modifier
-                .pullRefresh(pullRefreshState)
-                .verticalScroll(
-                    rememberScrollState()
-                )
+                    .pullRefresh(pullRefreshState)
+                    .verticalScroll(
+                            rememberScrollState()
+                    )
         ) {
             PullRefreshIndicator(
                 refreshing = isRefreshing, state = pullRefreshState, modifier = Modifier.align(
@@ -76,8 +75,8 @@ fun ProfilePage(
             )
 
             val fullModifier = Modifier
-                .height(this@BoxWithConstraints.maxHeight)
-                .width(this@BoxWithConstraints.maxWidth)
+                    .height(this@BoxWithConstraints.maxHeight)
+                    .width(this@BoxWithConstraints.maxWidth)
 
             SetupDrawer(
                 enabled = isMoreOptionsAvailable,
@@ -112,7 +111,7 @@ fun ProfilePage(
                             user.value!!,
                             challenges.value,
                             hunts.value,
-                            score,
+                            score.value,
                             // Do not show settings if seeing another profile
                             if (viewModel.isSelf) {
                                 {
@@ -240,8 +239,8 @@ private fun UserNumberDetails(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
+                .fillMaxWidth()
+                .padding(12.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 
