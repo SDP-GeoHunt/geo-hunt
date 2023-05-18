@@ -9,8 +9,6 @@ import com.github.geohunt.app.data.settings.AppSettingsSerializer
 import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.sensor.SharedLocationManager
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.lang.IllegalStateException
 
@@ -37,6 +35,8 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
     val bounties = BountiesRepository(user, auth, image, dbInstance, storageInstance)
 
     val feedUseCase = GetUserFeedUseCase(auth, challenges, follow)
+
+    val bounties = BountiesRepository(user, auth, image, dbInstance, storageInstance)
 
     // Settings
     private val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)

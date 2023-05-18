@@ -3,7 +3,6 @@ package com.github.geohunt.app.data.repository
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
-import android.text.style.BulletSpan
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.model.Challenge
@@ -16,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.lang.IllegalStateException
 
 /**
  * Contains methods related to local and remote images retrieval, including uploading to
