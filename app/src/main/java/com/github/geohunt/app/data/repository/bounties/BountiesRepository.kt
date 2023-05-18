@@ -9,8 +9,6 @@ import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.model.points.GaussianPointCalculator
 import com.github.geohunt.app.model.points.PointCalculator
-import com.github.geohunt.app.model.Location
-import com.github.geohunt.app.model.User
 import com.github.geohunt.app.utility.DataPool
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
