@@ -8,8 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.UserRepository
-import com.github.geohunt.app.data.repository.bounties.BountiesRepository
-import com.github.geohunt.app.data.repository.bounties.MessagesRepository
+import com.github.geohunt.app.data.repository.bounties.*
 import com.github.geohunt.app.model.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,12 +17,10 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class ChatViewModel(
-    bountiesRepository: BountiesRepository,
+    private val teamsRepository: TeamsRepositoryInterface,
+    private val messagesRepository: MessagesRepositoryInterface,
     private val userRepository: UserRepository
 ): ViewModel() {
-
-    private val teamsRepository = bountiesRepository.getTeamRepository("dummyId")
-    private val messagesRepository = bountiesRepository.getMessageRepository("dummyId")
 
     private val _messages: MutableStateFlow<List<Message>?> = MutableStateFlow(null)
     val messages: StateFlow<List<Message>?> = _messages.asStateFlow()
@@ -52,13 +49,14 @@ class ChatViewModel(
     }
 
     companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
+        fun factory(bountyId: String): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
                 val container = AppContainer.getInstance(application)
 
                 ChatViewModel(
-                    container.bounties,
+                    container.bounties.getTeamRepository(bountyId),
+                    container.bounties.getMessageRepository(bountyId),
                     container.user,
                 )
             }

@@ -18,7 +18,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(viewModel: ChatViewModel = viewModel(factory = ChatViewModel.Factory)) {
+fun ChatScreen(bountyId: String,
+               viewModel: ChatViewModel = viewModel(factory = ChatViewModel.factory(bountyId = bountyId))) {
     val messages = viewModel.messages.collectAsStateWithLifecycle()
     var messageContent by remember { mutableStateOf("") }
 
