@@ -61,6 +61,7 @@ fun TeamProgressScreen(
                 onBack = onBack,
                 onLeaderboard = onLeaderboard,
                 onChat = onChat,
+                onHunt = {},
                 teamName = teamName.value!!,
                 teamMembers = viewModel.teamMembers,
                 hunters = hunters.value ?: FinitePagedList.empty(),
