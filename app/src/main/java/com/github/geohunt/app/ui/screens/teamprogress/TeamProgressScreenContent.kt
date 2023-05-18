@@ -38,11 +38,11 @@ import kotlinx.coroutines.flow.StateFlow
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TeamProgressScreenContent(
-    onBack: () -> Unit = {},
-    onLeaderboard: () -> Unit = {},
-    onChat: () -> Unit = {},
-    onInvite: () -> Unit = {},
-    onHunt: (Challenge) -> Unit = { Log.i("teamProgressScreen", "Hunting !") },
+    onBack: () -> Unit,
+    onLeaderboard: () -> Unit,
+    onChat: () -> Unit,
+    onInvite: () -> Unit,
+    onHunt: (Challenge) -> Unit,
 
     teamName: String,
     teamMembers: FinitePagedList<User>,
@@ -118,8 +118,7 @@ fun TeamProgressScreenContent(
 
                         BountyChallengeCard(
                             challenge = challenge,
-                            // numberOfHunters = challengeHunters.value?.size ?: 0,
-                            numberOfHunters = 12,
+                            numberOfHunters = challengeHunters.value?.size ?: 0,
                             currentLocation = currentLocation.value,
                             modifier = Modifier
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
