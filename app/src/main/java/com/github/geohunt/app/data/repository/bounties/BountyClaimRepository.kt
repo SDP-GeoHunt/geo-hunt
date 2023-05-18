@@ -11,6 +11,7 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.Team
+import com.github.geohunt.app.model.points.GaussianPointCalculator
 import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
@@ -52,7 +53,7 @@ class BountyClaimRepository(
 
         // First upload the image to Firebase storage
         // This ensures that the database doesn't contain nonexistent image data
-        val photoUrl: Uri = imageRepository.uploadBountyClaimPhoto(photo, claimId, bid)
+        val photoUrl : Uri = imageRepository.uploadBountyClaimPhoto(photo, claimId, bid)
 
         // Compute the distance to the target
         val distance = location.distanceTo(challenge.location)

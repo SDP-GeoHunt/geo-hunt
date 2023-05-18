@@ -35,6 +35,10 @@ open class MockBountiesRepositories(): BountiesRepositoryInterface {
         TODO("Not yet implemented")
     }
 
+    override suspend fun renameBounty(bounty: Bounty, name: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getBounties(): List<Bounty> {
         TODO("Not yet implemented")
     }
