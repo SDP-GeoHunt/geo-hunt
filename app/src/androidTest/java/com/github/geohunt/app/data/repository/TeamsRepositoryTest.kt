@@ -29,11 +29,12 @@ class TeamsRepositoryTest {
         val t = repo.createTeam("name", "1")
         assert(
             getFromDb(database, "bounty/test-bounty/teams/${t.teamId}/teamLeader", String::class.java)
-            == "1"
+                    == "1"
         )
         assert(
             getFromDb(database, "bounty/test-bounty/teams/${t.teamId}/members/1", Boolean::class.java)
         )
+        repo.leaveTeam()
     }
 
 
@@ -115,8 +116,6 @@ class TeamsRepositoryTest {
             firstInstance.size == thirdInstance.size && secondInstance.size == firstInstance.size + 1
         )
     }
-
-
 
     private suspend fun <T> getFromDb(r: FirebaseDatabase, p: String, c: Class<T>): T {
         return r.getReference(p).get().await().getValue(c)!!
