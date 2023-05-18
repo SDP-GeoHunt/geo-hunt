@@ -31,6 +31,7 @@ import com.github.geohunt.app.ui.components.claims.ClaimChallenge
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
+import com.github.geohunt.app.ui.screens.bounty.ChatScreen
 import com.github.geohunt.app.ui.screens.home.HomeScreen
 import com.github.geohunt.app.ui.settings.SettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
@@ -80,7 +81,8 @@ fun NavigationController(
 
     NavHost(navController, startDestination = VisibleRoute.Home.route, modifier = modifier) {
         composable(VisibleRoute.Home.route) {
-            HomeScreen()
+//            HomeScreen()
+            ChatScreen()
         }
         composable(VisibleRoute.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)

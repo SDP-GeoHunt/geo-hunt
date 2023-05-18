@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.*
 
 class ChatViewModel(
@@ -24,6 +25,12 @@ class ChatViewModel(
 
     private val _messages: MutableStateFlow<List<Message>?> = MutableStateFlow(null)
     val messages: StateFlow<List<Message>?> = _messages.asStateFlow()
+
+    private val _userName: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val userName: StateFlow<String?> = _userName
+
+    private val _isMessageMine: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+    private val isMessageMine: StateFlow<Boolean?> = _isMessageMine
 
     init {
         fetchMessages()
@@ -38,6 +45,14 @@ class ChatViewModel(
         }
     }
 
+    fun isMessageMine(message: Message) : Boolean {
+        viewModelScope.launch {
+            val currentUserId = userRepository.getCurrentUser().id
+            _isMessageMine.value = currentUserId == message.senderUid
+        }
+        return isMessageMine.value!!
+    }
+
      fun sendMessage(content: String) {
          viewModelScope.launch {
              val teamId = teamsRepository.getUserTeamAsync().teamId
@@ -46,6 +61,14 @@ class ChatViewModel(
              val message = Message(UUID.randomUUID().toString(), senderUid, timestamp, content)
              messagesRepository.sendMessage(teamId, message)
          }
+    }
+
+    fun getUserName(userId: String) : String {
+        viewModelScope.launch {
+            _userName.value = userRepository.getUser(userId).displayName!!
+        }
+
+        return userName.value!!;
     }
 
     companion object {
