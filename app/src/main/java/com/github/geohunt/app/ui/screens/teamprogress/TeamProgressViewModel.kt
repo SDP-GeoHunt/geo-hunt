@@ -137,7 +137,7 @@ class TeamProgressViewModel(
                     authRepository = container.auth,
                     userRepository = container.user,
                     locationRepository = container.location,
-                    bountiesRepository = container.bounties,
+                    bountiesRepository = container.bounty,
                     bountyId = bountyId
                 )
             }

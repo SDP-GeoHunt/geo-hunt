@@ -54,7 +54,7 @@ class TeamLeaderboardViewModel(
                 val container = AppContainer.getInstance(application)
 
                 TeamLeaderboardViewModel(
-                        container.bounties.getTeamRepository(bid)
+                        container.bounty.getTeamRepository(bid)
                 )
             }
         }

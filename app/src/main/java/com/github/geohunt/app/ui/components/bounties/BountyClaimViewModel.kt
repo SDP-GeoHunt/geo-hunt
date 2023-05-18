@@ -158,8 +158,8 @@ class BountyClaimViewModel(
                         bountyId = bountyId,
                         imageRepository = container.image,
                         locationRepository = container.location,
-                        challengeRepository = container.bounties.getChallengeRepository(bountyId),
-                        bountyClaimRepository = container.bounties.getClaimRepository(bountyId)
+                        challengeRepository = container.bounty.getChallengeRepository(bountyId),
+                        bountyClaimRepository = container.bounty.getClaimRepository(bountyId)
                     )
                 }
             }
