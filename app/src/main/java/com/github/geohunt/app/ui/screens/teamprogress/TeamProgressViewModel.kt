@@ -136,5 +136,21 @@ class TeamProgressViewModel(
                 )
             }
         }
+
+        fun getTestFactory(bountyId: String) = viewModelFactory {
+            initializer {
+                val application = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as Application
+                val container = AppContainer.getEmulatedFirebaseInstance(application)
+
+                TeamProgressViewModel(
+                    authRepository = container.auth,
+                    activeHuntsRepository = container.activeHunts,
+                    locationRepository = container.location,
+                    userRepository = container.user,
+                    bountiesRepository = container.bounties,
+                    bountyId = bountyId
+                )
+            }
+        }
     }
 }

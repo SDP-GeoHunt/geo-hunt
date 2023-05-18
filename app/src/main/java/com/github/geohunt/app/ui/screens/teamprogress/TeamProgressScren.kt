@@ -22,7 +22,6 @@ fun TeamProgressScreen(
     onBack: () -> Unit,
     onLeaderboard: () -> Unit,
     onChat: () -> Unit,
-    onInvite: () -> Unit,
     bountyId: String,
     viewModel: TeamProgressViewModel = viewModel(factory = TeamProgressViewModel.getFactory(bountyId))
 ) {
@@ -62,7 +61,6 @@ fun TeamProgressScreen(
                 onBack = onBack,
                 onLeaderboard = onLeaderboard,
                 onChat = onChat,
-                onInvite = onInvite,
                 teamName = teamName.value!!,
                 teamMembers = viewModel.teamMembers,
                 hunters = hunters.value ?: FinitePagedList.empty(),

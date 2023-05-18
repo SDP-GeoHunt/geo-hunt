@@ -41,7 +41,6 @@ fun TeamProgressScreenContent(
     onBack: () -> Unit,
     onLeaderboard: () -> Unit,
     onChat: () -> Unit,
-    onInvite: () -> Unit,
     onHunt: (Challenge) -> Unit,
 
     teamName: String,
@@ -65,7 +64,6 @@ fun TeamProgressScreenContent(
                 onBack = onBack,
                 onLeaderboard = onLeaderboard,
                 onChat = onChat,
-                onInvite = onInvite,
                 newMessagesState = newMessages,
                 scrollBehavior = scrollBehavior
             ) }

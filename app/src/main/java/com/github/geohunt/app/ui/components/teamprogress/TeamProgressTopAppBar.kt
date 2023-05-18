@@ -32,7 +32,6 @@ private const val MAX_BADGE_NUMBER = 999
  * @param teamName The team name displayed as the title of the top bar.
  * @param onBack The callback used when pressing the back arrow.
  * @param onLeaderboard The callback used when pressing the leaderboard button.
- * @param onInvite The callback used when pressing the invite button.
  * @param newMessagesState The number of new messages of the chat.
  * @param scrollBehavior The scroll behavior of the app bar.
  */
@@ -43,7 +42,6 @@ fun TeamProgressTopAppBar(
     onBack: () -> Unit,
     onLeaderboard: () -> Unit,
     onChat: () -> Unit,
-    onInvite: () -> Unit,
     newMessagesState: StateFlow<Int>,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
@@ -91,13 +89,6 @@ fun TeamProgressTopAppBar(
                         contentDescription = "Open chat"
                     )
                 }
-            }
-
-            IconButton(onClick = onInvite) {
-                Icon(
-                    Icons.Outlined.GroupAdd,
-                    contentDescription = "Invite"
-                )
             }
         }
     )
