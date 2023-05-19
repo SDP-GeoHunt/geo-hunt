@@ -13,12 +13,18 @@ import androidx.compose.ui.test.performClick
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.github.geohunt.app.data.repository.ImageRepository
+import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.LocationRepositoryInterface
-import com.github.geohunt.app.data.repository.bounties.BountiesRepository
+import com.github.geohunt.app.data.repository.bounties.BountyClaimRepositoryInterface
+import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
 import com.github.geohunt.app.mocks.MockAuthRepository
+import com.github.geohunt.app.mocks.MockBountiesRepositories
+import com.github.geohunt.app.mocks.MockBountyClaimRepository
+import com.github.geohunt.app.mocks.MockChallengeRepository
+import com.github.geohunt.app.mocks.MockTeamRepository
 import com.github.geohunt.app.mocks.MockUserRepository
 import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.model.database.FirebaseEmulator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,13 +53,25 @@ class TeamProgressScreenTest {
 
     private val storage = FirebaseEmulator.getEmulatedStorage()
 
-    private val bountiesRepository = BountiesRepository(
-        userRepository = mockUserRepo,
-        authRepository = mockAuth,
-        database = FirebaseEmulator.getEmulatedFirebase(),
-        storage = storage,
-        imageRepository = ImageRepository(storage)
-    )
+    private val mockedTeamRepository = MockTeamRepository(listOf(
+        Team("1", "1", score = 1, membersUid = listOf("1", "2"), leaderUid = "1")
+    ))
+    private val mockedChallengeRepository = MockChallengeRepository()
+    private val mockBountyClaim = MockBountyClaimRepository()
+
+    private val bountiesRepository = object: MockBountiesRepositories() {
+        override fun getTeamRepository(bountyId: String): TeamsRepositoryInterface {
+            return mockedTeamRepository
+        }
+
+        override fun getChallengeRepository(bountyId: String): ChallengeRepositoryInterface {
+            return mockedChallengeRepository
+        }
+
+        override fun getClaimRepository(bountyId: String): BountyClaimRepositoryInterface {
+            return mockBountyClaim
+        }
+    }
 
     private val testFactory = viewModelFactory {
         initializer {
