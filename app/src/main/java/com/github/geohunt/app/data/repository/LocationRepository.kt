@@ -9,11 +9,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class LocationRepository constructor(private val sharedLocationManager: SharedLocationManager) {
+class LocationRepository constructor(private val sharedLocationManager: SharedLocationManager) :
+    LocationRepositoryInterface {
     /**
      * Observable flow for location updates
      */
-    fun getLocations(coroutineScope: CoroutineScope) =
+    override fun getLocations(coroutineScope: CoroutineScope) =
         (DefaultLocationFlow.get() ?: sharedLocationManager.locationFlow(coroutineScope).map { location ->
             if (BuildConfig.DEBUG) {
                 Location(location.latitude.quantize(0.1), location.longitude.quantize(0.1))

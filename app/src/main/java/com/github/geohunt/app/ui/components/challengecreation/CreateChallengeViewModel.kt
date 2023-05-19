@@ -6,7 +6,6 @@ import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.firebase.ui.auth.AuthUI
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.data.repository.*
@@ -24,7 +23,7 @@ import java.time.LocalDate
 
 class CreateChallengeViewModel(
     private val imageRepository: ImageRepository,
-    private val locationRepository: LocationRepository,
+    private val locationRepository: LocationRepositoryInterface,
     private val challengeRepository: ChallengeRepositoryInterface,
     val displaySetting: Boolean,
 ) : ViewModel() {

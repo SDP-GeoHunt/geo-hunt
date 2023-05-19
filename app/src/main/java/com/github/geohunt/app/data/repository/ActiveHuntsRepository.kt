@@ -22,6 +22,7 @@ class ActiveHuntsRepository(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ActiveHuntsRepositoryInterface {
     private val activeHunts = database.getReference("activeHunts")
+    private val hunters = database.getReference("hunters")
 
     /**
      * Updates the hunt state of the currently authenticated user on the given challenge.
@@ -34,10 +35,18 @@ class ActiveHuntsRepository(
         val currentUser = authRepository.getCurrentUser()
 
         withContext(ioDispatcher) {
+            val value = if (doHunt) true else null
+
             activeHunts
                 .child(currentUser.id)
                 .child(challenge.id)
-                .setValue(true.takeIf { doHunt })
+                .setValue(value)
+                .await()
+
+            hunters
+                .child(challenge.id)
+                .child(currentUser.id)
+                .setValue(value)
                 .await()
         }
     }
@@ -71,6 +80,19 @@ class ActiveHuntsRepository(
         // prefer Map<String, Boolean>
         return activeHunts
             .child(currentUser.id)
+            .snapshots
+            .map {
+                it.toList()
+            }
+            .flowOn(ioDispatcher)
+    }
+
+    /**
+     * Returns the list of hunters of the given challenge.
+     */
+    override fun getHunters(challenge: Challenge): Flow<List<String>> {
+        return hunters
+            .child(challenge.id)
             .snapshots
             .map {
                 it.toList()

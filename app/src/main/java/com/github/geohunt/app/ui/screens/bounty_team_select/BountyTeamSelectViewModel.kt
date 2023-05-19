@@ -125,10 +125,10 @@ class BountyTeamSelectViewModel(
 
                     BountyTeamSelectViewModel(
                         bountyId = bountyId,
-                        bountiesRepository = container.bounties,
-                        challengeRepository = container.bounties.getChallengeRepository(bountyId),
+                        bountiesRepository = container.bounty,
+                        challengeRepository = container.bounty.getChallengeRepository(bountyId),
                         userRepository = container.user,
-                        teamsRepository = container.bounties.getTeamRepository(bountyId)
+                        teamsRepository = container.bounty.getTeamRepository(bountyId)
                     )
                 }
             }

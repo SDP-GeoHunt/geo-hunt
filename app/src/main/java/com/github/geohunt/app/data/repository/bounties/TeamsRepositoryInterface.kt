@@ -95,7 +95,6 @@ interface TeamsRepositoryInterface {
      */
     suspend fun getUserTeam(): Flow<Team?>
 
-
     /**
      * Returns the score of the specified team
      */

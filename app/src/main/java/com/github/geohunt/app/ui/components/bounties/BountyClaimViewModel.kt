@@ -26,7 +26,7 @@ import java.io.File
 class BountyClaimViewModel(
     private val bountyId: String,
     private val imageRepository: ImageRepository,
-    private val locationRepository: LocationRepository,
+    private val locationRepository: LocationRepositoryInterface,
     private val challengeRepository: ChallengeRepositoryInterface,
     private val bountyClaimRepository: BountyClaimRepositoryInterface,
     ) : ViewModel() {
@@ -158,8 +158,8 @@ class BountyClaimViewModel(
                         bountyId = bountyId,
                         imageRepository = container.image,
                         locationRepository = container.location,
-                        challengeRepository = container.bounties.getChallengeRepository(bountyId),
-                        bountyClaimRepository = container.bounties.getClaimRepository(bountyId)
+                        challengeRepository = container.bounty.getChallengeRepository(bountyId),
+                        bountyClaimRepository = container.bounty.getClaimRepository(bountyId)
                     )
                 }
             }

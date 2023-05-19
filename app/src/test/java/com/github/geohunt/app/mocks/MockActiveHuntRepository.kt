@@ -19,4 +19,8 @@ open class MockActiveHuntRepository : ActiveHuntsRepositoryInterface {
     override fun isHunting(challenge: Challenge): Flow<Boolean> {
         return flowOf(false)
     }
+
+    override fun getHunters(challenge: Challenge): Flow<List<String>> {
+        return flowOf(listOf())
+    }
 }
