@@ -2,7 +2,6 @@ package com.github.geohunt.app.data.repository
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.datastore.dataStore
 import com.github.geohunt.app.data.repository.bounties.BountiesRepository
 import com.github.geohunt.app.data.settings.AppSettingsSerializer
@@ -10,7 +9,6 @@ import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.sensor.SharedLocationManager
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import java.lang.IllegalStateException
 
 /**
  * Container for the application's dependency instances.

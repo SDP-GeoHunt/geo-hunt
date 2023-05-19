@@ -1,16 +1,5 @@
 package com.github.geohunt.app.ui.components.navigation
 
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.testing.TestNavHostController
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-
 // Keep commented for now as it requires login
 /*
 class TestNavigation {

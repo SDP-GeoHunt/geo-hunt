@@ -4,11 +4,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.github.geohunt.app.MainActivity
 import com.github.geohunt.app.R
-import com.google.firebase.database.*
 
 private const val CHANNEL_ID = "new_challenge_notification"
 

@@ -1,11 +1,7 @@
 package com.github.geohunt.app.ui.components.challengecreation
 
-import android.Manifest
 import android.graphics.Bitmap
-import android.graphics.Paint.Align
-import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -32,10 +28,7 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.sensor.RequireCameraPermission
 import com.github.geohunt.app.sensor.RequireFineLocationPermissions
-import com.github.geohunt.app.sensor.rememberPermissionsState
 import com.github.geohunt.app.utility.*
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ireward.htmlcompose.HtmlText
 
 @Composable

@@ -3,7 +3,6 @@ package com.github.geohunt.app.ui.components.profile
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import com.github.geohunt.app.model.EditedUser
-import java.util.*
 
 
 @Composable
