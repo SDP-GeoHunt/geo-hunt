@@ -258,7 +258,9 @@ fun NavigationController(
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
-            BountyTeamSelectPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {})
+            BountyTeamSelectPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {
+                navController.navigate("${HiddenRoute.BountyTeamProgress.route}/$bid")
+            })
         }
 
         composable(
