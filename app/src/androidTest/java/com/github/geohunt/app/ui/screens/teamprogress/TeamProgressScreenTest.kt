@@ -24,7 +24,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 
@@ -47,15 +46,13 @@ class TeamProgressScreenTest {
     }
 
     private val storage = FirebaseEmulator.getEmulatedStorage()
-    private val testDispatcher = UnconfinedTestDispatcher()
 
     private val bountiesRepository = BountiesRepository(
         userRepository = mockUserRepo,
         authRepository = mockAuth,
         database = FirebaseEmulator.getEmulatedFirebase(),
         storage = storage,
-        imageRepository = ImageRepository(storage, ioDispatcher = testDispatcher),
-        ioDispatcher = testDispatcher
+        imageRepository = ImageRepository(storage)
     )
 
     private val testFactory = viewModelFactory {
