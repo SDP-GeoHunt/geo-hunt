@@ -34,6 +34,7 @@ class TeamsRepositoryTest {
         assert(
             getFromDb(database, "bounty/test-bounty/teams/${t.teamId}/members/1", Boolean::class.java)
         )
+
         repo.leaveTeam()
     }
 
@@ -51,6 +52,7 @@ class TeamsRepositoryTest {
         repo.joinTeam(createdTeam.teamId, "2")
         val secondInstance = flow.first()
         assert(secondInstance.membersUid.contains("2"))
+
         // Clean
         repo.leaveTeam("2")
         repo.leaveTeam("1")
@@ -63,6 +65,7 @@ class TeamsRepositoryTest {
             MockUserRepository()
         )
         val createdTeam = repo.createTeam("name", "2")
+
         repo.joinTeam(createdTeam.teamId)
         val t = repo.getTeam(createdTeam.teamId).first()
         assert(t.membersUid.contains("1"))
@@ -97,6 +100,7 @@ class TeamsRepositoryTest {
         val secondInstance = flow.first()
         assert(secondInstance.size == nbOfTeamsInFirstInstance + 1)
         assert(secondInstance.subtract(firstInstance).size == 1)
+
         repo.leaveTeam()
     }
 

@@ -149,7 +149,7 @@ open class HomeViewModel(
                     container.user,
                     container.feedUseCase,
                     container.challenges,
-                    container.bounties
+                    container.bounty
                 )
             }
         }

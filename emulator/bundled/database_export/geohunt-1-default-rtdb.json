@@ -1,11 +1,58 @@
 {
     "bounties": {
+        "challenges": {
+            "testBountyId": {
+                "challenges": {
+                    "testChal": {
+                        "llengeId": {
+                            "authorId": "1",
+                            "difficulty": "MEDIUM",
+                            "location": {
+                                "latitude": 46.51958,
+                                "longitude": 6.56398
+                            },
+                            "photoUrl": "https://firebasestorage.googleapis.com/v0/b/geohunt-1.appspot.com/o/images%2Fchallenge%2F95a5a7d8%2F-NV_4-PLpi6TGYfsqYW4.webp?alt=media&token=a121f8a5-4e95-406c-b0b7-97a8c2915c24",
+                            "publishedDate": "2023-05-16T15:04:42.674815Z"
+                        }
+                    }
+                }
+            }
+        },
+        "teams": {
+            "testBountyId": {
+                "teams": {
+                    "testTeamId": {
+                        "name": "Test team",
+                        "members": {
+                            "1": true
+                        },
+                        "score": 1000,
+                        "teamLeader": "1"
+                    }
+                }
+            },
+            "98d755ad-NVP5y7V0SyObpqi226o": {
+                "teams": {
+                    "-NVVeeG9ztzPzjK3PGZn": {
+                        "name": "<Team-Name>",
+                        "score": 0,
+                        "teamLeader": "o18YSwuv2QTi4wd7UW53HJ0sAHK2"
+                    }
+                }
+            }
+        },
         "byUser": {
             "1": {
                 "98d755ad-NVP5y7V0SyObpqi226o": true
             }
         },
         "meta": {
+            "testBoun": {
+                "tyId": {
+                    "adminUid": "1",
+                    "name": "Test bounty"
+                }
+            },
             "98d755ad": {
                 "-NVP5y7V0SyObpqi226o": {
                     "metadata": {
@@ -17,17 +64,6 @@
                         },
                         "name": "Bounty's Cup",
                         "startingDate": "2023-05-13T22:00:00Z"
-                    }
-                }
-            }
-        },
-        "teams": {
-            "98d755ad-NVP5y7V0SyObpqi226o": {
-                "teams": {
-                    "-NVVeeG9ztzPzjK3PGZn": {
-                        "name": "<Team-Name>",
-                        "score": 0,
-                        "teamLeader": "o18YSwuv2QTi4wd7UW53HJ0sAHK2"
                     }
                 }
             }
@@ -67,48 +103,6 @@
             "id": "2",
             "displayName": "dn2",
             "profilePictureUrl": "null"
-        }
-    },
-    "bounties": {
-        "challenges": {
-            "testBountyId": {
-                "challenges": {
-                    "testChal": {
-                        "llengeId": {
-                            "authorId": "1",
-                            "difficulty": "MEDIUM",
-                            "location": {
-                                "latitude": 0.0,
-                                "longitude": 0.0
-                            },
-                            "photoUrl": "",
-                            "publishedDate": "2023-05-16T15:04:42.674815Z"
-                        }
-                    }
-                }
-            }
-        },
-        "meta": {
-            "testBoun": {
-                "tyId": {
-                    "adminUid": "1",
-                    "name": "Test bounty"
-                }
-            }
-        },
-        "teams": {
-            "testBountyId": {
-                "teams": {
-                    "testTeamId": {
-                        "name": "Test team",
-                        "members": {
-                            "1": true
-                        },
-                        "score": 1000,
-                        "teamLeader": "1"
-                    }
-                }
-            }
         }
     }
 }

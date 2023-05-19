@@ -7,6 +7,7 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.Team
+import kotlinx.coroutines.flow.Flow
 
 interface BountyClaimRepositoryInterface {
     /**
@@ -34,4 +35,6 @@ interface BountyClaimRepositoryInterface {
     suspend fun getClaimsOf(team: Team) : List<Claim>
 
     suspend fun getClaimById(id: String) : Claim
+
+    fun getRealtimeClaimsOf(team: Team): Flow<List<Claim>>
 }

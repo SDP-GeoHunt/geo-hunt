@@ -3,9 +3,8 @@ package com.github.geohunt.app.ui.components.navigation
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.material.Button
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.Add
 import androidx.compose.material.icons.sharp.Home
@@ -22,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.maps.GoogleMapDisplay
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.bounties.AdminBountyPage
 import com.github.geohunt.app.ui.components.bounties.BountyClaimChallenge
@@ -37,12 +37,16 @@ import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
 import com.github.geohunt.app.ui.screens.bounty.ChatScreen
 import com.github.geohunt.app.ui.screens.bounty_team_select.BountyTeamSelectPage
 import com.github.geohunt.app.ui.screens.home.HomeScreen
+import com.github.geohunt.app.ui.screens.teamleaderboard.TeamLeaderboard
+import com.github.geohunt.app.ui.screens.teamprogress.TeamProgressScreen
 import com.github.geohunt.app.ui.screens.userleaderboard.UserLeaderboard
 import com.github.geohunt.app.ui.settings.SettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsPage
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsViewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -71,7 +75,7 @@ enum class VisibleRoute(val titleStringId: Int,
 
 enum class HiddenRoute(override val route: String): Route {
     BountyTeamChooser("bounty/team-select"),
-    BountyView("bounty/view"),
+    BountyTeamProgress("bounty/team-progress"),
     EditProfile("settings/profile"),
     Settings("settings"),
     AppSettings("settings/app"),
@@ -81,7 +85,7 @@ enum class HiddenRoute(override val route: String): Route {
     CreateBounty("create-bounty"),
     BountyClaimChallenge("bounty-claim-challenge"),
     ChallengeView("challenge-view"),
-
+    BountyLeaderboard("bounty/leaderboard")
 }
 
 @Composable
@@ -103,15 +107,12 @@ fun NavigationController(
             HomeScreen(navigate = { navController.navigate(it) })
         }
         composable(VisibleRoute.Explore.route) {
-            /*val epflCoordinates = LatLng(46.519585, 6.5684919)
+            val epflCoordinates = LatLng(46.519585, 6.5684919)
             val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
             GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
                 cameraPosition = epflCameraPosition
-            )*/
-            Button(onClick = { navController.navigate("challenge-view/95a5a7d8-NUXh1ljKFT--eAv8d-c") }) {
-                Text("OK")
-            }
+            )
         }
         composable(HiddenRoute.CreateChallenge.route) {
             CreateNewChallenge(
@@ -258,15 +259,31 @@ fun NavigationController(
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
-            BountyTeamSelectPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {})
+            BountyTeamSelectPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {
+                navController.navigate("${HiddenRoute.BountyTeamProgress.route}/$bid")
+            })
         }
 
         composable(
-            "${HiddenRoute.BountyView.route}/{bountyId}",
+            "${HiddenRoute.BountyTeamProgress.route}/{bountyId}",
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
-            Text(text = "ok")
+            TeamProgressScreen(
+                onBack = { navController.popBackStack() },
+                onLeaderboard = { navController.navigate("bounty/leaderboard/$bid") },
+                onChat = { /* TODO */ },
+                onClaim = { navController.navigate("${HiddenRoute.BountyClaimChallenge.route}/$bid/${it.id}") },
+                bountyId = bid
+            )
+        }
+
+        composable(
+            "${HiddenRoute.BountyLeaderboard.route}/{bountyId}",
+            arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
+        ) {
+            val bid = it.arguments?.getString("bountyId")!!
+            TeamLeaderboard(bid = bid)
         }
 
         // Bounties

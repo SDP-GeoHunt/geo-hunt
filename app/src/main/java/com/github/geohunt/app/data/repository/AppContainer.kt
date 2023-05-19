@@ -38,8 +38,6 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
 
     val feedUseCase = GetUserFeedUseCase(auth, challenges, follow)
 
-    val bounties = BountiesRepository(user, auth, image, dbInstance, storageInstance)
-
     // Settings
     private val Context.dataStore by dataStore("app-settings.json", AppSettingsSerializer)
     val appSettingsRepository = AppSettingsRepositoryImpl(application.dataStore)

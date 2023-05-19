@@ -65,7 +65,7 @@ class TeamsRepository(
     override fun getUserTeam(userId: String): Flow<Team?> {
         return getTeams().map {
             it.firstOrNull { team -> team.membersUid.contains(userId) }
-        }
+        }.flowOn(ioDispatcher)
     }
 
     override fun getTeams(): Flow<List<Team>> {
@@ -136,5 +136,4 @@ class TeamsRepository(
     override suspend fun leaveTeam() {
         return leaveTeam(userRepository.getCurrentUser().id)
     }
-    
 }
