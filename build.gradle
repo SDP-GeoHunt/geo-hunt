@@ -1,8 +1,4 @@
 buildscript {
-    ext {
-        compose_ui_version = '1.4.3'
-        material3_version = '1.1.0'
-    }
     dependencies {
         classpath 'com.google.gms:google-services:4.3.15'
         classpath "org.jetbrains.kotlin:kotlin-serialization:1.8.21"
@@ -13,9 +9,9 @@ buildscript {
 }
 
 plugins {
-    // Gradle 8.0.1
-    id 'com.android.application' version '8.0.1' apply false
-    id 'com.android.library' version '8.0.1' apply false
+    // Gradle 7.4.2
+    id 'com.android.application' version '7.4.2' apply false
+    id 'com.android.library' version '7.4.2' apply false
 
     // Kotlin 1.8.21
     id 'org.jetbrains.kotlin.android' version '1.8.21' apply false
