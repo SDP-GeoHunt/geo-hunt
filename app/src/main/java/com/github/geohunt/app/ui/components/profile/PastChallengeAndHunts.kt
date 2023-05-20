@@ -12,12 +12,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.ui.components.GeoHuntTabs
+import com.github.geohunt.app.ui.components.TabData
 
-typealias ComposableFun = @Composable (List<Challenge>?) -> Unit
-
-enum class ProfileTabs(val tabName: Int, val tabContent: ComposableFun) {
-    PastChallenges(R.string.challenges, { PastChallengesContent(it) }),
-    PastHunts(R.string.hunts, { PastHuntsContent(it) })
+enum class ProfileTabs {
+    PastChallenges,
+    PastHunts
 }
 
 /**
@@ -28,18 +28,15 @@ fun PastChallengeAndHunts(challenges: List<Challenge>?, hunts: List<Challenge>?)
     var currentTab by remember { mutableStateOf(ProfileTabs.PastChallenges) }
 
     Column {
-        TabRow(selectedTabIndex = currentTab.ordinal, backgroundColor = MaterialTheme.colors.background) {
-            ProfileTabs.values().forEach {
-                Tab(
-                    selected = it.ordinal == currentTab.ordinal,
-                    text = { Text(stringResource(id = it.tabName)) },
-                    onClick = { currentTab = it },
-                    modifier = Modifier.testTag("tabbtn-${it.ordinal}")
-                )
-            }
-        }
+        GeoHuntTabs(tabs = listOf(
+            TabData(title = stringResource(id = R.string.challenges), onClick = { currentTab = ProfileTabs.PastChallenges }),
+            TabData(title = stringResource(id = R.string.hunts), onClick = { currentTab = ProfileTabs.PastHunts }),
+        ))
 
-        currentTab.tabContent(if (currentTab.ordinal == 0) challenges else hunts)
+        when (currentTab) {
+            ProfileTabs.PastChallenges -> PastChallengesContent(challenges)
+            ProfileTabs.PastHunts -> PastHuntsContent(hunts)
+        }
     }
 }
 

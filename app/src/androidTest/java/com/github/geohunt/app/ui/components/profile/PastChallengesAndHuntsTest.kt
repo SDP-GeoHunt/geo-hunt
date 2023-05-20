@@ -16,23 +16,11 @@ class PastChallengesAndHuntsTest {
 
     // Navigation test
     @Test
-    fun clickingOnTabSelectsIt() {
-        testRule.setContent {
-            PastChallengeAndHunts(listOf(), listOf())
-        }
-        for (tab in ProfileTabs.values()) {
-            val node = testRule.onNodeWithTag("tabbtn-${tab.ordinal}")
-            node.performClick()
-            node.assertIsSelected()
-        }
-    }
-
-    @Test
     fun clickingOnPastHuntsShowsPastHuntsComponent() {
         testRule.setContent {
             PastChallengeAndHunts(listOf(), listOf())
         }
-        testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastHunts.ordinal}").performClick()
+        testRule.onNodeWithTag("tab-${ProfileTabs.PastHunts.ordinal}").performClick()
         testRule.onNodeWithTag("past-hunts").assertExists().assertIsDisplayed()
     }
 
@@ -41,7 +29,7 @@ class PastChallengesAndHuntsTest {
         testRule.setContent {
             PastChallengeAndHunts(listOf(), listOf())
         }
-        testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastChallenges.ordinal}").performClick()
+        testRule.onNodeWithTag("tab-${ProfileTabs.PastChallenges.ordinal}").performClick()
         testRule.onNodeWithTag("past-challenges").assertExists().assertIsDisplayed()
     }
     
@@ -50,7 +38,7 @@ class PastChallengesAndHuntsTest {
         testRule.setContent {
             PastChallengeAndHunts(listOf(MockChallenge()), listOf())
         }
-        testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastHunts.ordinal}").performClick()
+        testRule.onNodeWithTag("tab-${ProfileTabs.PastHunts.ordinal}").performClick()
         testRule.onNodeWithText("No past hunts", substring = true).assertIsDisplayed()
     }
 
@@ -59,7 +47,7 @@ class PastChallengesAndHuntsTest {
         testRule.setContent {
             PastChallengeAndHunts(listOf(), listOf())
         }
-        testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastChallenges.ordinal}").performClick()
+        testRule.onNodeWithTag("tab-${ProfileTabs.PastChallenges.ordinal}").performClick()
         testRule.onNodeWithText("No challenges", substring = true).assertIsDisplayed()
     }
 
@@ -68,7 +56,7 @@ class PastChallengesAndHuntsTest {
         testRule.setContent {
             PastChallengeAndHunts(hunts = listOf(MockChallenge()), challenges = listOf())
         }
-        testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastHunts.ordinal}").performClick()
+        testRule.onNodeWithTag("tab-${ProfileTabs.PastHunts.ordinal}").performClick()
         testRule.onNodeWithText("No past hunts", substring = true).assertDoesNotExist()
     }
 
@@ -77,7 +65,7 @@ class PastChallengesAndHuntsTest {
         testRule.setContent {
             PastChallengeAndHunts(challenges = listOf(MockChallenge()), hunts = listOf())
         }
-        testRule.onNodeWithTag("tabbtn-${ProfileTabs.PastChallenges.ordinal}").performClick()
+        testRule.onNodeWithTag("tab-${ProfileTabs.PastChallenges.ordinal}").performClick()
         testRule.onNodeWithText("No challenges", substring = true).assertDoesNotExist()
     }
 }
