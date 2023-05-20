@@ -68,18 +68,3 @@ fun gaussianDistributionPDF (mean: Double, std: Double): (Double) -> Double {
         return (1 / (std * piFactor)) * exp(exponent)
     }
 }
-
-/**
- * Restricts x between min and max
- * @param min the minimum value
- * @param x the value to restrict
- * @param max the maximum value
- */
-fun clamp(min: Double, x: Double, max: Double): Double {
-    return max(min(x, max), min)
-}
-
-fun clamp(min: Long, x: Long, max: Long) : Long {
-    return max(min(x, max), min)
-}
-

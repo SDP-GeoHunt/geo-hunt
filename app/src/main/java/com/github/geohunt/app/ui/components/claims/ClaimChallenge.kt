@@ -30,7 +30,6 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.sensor.RequireCameraPermission
 import com.github.geohunt.app.sensor.RequireFineLocationPermissions
-import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeViewModel
 import com.github.geohunt.app.utility.createImageFile
 import com.ireward.htmlcompose.HtmlText
 
@@ -141,7 +140,6 @@ fun ClaimChallenge(
     ) {
         Log.i("GeoHunt", "Returning from camera")
         if (!it) {
-            @Suppress("ThrowableNotThrown")
             onFailure(RuntimeException("Failed to take photo at ${file.absolutePath}"))
         }
         else {

@@ -88,7 +88,6 @@ class TaskUtilsTest {
         val resultTask = Tasks.forResult(5).thenMap {
             called++
             throw IllegalArgumentException()
-            it.toDouble() + 10.0
         }
 
         try {

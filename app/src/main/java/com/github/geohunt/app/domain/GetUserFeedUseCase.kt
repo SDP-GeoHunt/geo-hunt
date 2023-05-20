@@ -32,8 +32,6 @@ class GetUserFeedUseCase(
     fun getFollowFeed(followList: List<String>): Flow<List<Challenge>> {
         authRepository.requireLoggedIn()
 
-        val currentUser = authRepository.getCurrentUser()
-
         // Fetch all recent posts from the followed users
         val posts = followList.map { userId ->
             challengeRepository.getPosts(userId)

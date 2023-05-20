@@ -1,9 +1,15 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.github.geohunt.app.ui.components.tutorial
 
 import android.content.Intent
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -29,11 +35,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.LoginActivity
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import com.github.geohunt.app.utility.replaceActivity
-import com.google.accompanist.pager.PagerState
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -60,13 +63,13 @@ fun Tutorial(activity: ComponentActivity) {
         )
 
         HorizontalPager(
-            count = items.size,
+            pageCount = items.size,
             state = pageState,
             modifier = Modifier
                 .fillMaxHeight(0.9f)
                 .fillMaxWidth()
                 .testTag("Current page is ${pageState.currentPage}"),
-            content = {
+            pageContent = {
                 page -> TutorialSlideContent(slide = items[page])
             },
         )

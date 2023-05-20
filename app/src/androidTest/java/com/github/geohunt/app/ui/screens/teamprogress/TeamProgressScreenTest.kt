@@ -27,13 +27,12 @@ import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.model.database.FirebaseEmulator
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalTestApi::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalTestApi::class)
 class TeamProgressScreenTest {
     @get:Rule
     val testRule = createComposeRule()
@@ -50,8 +49,6 @@ class TeamProgressScreenTest {
             return flowOf(mockLocation)
         }
     }
-
-    private val storage = FirebaseEmulator.getEmulatedStorage()
 
     private val mockedTeamRepository = MockTeamRepository(listOf(
         Team("1", "1", score = 1, membersUid = listOf("1", "2"), leaderUid = "1")

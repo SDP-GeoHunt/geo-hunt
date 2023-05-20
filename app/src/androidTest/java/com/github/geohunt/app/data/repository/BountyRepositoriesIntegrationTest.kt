@@ -44,8 +44,7 @@ class BountyRepositoriesIntegrationTest {
             MockUserRepository(mockAuth = mockAuth),
             MockAuthRepository(),
             ImageRepository(storage),
-            database = database,
-            storage = storage
+            database = database
         )
 
         // Create a new bounty
@@ -78,7 +77,7 @@ class BountyRepositoriesIntegrationTest {
             }
         }
 
-        var cid : String = ""
+        var cid = ""
         var challenge: Challenge
         mockAuth.loggedAs("1").run {
             challenge = repo.getChallengeRepository(bounty)

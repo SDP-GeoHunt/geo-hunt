@@ -99,7 +99,7 @@ class TeamsRepositoryTest {
         repo.createTeam("name", "1")
         val secondInstance = flow.first()
         assert(secondInstance.size == nbOfTeamsInFirstInstance + 1)
-        assert(secondInstance.subtract(firstInstance).size == 1)
+        assert(secondInstance.subtract(firstInstance.toSet()).size == 1)
 
         repo.leaveTeam()
     }

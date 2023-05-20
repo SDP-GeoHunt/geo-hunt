@@ -1,7 +1,6 @@
 package com.github.geohunt.app.data.network.firebase.models
 
 import com.github.geohunt.app.model.Location
-import java.time.LocalDateTime
 
 data class FirebaseBountyMetadata(
     val adminUid: String? = null,

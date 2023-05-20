@@ -11,7 +11,6 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.Team
-import com.github.geohunt.app.model.points.GaussianPointCalculator
 import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference

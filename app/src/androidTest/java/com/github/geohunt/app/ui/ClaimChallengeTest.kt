@@ -37,8 +37,6 @@ class ClaimChallengeTest {
     @get:Rule
     val grantLocationPermission : GrantPermissionRule = GrantPermissionRule.grant(permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION)
 
-    private val mockedLocation = Location(13.412471480006737, 103.86698070815994)
-
     @Before
     fun setup() {
         Intents.init()

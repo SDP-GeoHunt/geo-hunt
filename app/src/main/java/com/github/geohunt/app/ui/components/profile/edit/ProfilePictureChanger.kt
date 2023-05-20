@@ -15,7 +15,7 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.ui.components.user.DefaultProfileIcon
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 
-typealias ProfilePictureProviderType = @Composable () (((Uri) -> Unit)) -> (() -> Unit)
+typealias ProfilePictureProviderType = @Composable (((Uri) -> Unit)) -> (() -> Unit)
 
 /**
  * A profile picture changer.

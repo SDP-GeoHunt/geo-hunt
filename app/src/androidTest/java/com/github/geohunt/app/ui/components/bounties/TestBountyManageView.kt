@@ -6,15 +6,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.ImageRepository
-import com.github.geohunt.app.data.repository.bounties.BountiesRepository
-import com.github.geohunt.app.mocks.MockAuthRepository
 import com.github.geohunt.app.mocks.MockBountyRepository
 import com.github.geohunt.app.mocks.MockUserRepository
-import com.github.geohunt.app.model.database.FirebaseEmulator
 import com.github.geohunt.app.ui.components.bounties.viewmodel.AdminBountyViewModel
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.equalTo
@@ -88,7 +82,7 @@ class TestBountyManageView {
         testRule.onNodeWithTag("rename-field")
             .performTextInput("<New-Bounty-Name>")
 
-        testRule.onNodeWithText("Ok")
+        testRule.onNodeWithText("OK")
             .performClick()
 
         assertThat(bountiesRepository.name, equalTo("<New-Bounty-Name>"))

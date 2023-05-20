@@ -1,8 +1,6 @@
 package com.github.geohunt.app.ui.utils.pagination
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 
 /**
  * Represents a finite scrolling paged list which fetches element on demand, using the given

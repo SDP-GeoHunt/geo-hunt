@@ -1,9 +1,9 @@
 {
   "rules": {
-    ".read": true,  // 2023-3-27
-    ".write": true,  // 2023-3-27
+    ".read": true,
+    ".write": true,
     "scores" : {
       ".indexOn": ".value" 
-    },
+    }
   }
 }

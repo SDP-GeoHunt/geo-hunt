@@ -21,10 +21,3 @@ inline fun <reified T> DataSnapshot.toMap(): Map<String, T>
     return map
 }
 
-/**
- * Queries this [Query], awaits the result and casts it to the given type.
- *
- * @return The result of type [T]
- */
-suspend inline fun <reified T> Query.queryAs(): T? = this.get().await().getValue<T>()
-

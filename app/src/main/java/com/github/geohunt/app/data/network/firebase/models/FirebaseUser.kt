@@ -14,6 +14,7 @@ data class FirebaseUser(
     val profilePictureUrl: String?
 ) {
     /** Default constructor to comply with [com.google.firebase.database.DataSnapshot.getValue]'s requirements */
+    @Suppress("unused")
     constructor(): this(
         id = "",
         displayName = null,

@@ -1,7 +1,6 @@
 package com.github.geohunt.app.data.repository
 
 import android.net.Uri
-import android.util.Log
 import com.github.geohunt.app.data.exceptions.ChallengeNotFoundException
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.local.LocalPicture

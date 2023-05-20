@@ -9,7 +9,7 @@ import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.User
 import java.time.LocalDateTime
 
-open class MockBountiesRepositories(): BountiesRepositoryInterface {
+open class MockBountiesRepositories : BountiesRepositoryInterface {
     override suspend fun createBounty(
         name: String,
         startingDate: LocalDateTime,

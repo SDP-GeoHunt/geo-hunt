@@ -1,11 +1,7 @@
 <resources>
     <string name="app_name">GeoHunt</string>
-    <string name="event_image">Event image</string>
 
     <string name="claim_hunt">Claim</string>
-    <string name="challenge_created_by">Created by : %1$s</string>
-    <string name="challenge_published">Published : %1$s</string>
-    <string name="challenge_time_remaining">Time remaining : %1$s </string>
 
 
     <!-- All string for formatting message like "published just now" -->
@@ -13,9 +9,6 @@
     <string name="published_format">published %s</string>
     <string name="claimed_format">claimed %s</string>
 
-    <string name="date_format_less_one_hour">Less than 1 hour</string>
-    <string name="date_format_never">NEVER</string>
-    <string name="date_format_format">dd/MM/yyyy</string>
     <string name="navigation.home">Home</string>
     <string name="navigation.explore">Explore</string>
     <string name="navigation.create">Create a hunt</string>
@@ -23,15 +16,12 @@
     <string name="navigation.profile">Profile</string>
     <string name="title_main_activity">GeoHunt</string>
     <string name="title_activity_login">Login</string>
-    <string name="date_range_formatting">from %s to %s</string>
+    <string name="date_range_formatting">from %1$s to %2$s</string>
     <string name="start_in_formatter">Starts %s</string>
     <string name="end_in_formatter">Ends %s</string>
     <string name="already_terminated">terminated</string>
 
     <string name="sign_in">Sign in</string>
-
-    <string name="community_guidelines_url">https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines</string>
-    <string name="privacy_policy_url">https://github.com/SDP-GeoHunt/geo-hunt/wiki/Privacy-Policy</string>
 
     <string name="profile_number_of_posts_subtitle">posts</string>
     <string name="profile_number_of_hunts_subtitle">hunts</string>
@@ -72,20 +62,11 @@
     <string name="tutorial_third_screen_title">Complete challenges!</string>
     <string name="tutorial_third_screen_description">Complete challenges and earn points!</string>
 
-    <string name="active_hunts_black_part">Active</string>
-    <string name="active_hunts_red_part">hunts</string>
-    <string name="no_challenge_message">No challenges yet… <br/> Go pick some challenges to begin your hunt!</string>
-    <string name="search_nearby_challenges">Search nearby challenges</string>
-    <string name="never_expires">Never expires</string>
-    <string name="expired_formatter"><![CDATA[Expired <font color="#2596be">%s</font>]]></string>
-    <string name="expires_in_formatter"><![CDATA[Expires <font color="#2596be">%s</font>]]></string>
     <string name="challenge_create_agree_community_link"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
     <string name="claim_create_agree_community_link"><![CDATA[By claiming a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
-    <string name="leave_hunt">Leave Hunt</string>
     <string name="join_hunt">Join Hunt</string>
     <string name="less_button">less…</string>
     <string name="more_button">more…</string>
-    <string name="submit_a_claim_title">Submit a Claim</string>
     <string name="claim_challenge_button">Submit Claim</string>
     <string name="create_challenge_button">Create challenge</string>
 
@@ -108,11 +89,9 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="system">System</string>
-    <string name="theme_desc">The theme used by the application</string>
 
     <!-- buttons -->
     <string name="confirm">Confirm</string>
-    <string name="cancel">Cancel</string>
     <string name="claim">Claim</string>
 
     <!-- team progress -->
@@ -128,7 +107,6 @@
     <string name="following_only_desc">Your profile will be visible by users that you follow.</string>
     <string name="private_word">Private</string>
     <string name="private_desc">Your profile will be visible only by you.</string>
-    <string name="update_profile_visibility_failed">Failed to update profile visibility.</string>
 
 
     <string name="statistics_title">Statistics</string>
@@ -143,16 +121,12 @@
 
     <!-- home feed/bounty selector -->
     <string name="feed">Feed</string>
-    <string name="bounty">Bounty</string>
     <string name="bounties">Bounties</string>
     <string name="join">Join</string>
     <string name="no_bounties">No available bounties at the moment.</string>
-    <string name="begins_in">Begins in %1$s</string>
     <string name="ends_in">Ends in %1$s</string>
     <string name="expired_since">Expired since %1$s</string>
-    <string name="km_away">%1$dkm away</string>
 
-    <string name="team_title">Team %1$d</string>
     <string name="team_name">Team name</string>
     <string name="enter_team_name">Enter the new team\'s name</string>
     <string name="create_team">Create team</string>
@@ -164,7 +138,7 @@
     <string name="location">Location</string>
     <string name="name">Name</string>
     <string name="create_bounty_button">Create bounty</string>
-    <string name="Ok">Ok</string>
+    <string name="Ok">OK</string>
     <string name="Cancel">Cancel</string>
     <string name="renaming_bounty_popup_title">Renaming bounty</string>
     <string name="renaming_bounty_placeholder"><![CDATA[<Name of Bounty>]]></string>

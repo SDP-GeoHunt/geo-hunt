@@ -24,12 +24,11 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class BountyClaimViewModel(
-    private val bountyId: String,
     private val imageRepository: ImageRepository,
     private val locationRepository: LocationRepositoryInterface,
     private val challengeRepository: ChallengeRepositoryInterface,
     private val bountyClaimRepository: BountyClaimRepositoryInterface,
-    ) : ViewModel() {
+) : ViewModel() {
 
     enum class State {
         AWAITING_CHALLENGE,
@@ -155,7 +154,6 @@ class BountyClaimViewModel(
                     val container = AppContainer.getInstance(application)
 
                     BountyClaimViewModel(
-                        bountyId = bountyId,
                         imageRepository = container.image,
                         locationRepository = container.location,
                         challengeRepository = container.bounty.getChallengeRepository(bountyId),
