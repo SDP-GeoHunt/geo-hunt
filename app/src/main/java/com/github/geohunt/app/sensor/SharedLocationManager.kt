@@ -34,7 +34,7 @@ class SharedLocationManager(
         .build()
 
     @SuppressLint("MissingPermission")
-    private fun _locationUpdates(coroutineScope: CoroutineScope) = callbackFlow<Location> {
+    private fun _locationUpdates(coroutineScope: CoroutineScope) = callbackFlow {
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 if (result.lastLocation != null) {

@@ -40,32 +40,8 @@ interface LocationRequestState {
      * Launch the location request and await the result
      */
     fun requestLocation() : CompletableFuture<Location>
-
-    companion object {
-        /**
-         * Default [LocationRequestState] factory (used for mocking during testing)
-         */
-        val defaultFactory = Singleton<@Composable () -> LocationRequestState> {
-            LocationRequestAndroidImplementation(
-                LocalContext.current,
-                remember { mutableStateOf(null) },
-                rememberPermissionsState(
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                )
-            )
-        }
-    }
 }
 
-
-/**
- * Create a static state that holds an instance of [LocationRequestState]
- */
-@Composable
-fun rememberLocationRequestState() : LocationRequestState {
-    return LocationRequestState.defaultFactory.get()()
-}
 
 /**
  * Default implementation for the [LocationRequestState]

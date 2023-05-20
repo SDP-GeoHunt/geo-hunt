@@ -45,7 +45,7 @@ private val DarkColors = darkColors(
 
 @Composable
 fun GeoHuntTheme(
-    content: @Composable() () -> Unit,
+    content: @Composable () -> Unit,
 ) {
     val themeState =
         AppContainer.getInstance(LocalContext.current.applicationContext as Application)

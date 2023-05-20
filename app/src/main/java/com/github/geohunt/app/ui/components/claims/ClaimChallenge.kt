@@ -140,7 +140,6 @@ fun ClaimChallenge(
     ) {
         Log.i("GeoHunt", "Returning from camera")
         if (!it) {
-            @Suppress("ThrowableNotThrown")
             onFailure(RuntimeException("Failed to take photo at ${file.absolutePath}"))
         }
         else {

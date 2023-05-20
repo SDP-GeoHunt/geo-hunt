@@ -1,6 +1,5 @@
 package com.github.geohunt.app.ui.components.bounties
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -26,7 +25,7 @@ import coil.request.ImageRequest
 import com.github.geohunt.app.model.Challenge
 
 @Composable
-internal fun ColumnScope.DisplayChallenges(
+internal fun DisplayChallenges(
     challenges: List<Challenge>,
     onCreateChallenge: () -> Unit,
 ) {

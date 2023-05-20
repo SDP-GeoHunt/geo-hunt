@@ -36,12 +36,12 @@ fun LabelledIcon(
     text: String,
     painter: Painter,
     contentDescription: String,
+    modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
     fontColor: Color = Color.Unspecified,
     iconSize: Dp = 25.dp,
-    tint : Color = Color.Unspecified,
-    modifier: Modifier = Modifier
+    tint: Color = Color.Unspecified
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

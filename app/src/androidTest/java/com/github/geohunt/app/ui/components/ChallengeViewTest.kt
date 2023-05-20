@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package com.github.geohunt.app.ui.components
 
 import android.app.Application
@@ -15,7 +13,6 @@ import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.challenge.ChallengeViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.Before
@@ -53,10 +50,6 @@ class ChallengeViewTest {
         )
     }
 
-    private fun createTestBitmap(context: Context) : Bitmap {
-        return ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground)?.toBitmap()!!
-    }
-    
     @Test
     fun testChallenge1() {
         var route = ""

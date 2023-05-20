@@ -6,7 +6,7 @@ container:
   image: cirrusci/android-sdk:30
   cpu: 4
   memory: 16G
-  kvm: true
+  kvm: "true"
 
 check_android_task:
   name: Run Android tests

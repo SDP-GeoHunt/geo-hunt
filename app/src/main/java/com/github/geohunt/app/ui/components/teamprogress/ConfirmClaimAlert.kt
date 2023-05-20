@@ -25,7 +25,7 @@ fun ConfirmClaimAlert(
             },
             dismissButton = {
                 TextButton(onClick = onCancel) {
-                    Text(stringResource(id = R.string.cancel))
+                    Text(stringResource(id = R.string.Cancel))
                 }
             },
             title = { Text(stringResource(id = R.string.claim_confirmation_alert_title)) },

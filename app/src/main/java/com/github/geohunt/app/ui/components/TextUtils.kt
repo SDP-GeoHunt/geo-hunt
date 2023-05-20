@@ -17,35 +17,6 @@ data class LinkTextData(
 )
 
 @Composable
-fun LinkText(
-        linkTextData: List<LinkTextData>,
-        modifier: Modifier = Modifier,
-        style: TextStyle = Typography.body1,
-        primaryColor: Color = MaterialTheme.colors.primary,
-) {
-    val annotatedString = createAnnotatedString(linkTextData, primaryColor)
-
-    ClickableText(
-            text = annotatedString,
-            style = style,
-            onClick = { offset ->
-                linkTextData.forEach { annotatedStringData ->
-                    if (annotatedStringData.tag != null && annotatedStringData.annotation != null) {
-                        annotatedString.getStringAnnotations(
-                                tag = annotatedStringData.tag,
-                                start = offset,
-                                end = offset,
-                        ).firstOrNull()?.let {
-                            annotatedStringData.onClick?.invoke(it)
-                        }
-                    }
-                }
-            },
-            modifier = modifier,
-    )
-}
-
-@Composable
 private fun createAnnotatedString(data: List<LinkTextData>, primaryColor: Color): AnnotatedString {
     return buildAnnotatedString {
         data.forEach { linkTextData ->

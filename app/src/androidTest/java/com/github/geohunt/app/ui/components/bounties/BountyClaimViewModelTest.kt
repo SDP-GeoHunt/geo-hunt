@@ -59,8 +59,7 @@ class BountyClaimViewModelTest {
             MockUserRepository(mockAuth = mockAuth),
             MockAuthRepository(),
             ImageRepository(storage),
-            database = database,
-            storage = storage
+            database = database
         )
 
         runBlocking {

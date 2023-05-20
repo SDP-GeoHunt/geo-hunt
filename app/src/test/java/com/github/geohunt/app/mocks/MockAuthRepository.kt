@@ -23,16 +23,6 @@ class MockAuthRepository(var loggedUser: User? = defaultLoggedUser): AuthReposit
 
     }
 
-    fun loggedAs(uid: String) : AutoCloseable {
-        val previousValue = loggedUser
-        loggedUser = User(
-            id = uid,
-            displayName = "dn$uid",
-            profilePictureUrl = null
-        )
-        return AutoCloseable { loggedUser = previousValue }
-    }
-
     override suspend fun logOut(context: ComponentActivity) {
 
     }

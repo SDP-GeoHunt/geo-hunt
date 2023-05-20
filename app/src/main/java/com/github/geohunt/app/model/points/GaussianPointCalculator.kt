@@ -2,7 +2,6 @@ package com.github.geohunt.app.model.points
 
 import com.github.geohunt.app.model.points.PointCalculator.Companion.MAX_POINTS
 import com.github.geohunt.app.model.points.PointCalculator.Companion.MIN_POINTS
-import com.github.geohunt.app.utility.clamp
 import com.github.geohunt.app.utility.gaussianDistributionPDF
 
 /**
@@ -26,6 +25,6 @@ class GaussianPointCalculator(std: Double) : PointCalculator {
      */
     override fun computePoints(distance: Double): Long {
         val points = calculator(distance) * ratio
-        return clamp(MIN_POINTS, points.toLong(), MAX_POINTS)
+        return points.toLong().coerceIn(MIN_POINTS, MAX_POINTS)
     }
 }
