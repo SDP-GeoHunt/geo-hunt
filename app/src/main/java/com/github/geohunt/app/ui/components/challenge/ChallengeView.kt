@@ -24,7 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.components.GoBackBtn
+import com.github.geohunt.app.ui.components.buttons.BackButton
 import com.github.geohunt.app.ui.components.utils.AwaitNullable
 import com.github.geohunt.app.ui.screens.home.HorizontalDivider
 
@@ -39,7 +39,7 @@ fun ChallengeView(
     cid: String,
     fnViewImageCallback: (String) -> Unit,
     fnClaimHuntCallback: (String) -> Unit,
-    fnGoBackBtn: () -> Unit,
+    onBack: () -> Unit,
     viewModel: ChallengeViewModel = viewModel(factory = ChallengeViewModel.Factory)
 ) {
     val lazyState = rememberLazyListState()
@@ -91,7 +91,7 @@ fun ChallengeView(
                 LazyClaimList(lazyState, viewModel, state, fnViewImageCallback)
             }
 
-            GoBackBtn(fnGoBackBtn)
+            BackButton(onBack)
         }
     }
 }

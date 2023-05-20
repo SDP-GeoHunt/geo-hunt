@@ -1,14 +1,9 @@
 package com.github.geohunt.app.ui.components
 
 import android.app.Application
-import android.content.Context
-import android.graphics.Bitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.mocks.*
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
@@ -74,7 +69,7 @@ class ChallengeViewTest {
                 cid = "163f921c-ML2eCQ52mAQlvCEQZ2n",
                 fnViewImageCallback = { route = "image-view/$it" },
                 fnClaimHuntCallback = { route = "claim/$it" } ,
-                fnGoBackBtn = { route = ".." },
+                onBack = { route = ".." },
                 viewModel = vm)
         }
 

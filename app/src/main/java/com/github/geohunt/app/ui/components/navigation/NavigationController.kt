@@ -204,7 +204,7 @@ fun NavigationController(
                 cid = cid,
                 fnViewImageCallback = { navController.navigate("image-view/${URLEncoder.encode(it, StandardCharsets.UTF_8.toString())}") },
                 fnClaimHuntCallback = { cid -> navController.navigate("claim-challenge/$cid") },
-                fnGoBackBtn = { navController.popBackStack() }
+                onBack = { navController.popBackStack() }
             )
         }
 
