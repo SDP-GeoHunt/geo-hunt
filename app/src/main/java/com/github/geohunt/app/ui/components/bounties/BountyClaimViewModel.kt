@@ -15,6 +15,7 @@ import com.github.geohunt.app.data.repository.bounties.BountyClaimRepositoryInte
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.ui.components.utils.viewmodels.exceptionHandler
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.BitmapUtils.resizeBitmapToFit
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -29,26 +30,7 @@ class BountyClaimViewModel(
     private val locationRepository: LocationRepositoryInterface,
     private val challengeRepository: ChallengeRepositoryInterface,
     private val bountyClaimRepository: BountyClaimRepositoryInterface,
-    ) : ViewModel() {
-
-    enum class State {
-        AWAITING_CHALLENGE,
-        AWAITING_CAMERA,
-        AWAITING_LOCATION_PERMISSION,
-        AWAITING_LOCATION,
-        READY_TO_CLAIM,
-        CLAIMING
-    }
-
-    private val _location : MutableStateFlow<Location?> = MutableStateFlow(null)
-    val location : StateFlow<Location?> = _location
-
-    private val _submittingState : MutableStateFlow<State> =
-        MutableStateFlow(State.AWAITING_CHALLENGE)
-    val submittingState : StateFlow<State> = _submittingState
-
-    private val _photoState = MutableStateFlow<Bitmap?>(null)
-    val photoState: StateFlow<Bitmap?> = _photoState
+) : ViewModel() {
 
     private val _challenge = MutableStateFlow<Challenge?>(null)
     val challenge: StateFlow<Challenge?> = _challenge
@@ -57,77 +39,24 @@ class BountyClaimViewModel(
         reset()
         viewModelScope.launch(exceptionHandler(onFailure)) {
             _challenge.value = challengeRepository.getChallenge(cid)
-            _submittingState.value = State.AWAITING_CAMERA
         }
     }
 
-    fun claim(fileFactory: (String) -> File,
-              onFailure: (Throwable) -> Unit = {},
-              onSuccess: (Claim) -> Unit = {}) {
-        require(submittingState.value == State.READY_TO_CLAIM)
-        require(location.value != null)
-        require(photoState.value != null)
+    fun claim(
+        location: Location,
+        localPicture: LocalPicture,
+        onFailure: (Throwable) -> Unit = {},
+        onSuccess: (Claim) -> Unit = {}
+    ) {
         require(challenge.value != null)
-
         viewModelScope.launch(exceptionHandler(onFailure)) {
-            val file = imageRepository.preprocessImage(photoState.value!!, fileFactory)
-            _submittingState.value = State.CLAIMING
-
             val claim = bountyClaimRepository.claimChallenge(
-                LocalPicture(file),
+                localPicture,
                 challenge.value!!,
-                location.value!!,
+                location,
             )
-
             onSuccess(claim)
         }
-    }
-
-    fun startLocationUpdate(onFailure: (Throwable) -> Unit = {}) {
-        require(_submittingState.value == State.AWAITING_LOCATION_PERMISSION)
-
-        _submittingState.value = State.AWAITING_LOCATION
-        viewModelScope.launch(exceptionHandler(onFailure)) {
-            locationRepository.getLocations(viewModelScope).collect {
-                _location.value = it
-                if (_submittingState.value == State.AWAITING_LOCATION) {
-                    _submittingState.value = State.READY_TO_CLAIM
-                }
-            }
-        }
-    }
-
-    fun withPhoto(file: File, onFailure: (Throwable) -> Unit = {}) {
-        require(_submittingState.value == State.AWAITING_CAMERA)
-
-        withPhoto({ BitmapUtils.loadFromFile(file) }, onFailure)
-    }
-
-    fun withPhoto(bitmapFactory: suspend () -> Bitmap, onFailure: (Throwable) -> Unit = {}) {
-        require(_submittingState.value == State.AWAITING_CAMERA)
-
-        _submittingState.value = State.AWAITING_LOCATION_PERMISSION
-        viewModelScope.launch(exceptionHandler(onFailure)) {
-            _photoState.value = bitmapFactory().resizeBitmapToFit(R.integer.maximum_number_of_pixel_per_photo)
-        }
-    }
-
-    fun injectLocationUpdate(location: Location) {
-        require(_submittingState.value == State.AWAITING_LOCATION_PERMISSION)
-
-        _submittingState.value = State.READY_TO_CLAIM
-        _location.value = location
-    }
-
-    fun injectPhoto(bitmap: Bitmap) {
-        require(_submittingState.value == State.AWAITING_CAMERA)
-
-        _submittingState.value = State.AWAITING_LOCATION_PERMISSION
-        _photoState.value = bitmap
-    }
-
-    fun injectChallenge(challenge: Challenge) {
-        _challenge.value = challenge
     }
 
     override fun onCleared() {
@@ -136,16 +65,9 @@ class BountyClaimViewModel(
     }
 
     fun reset() {
-        _location.value = null
-        _submittingState.value = State.AWAITING_CAMERA
-        _photoState.value = null
         _challenge.value = null
     }
 
-    private fun exceptionHandler(callback: (Throwable) -> Unit) =
-        CoroutineExceptionHandler { _, throwable ->
-            callback(throwable)
-        }
 
     companion object {
         fun getFactory(bountyId: String): ViewModelProvider.Factory {

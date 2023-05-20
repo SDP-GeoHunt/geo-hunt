@@ -304,7 +304,7 @@ fun NavigationController(
                     Log.e("GeoHunt", "Fail to create challenge: $it")
                     navController.popBackStack()
                 },
-                onClaimSubmitted = {
+                onSuccess = {
                     navController.popBackStack()
                     navController.navigate("${HiddenRoute.ChallengeView.route}/$cid")
                 }

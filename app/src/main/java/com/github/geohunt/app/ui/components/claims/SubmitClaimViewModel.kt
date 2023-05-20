@@ -13,6 +13,7 @@ import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.ui.components.utils.viewmodels.exceptionHandler
 import com.github.geohunt.app.utility.BitmapUtils
 import com.github.geohunt.app.utility.BitmapUtils.resizeBitmapToFit
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -61,10 +62,6 @@ class SubmitClaimViewModel(
         _challenge.value = null
     }
 
-    private fun exceptionHandler(callback: (Throwable) -> Unit) =
-        CoroutineExceptionHandler { _, throwable ->
-            callback(throwable)
-        }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
