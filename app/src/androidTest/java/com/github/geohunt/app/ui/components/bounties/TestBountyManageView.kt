@@ -82,7 +82,7 @@ class TestBountyManageView {
         testRule.onNodeWithTag("rename-field")
             .performTextInput("<New-Bounty-Name>")
 
-        testRule.onNodeWithText("Ok")
+        testRule.onNodeWithText("OK")
             .performClick()
 
         assertThat(bountiesRepository.name, equalTo("<New-Bounty-Name>"))
