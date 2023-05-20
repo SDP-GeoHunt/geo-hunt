@@ -3,7 +3,7 @@ env:
   MAPS_API_KEY: ENCRYPTED[c6f0602a257026d81282f12942805107edbf80459f576f8919bd0090232770743df99a26fb0c08bf2024f39257f2fee4]
 
 container:
-  image: cirrusci/android-sdk:30
+  image: cirrusci/android-sdk:33
   cpu: 4
   memory: 16G
   kvm: "true"
