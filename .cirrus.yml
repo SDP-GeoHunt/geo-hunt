@@ -11,6 +11,7 @@ container:
 check_android_task:
   name: Run Android tests
   alias: check_android
+  timeout_in: 30m
   install_ffmpeg_script: |
     sudo apt-get update
     sudo apt-get install -y ffmpeg
