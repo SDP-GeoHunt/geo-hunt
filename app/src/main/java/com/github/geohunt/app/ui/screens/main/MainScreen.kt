@@ -13,8 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.github.geohunt.app.ui.components.CreateMenuPopup
-import com.github.geohunt.app.ui.components.navigation.HiddenRoute
-import com.github.geohunt.app.ui.components.navigation.NavigationBar
+import com.github.geohunt.app.ui.components.navigation.SecondaryScreen
+import com.github.geohunt.app.ui.components.navigation.GeoHuntNavigationBar
 import com.github.geohunt.app.ui.components.navigation.NavigationController
 import kotlinx.coroutines.launch
 
@@ -37,17 +37,18 @@ fun MainScreen(viewModel: MainViewModel, logout: () -> Any) {
         }
     }
 
-    CreateMenuPopup(modalState, {
-        navController.navigate(HiddenRoute.CreateChallenge.route)
-    }, {
-       navController.navigate(HiddenRoute.CreateBounty.route)
-    }, scope) {
+    CreateMenuPopup(
+        modalState,
+        createChallenge = { navController.navigate(SecondaryScreen.CreateChallenge.route) },
+        createBounty = { navController.navigate(SecondaryScreen.CreateBounty.route) },
+        scope
+    ) {
         Scaffold(
             bottomBar = {
                 Surface(modifier = Modifier.shadow(9.dp)) {
-                    NavigationBar(navController = navController) { // on create
+                    GeoHuntNavigationBar(navController = navController, onCreate = {
                         scope.launch { modalState.show() }
-                    }
+                    })
                 }
             },
             scaffoldState = scaffoldState

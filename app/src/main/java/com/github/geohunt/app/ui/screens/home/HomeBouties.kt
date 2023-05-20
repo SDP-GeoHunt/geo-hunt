@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Bounty
-import com.github.geohunt.app.ui.components.navigation.HiddenRoute
+import com.github.geohunt.app.ui.components.navigation.SecondaryScreen
 import kotlinx.coroutines.flow.map
 
 @SuppressLint("FlowOperatorInvokedInComposition")
@@ -63,8 +63,8 @@ fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Any) {
                                     vm.nbParticipating.map { it[bounty.bid] },
                                     isInside
                                 ) {
-                                    if (isInside) navigate("${HiddenRoute.BountyTeamProgress.route}/${bounty.bid}")
-                                    else navigate("${HiddenRoute.BountyTeamChooser.route}/${bounty.bid}")
+                                    if (isInside) navigate("${SecondaryScreen.BountyTeamProgress.route}/${bounty.bid}")
+                                    else navigate("${SecondaryScreen.BountyTeamChooser.route}/${bounty.bid}")
                                 }
                             }
                         }
