@@ -9,10 +9,11 @@ buildscript {
 }
 
 plugins {
-    // Gradle 7.4.2
-    id 'com.android.application' version '7.4.2' apply false
-    id 'com.android.library' version '7.4.2' apply false
+    // Android Gradle
+    id 'com.android.application' version '7.4.0' apply false
+    id 'com.android.library' version '7.4.0' apply false
 
-    // Kotlin 1.8.21
-    id 'org.jetbrains.kotlin.android' version '1.8.21' apply false
+    // Kotlin
+    // Compatibility with Android Gradle versions can be found here: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
+    id 'org.jetbrains.kotlin.android' version '1.8.20' apply false
 }
