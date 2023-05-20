@@ -20,7 +20,7 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import org.junit.Assert.*
 import org.junit.Before
@@ -29,6 +29,7 @@ import org.junit.Test
 import java.io.File
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class BountyClaimViewModelTest {
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -108,27 +109,24 @@ class BountyClaimViewModelTest {
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testThatTheInitialStateIsCorrect() = runBlockingTest {
+    fun testThatTheInitialStateIsCorrect() = runTest {
         assertNull(viewModel.location.value)
         assertEquals(BountyClaimViewModel.State.AWAITING_CHALLENGE, viewModel.submittingState.value)
         assertNull(viewModel.photoState.value)
         assertNull(viewModel.challenge.value)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun testSubmittingPhotoMakesSubmittingStateToAwaitingLocationPermission() = runBlockingTest {
+    fun testSubmittingPhotoMakesSubmittingStateToAwaitingLocationPermission() = runTest {
         viewModel.start(listOfChallenges[0].id)
         viewModel.withPhoto({ Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) })
 
         assertEquals(BountyClaimViewModel.State.AWAITING_LOCATION_PERMISSION, viewModel.submittingState.value)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun testResettingViewModelNullifiesValues() = runBlockingTest {
+    fun testResettingViewModelNullifiesValues() = runTest {
         viewModel.start(listOfChallenges[0].id)
         viewModel.withPhoto({ Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) })
 
@@ -139,9 +137,8 @@ class BountyClaimViewModelTest {
         assertEquals(BountyClaimViewModel.State.AWAITING_CAMERA, viewModel.submittingState.value)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun testStartLocationUpdateMakesSubmittingStateAwaitingLocation() = runBlockingTest {
+    fun testStartLocationUpdateMakesSubmittingStateAwaitingLocation() = runTest {
         viewModel.start(listOfChallenges[0].id)
         viewModel.withPhoto({ Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888) })
 
@@ -149,9 +146,8 @@ class BountyClaimViewModelTest {
         assertEquals(BountyClaimViewModel.State.AWAITING_LOCATION, viewModel.submittingState.value)
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun testSubmittingClaimWithUninitializedLocationThrowsErrorWhenClaiming() = runBlockingTest {
+    fun testSubmittingClaimWithUninitializedLocationThrowsErrorWhenClaiming() = runTest {
         var file: File
 
         runBlocking {
@@ -180,7 +176,7 @@ class BountyClaimViewModelTest {
     }
 
     @Test
-    fun testSubmittingClaimFinishesClaimingCorrectly() = runBlockingTest {
+    fun testSubmittingClaimFinishesClaimingCorrectly() = runTest {
         viewModel.start(listOfChallenges[0].id)
         assertEquals(BountyClaimViewModel.State.AWAITING_CAMERA, viewModel.submittingState.value)
 
