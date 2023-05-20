@@ -18,10 +18,10 @@ check_android_task:
   install_firebase_emulator_script: |
     sudo curl -sL https://firebase.tools | bash
   install_emulator_script:
-    sdkmanager --install "system-images;android-30;google_apis_playstore;x86_64"
+    sdkmanager --install "system-images;android-33;google_apis_playstore;x86_64"
   create_avd_script: echo no | avdmanager create avd --force
     --name emulator
-    --package "system-images;android-30;google_apis_playstore;x86_64"
+    --package "system-images;android-33;google_apis_playstore;x86_64"
   start_avd_background_script: $ANDROID_HOME/emulator/emulator
     -avd emulator
     -no-audio
