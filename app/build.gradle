@@ -115,9 +115,6 @@ dependencies {
     // Authentication
     implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
 
-    // Tutorial implementation
-    implementation 'com.google.accompanist:accompanist-pager:0.30.1'
-
     // Permissions
     implementation "com.google.accompanist:accompanist-permissions:0.30.1"
 
