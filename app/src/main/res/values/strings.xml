@@ -79,7 +79,7 @@
     <string name="never_expires">Never expires</string>
     <string name="expired_formatter"><![CDATA[Expired <font color="#2596be">%s</font>]]></string>
     <string name="expires_in_formatter"><![CDATA[Expires <font color="#2596be">%s</font>]]></string>
-    <string name="challenge_create_agree_community_link"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
+    <string name="agree_community_html"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
     <string name="claim_create_agree_community_link"><![CDATA[By claiming a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
     <string name="leave_hunt">Leave Hunt</string>
     <string name="join_hunt">Join Hunt</string>

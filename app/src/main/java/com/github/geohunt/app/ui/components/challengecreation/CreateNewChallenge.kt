@@ -1,11 +1,7 @@
 package com.github.geohunt.app.ui.components.challengecreation
 
-import android.Manifest
 import android.graphics.Bitmap
-import android.graphics.Paint.Align
-import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -32,122 +28,9 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.sensor.RequireCameraPermission
 import com.github.geohunt.app.sensor.RequireFineLocationPermissions
-import com.github.geohunt.app.sensor.rememberPermissionsState
+import com.github.geohunt.app.ui.components.utils.PhotoLocationPipeline
 import com.github.geohunt.app.utility.*
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.ireward.htmlcompose.HtmlText
-
-@Composable
-fun CreateChallengeForm(
-    bitmap: Bitmap,
-    viewModel: CreateChallengeViewModel,
-    onFailure: (Throwable) -> Unit,
-    onSuccess: (Challenge) -> Unit
-) {
-    val uriHandler = LocalUriHandler.current
-    val bitmapPainter = remember(bitmap) { BitmapPainter(bitmap.asImageBitmap()) }
-
-    val location = viewModel.location.collectAsState()
-
-    if (location.value != null) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                Image(
-                    painter = bitmapPainter,
-                    modifier = Modifier
-                        .aspectRatio(bitmapPainter.intrinsicSize.width / bitmapPainter.intrinsicSize.height)
-                        .fillMaxSize(0.5f),
-                    contentDescription = "Photo just taken of the challenge"
-                )
-
-                Spacer(Modifier.height(15.dp))
-
-                if (viewModel.displaySetting) {
-                    val difficulty = viewModel.selectedDifficulty.collectAsState()
-                    val expirationDate = viewModel.expirationDate.collectAsState()
-
-                    ChallengeSettings(
-                        difficulty = difficulty.value,
-                        setDifficultyCallback = viewModel::withDifficulty,
-                        expirationDate = expirationDate.value,
-                        setExpirationDate = viewModel::withExpirationDate
-                    )
-
-                    Spacer(Modifier.height(15.dp))
-                }
-
-                HtmlText(
-                    text = stringResource(id = R.string.challenge_create_agree_community_link),
-                    modifier = Modifier.padding(25.dp, 0.dp),
-                    linkClicked = { url ->
-                        uriHandler.openUri(url)
-                    }
-                )
-
-                Spacer(Modifier.height(15.dp))
-
-                CreateNewChallengeButton(viewModel = viewModel,
-                    onFailure = onFailure,
-                    onSuccess = onSuccess)
-
-            }
-        }
-    } else {
-        Column {
-            CircularProgressIndicator(
-                modifier = Modifier.fillMaxSize(0.8f)
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "Awaiting location",
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                style = TextStyle(fontSize = 20.sp),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Composable
-private fun CreateNewChallengeButton(
-    viewModel: CreateChallengeViewModel,
-    onFailure: (Throwable) -> Unit,
-    onSuccess: (Challenge) -> Unit
-) {
-    val context = LocalContext.current
-    val state = viewModel.submittingState.collectAsState()
-
-    if (state.value == CreateChallengeViewModel.State.CREATING) {
-        CircularProgressIndicator()
-    }
-    else {
-        Button(
-            onClick = {
-                viewModel.create(
-                    { suffix ->
-                        context.createImageFile(suffix)
-                    },
-                    onFailure = onFailure,
-                    onSuccess = onSuccess
-                )
-            },
-            enabled = state.value == CreateChallengeViewModel.State.READY_TO_CREATE
-        ) {
-            Text(stringResource(R.string.create_challenge_button))
-        }
-    }
-}
-
 
 @Composable
 fun CreateNewChallenge(
@@ -155,53 +38,34 @@ fun CreateNewChallenge(
     onSuccess: (Challenge) -> Unit = {},
     viewModel: CreateChallengeViewModel = viewModel(factory = CreateChallengeViewModel.Factory)
 ) {
-    val context = LocalContext.current
-    val file = remember { context.createImageFile() }
-    val uri = remember {
-        FileProvider.getUriForFile(
-            context,
-            BuildConfig.APPLICATION_ID + ".provider",
-            file
-        )
-    }
-    val photoState = viewModel.photoState.collectAsState()
-    val cameraLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicture()
-    ) {
-        Log.i("GeoHunt", "Returning from camera")
-        if (!it) {
-            @Suppress("ThrowableNotThrown")
-            onFailure(RuntimeException("Failed to take photo at ${file.absolutePath}"))
-        }
-        else {
-            viewModel.withPhoto(file, onFailure)
-        }
-    }
-
-    DisposableEffect(Unit) {
+    DisposableEffect(viewModel) {
         onDispose {
             viewModel.reset()
         }
     }
 
-    RequireCameraPermission {
-        LaunchedEffect(viewModel) {
-            cameraLauncher.launch(uri)
-        }
-    }
+    PhotoLocationPipeline(
+        submitCallback = { localPicture, location ->
+            viewModel.create(location, localPicture, onFailure, onSuccess)
+        },
+        onFailure = onFailure,
+        buttonText = stringResource(R.string.create_challenge_button)
+    ) {
+        if (viewModel.displaySetting) {
+            val expirationDate = viewModel.expirationDate.collectAsState()
+            val difficulty = viewModel.selectedDifficulty.collectAsState()
 
-    if (photoState.value != null) {
-        RequireFineLocationPermissions {
-            LaunchedEffect(viewModel) {
-                viewModel.startLocationUpdate(onFailure)
-            }
-
-            CreateChallengeForm(
-                bitmap = photoState.value!!,
-                viewModel = viewModel,
-                onFailure = onFailure,
-                onSuccess = onSuccess
+            ChallengeSettings(
+                difficulty = difficulty.value,
+                setDifficultyCallback = viewModel::withDifficulty,
+                expirationDate = expirationDate.value,
+                setExpirationDate = viewModel::withExpirationDate
             )
+
+            Spacer(Modifier.height(15.dp))
         }
+
+        true
     }
 }
+

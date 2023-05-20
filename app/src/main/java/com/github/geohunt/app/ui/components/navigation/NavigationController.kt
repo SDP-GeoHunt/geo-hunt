@@ -216,7 +216,7 @@ fun NavigationController(
             ClaimChallenge(
                 cid = cid,
                 onFailure = onFailure,
-                onClaimSubmitted = {
+                onSuccess = {
                     navController.popBackStack()
                     navController.navigate("challenge-view/$cid")
                 }
