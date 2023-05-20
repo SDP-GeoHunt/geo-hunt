@@ -1,7 +1,7 @@
 buildscript {
     dependencies {
         classpath 'com.google.gms:google-services:4.3.15'
-        classpath "org.jetbrains.kotlin:kotlin-serialization:1.8.20"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:1.8.21"
 
         // Gradle Secrets (for Maps API key)
         classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1"
@@ -10,10 +10,11 @@ buildscript {
 
 plugins {
     // Android Gradle
-    id 'com.android.application' version '7.4.0' apply false
-    id 'com.android.library' version '7.4.0' apply false
+    // We do not upgrade to Gradle 8.0 yet as it requires Java 17
+    id 'com.android.application' version '7.4.2' apply false
+    id 'com.android.library' version '7.4.2' apply false
 
     // Kotlin
     // Compatibility with Android Gradle versions can be found here: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
-    id 'org.jetbrains.kotlin.android' version '1.8.20' apply false
+    id 'org.jetbrains.kotlin.android' version '1.8.21' apply false
 }

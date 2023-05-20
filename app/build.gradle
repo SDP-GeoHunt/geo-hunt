@@ -52,7 +52,7 @@ android {
     composeOptions {
         // Compose compiler to Kotlin version compability:
         // https://developer.android.com/jetpack/androidx/releases/compose-kotlin
-        kotlinCompilerExtensionVersion '1.4.6'
+        kotlinCompilerExtensionVersion '1.4.7'
     }
 
     packagingOptions {
