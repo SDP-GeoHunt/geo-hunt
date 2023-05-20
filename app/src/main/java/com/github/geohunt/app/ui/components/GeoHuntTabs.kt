@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 /**
@@ -66,14 +65,9 @@ fun GeoHuntTabIndicator(tabPosition: TabPosition) {
  *
  * The current tab has a small indicator below it to indicate selection.
  */
-@Preview
 @Composable
 fun GeoHuntTabs(
-    tabs: List<TabData> = listOf(
-        TabData("Tab 1", {}),
-        TabData("Tab 2", {}),
-        TabData("Tab 3", {}),
-    )
+    tabs: List<TabData>
 ) {
     val selectedTabIndex = remember { mutableStateOf(0) }
 
