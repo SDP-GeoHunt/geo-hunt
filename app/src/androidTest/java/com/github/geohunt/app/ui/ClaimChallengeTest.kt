@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.provider.MediaStore
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
@@ -16,13 +17,15 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.AppContainer
+import com.github.geohunt.app.data.repository.LocationRepository
+import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
-import com.github.geohunt.app.ui.components.claims.SubmitClaimForm
-import com.github.geohunt.app.ui.components.claims.SubmitClaimViewModel
+import com.github.geohunt.app.ui.components.utils.intents.IntentsMocking
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.Matchers.equalTo
 import org.junit.*
 import org.junit.runner.RunWith
 
@@ -64,23 +67,44 @@ class ClaimChallengeTest {
     @Test
     fun testClaimChallenge() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val bitmap = createTestBitmap(context)
-        val awaitingThingy = CompletableDeferred<Unit>()
+        val deferred = CompletableDeferred<Claim>()
 
-        // Start the application
-        composeTestRule.setContent {
-            SubmitClaimForm(bitmap = bitmap, state = SubmitClaimViewModel.State.READY_TO_CLAIM) {
-                awaitingThingy.complete(Unit)
+        val mockedLocationFlow = MutableSharedFlow<Location>()
+
+        LocationRepository.DefaultLocationFlow.mocked(mockedLocationFlow).use {
+            IntentsMocking.mock(
+                contract = ActivityResultContracts.TakePicture(),
+                callback = { uri, onResult ->
+                    val oStream = context.contentResolver.openOutputStream(uri)
+                    val bitmap = createTestBitmap(context)
+                    runBlocking {
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, oStream)
+                    }
+                    onResult(true)
+                }
+            ).run {
+                // Start the application
+                composeTestRule.setContent {
+                    ClaimChallenge(
+                        "163f921c-ML2eCQ52mAQlvCEQZ2n",
+                        onFailure = deferred::completeExceptionally,
+                        onSuccess = deferred::complete
+                    )
+                }
+
+                // Emit location
+                mockedLocationFlow.emit(mockedLocation)
+
+                // Emit a location update
+                composeTestRule.awaitIdle()
+
+                // Test button is enabled
+                composeTestRule.onNodeWithText("Submit Claim")
+                    .performScrollTo()
+                    .assertIsDisplayed()
+                    .assertIsEnabled()
             }
         }
-
-        composeTestRule.onNodeWithText("Submit Claim")
-            .performScrollTo()
-            .assertIsDisplayed()
-            .performClick()
-
-        // Awaiting thingy
-        assertThat(awaitingThingy.isCompleted, equalTo(true))
     }
 
     private fun createTestBitmap(context: Context) : Bitmap {

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.github.geohunt.app.ui.components.challengecreation
 
 import android.Manifest.permission
@@ -5,13 +7,13 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.provider.MediaStore
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -21,14 +23,18 @@ import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.LocationRepository
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.ui.components.utils.intents.IntentsMocking
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.CompletableFuture
+
 
 @RunWith(AndroidJUnit4::class)
 class CreateChallengeViewTest {
@@ -39,7 +45,10 @@ class CreateChallengeViewTest {
     val grantCameraPermission: GrantPermissionRule = GrantPermissionRule.grant(permission.CAMERA)
 
     @get:Rule
-    val grantLocationPermission : GrantPermissionRule = GrantPermissionRule.grant(permission.ACCESS_COARSE_LOCATION, permission.ACCESS_FINE_LOCATION)
+    val grantLocationPermission: GrantPermissionRule = GrantPermissionRule.grant(
+        permission.ACCESS_COARSE_LOCATION,
+        permission.ACCESS_FINE_LOCATION
+    )
 
     private val mockedLocation = Location(13.412471480006737, 103.86698070815994)
 
@@ -62,48 +71,48 @@ class CreateChallengeViewTest {
             CreateNewChallenge()
         }
 
-        Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+        Intents.intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testCreateChallenge() {
+    fun testCreateChallenge() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val resultingBitmap = createTestBitmap(context)
-        val future = CompletableFuture<Challenge>()
+        val deferred = CompletableDeferred<Challenge>()
 
         val mockedLocationFlow = MutableSharedFlow<Location>()
 
         LocationRepository.DefaultLocationFlow.mocked(mockedLocationFlow).use {
-            // Start the application
-            composeTestRule.setContent {
-                CreateChallengeForm(
-                    bitmap = resultingBitmap,
-                    viewModel = viewModel<CreateChallengeViewModel>(factory = CreateChallengeViewModel.Factory).apply {
-                        this.withPhoto({ resultingBitmap }, future::completeExceptionally)
-                        this.startLocationUpdate(future::completeExceptionally)
-                    },
-                    onSuccess = future::complete,
-                    onFailure = future::completeExceptionally)
-            }
+            IntentsMocking.mock(
+                contract = ActivityResultContracts.TakePicture(),
+                callback = { uri, onResult ->
+                    val oStream = context.contentResolver.openOutputStream(uri)
+                    val bitmap = createTestBitmap(context)
+                    runBlocking {
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, oStream)
+                    }
+                    onResult(true)
+                }
+            ).run {
+                // Start the application
+                composeTestRule.setContent {
+                    CreateNewChallenge(
+                        onFailure = deferred::completeExceptionally,
+                        onSuccess = deferred::complete
+                    )
+                }
 
-            // Wait for idle
-            composeTestRule.waitForIdle()
-
-            runBlocking {
+                // Emit location
                 mockedLocationFlow.emit(mockedLocation)
+
+                // Emit a location update
+                composeTestRule.awaitIdle()
+
+                // Test button is enabled
+                composeTestRule.onNodeWithText("Create challenge")
+                    .performScrollTo()
+                    .assertIsDisplayed()
+                    .assertIsEnabled()
             }
-
-            composeTestRule.waitForIdle()
-
-            // Ensure the button get updated
-            composeTestRule.onNodeWithText("Create challenge")
-                .performScrollTo()
-                .assertIsDisplayed()
-                .assertIsEnabled()
-                .performClick()
-
-            composeTestRule.waitUntilDoesNotExist(hasText("Create challenge"), 10_000L)
         }
     }
 

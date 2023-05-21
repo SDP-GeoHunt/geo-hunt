@@ -19,6 +19,7 @@ import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.sensor.RequireCameraPermission
 import com.github.geohunt.app.ui.components.CircleLoadingAnimation
+import com.github.geohunt.app.ui.components.utils.intents.IntentsMocking
 import com.github.geohunt.app.ui.components.utils.viewmodels.WithPhotoViewModel
 import com.github.geohunt.app.utility.createImageFile
 
@@ -39,8 +40,8 @@ fun WithPhoto(
             file
         )
     }
-    val cameraLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicture()
+    val cameraLauncher = IntentsMocking.rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
     ) {
         Log.i("GeoHunt", "Returning from camera with ${if (it) "success" else "failure"}")
         if (!it) {
