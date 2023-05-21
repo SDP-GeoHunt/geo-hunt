@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
  */
 class ActiveHuntsRepository(
     private val authRepository: AuthRepository,
-    private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
+    database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ActiveHuntsRepositoryInterface {
     private val activeHunts = database.getReference("activeHunts")

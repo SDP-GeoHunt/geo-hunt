@@ -11,18 +11,6 @@ import java.io.FileOutputStream
 import kotlin.math.sqrt
 
 object BitmapUtils {
-    /**
-     * Save the bitmap to the file
-     *
-     * @param file the file where the bitmap will be saved to
-     * @param format the format to use in order to save the bitmap
-     * @param quality the quality to format the bitmap
-     */
-    fun saveToFileAsync(bitmap: Bitmap, file: File, format: CompressFormat, quality: Int) : Deferred<Unit> {
-        return CoroutineScope(Dispatchers.IO).async {
-            saveToFile(bitmap, file, format, quality)
-        }
-    }
 
     suspend fun saveToFile(bitmap: Bitmap, file: File, format: CompressFormat, quality: Int) {
         return withContext(Dispatchers.IO) {
@@ -30,17 +18,6 @@ object BitmapUtils {
                 bitmap.compress(format, quality, it)
                 it.flush()
             }
-        }
-    }
-
-    /**
-     * Start a task to load a specific file as a bitmap
-     *
-     * @param file the file to be loaded in memory
-     */
-    fun loadFromFileAsync(file: File) : Deferred<Bitmap> {
-        return CoroutineScope(Dispatchers.IO).async {
-            loadFromFile(file)
         }
     }
 
@@ -92,10 +69,4 @@ object BitmapUtils {
         }
     }
 
-    /**
-     * Computes the hash of a bitmap
-     */
-    fun hash(bitmap: Bitmap): Int {
-        return bitmap.hashCode()
-    }
 }

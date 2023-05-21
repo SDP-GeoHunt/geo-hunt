@@ -62,18 +62,6 @@ class BountyClaimChallengeTest {
         Intents.release()
     }
 
-    @Test
-    fun testClaimChallengeLaunchMatchesIntent() {
-        composeTestRule.setContent {
-            BountyClaimChallenge(
-                bid = "063f921c-ML2eCQ52mAQlvCEQZ2n",
-                cid = "163f921c-ML2eCQ52mAQlvCEQZ2n"
-            )
-        }
-
-        Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
-    }
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun testClaimingBountyChallenge() = runTest {

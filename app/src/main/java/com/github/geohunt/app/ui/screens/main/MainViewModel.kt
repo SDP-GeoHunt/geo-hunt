@@ -1,16 +1,12 @@
 package com.github.geohunt.app.ui.screens.main
 
 import android.content.Context
-import android.provider.Settings.Global.getString
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewModelScope
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.network.NetworkMonitor
 import com.github.geohunt.app.data.repository.AuthRepository
-import com.github.geohunt.app.data.repository.FollowRepository
-import com.github.geohunt.app.data.repository.UserRepository
 import com.github.geohunt.app.ui.AuthViewModel
 import com.github.geohunt.app.utility.showNotification
 import com.google.firebase.database.DataSnapshot

@@ -55,21 +55,22 @@ interface Route {
     val route: String
 }
 
-enum class VisibleRoute(val titleStringId: Int,
-                        override val route: String,
-                        val icon: ComposableFun): Route {
+enum class VisibleRoute(
+    override val route: String,
+    val icon: ComposableFun
+): Route {
 
-    Home(R.string.navigation_home, "home", { Icon(Icons.Sharp.Home, null) }),
-    Explore(R.string.navigation_explore, "explore", { Icon(Icons.Sharp.Search, null) }),
-    Create(R.string.navigation_create, "create", { Icon(Icons.Sharp.Add, null) }),
-    ActiveHunts(R.string.navigation_active_hunts, "active-hunts", {
+    Home("home", { Icon(Icons.Sharp.Home, null) }),
+    Explore("explore", { Icon(Icons.Sharp.Search, null) }),
+    Create("create", { Icon(Icons.Sharp.Add, null) }),
+    ActiveHunts("active-hunts", {
         Icon(
             androidx.compose.ui.res.painterResource(
                 id = R.drawable.target_arrow
             ), null
         )
     }),
-    Profile(R.string.navigation_profile, "profile", { Icon(Icons.Sharp.Person, null) })
+    Profile("profile", { Icon(Icons.Sharp.Person, null) })
 }
 
 enum class HiddenRoute(override val route: String): Route {

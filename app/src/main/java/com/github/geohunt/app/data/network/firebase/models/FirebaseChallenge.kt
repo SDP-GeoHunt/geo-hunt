@@ -22,6 +22,7 @@ data class FirebaseChallenge(
     val description: String?
 ) {
     /** Default constructor to comply with [com.google.firebase.database.DataSnapshot.getValue]'s requirements */
+    @Suppress("unused")
     constructor(): this(
         authorId = "",
         photoUrl = "",

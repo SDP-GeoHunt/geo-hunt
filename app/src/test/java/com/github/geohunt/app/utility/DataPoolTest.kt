@@ -13,7 +13,7 @@ class DataPoolTest {
     @Before
     fun setup() {
         count = 0
-        dataPool = DataPool() {
+        dataPool = DataPool {
             count += 1
             "value: $it"
         }

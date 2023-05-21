@@ -11,7 +11,6 @@ import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.getValue
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
@@ -21,8 +20,7 @@ class BountiesRepository(
     private val authRepository: AuthRepositoryInterface,
     private val imageRepository: ImageRepository,
     private val database: FirebaseDatabase,
-    private val storage: FirebaseStorage,
-    private val ioDispatcher : CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BountiesRepositoryInterface {
 
     private val bountiesMetadataRef = database.getReference("bounties/meta")

@@ -23,7 +23,8 @@ fun Context.findActivity() : Activity {
 }
 
 fun Context.createImageFile(suffix: String = ".jpg"): File {
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    // See https://stackoverflow.com/a/27023535 for explanation of Location.US
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
     val imageFileName = "GENERATED_" + timeStamp + "_"
     return File.createTempFile(
         imageFileName, /* prefix */

@@ -18,9 +18,6 @@ class ImageIdlingResource : EventListener, IdlingResource {
     private val ongoingRequests = Collections.synchronizedSet(mutableSetOf<ImageRequest>())
     private val _results = Collections.synchronizedList(mutableListOf<ImageResult>())
 
-    val results: List<ImageResult>
-        get() = _results.toList()
-
     @field:Volatile var startedRequests = 0
         private set
 

@@ -97,8 +97,6 @@ class ImageRepository(
     suspend fun uploadBountyClaimPhoto(photo: LocalPicture, id: String, bid: String) =
         uploadImage(photo, ImageType.BOUNTY_CLAIM_PHOTO, "$id-$bid")
 
-    fun getChallengePhoto(challenge: Challenge): String = challenge.photoUrl
-
     companion object {
         private const val IMAGE_EXTENSION = "webp"
     }

@@ -1,36 +1,17 @@
 package com.github.geohunt.app.ui.components.challengecreation
 
-import android.graphics.Bitmap
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.geohunt.app.BuildConfig
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
-import com.github.geohunt.app.sensor.RequireCameraPermission
-import com.github.geohunt.app.sensor.RequireFineLocationPermissions
 import com.github.geohunt.app.ui.components.utils.PhotoLocationPipeline
-import com.github.geohunt.app.utility.*
-import com.ireward.htmlcompose.HtmlText
 
 @Composable
 fun CreateNewChallenge(
