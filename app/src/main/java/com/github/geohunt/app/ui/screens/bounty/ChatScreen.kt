@@ -28,12 +28,13 @@ import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
 import kotlinx.coroutines.flow.StateFlow
 import com.github.geohunt.app.R
 import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.platform.testTag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
-    onBack : () -> Any,
+    onBack : () -> Unit,
     bountyId: String,
     viewModel: TeamChatViewModel = viewModel(factory = TeamChatViewModel.factory(bountyId = bountyId))
 ) {
@@ -86,14 +87,14 @@ fun MessageInput(sendMessage : (String) -> Unit) {
         .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween) {
         TextField(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).testTag("message-input"),
             singleLine = true,
             value = inputValue,
             onValueChange = { inputValue = it },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
         )
         Button(
-            modifier = Modifier.height(56.dp),
+            modifier = Modifier.height(56.dp).testTag("send-button"),
             onClick = { sendMessage(inputValue); inputValue = ""},
             enabled = inputValue.isNotBlank(),
         ) {

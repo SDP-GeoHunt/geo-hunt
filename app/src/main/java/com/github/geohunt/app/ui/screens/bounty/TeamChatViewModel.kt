@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.UserRepository
+import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.*
 import com.github.geohunt.app.model.Message
 import com.github.geohunt.app.model.User
@@ -21,7 +22,7 @@ import java.util.*
 class TeamChatViewModel(
     private val teamsRepository: TeamsRepositoryInterface,
     private val messagesRepository: MessagesRepositoryInterface,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepositoryInterface
 ): ViewModel() {
 
     private val _messages: MutableStateFlow<List<Message>?> = MutableStateFlow(null)
