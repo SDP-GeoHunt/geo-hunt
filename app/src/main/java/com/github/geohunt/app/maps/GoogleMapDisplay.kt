@@ -1,10 +1,6 @@
 package com.github.geohunt.app.maps
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -14,11 +10,7 @@ import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.ui.screens.maps.MapsViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapType
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.*
 import java.time.LocalDateTime
 import java.time.Month
 import kotlin.math.PI
@@ -43,11 +35,47 @@ fun GoogleMapDisplay(
     content: @Composable () -> Unit = {}
 ) {
     val uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
-    val mapProperties by remember { mutableStateOf(MapProperties(mapType = MapType.NORMAL)) }
+    val mapProperties by remember { mutableStateOf(MapProperties(
+        mapType = MapType.NORMAL,
+        isMyLocationEnabled = true,
+        isBuildingEnabled = true,
+        isIndoorEnabled = true,
+    )) }
     val mapVisible by remember { mutableStateOf(true) }
-    val cameraPositionState = rememberCameraPositionState {
-        position = cameraPosition
+
+
+    //var cameraPosition: CameraPosition = CameraPosition(epflCoordinates, 10f, 0f, 0f)
+
+    val cameraPositionState = rememberCameraPositionState { position = cameraPosition }
+
+    /*val loc = remember { mutableStateOf<Location?>(null) }
+    val curLoc = viewModel.currentLocation.collectAsStateWithLifecycle()
+
+    DisposableEffect(viewModel) {
+        onDispose {
+            viewModel.reset()
+        }
     }
+
+    RequireFineLocationPermissions {
+        LaunchedEffect(viewModel) {
+            viewModel.startLocationUpdate()
+        }
+    }
+
+    if (curLoc.value == null) {
+        Box(modifier = Modifier
+            .aspectRatio(1f)
+            .fillMaxSize(0.5f))
+        {
+            CircleLoadingAnimation()
+        }
+    }
+
+    loc.value = curLoc.value
+
+    cameraPosition = CameraPosition(LatLng(loc.value!!.latitude, loc.value!!.longitude), 10f, 0f, 0f)
+    cameraPositionState.position = cameraPosition*/
 
     if (mapVisible) {
         GoogleMap(
