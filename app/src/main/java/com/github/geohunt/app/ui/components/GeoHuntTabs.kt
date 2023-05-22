@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 
@@ -42,16 +43,18 @@ data class TabData(
  */
 @Composable
 fun GeoHuntTabIndicator(tabPosition: TabPosition) {
+    val indicatorHeight = 3.dp // per the specs
+
     Box(
         Modifier
             .tabIndicatorOffset(currentTabPosition = tabPosition)
             .padding(horizontal = tabPosition.width / 3)
-            .height(3.dp)
+            .height(indicatorHeight)
             .background(
                 color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(
-                    topStart = 3.dp,
-                    topEnd = 3.dp,
+                    topStart = indicatorHeight,
+                    topEnd = indicatorHeight,
                     bottomStart = 0.dp,
                     bottomEnd = 0.dp
                 )
@@ -73,6 +76,7 @@ fun GeoHuntTabs(
 
     TabRow(
         selectedTabIndex = selectedTabIndex.value,
+        containerColor = Color.Transparent, // to comply with dark theme
         indicator = { tabPositions ->
             GeoHuntTabIndicator(tabPosition = tabPositions[selectedTabIndex.value])
         },
@@ -81,16 +85,13 @@ fun GeoHuntTabs(
         tabs.forEachIndexed { index, tabData ->
             Tab(
                 selected = selectedTabIndex.value == index,
+                text = { Text(tabData.title) },
                 onClick = {
                     selectedTabIndex.value = index
                     tabData.onClick()
                 },
-                selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.height(48.dp).testTag("tab-$index")
-            ) {
-                Text(tabData.title, style = MaterialTheme.typography.titleSmall)
-            }
+                modifier = Modifier.testTag("tab-$index")
+            )
         }
     }
 }
