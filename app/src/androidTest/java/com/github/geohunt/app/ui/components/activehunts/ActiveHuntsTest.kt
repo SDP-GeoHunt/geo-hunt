@@ -22,6 +22,7 @@ class ActiveHuntsTest {
     val testRule = createComposeRule()
 
     private var exploreCallbackCalled = false
+    private var exploreChallengeCalled: Challenge? = null
 
     private fun setupComposable(challenges: List<Challenge>) {
         val activeHuntsStateFlow = MutableStateFlow(challenges).asStateFlow()
@@ -33,10 +34,12 @@ class ActiveHuntsTest {
         }
 
         exploreCallbackCalled = false
+        exploreChallengeCalled = null
         testRule.setContent {
             GeoHuntTheme {
                 ActiveHuntsScreen(
                     openExploreTab = { exploreCallbackCalled = true },
+                    openChallengeView = { exploreChallengeCalled = it },
                     viewModel = mockViewModel
                 )
             }
@@ -81,5 +84,17 @@ class ActiveHuntsTest {
                 .performClick()
 
         assertThat(exploreCallbackCalled, equalTo(true))
+    }
+
+    @Test
+    fun challengeCallbackIsCalled() {
+        val mockChallenge = MockChallenge()
+        setupComposable(listOf(mockChallenge))
+
+        testRule.onNodeWithTag("challenge-box-${mockChallenge.id}")
+                .assertHasClickAction()
+                .performClick()
+
+        assertThat(exploreChallengeCalled, equalTo(mockChallenge))
     }
 }

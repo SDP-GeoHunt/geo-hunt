@@ -148,7 +148,8 @@ fun NavigationController(
 
         composable(VisibleRoute.ActiveHunts.route) {
             ActiveHuntsScreen(
-                openExploreTab = { navController.navigate(VisibleRoute.Explore.route) }
+                openExploreTab = { navController.navigate(VisibleRoute.Home.route) },
+                openChallengeView = { navController.navigate("${HiddenRoute.ChallengeView.route}/${it.id}") }
             )
         }
 

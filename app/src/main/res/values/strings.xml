@@ -53,7 +53,7 @@
 
     <string name="range_date">Date</string>
 
-    // Strings defined for the tutorial
+    <!-- Strings defined for the tutorial -->
     <string name="title_activity_tutorial">TutorialActivity</string>
     <string name="tutorial_first_screen_title"> Create your own challenges!</string>
     <string name="tutorial_first_screen_description">Create your own challenges and share them with the community!</string>
@@ -80,6 +80,12 @@
 
     <string name="error_fetching_page">An error occurred when fetching the profile page.</string>
     <string name="private_profile_page">You do not have access to this user\'s profile page.</string>
+
+    <!-- active hunts -->
+    <string name="active_hunts_empty_challenge">"No challenges yet…\nGo pick some challenges to begin your hunt!"</string>
+    <string name="active_hunts_empty_challenge_button">"Search nearby challenges"</string>
+    <string name="active_hunts_empty_bounties">"No bounties yet…\nGo pick some bounties to begin your hunt!"</string>
+    <string name="active_hunts_empty_bounties_button">"Search nearby bounties"</string>
 
     <!-- settings -->
     <string name="app_settings">App settings</string>
@@ -124,6 +130,7 @@
     <string name="bounties">Bounties</string>
     <string name="join">Join</string>
     <string name="no_bounties">No available bounties at the moment.</string>
+    <string name="starts_in">Starts in %1$s</string>
     <string name="ends_in">Ends in %1$s</string>
     <string name="expired_since">Expired since %1$s</string>
 
