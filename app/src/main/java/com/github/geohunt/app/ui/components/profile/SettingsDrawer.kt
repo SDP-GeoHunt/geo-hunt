@@ -22,7 +22,7 @@ fun SettingsDrawer(
     openLeaderboard: OptionalCallback,
     onLogout: OptionalCallback,
     openSettings: OptionalCallback,
-    close: () -> Any
+    close: () -> Unit
 ) {
     var isSureToLogOff by remember { mutableStateOf(false) }
 

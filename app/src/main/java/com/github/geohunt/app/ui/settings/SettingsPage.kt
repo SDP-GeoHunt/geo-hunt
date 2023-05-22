@@ -15,17 +15,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
+import com.github.geohunt.app.ui.components.appbar.TopAppBarWithBackButton
 import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.github.geohunt.app.ui.components.navigation.SecondaryScreen
 import com.github.geohunt.app.ui.components.navigation.Screen
 
 @Composable
-fun SettingsPage(onBack: () -> Any, navigate: (Screen) -> Any) {
+fun SettingsPage(onBack: () -> Unit, navigate: (Screen) -> Unit) {
     Scaffold(
         topBar = {
-            TopBarWithBackButton(
-                onBack = { onBack() },
+            TopAppBarWithBackButton(
+                onBack = onBack,
                 title = stringResource(id = R.string.settings)
             )
         }
@@ -48,7 +48,7 @@ fun SettingsPage(onBack: () -> Any, navigate: (Screen) -> Any) {
 }
 
 @Composable
-private fun SettingsMenuLinkQuick(title: String, icon: ImageVector, onClick: () -> Any) {
+private fun SettingsMenuLinkQuick(title: String, icon: ImageVector, onClick: () -> Unit) {
     SettingsMenuLink(
         title = { Text(title) },
         icon = { Icon(imageVector = icon, contentDescription = title)}

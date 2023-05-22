@@ -13,7 +13,7 @@ fun <T> RadioItem(
     title: String,
     value: T,
     isSelected: Boolean,
-    onSelect: (T) -> Any,
+    onSelect: (T) -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     subtitle: String? = null,

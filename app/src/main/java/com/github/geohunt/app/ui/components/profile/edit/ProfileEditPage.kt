@@ -14,10 +14,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
+import com.github.geohunt.app.ui.components.appbar.TopAppBarWithBackButton
 
 @Composable
-fun ProfileEditPage(onBackButton: () -> Any, vm: ProfileEditPageViewModel = viewModel(factory = ProfileEditPageViewModel.Factory)) {
+fun ProfileEditPage(onBackButton: () -> Unit, vm: ProfileEditPageViewModel = viewModel(factory = ProfileEditPageViewModel.Factory)) {
     // Getting user
     val user by vm.user.collectAsState()
     val eu by vm.editedUser.collectAsState()
@@ -25,8 +25,8 @@ fun ProfileEditPage(onBackButton: () -> Any, vm: ProfileEditPageViewModel = view
 
     Scaffold(
         topBar = {
-            TopBarWithBackButton(
-                onBack = { onBackButton() },
+            TopAppBarWithBackButton(
+                onBack = onBackButton,
                 title = stringResource(id = R.string.edit_profile)
             )
         }

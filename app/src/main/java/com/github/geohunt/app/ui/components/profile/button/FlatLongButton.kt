@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 fun FlatLongButton(
     icon: ImageVector,
     text: String,
-    onClick: () -> Any,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.typography.bodyMedium.color,
     disabled: Boolean = false

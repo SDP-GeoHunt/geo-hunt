@@ -51,15 +51,23 @@ import com.google.android.gms.maps.model.LatLng
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-interface Screen {
+/**
+ * Represents an app screen that is reachable in the navigation graph using a provided route.
+ */
+sealed interface Screen {
+    /**
+     * Returns the route that is used to navigate to this screen in the navigation graph.
+     *
+     * This route must be unique to avoid navigation conflicts.
+     */
     val route: String
 }
 
 /**
  * Represents a top-level screen.
  * 
- * A top-level is bound to the [GeoHuntNavigationBar] as it has a dedicated item. As such, [icon]
- * and [label] are used to construct the [NavigationBarItem] of the navigation bar.
+ * Such screens are primary destinations of the application, and are represented with their
+ * [icon] and [label] in the [GeoHuntNavigationBar].
  *
  * @param label A textual label shown below the selected [NavigationBarItem].
  * @param icon The icon of the screen in the [GeoHuntNavigationBar].
@@ -115,7 +123,7 @@ enum class SecondaryScreen(override val route: String): Screen {
 fun NavigationController(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    logout: () -> Any
+    logout: () -> Unit
 ) {
     val context = LocalContext.current
     val container: AppContainer = AppContainer.getInstance(LocalContext.current.applicationContext as Application)

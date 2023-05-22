@@ -39,7 +39,7 @@ fun HomeBountyCard(
     challengesFlows: Flow<List<Challenge>?>,
     nbMembersFlow: Flow<Int?>,
     isInside: Boolean,
-    onClick: () -> Any
+    onClick: () -> Unit
 ) {
 
     val challenges by challengesFlows.collectAsState(initial = null)

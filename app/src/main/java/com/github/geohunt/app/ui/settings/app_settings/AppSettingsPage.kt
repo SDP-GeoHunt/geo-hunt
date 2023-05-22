@@ -14,20 +14,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.settings.Theme
-import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
+import com.github.geohunt.app.ui.components.appbar.TopAppBarWithBackButton
 import com.github.geohunt.app.ui.settings.SettingsListDropdownQuick
 
 @Composable
 fun AppSettingsPage(
-    onBack: () -> Any,
+    onBack: () -> Unit,
     viewModel: AppSettingsViewModel
 ) {
     val theme = viewModel.theme.collectAsState()
 
     Scaffold(
         topBar = {
-            TopBarWithBackButton(
-                onBack = { onBack() },
+            TopAppBarWithBackButton(
+                onBack = onBack,
                 title = stringResource(id = R.string.app_settings)
             )
         }

@@ -18,10 +18,10 @@ import com.github.geohunt.app.ui.components.profile.button.FlatLongButton
 fun EditProfileContent(
     user: User,
     eu: EditedUser,
-    onDisplayNameChange: (String) -> Any,
-    onProfilePictureChange: (Uri) -> Any,
+    onDisplayNameChange: (String) -> Unit,
+    onProfilePictureChange: (Uri) -> Unit,
     isSaving: Boolean,
-    save: () -> Any
+    save: () -> Unit
 ) {
     Column {
         ProfilePictureChanger(eu.newProfilePicture?.uri ?: user.profilePictureUrl, { onProfilePictureChange(it) }) { profilePictureProvider(it) }

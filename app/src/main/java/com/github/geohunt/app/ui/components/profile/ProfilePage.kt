@@ -24,7 +24,7 @@ import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 import kotlinx.coroutines.async
 
-typealias OptionalCallback = (() -> Any)?
+typealias OptionalCallback = (() -> Unit)?
 
 
 /**
@@ -167,9 +167,9 @@ fun ProfilePageContent(
     challenges: List<Challenge>?,
     hunts: List<Challenge>?,
     score: Long?,
-    onSettingsClick: (() -> Any)?,
+    onSettingsClick: (() -> Unit)?,
     isFollowed: Boolean? = null,
-    toggleFollow: (() -> Any)? = null,
+    toggleFollow: (() -> Unit)? = null,
 ) {
     Column {
         Row {

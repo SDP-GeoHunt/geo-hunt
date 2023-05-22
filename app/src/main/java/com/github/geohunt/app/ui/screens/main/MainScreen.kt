@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainScreen(viewModel: MainViewModel, logout: () -> Any) {
+fun MainScreen(viewModel: MainViewModel, logout: () -> Unit) {
     val navController = rememberNavController()
     val scaffoldState = rememberScaffoldState()
     val modalState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)

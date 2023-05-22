@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.map
 @SuppressLint("FlowOperatorInvokedInComposition")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Any) {
+fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Unit) {
     val isRefreshing = vm.areBountiesRefreshing.collectAsState()
     val bounties by vm.bountyList.collectAsState()
     val pullRefreshState = rememberPullRefreshState(

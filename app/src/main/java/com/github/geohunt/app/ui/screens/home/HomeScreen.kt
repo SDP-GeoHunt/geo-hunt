@@ -18,7 +18,7 @@ internal enum class HomeScreens(val title: @Composable () -> String) {
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
-    navigate: (String) -> Any
+    navigate: (String) -> Unit
 ) {
     var currentScreen by remember { mutableStateOf(HomeScreens.Feed) }
     val didFail by viewModel.initFailException.collectAsState()

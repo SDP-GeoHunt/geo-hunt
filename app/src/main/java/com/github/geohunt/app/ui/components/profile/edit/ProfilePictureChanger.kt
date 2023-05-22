@@ -27,7 +27,7 @@ typealias ProfilePictureProviderType = @Composable (((Uri) -> Unit)) -> (() -> U
 @Composable
 fun ProfilePictureChanger(
     currentImage: Any?,
-    onImageSelected: (Uri) -> Any,
+    onImageSelected: (Uri) -> Unit,
     profilePictureProvider: ProfilePictureProviderType
 ) {
     // Image picker
