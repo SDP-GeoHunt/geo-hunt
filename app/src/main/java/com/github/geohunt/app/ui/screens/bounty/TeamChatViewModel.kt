@@ -84,8 +84,8 @@ class TeamChatViewModel(
                 val container = AppContainer.getInstance(application)
 
                 TeamChatViewModel(
-                    container.bounties.getTeamRepository(bountyId),
-                    container.bounties.getMessageRepository(bountyId),
+                    container.bounty.getTeamRepository(bountyId),
+                    container.bounty.getMessageRepository(bountyId),
                     container.user,
                 )
             }
