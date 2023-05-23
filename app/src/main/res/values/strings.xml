@@ -3,7 +3,6 @@
 
     <string name="claim_hunt">Claim</string>
 
-
     <!-- All string for formatting message like "published just now" -->
     <string name="just_now">just now</string>
     <string name="published_format">published %s</string>
@@ -64,7 +63,7 @@
 
     <string name="challenge_create_agree_community_link"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
     <string name="claim_create_agree_community_link"><![CDATA[By claiming a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
-    <string name="join_hunt">Join Hunt</string>
+    <string name="join_hunt">Hunt</string>
     <string name="less_button">less…</string>
     <string name="more_button">more…</string>
     <string name="claim_challenge_button">Submit Claim</string>
