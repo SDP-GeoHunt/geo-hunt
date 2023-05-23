@@ -4,6 +4,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.data.repository.LocationRepositoryInterface
 import com.github.geohunt.app.maps.marker.Marker
 import com.github.geohunt.app.maps.marker.MarkerInfoWindowContent
@@ -27,6 +28,12 @@ import java.time.Month
 class GoogleMapDisplayTest {
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    @get:Rule
+    val fineLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+    @get:Rule
+    val coarseLocationPermissionRule: GrantPermissionRule = GrantPermissionRule.grant(android.Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private val epflCoordinates = LatLng(46.51958, 6.56398)
     private var mockTestChallengeDatabase = mutableListOf<Marker>()
