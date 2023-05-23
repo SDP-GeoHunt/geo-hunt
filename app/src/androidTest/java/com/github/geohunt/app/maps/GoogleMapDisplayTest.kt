@@ -2,11 +2,8 @@ package com.github.geohunt.app.maps
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import com.github.geohunt.app.maps.marker.Marker
 import com.github.geohunt.app.maps.marker.MarkerInfoWindowContent
 import com.google.android.gms.maps.model.CameraPosition
@@ -68,17 +65,10 @@ class GoogleMapDisplayTest {
         composeTestRule
             .onNodeWithContentDescription("Marker Image")
             .assertExists()
-
-        composeTestRule
-            .onNodeWithTag("Marker title")
-            .assertIsDisplayed()
+            .assertHasClickAction()
 
         composeTestRule
             .onNodeWithTag("Marker expiry date")
-            .assertIsDisplayed()
-
-        composeTestRule
-            .onNodeWithText("2024-05-01T19:39:12")
             .assertIsDisplayed()
     }
 
@@ -89,7 +79,7 @@ class GoogleMapDisplayTest {
         }
 
         composeTestRule
-            .onNodeWithContentDescription("Marker Image")
-            .assertExists()
+            .onAllNodesWithTag("Marker image")
+            .assertAny(hasClickAction())
     }
 }

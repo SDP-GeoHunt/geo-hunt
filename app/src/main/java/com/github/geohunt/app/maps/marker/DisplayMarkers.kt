@@ -2,11 +2,15 @@ package com.github.geohunt.app.maps.marker
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -15,13 +19,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.github.geohunt.app.R
 import com.google.maps.android.compose.MarkerInfoWindow
 import com.google.maps.android.compose.rememberMarkerState
-
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 /**
  * Displays provided markers on the map
@@ -37,7 +42,8 @@ fun DisplayMarkers(markers: List<Marker>) {
             snippet = challenge.expiryDate.toString(),
             tag = challenge.title,
         ) {
-            MarkerInfoWindowContent(challenge)
+            val imageLoaded = remember { mutableStateOf(false) }
+            MarkerInfoWindowContent(challenge, imageLoaded)
         }
     }
 }
@@ -49,8 +55,11 @@ fun DisplayMarkers(markers: List<Marker>) {
  */
 @Composable
 fun MarkerInfoWindowContent(
-    challenge: Marker
+    challenge: Marker,
+    imageLoaded: MutableState<Boolean> = remember { mutableStateOf(false) }
 ){
+   // val imageLoaded = remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .background(
@@ -61,6 +70,8 @@ fun MarkerInfoWindowContent(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
             //The image displayed at the top of the info window
             if (challenge.image != "") {
                 Column(
@@ -68,48 +79,50 @@ fun MarkerInfoWindowContent(
                         .fillMaxWidth()
                         .testTag("Marker image")
                 ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(
-                            ImageRequest.Builder(LocalContext.current).data(data = challenge.image)
-                                .apply(block = fun ImageRequest.Builder.() {
-                                    crossfade(true)
-                                    allowHardware(false)
-                                    scale(Scale.FILL)
-                                }).build()
-                        ),
-                        contentDescription = "Marker Image",
-                        contentScale = ContentScale.Fit,
+                    val imagePainter = ImageRequest.Builder(LocalContext.current)
+                            .data(data = challenge.image)
+                            .apply(block = fun ImageRequest.Builder.() {
+                                crossfade(true)
+                                allowHardware(false)
+                                scale(Scale.FILL)
+                                listener(
+                                    onSuccess = { _, _ ->
+                                        imageLoaded.value = true
+                                    }
+                                )
+                            }).build()
+
+                    AsyncImage(
+                        model = imagePainter,
                         modifier = Modifier
-                            .size(70.dp)
+                            .size(160.dp)
                             .align(Alignment.CenterHorizontally)
+                            .clickable {
+                                //TODO Go to the challenge page
+                            }
+                            .testTag("Marker image"),
+                        contentDescription = if (imageLoaded.value) "Marker Image" else "Loading",
                     )
-            }
+
+
+                }
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.radar_icon),
                     contentDescription = "Marker Image",
                     modifier = Modifier
                         .size(90.dp)
-                     .padding(top = 16.dp),
+                        .padding(top = 16.dp)
+                        .clickable { /*TODO Go to the challenge page*/ },
                     contentScale = ContentScale.Crop
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            //The middle text containing the title of the challenge
-            Text(
-                text = challenge.title,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("Marker title"),
-                style = MaterialTheme.typography.displayMedium,
-            )
-
             //The bottom text containing the expiry date of the challenge
             Text(
-                text = challenge.expiryDate.toString(),
+                text = getExpiryString(challenge.expiryDate),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 10.dp, start = 25.dp, end = 25.dp)
@@ -121,4 +134,31 @@ fun MarkerInfoWindowContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+}
+
+private fun getExpiryString(expiryDate: LocalDateTime): String {
+    val currentDate = LocalDateTime.now()
+
+    val diffInMinutes = ChronoUnit.MINUTES.between(currentDate, expiryDate)
+    if (diffInMinutes < 60) {
+        return "Expires in $diffInMinutes minute(s)"
+    }
+
+    val diffInHours = ChronoUnit.HOURS.between(currentDate, expiryDate)
+    if (diffInHours < 24) {
+        return "Expires in $diffInHours hour(s)"
+    }
+
+    val diffInDays = ChronoUnit.DAYS.between(currentDate, expiryDate)
+    if (diffInDays < 30) {
+        return "Expires in $diffInDays day(s)"
+    }
+
+    val diffInMonths = ChronoUnit.MONTHS.between(currentDate, expiryDate)
+    if (diffInMonths < 12) {
+        return "Expires in $diffInMonths month(s)"
+    }
+
+    val diffInYears = ChronoUnit.YEARS.between(currentDate, expiryDate)
+    return "Expires in $diffInYears year(s)"
 }
