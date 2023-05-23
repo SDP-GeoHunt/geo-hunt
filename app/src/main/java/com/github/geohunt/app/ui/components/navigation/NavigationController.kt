@@ -44,8 +44,6 @@ import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsPage
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsViewModel
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -107,11 +105,8 @@ fun NavigationController(
             HomeScreen(navigate = { navController.navigate(it) })
         }
         composable(VisibleRoute.Explore.route) {
-            val epflCoordinates = LatLng(46.519585, 6.5684919)
-            val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
             GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
-                cameraPosition = epflCameraPosition
             )
         }
         composable(HiddenRoute.CreateChallenge.route) {
