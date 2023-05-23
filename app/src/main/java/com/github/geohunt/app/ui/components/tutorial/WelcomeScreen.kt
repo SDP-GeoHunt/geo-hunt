@@ -40,6 +40,7 @@ fun WelcomeScreen(showTutorial: () -> Unit){
             modifier = Modifier
                 .fillMaxWidth().fillMaxHeight(.3f)
                 .padding(32.dp)
+                .testTag("Welcome Label")
         )
 
 
