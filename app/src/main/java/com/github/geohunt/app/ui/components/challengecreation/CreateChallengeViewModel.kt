@@ -31,7 +31,7 @@ class CreateChallengeViewModel(
 ) : ViewModel() {
 
     private val _selectedDifficulty: MutableStateFlow<Challenge.Difficulty> =
-    MutableStateFlow(Challenge.Difficulty.MEDIUM)
+        MutableStateFlow(Challenge.Difficulty.MEDIUM)
     val selectedDifficulty: StateFlow<Challenge.Difficulty> = _selectedDifficulty
 
     private val _expirationDate: MutableStateFlow<LocalDate?> = MutableStateFlow(null)

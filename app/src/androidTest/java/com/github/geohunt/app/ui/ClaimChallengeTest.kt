@@ -132,7 +132,7 @@ class ClaimChallengeTest {
                 awaitThingy.await()
 
                 // Test button is enabled
-                composeTestRule.onNodeWithText("Submit Claim")
+                composeTestRule.onNodeWithText("Submit claim")
                     .performScrollTo()
                     .assertIsDisplayed()
             }

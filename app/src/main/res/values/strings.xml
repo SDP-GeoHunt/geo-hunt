@@ -116,7 +116,7 @@
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
 
     <!-- Bounty -->
-    <string name="claim_bounty_challenge_button">Submit Claim</string>
+    <string name="claim_bounty_challenge_button">Submit claim</string>
     <string name="photo_of_the_claim_taken">Photo just taken of the claim</string>
 
     <!-- home feed/bounty selector -->

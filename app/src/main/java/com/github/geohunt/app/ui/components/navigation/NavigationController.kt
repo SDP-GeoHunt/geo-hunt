@@ -195,7 +195,7 @@ fun NavigationController(
 
         // Open the view for a certain challenge
         composable(
-            "challenge-view/{challengeId}",
+            HiddenRoute.ChallengeView.route + "/{challengeId}",
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
         ) { backStackEntry ->
             val cid = backStackEntry.arguments?.getString("challengeId")!!
@@ -219,7 +219,7 @@ fun NavigationController(
                 onFailure = onFailure,
                 onSuccess = {
                     navController.popBackStack()
-                    navController.navigate("challenge-view/$cid")
+                    navController.navigate(HiddenRoute.ChallengeView.route + "/$cid")
                 }
             )
         }
