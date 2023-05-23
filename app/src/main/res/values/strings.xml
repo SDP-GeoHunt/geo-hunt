@@ -55,12 +55,19 @@
 
     // Strings defined for the tutorial
     <string name="title_activity_tutorial">TutorialActivity</string>
+    <string name="welcome_screen_detail">The fun, interactive, engaging and challenging treasure hunt game!</string>
     <string name="tutorial_first_screen_title"> Create your own challenges!</string>
     <string name="tutorial_first_screen_description">Create your own challenges and share them with the community!</string>
     <string name="tutorial_second_screen_title">Explore the map!</string>
     <string name="tutorial_second_screen_description">Explore the map and find challenges near you!</string>
     <string name="tutorial_third_screen_title">Complete challenges!</string>
     <string name="tutorial_third_screen_description">Complete challenges and earn points!</string>
+    <string name="tutorial_fourth_screen_title">Compete as a team!</string>
+    <string name="tutorial_fourth_screen_description">Join a team and complete bounties together!</string>
+    <string name="tutorial_get_started">Get started</string>
+    <string name="tutorial_skip">Skip</string>
+    <string name="go_left">Go left</string>
+    <string name="go_right">Go right</string>
 
     <string name="challenge_create_agree_community_link"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
     <string name="claim_create_agree_community_link"><![CDATA[By claiming a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>

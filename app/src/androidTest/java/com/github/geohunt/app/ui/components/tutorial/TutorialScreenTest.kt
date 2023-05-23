@@ -1,8 +1,8 @@
 package com.github.geohunt.app.ui.components.tutorial
 
-import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -20,7 +20,7 @@ class TutorialScreenTest {
     @Before
     fun setup() {
         composeTestRule.setContent {
-            Tutorial(activity = ComponentActivity())
+            Tutorial { }
         }
     }
 
@@ -48,6 +48,10 @@ class TutorialScreenTest {
     @Test
     fun clickingOnForwardAndBackButtonsChangesThePage() {
         composeTestRule
+            .onNodeWithTag("Go back button")
+            .assertIsNotEnabled()
+
+        composeTestRule
             .onNodeWithTag("Current page is 0")
             .assertIsDisplayed()
 
@@ -70,9 +74,28 @@ class TutorialScreenTest {
             .assertIsDisplayed()
 
         composeTestRule
+            .onNodeWithTag("Go forward button")
+            .assertHasClickAction()
+            .performClick()
+
+        composeTestRule
+            .onNodeWithTag("Current page is 3")
+            .assertIsDisplayed()
+
+        composeTestRule
             .onNodeWithTag("Go back button")
             .assertHasClickAction()
             .performClick()
+
+        composeTestRule
+            .onNodeWithTag("Current page is 2")
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithTag("Go back button")
+            .assertHasClickAction()
+            .performClick()
+
 
         composeTestRule
             .onNodeWithTag("Current page is 1")
