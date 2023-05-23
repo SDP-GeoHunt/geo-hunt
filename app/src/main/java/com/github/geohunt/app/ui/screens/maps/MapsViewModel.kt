@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.ChallengeRepository
+import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.LocationRepositoryInterface
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MapsViewModel(
-    private val challengeRepository: ChallengeRepository,
+    private val challengeRepository: ChallengeRepositoryInterface,
     private val locationRepository: LocationRepositoryInterface
 ) : ViewModel() {
     private val _challenges: MutableStateFlow<List<Challenge>?> = MutableStateFlow(null)

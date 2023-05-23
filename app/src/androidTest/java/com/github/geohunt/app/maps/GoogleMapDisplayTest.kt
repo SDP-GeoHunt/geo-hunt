@@ -4,10 +4,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.github.geohunt.app.data.repository.LocationRepositoryInterface
 import com.github.geohunt.app.maps.marker.Marker
 import com.github.geohunt.app.maps.marker.MarkerInfoWindowContent
+import com.github.geohunt.app.mocks.MockChallengeRepository
+import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.ui.screens.maps.MapsViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,6 +30,22 @@ class GoogleMapDisplayTest {
 
     private val epflCoordinates = LatLng(46.51958, 6.56398)
     private var mockTestChallengeDatabase = mutableListOf<Marker>()
+
+    private val mockLocation = Location(46.51958, 6.56398)
+    private val mockLocationRepo = object : LocationRepositoryInterface {
+        override fun getLocations(coroutineScope: CoroutineScope): Flow<Location> {
+            return flowOf(mockLocation)
+        }
+    }
+
+    private val mockChallengeRepository = MockChallengeRepository()
+
+    private fun mockViewModel(): MapsViewModel {
+        return MapsViewModel(
+            challengeRepository = mockChallengeRepository,
+            locationRepository = mockLocationRepo,
+        )
+    }
 
     @Before
     fun initializeMockChallengeDatabase() {
@@ -43,16 +66,17 @@ class GoogleMapDisplayTest {
     }
 
     @Test
-    fun testMapIsDisplayed() {
-        val cameraPosition = CameraPosition(epflCoordinates, 12f, 0f, 0f)
+    fun testMapIsLoadingCorrectly() {
         composeTestRule.setContent {
             GoogleMapDisplay(
                 Modifier.testTag("Maps"),
-                cameraPosition = cameraPosition,
+                setCameraPosition = CameraPosition(epflCoordinates, 10f, 0f, 0f),
+                viewModel = mockViewModel(),
             )
         }
 
-        composeTestRule.onNodeWithTag("Maps")
+        composeTestRule
+            .onNodeWithTag("Maps")
             .assertExists()
     }
 

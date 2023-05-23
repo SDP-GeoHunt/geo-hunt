@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.maps.marker.DisplayMarkers
@@ -42,7 +43,8 @@ import kotlin.math.pow
 fun GoogleMapDisplay(
     modifier: Modifier = Modifier,
     viewModel: MapsViewModel = viewModel(factory = MapsViewModel.Factory),
-    content: @Composable () -> Unit = {}
+    content: @Composable () -> Unit = {},
+    setCameraPosition: CameraPosition? = null,
 ) {
     val uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
     val mapProperties by remember { mutableStateOf(MapProperties(
@@ -71,14 +73,18 @@ fun GoogleMapDisplay(
         CircleLoadingAnimation(
             modifier = Modifier
                 .fillMaxSize()
+                .testTag("loading-animation")
         )
     }
     else {
 
         loc.value = curLoc.value
 
-        val cameraPosition =
-            CameraPosition(LatLng(loc.value!!.latitude, loc.value!!.longitude), 10f, 0f, 0f)
+        var cameraPosition = CameraPosition(LatLng(loc.value!!.latitude, loc.value!!.longitude), 12f, 0f, 0f)
+
+        if (setCameraPosition != null)
+            cameraPosition = setCameraPosition
+
         val cameraPositionState = rememberCameraPositionState { position = cameraPosition }
 
         if (mapVisible) {
