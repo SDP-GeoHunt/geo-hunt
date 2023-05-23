@@ -92,11 +92,9 @@ class BountyClaimChallengeTest {
     }
 
     @Test
-    fun testClaimingBountyChallenge() = runTest {
+    fun testClaimingBountyChallenge() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val deferred = CompletableDeferred<Claim>()
         val returnFromCoroutine = CompletableDeferred<Unit>()
-        val awaitThingy = CompletableDeferred<Unit>()
 
         val mockedLocationFlow = MutableSharedFlow<Location>()
 
@@ -122,29 +120,24 @@ class BountyClaimChallengeTest {
                         )
                     }
                     val state = vm.challenge.collectAsState()
-                    if (state.value != null) {
-                        awaitThingy.complete(Unit)
-                    }
 
                     BountyClaimChallenge(
                         bid = "<NaN>",
                         cid = "some-claim-id",
-                        onFailure = {
-                            deferred.completeExceptionally(it)
-                            awaitThingy.completeExceptionally(it)
-                        },
-                        onSuccess = deferred::complete,
                         viewModel = vm
                     )
                 }
 
                 // Emit location
-                mockedLocationFlow.emit(mockedLocation)
+                runBlocking {
+                    mockedLocationFlow.emit(mockedLocation)
+                }
 
                 // Emit a location update
-                returnFromCoroutine.await()
-                awaitThingy.await()
-                composeTestRule.awaitIdle()
+                composeTestRule.waitUntil {
+                    composeTestRule.onAllNodesWithText("Submit claim")
+                        .fetchSemanticsNodes().isNotEmpty()
+                }
 
                 // Test button is enabled
                 composeTestRule.onNodeWithText("Submit claim")

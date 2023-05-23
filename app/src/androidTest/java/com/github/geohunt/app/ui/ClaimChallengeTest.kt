@@ -85,10 +85,8 @@ class ClaimChallengeTest {
     }
 
     @Test
-    fun testClaimChallenge() = runTest {
+    fun testClaimChallenge() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val deferred = CompletableDeferred<Claim>()
-        val awaitThingy = CompletableDeferred<Unit>()
 
         val mockedLocationFlow = MutableSharedFlow<Location>()
 
@@ -113,23 +111,22 @@ class ClaimChallengeTest {
                         )
                     }
                     val state = vm.challenge.collectAsState()
-                    if (state.value != null) {
-                        awaitThingy.complete(Unit)
-                    }
 
                     ClaimChallenge(
                         "1",
-                        onFailure = deferred::completeExceptionally,
-                        onSuccess = deferred::complete,
                         viewModel = vm
                     )
                 }
 
                 // Emit location
-                mockedLocationFlow.emit(mockedLocation)
+                runBlocking {
+                    mockedLocationFlow.emit(mockedLocation)
+                }
 
-                // Await the challenge
-                awaitThingy.await()
+                composeTestRule.waitUntil {
+                    composeTestRule.onAllNodesWithText("Submit claim")
+                        .fetchSemanticsNodes().isNotEmpty()
+                }
 
                 // Test button is enabled
                 composeTestRule.onNodeWithText("Submit claim")

@@ -84,9 +84,8 @@ class CreateChallengeViewTest {
     }
 
     @Test
-    fun testCreateChallenge() = runTest {
+    fun testCreateChallenge() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val deferred = CompletableDeferred<Challenge>()
 
         val mockedLocationFlow = MutableSharedFlow<Location>()
 
@@ -106,17 +105,20 @@ class CreateChallengeViewTest {
                 composeTestRule.setContent {
                     val vm : CreateChallengeViewModel = viewModel(factory = CreateChallengeViewModel.Factory)
                     CreateNewChallenge(
-                        onFailure = deferred::completeExceptionally,
-                        onSuccess = deferred::complete,
                         viewModel = vm
                     )
                 }
 
                 // Emit location
-                mockedLocationFlow.emit(mockedLocation)
+                runBlocking {
+                    mockedLocationFlow.emit(mockedLocation)
+                }
 
                 // Emit a location update
-                composeTestRule.awaitIdle()
+                composeTestRule.waitUntil {
+                    composeTestRule.onAllNodesWithText("Create challenge")
+                        .fetchSemanticsNodes().isNotEmpty()
+                }
 
                 // Test button is enabled
                 composeTestRule.onNodeWithText("Create challenge")
