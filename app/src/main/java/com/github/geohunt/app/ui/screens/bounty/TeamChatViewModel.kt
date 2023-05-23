@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.*
 
-class TeamChatViewModel(
+open class TeamChatViewModel(
     private val teamsRepository: TeamsRepositoryInterface,
     private val messagesRepository: MessagesRepositoryInterface,
     private val userRepository: UserRepositoryInterface
@@ -58,7 +58,7 @@ class TeamChatViewModel(
         return message.senderUid == currentUserId
     }
 
-     fun sendMessage(content: String) {
+     open fun sendMessage(content: String) {
          viewModelScope.launch {
              val teamId = teamsRepository.getUserTeam().first()?.teamId
              if (teamId != null) {
