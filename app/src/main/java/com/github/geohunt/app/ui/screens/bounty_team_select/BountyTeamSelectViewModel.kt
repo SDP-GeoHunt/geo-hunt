@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.UserRepositoryInterface
+import com.github.geohunt.app.data.repository.bounties.ActiveBountiesRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
 import com.github.geohunt.app.model.Challenge
@@ -27,10 +28,11 @@ import kotlinx.coroutines.launch
  * @param teamsRepository The team repository of the bounty
  */
 class BountyTeamSelectViewModel(
-    bountyId: String,
+    private val bountyId: String,
     bountiesRepository: BountiesRepositoryInterface,
     challengeRepository: ChallengeRepositoryInterface,
     userRepository: UserRepositoryInterface,
+    private val activeBountiesRepository: ActiveBountiesRepositoryInterface,
     private val teamsRepository: TeamsRepositoryInterface
 ): ViewModel() {
 
@@ -59,6 +61,8 @@ class BountyTeamSelectViewModel(
         _isBusy.value = true
         viewModelScope.launch {
             teamsRepository.joinTeam(teamId)
+            activeBountiesRepository.joinBounty(bountyId)
+
             _isBusy.value = false
         }
     }
@@ -67,6 +71,7 @@ class BountyTeamSelectViewModel(
         _isBusy.value = true
         viewModelScope.launch {
             teamsRepository.leaveTeam()
+            activeBountiesRepository.leaveBounty(bountyId)
 
             _isBusy.value = false
         }
@@ -76,6 +81,7 @@ class BountyTeamSelectViewModel(
         _isBusy.value = true
         viewModelScope.launch {
             teamsRepository.createTeam(name)
+            activeBountiesRepository.joinBounty(bountyId)
 
             _isBusy.value = false
         }
@@ -85,6 +91,8 @@ class BountyTeamSelectViewModel(
         _isBusy.value = true
         viewModelScope.launch  {
             teamsRepository.deleteTeam(team)
+            activeBountiesRepository.leaveBounty(bountyId)
+
             _isBusy.value = false
         }
     }
@@ -128,6 +136,7 @@ class BountyTeamSelectViewModel(
                         bountiesRepository = container.bounty,
                         challengeRepository = container.bounty.getChallengeRepository(bountyId),
                         userRepository = container.user,
+                        activeBountiesRepository = container.activeBounties,
                         teamsRepository = container.bounty.getTeamRepository(bountyId)
                     )
                 }
