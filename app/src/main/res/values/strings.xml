@@ -130,9 +130,9 @@
     <string name="bounties">Bounties</string>
     <string name="join">Join</string>
     <string name="no_bounties">No available bounties at the moment.</string>
-    <string name="starts_in">Starts in %1$s</string>
-    <string name="ends_in">Ends in %1$s</string>
-    <string name="expired_since">Expired since %1$s</string>
+    <string name="starts_in">Starts %1$s</string>
+    <string name="ends_in">Ends %1$s</string>
+    <string name="expired_since">Expired %1$s</string>
 
     <string name="team_name">Team name</string>
     <string name="enter_team_name">Enter the new team\'s name</string>

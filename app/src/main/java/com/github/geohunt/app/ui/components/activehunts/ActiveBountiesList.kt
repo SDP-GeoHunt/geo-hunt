@@ -38,12 +38,13 @@ fun ActiveBountiesList(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(bounties) { bounty ->
+                    val collected = bounty.first
                     Box(modifier = Modifier
                             .size(300.dp, 600.dp)
-                            .testTag("challenge-box-${bounty.first.bid}")
-                            .clickable { openBountyView(bounty.first) })
+                            .testTag("bounty-box-${collected.bid}")
+                            .clickable { openBountyView(collected) })
                     {
-                        BountyPreview(bounty.first, bounty.second)
+                        BountyPreview(collected, bounty.second)
                     }
                 }
             }

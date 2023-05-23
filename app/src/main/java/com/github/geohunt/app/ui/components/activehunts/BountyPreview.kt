@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AdsClick
 import androidx.compose.material.icons.rounded.CalendarMonth
-import androidx.compose.material.icons.rounded.Group
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -58,7 +58,7 @@ fun BountyDate(startingDate: LocalDateTime, expirationDate: LocalDateTime) {
 @Composable
 fun BountyName(name: String) {
     Row(modifier = Modifier.fillMaxWidth()) {
-        Icon(Icons.Rounded.Group, contentDescription = "bounty_icon")
+        Icon(Icons.Rounded.AdsClick, contentDescription = "bounty_icon")
 
         Spacer(modifier = Modifier.size(10.dp))
 

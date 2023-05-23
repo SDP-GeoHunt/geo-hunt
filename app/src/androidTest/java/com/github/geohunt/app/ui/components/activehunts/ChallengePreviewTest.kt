@@ -3,7 +3,6 @@ package com.github.geohunt.app.ui.components.activehunts
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.github.geohunt.app.mocks.MockChallenge
-import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.junit.Before
@@ -24,11 +23,9 @@ class ChallengePreviewTest {
     @Before
     fun setupComposable() {
         testRule.setContent {
-            GeoHuntTheme {
-                ChallengePreview(challenge = dummyChallenge, getAuthorName = {
-                    MutableStateFlow("Debug User").asStateFlow()
-                })
-            }
+            ChallengePreview(challenge = dummyChallenge, getAuthorName = {
+                MutableStateFlow("Debug User").asStateFlow()
+            })
         }
     }
 
