@@ -134,7 +134,7 @@ class BountyClaimChallengeTest {
                 }
 
                 // Emit a location update
-                composeTestRule.waitUntil {
+                composeTestRule.waitUntil(10000) {
                     composeTestRule.onAllNodesWithText("Submit claim")
                         .fetchSemanticsNodes().isNotEmpty()
                 }

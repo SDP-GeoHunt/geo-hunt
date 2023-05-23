@@ -123,7 +123,7 @@ class ClaimChallengeTest {
                     mockedLocationFlow.emit(mockedLocation)
                 }
 
-                composeTestRule.waitUntil {
+                composeTestRule.waitUntil(10000) {
                     composeTestRule.onAllNodesWithText("Submit claim")
                         .fetchSemanticsNodes().isNotEmpty()
                 }

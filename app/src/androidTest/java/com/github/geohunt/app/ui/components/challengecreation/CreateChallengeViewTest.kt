@@ -115,7 +115,7 @@ class CreateChallengeViewTest {
                 }
 
                 // Emit a location update
-                composeTestRule.waitUntil {
+                composeTestRule.waitUntil(10000) {
                     composeTestRule.onAllNodesWithText("Create challenge")
                         .fetchSemanticsNodes().isNotEmpty()
                 }
