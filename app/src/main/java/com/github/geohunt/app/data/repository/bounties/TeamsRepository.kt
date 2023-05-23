@@ -81,9 +81,13 @@ class TeamsRepository(
             val teamId = newTeamReference.key!!
 
             // set the leader
-            newTeamReference.child("name").setValue(name)
-            newTeamReference.child("score").setValue(0)
-            newTeamReference.child("teamLeader").setValue(teamLeaderUid)
+            // note that the three updates have to be atomic due to flows causing
+            // recomposition on partially created teams
+            newTeamReference.updateChildren(mapOf(
+                    "name" to name,
+                    "score" to 0,
+                    "teamLeader" to teamLeaderUid
+            ))
 
             joinTeam(teamId, teamLeaderUid)
 
