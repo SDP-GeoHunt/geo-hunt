@@ -35,14 +35,12 @@ class ChallengePreviewTest {
     @Test
     fun challengeInformationAreDisplayed() {
         testRule.onNodeWithText("Debug User", substring = true).assertIsDisplayed()
-        testRule.onNodeWithText("Italy", substring = true).assertIsDisplayed()
     }
 
     @Test
     fun iconsAreDisplayed() {
-        testRule.onAllNodesWithContentDescription("icon", substring = true).assertCountEquals(3)
+        testRule.onAllNodesWithContentDescription("icon", substring = true).assertCountEquals(2)
         testRule.onNodeWithContentDescription("person", substring = true).assertIsDisplayed()
-        testRule.onNodeWithContentDescription("location", substring = true).assertIsDisplayed()
         testRule.onNodeWithContentDescription("calendar", substring = true).assertIsDisplayed()
     }
 
