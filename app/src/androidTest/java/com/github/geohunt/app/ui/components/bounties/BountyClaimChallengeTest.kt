@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.github.geohunt.app.ui.components.bounties
 
 import android.Manifest.permission
@@ -6,10 +8,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -19,16 +24,16 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.LocationRepository
+import com.github.geohunt.app.mocks.MockBountyClaimRepository
+import com.github.geohunt.app.mocks.MockChallengeRepository
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.ui.components.challengecreation.CreateChallengeViewModel
 import com.github.geohunt.app.ui.components.challengecreation.CreateNewChallenge
 import com.github.geohunt.app.ui.components.utils.intents.IntentsMocking
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.Matchers.equalTo
 import org.junit.*
@@ -62,12 +67,36 @@ class BountyClaimChallengeTest {
         Intents.release()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun testClaimingBountyChallengeLaunchCameraIntent() = runTest {
+        val deferred = CompletableDeferred<Unit>()
+
+        IntentsMocking.mock(
+            contract = ActivityResultContracts.TakePicture(),
+            callback = { uri, onResult ->
+                deferred.complete(Unit)
+            }
+        ).use {
+            composeTestRule.setContent {
+
+                BountyClaimChallenge(
+                    bid = "98d755ad-NVP5y7V0SyObpqi226o",
+                    cid = "testChalllengeId",
+                )
+            }
+
+            withTimeout(10000) {
+                deferred.await()
+            }
+        }
+    }
+
     @Test
     fun testClaimingBountyChallenge() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val deferred = CompletableDeferred<Claim>()
         val returnFromCoroutine = CompletableDeferred<Unit>()
+        val awaitThingy = CompletableDeferred<Unit>()
 
         val mockedLocationFlow = MutableSharedFlow<Location>()
 
@@ -86,11 +115,26 @@ class BountyClaimChallengeTest {
             ).run {
                 // Start the application
                 composeTestRule.setContent {
+                    val vm : BountyClaimViewModel = remember {
+                        BountyClaimViewModel(
+                            MockChallengeRepository(),
+                            MockBountyClaimRepository()
+                        )
+                    }
+                    val state = vm.challenge.collectAsState()
+                    if (state.value != null) {
+                        awaitThingy.complete(Unit)
+                    }
+
                     BountyClaimChallenge(
-                        bid = "98d755ad-NVP5y7V0SyObpqi226o",
-                        cid = "testChalllengeId",
-                        onFailure = deferred::completeExceptionally,
-                        onSuccess = deferred::complete
+                        bid = "<NaN>",
+                        cid = "some-claim-id",
+                        onFailure = {
+                            deferred.completeExceptionally(it)
+                            awaitThingy.completeExceptionally(it)
+                        },
+                        onSuccess = deferred::complete,
+                        viewModel = vm
                     )
                 }
 
@@ -99,6 +143,7 @@ class BountyClaimChallengeTest {
 
                 // Emit a location update
                 returnFromCoroutine.await()
+                awaitThingy.await()
                 composeTestRule.awaitIdle()
 
                 // Test button is enabled

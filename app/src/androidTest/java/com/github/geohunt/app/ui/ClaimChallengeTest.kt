@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.github.geohunt.app.ui
 import android.Manifest.permission
 import android.app.Application
@@ -5,10 +7,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -18,14 +23,20 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.data.repository.LocationRepository
+import com.github.geohunt.app.mocks.MockChallengeRepository
+import com.github.geohunt.app.mocks.MockClaim
+import com.github.geohunt.app.mocks.MockClaimRepository
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.ui.components.claims.ClaimChallenge
+import com.github.geohunt.app.ui.components.claims.SubmitClaimViewModel
 import com.github.geohunt.app.ui.components.utils.intents.IntentsMocking
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import org.junit.*
 import org.junit.runner.RunWith
 
@@ -56,18 +67,28 @@ class ClaimChallengeTest {
     }
 
     @Test
-    fun testClaimChallengeLaunchIntent() {
-        composeTestRule.setContent {
-            ClaimChallenge(cid = "163f921c-ML2eCQ52mAQlvCEQZ2n")
-        }
+    fun testClaimChallengeLaunchIntent() = runTest {
+        val deferred = CompletableDeferred<Unit>()
 
-        Intents.intended(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+        IntentsMocking.mock(
+            contract = ActivityResultContracts.TakePicture(),
+            callback = { uri, onResult ->
+                deferred.complete(Unit)
+            }
+        ).use {
+            composeTestRule.setContent {
+                ClaimChallenge(cid = "163f921c-ML2eCQ52mAQlvCEQZ2n")
+            }
+
+            deferred.await()
+        }
     }
 
     @Test
     fun testClaimChallenge() = runTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val deferred = CompletableDeferred<Claim>()
+        val awaitThingy = CompletableDeferred<Unit>()
 
         val mockedLocationFlow = MutableSharedFlow<Location>()
 
@@ -85,18 +106,30 @@ class ClaimChallengeTest {
             ).run {
                 // Start the application
                 composeTestRule.setContent {
+                    val vm = remember {
+                        SubmitClaimViewModel(
+                            MockChallengeRepository(),
+                            MockClaimRepository()
+                        )
+                    }
+                    val state = vm.challenge.collectAsState()
+                    if (state.value != null) {
+                        awaitThingy.complete(Unit)
+                    }
+
                     ClaimChallenge(
-                        "163f921c-ML2eCQ52mAQlvCEQZ2n",
+                        "1",
                         onFailure = deferred::completeExceptionally,
-                        onSuccess = deferred::complete
+                        onSuccess = deferred::complete,
+                        viewModel = vm
                     )
                 }
 
                 // Emit location
                 mockedLocationFlow.emit(mockedLocation)
 
-                // Emit a location update
-                composeTestRule.awaitIdle()
+                // Await the challenge
+                awaitThingy.await()
 
                 // Test button is enabled
                 composeTestRule.onNodeWithText("Submit Claim")

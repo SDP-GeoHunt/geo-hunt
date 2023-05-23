@@ -23,8 +23,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class SubmitClaimViewModel(
-    private val challengeRepository: ChallengeRepository,
-    private val claimRepository: ClaimRepository
+    private val challengeRepository: ChallengeRepositoryInterface,
+    private val claimRepository: ClaimRepositoryInterface
 ) : ViewModel() {
 
     private val _challenge = MutableStateFlow<Challenge?>(null)

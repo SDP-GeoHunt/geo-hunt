@@ -6,14 +6,13 @@ import android.Manifest.permission
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
-import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -29,6 +28,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -66,12 +66,21 @@ class CreateChallengeViewTest {
     }
 
     @Test
-    fun testCreateChallengeLaunchIntent() {
-        composeTestRule.setContent {
-            CreateNewChallenge()
-        }
+    fun testCreateChallengeLaunchIntent() = runTest {
+        val deferred = CompletableDeferred<Unit>()
 
-        Intents.intended(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+        IntentsMocking.mock(
+            contract = ActivityResultContracts.TakePicture(),
+            callback = { uri, onResult ->
+                deferred.complete(Unit)
+            }
+        ).use {
+            composeTestRule.setContent {
+                CreateNewChallenge()
+            }
+
+            deferred.await()
+        }
     }
 
     @Test
@@ -95,9 +104,11 @@ class CreateChallengeViewTest {
             ).run {
                 // Start the application
                 composeTestRule.setContent {
+                    val vm : CreateChallengeViewModel = viewModel(factory = CreateChallengeViewModel.Factory)
                     CreateNewChallenge(
                         onFailure = deferred::completeExceptionally,
-                        onSuccess = deferred::complete
+                        onSuccess = deferred::complete,
+                        viewModel = vm
                     )
                 }
 
