@@ -64,7 +64,7 @@ internal fun DisplayChallenges(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://picsum.photos/200/300") // challenge.photoUrl)
+                    .data(challenge.photoUrl)
                     .crossfade(true)
                     .build(),
                 modifier = Modifier.fillMaxSize(),
