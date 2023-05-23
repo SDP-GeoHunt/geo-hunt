@@ -24,11 +24,11 @@ import java.time.LocalDateTime
 @Composable
 fun BountyPreview(bounty: Bounty, firstChallenge: Challenge) {
     Column(modifier = Modifier.fillMaxSize()) {
-        ChallengeImage(firstChallenge, modifier = Modifier.weight(0.85F))
+        ChallengeImage(firstChallenge, modifier = Modifier.weight(0.90F))
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        BountyDescription(bounty, modifier = Modifier.weight(0.15F))
+        BountyDescription(bounty, modifier = Modifier.weight(0.10F))
     }
 }
 

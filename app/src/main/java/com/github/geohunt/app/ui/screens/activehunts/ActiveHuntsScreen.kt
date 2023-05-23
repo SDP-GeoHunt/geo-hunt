@@ -47,6 +47,7 @@ enum class ActiveHuntsTabs(val tabName: Int) {
 fun ActiveHuntsScreen(
     openExploreTab: () -> Unit,
     openChallengeView: (Challenge) -> Unit,
+    openBountyView: (Bounty) -> Unit,
     viewModel: ActiveHuntsViewModel = viewModel(factory = ActiveHuntsViewModel.Factory)
 ) {
     Column(
@@ -59,6 +60,7 @@ fun ActiveHuntsScreen(
         Spacer(modifier = Modifier.size(10.dp))
 
         val challenges = viewModel.activeHunts.collectAsStateWithLifecycle()
+        val bounties = viewModel.activeBounties.collectAsStateWithLifecycle()
 
         var currentTab by remember { mutableStateOf(ActiveHuntsTabs.Challenges) }
 
@@ -76,7 +78,7 @@ fun ActiveHuntsScreen(
             ActiveChallenges(challenges.value, openExploreTab, openChallengeView, viewModel::getAuthorName)
         }
         else if(currentTab == ActiveHuntsTabs.Bounties) {
-            ActiveBounties(listOf(), openExploreTab)
+            ActiveBounties(bounties.value, openExploreTab, openBountyView)
         }
     }
 }
@@ -102,7 +104,8 @@ fun ActiveChallenges(
 @Composable
 fun ActiveBounties(
         bounties: List<Pair<Bounty, Challenge>>?,
-        openExploreTab: () -> Unit
+        openExploreTab: () -> Unit,
+        openBountyView: (Bounty) -> Unit
 ) {
     when (bounties) {
         null -> Box(modifier = Modifier.fillMaxSize()) {
@@ -111,8 +114,7 @@ fun ActiveBounties(
         else -> ActiveBountiesList(
             bounties,
             openExploreTab,
-            {  }
+            openBountyView
         )
     }
-    Text("OK !")
 }
