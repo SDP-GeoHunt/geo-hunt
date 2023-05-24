@@ -195,7 +195,7 @@ fun NavigationController(
 
         // Open the view for a certain challenge
         composable(
-            "challenge-view/{challengeId}",
+            HiddenRoute.ChallengeView.route + "/{challengeId}",
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
         ) { backStackEntry ->
             val cid = backStackEntry.arguments?.getString("challengeId")!!
@@ -217,9 +217,9 @@ fun NavigationController(
             ClaimChallenge(
                 cid = cid,
                 onFailure = onFailure,
-                onClaimSubmitted = {
+                onSuccess = {
                     navController.popBackStack()
-                    navController.navigate("challenge-view/$cid")
+                    navController.navigate(HiddenRoute.ChallengeView.route + "/$cid")
                 }
             )
         }
@@ -305,7 +305,7 @@ fun NavigationController(
                     Log.e("GeoHunt", "Fail to create challenge: $it")
                     navController.popBackStack()
                 },
-                onClaimSubmitted = {
+                onSuccess = {
                     navController.popBackStack()
                     navController.navigate("${HiddenRoute.ChallengeView.route}/$cid")
                 }

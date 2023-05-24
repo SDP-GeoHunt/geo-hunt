@@ -67,7 +67,7 @@
     <string name="join_hunt">Join Hunt</string>
     <string name="less_button">less…</string>
     <string name="more_button">more…</string>
-    <string name="claim_challenge_button">Submit Claim</string>
+    <string name="claim_challenge_button">Submit claim</string>
     <string name="create_challenge_button">Create challenge</string>
 
     <string name="follow">Follow</string>
@@ -80,6 +80,7 @@
 
     <string name="error_fetching_page">An error occurred when fetching the profile page.</string>
     <string name="private_profile_page">You do not have access to this user\'s profile page.</string>
+    <string name="agree_community_html"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
 
     <!-- settings -->
     <string name="app_settings">App settings</string>
@@ -108,7 +109,6 @@
     <string name="private_word">Private</string>
     <string name="private_desc">Your profile will be visible only by you.</string>
 
-
     <string name="statistics_title">Statistics</string>
     <string name="statistics_empty_screen_text">You haven\'t claimed enough challenges yet</string>
     
@@ -116,7 +116,7 @@
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
 
     <!-- Bounty -->
-    <string name="claim_bounty_challenge_button">Submit Claim</string>
+    <string name="claim_bounty_challenge_button">Submit claim</string>
     <string name="photo_of_the_claim_taken">Photo just taken of the claim</string>
 
     <!-- home feed/bounty selector -->
