@@ -1,8 +1,10 @@
 package com.github.geohunt.app.maps
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.maps.marker.DisplayMarkers
@@ -15,6 +17,7 @@ import com.github.geohunt.app.ui.screens.maps.MapsViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import com.google.maps.android.compose.widgets.ScaleBar
 import java.time.LocalDateTime
 import java.time.Month
 import kotlin.math.PI
@@ -91,14 +94,17 @@ fun GoogleMapDisplay(
         val cameraPositionState = rememberCameraPositionState { position = cameraPosition }
 
         if (mapVisible) {
+
             GoogleMap(
                 modifier = modifier,
                 cameraPositionState = cameraPositionState,
                 properties = mapProperties,
                 uiSettings = uiSettings,
             ) {
+
+
                 val coordinateCenter = cameraPositionState.position.target
-                val zoom = cameraPositionState.position.zoom.coerceAtLeast(9f)
+                val zoom = cameraPositionState.position.zoom.coerceAtLeast(12f)
                 val latitude = coordinateCenter.latitude
                 val longitude = coordinateCenter.longitude
 
@@ -127,7 +133,13 @@ fun GoogleMapDisplay(
 
                 content()
                 }
-            }
+
+            ScaleBar(
+                modifier = Modifier
+                    .padding(top = 5.dp, end = 15.dp),
+                cameraPositionState = cameraPositionState
+            )
+        }
         }
     }
 }
