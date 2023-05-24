@@ -53,7 +53,7 @@ class ActiveBountiesRepositoryTest {
 
         activeBounties.joinBounty(mockBounty3.bid)
         val data2 = database.getReference("bounties/ofUser").child("1").get().await()
-        assertThat(data2.childrenCount, equalTo(2L))
+        assertThat(data2.childrenCount, equalTo(3L))
         val entries2 = data2.children.map { it.key!! }
         assertThat(entries2, containsInAnyOrder(mockBounty2.bid, mockBounty1.bid, mockBounty3))
     }
