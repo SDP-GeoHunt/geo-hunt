@@ -41,7 +41,7 @@ fun ChatScreen(
 
     val messageState = viewModel.messages.collectAsStateWithLifecycle()
 
-    Scaffold(topBar = { TopBarWithBackButton(onBack = { onBack }, title = stringResource(id = R.string.team_chat_title)) },
+    Scaffold(topBar = { TopBarWithBackButton(onBack = onBack, title = stringResource(id = R.string.team_chat_title)) },
     bottomBar = { MessageInput(sendMessage = viewModel::sendMessage) }) {
         padding ->
         Column(
