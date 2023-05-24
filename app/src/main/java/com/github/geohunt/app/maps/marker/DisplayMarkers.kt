@@ -139,9 +139,17 @@ fun MarkerInfoWindowContent(
     }
 }
 
-private fun getExpiryString(expiryDate: LocalDateTime): String {
-    val currentDate = LocalDateTime.now()
-
+/**
+ * Returns a string that represents the time until the challenge expires
+ *
+ * @param expiryDate The date that the challenge expires
+ *
+ * @return A string that represents the time until the challenge expires
+ */
+fun getExpiryString(
+    expiryDate: LocalDateTime,
+    currentDate: LocalDateTime = LocalDateTime.now()
+): String {
     val diffInMinutes = ChronoUnit.MINUTES.between(currentDate, expiryDate)
     if (diffInMinutes < 60) {
         return "Expires in $diffInMinutes minute(s)"
