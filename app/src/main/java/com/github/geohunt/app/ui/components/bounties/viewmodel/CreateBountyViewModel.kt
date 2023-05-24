@@ -41,17 +41,11 @@ class CreateBountyViewModel(
         _location.value = location
     }
 
-    fun withExpirationDate(expirationDate: LocalDate) {
-        if (expirationDate.isBefore(startingDate.value ?: LocalDate.MAX)) {
+    fun withDateRanding(startingDate: LocalDate, expirationDate: LocalDate) {
+        if (startingDate.isAfter(expirationDate)) {
             return
         }
         _expirationDate.value = expirationDate
-    }
-
-    fun withStartingDate(startingDate: LocalDate) {
-        if (startingDate.isAfter(expirationDate.value ?: LocalDate.MIN)) {
-            return
-        }
         _startingDate.value = startingDate
     }
 

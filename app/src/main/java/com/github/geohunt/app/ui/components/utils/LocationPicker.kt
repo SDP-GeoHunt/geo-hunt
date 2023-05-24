@@ -34,14 +34,19 @@ private fun LocationDialog(
     setLocation: (Location) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismissRequest,
-           properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = false))
-    {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false
+        )
+    ) {
         Card(
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(2.dp, 2.dp),
+                .padding(10.dp, 5.dp),
             elevation = 2.dp
         ) {
             Column(
@@ -65,13 +70,6 @@ private fun LocationDialog(
                         .padding(2.dp, 5.dp)
                         .weight(1.0f),
                     properties = remember { MapProperties(isMyLocationEnabled = true) },
-                    cameraPositionState = CameraPositionState(position = CameraPosition(
-                        //TODO: Get last known location as default location
-                        (location ?: Location(46.51924489262315, 6.568330260793486)).run { LatLng(latitude, longitude) },
-                        10.0f,
-                        0.0f,
-                        0.0f
-                    )),
                     onMapClick = {
                         setLocation(Location(it.latitude, it.longitude))
                         mapState?.apply {
