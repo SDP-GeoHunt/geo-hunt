@@ -43,6 +43,7 @@ fun DisplayMarkers(
             val location = Location(
                 challenge.coordinates.latitude,
                 challenge.coordinates.longitude)
+
             MarkerInfoWindow(
                 state = rememberMarkerState(position = challenge.coordinates),
                 title = challenge.id,
@@ -51,7 +52,6 @@ fun DisplayMarkers(
                     challengeId.value = location.getCoarseHash() + challenge.id
                     showChallengeView.value = true
                 },
-                tag = challenge.id,
             ) {
                 MarkerInfoWindowContent(challenge)
             }
@@ -69,7 +69,7 @@ fun MarkerInfoWindowContent(
     challenge: Marker,
     imageLoaded: MutableState<Boolean> = remember { mutableStateOf(false) }
 ){
-   // val imageLoaded = remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .background(

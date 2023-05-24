@@ -115,13 +115,7 @@ fun GoogleMapDisplay(
                             id = it.id,
                             image = it.photoUrl,
                             coordinates = LatLng(it.location.latitude, it.location.longitude),
-                            expiryDate = it.expirationDate ?: LocalDateTime.of(
-                                2024,
-                                Month.MAY,
-                                1,
-                                19,
-                                0
-                            ),
+                            expiryDate = it.expirationDate ?: LocalDateTime.of(2024, Month.MAY, 1, 19, 0),
                         )
                         markers.add(marker)
                     }
