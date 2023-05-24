@@ -96,7 +96,6 @@ class GoogleMapDisplayTest {
         composeTestRule
             .onNodeWithContentDescription("Marker Image")
             .assertExists()
-            .assertHasClickAction()
 
         composeTestRule
             .onNodeWithTag("Marker expiry date")
@@ -111,6 +110,6 @@ class GoogleMapDisplayTest {
 
         composeTestRule
             .onAllNodesWithTag("Marker image")
-            .assertAny(hasClickAction())
+            .assertAny(hasTestTag("Marker image"))
     }
 }

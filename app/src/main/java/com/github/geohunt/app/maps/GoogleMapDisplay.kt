@@ -60,14 +60,13 @@ fun GoogleMapDisplay(
     viewModel.startLocationUpdate()
 
     val showChallengeView = remember { mutableStateOf(false) }
-    val challengeId = remember { mutableStateOf("") }
+    val cid = remember { mutableStateOf("") }
 
     if (showChallengeView.value) {
         val fnClaimHuntCallback: (String) -> Unit = {}
 
         ChallengeView(
-            //TODO Update the cid
-            cid = "3cc359ec" + challengeId.value,
+            cid = cid.value,
             fnViewImageCallback = fnClaimHuntCallback,
             fnClaimHuntCallback = fnClaimHuntCallback,
             fnGoBackBtn = { showChallengeView.value = false }
@@ -123,13 +122,13 @@ fun GoogleMapDisplay(
                 DisplayMarkers(
                     markers = markers,
                     showChallengeView = showChallengeView,
-                    challengeId = challengeId,
+                    challengeId = cid,
                 )
 
                 content()
+                }
             }
         }
-    }
     }
 }
 

@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.Location
 import com.google.maps.android.compose.MarkerInfoWindow
 import com.google.maps.android.compose.rememberMarkerState
 import java.time.LocalDateTime
@@ -39,12 +40,16 @@ fun DisplayMarkers(
     challengeId: MutableState<String>,
 ) {
     markers.forEach { challenge ->
+            val location = Location(
+                challenge.coordinates.latitude,
+                challenge.coordinates.longitude
+            )
             MarkerInfoWindow(
                 state = rememberMarkerState(position = challenge.coordinates),
                 title = challenge.id,
                 snippet = challenge.expiryDate.toString(),
                 onInfoWindowClick = {
-                    challengeId.value = challenge.id
+                    challengeId.value = location.getCoarseHash() + challenge.id
                     showChallengeView.value = true
                 },
                 tag = challenge.id,
@@ -116,7 +121,8 @@ fun MarkerInfoWindowContent(
                     contentDescription = "Marker Image",
                     modifier = Modifier
                         .size(90.dp)
-                        .padding(top = 16.dp),
+                        .padding(top = 16.dp)
+                        .testTag("Marker image"),
                     contentScale = ContentScale.Crop
                 )
             }
