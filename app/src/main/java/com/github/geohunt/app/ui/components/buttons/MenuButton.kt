@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
  * @param title The title of the item.
  * @param icon A descriptive leading icon.
  * @param onClick The click handler.
+ * @param enabled Whether the item is enabled.
  * @param red Whether the item should be displayed in red (only for destructive operations)
  */
 @Composable
@@ -33,12 +34,14 @@ fun MenuItem(
     title: String,
     icon: @Composable () -> Unit,
     onClick: () -> Unit,
+    enabled: Boolean = true,
     red: Boolean = false
 ) {
     DropdownMenuItem(
         text = { Text(title) },
         onClick = onClick,
         leadingIcon = icon,
+        enabled = enabled,
         colors = if (red) MenuDefaults.itemColors(
             textColor = Color.Red,
             leadingIconColor = Color.Red

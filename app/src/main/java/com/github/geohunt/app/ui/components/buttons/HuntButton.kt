@@ -106,6 +106,7 @@ fun ClaimedButton(onClick: () -> Unit) {
  * This is used to show the appropriate button to the user.
  */
 enum class ChallengeHuntState {
+    UNKNOWN, // Used when loading the challenge hunt state
     NOT_HUNTED,
     HUNTED,
     CLAIMED
@@ -129,11 +130,12 @@ fun HuntClaimButton(
     onHunt: () -> Unit,
     onClaim: () -> Unit,
     showClaim: () -> Unit = { /* TODO Create a claim page */ },
-    isBusy: Boolean = false
+    isBusy: () -> Boolean = { false }
 ) {
     when (state) {
-        ChallengeHuntState.NOT_HUNTED -> HuntButton(onClick = onHunt, enabled = !isBusy)
-        ChallengeHuntState.HUNTED -> ClaimButton(onClick = onClaim, enabled = !isBusy)
+        ChallengeHuntState.UNKNOWN -> HuntButton(onClick = {}, enabled = false)
+        ChallengeHuntState.NOT_HUNTED -> HuntButton(onClick = onHunt, enabled = !isBusy())
+        ChallengeHuntState.HUNTED -> ClaimButton(onClick = onClaim, enabled = !isBusy())
         ChallengeHuntState.CLAIMED -> ClaimedButton(onClick = showClaim)
     }
 }

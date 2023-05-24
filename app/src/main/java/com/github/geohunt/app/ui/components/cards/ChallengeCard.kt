@@ -35,6 +35,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils
+import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.buttons.ChallengeHuntState
 import com.github.geohunt.app.ui.components.buttons.HuntClaimButton
 import com.github.geohunt.app.ui.components.buttons.LikeButton
@@ -60,10 +63,10 @@ private val ChallengeCardContentPadding = 8.dp
  */
 @Composable
 private fun ChallengeCardTitle(
-    author: String?,
-    distance: Double?,
+    author: User?,
+    distance: () -> Double?,
     publicationDate: LocalDateTime,
-    onFollow: () -> Unit,
+    onFollow: (User) -> Unit,
     canLeaveHunt: Boolean,
     onLeaveHunt: () -> Unit
 ) {
@@ -81,14 +84,14 @@ private fun ChallengeCardTitle(
             Modifier.padding(start = ChallengeCardContentPadding),
             verticalArrangement = Arrangement.spacedBy(3.dp)
         ) {
-            SkeletonLoading(value = author, width = 80.dp, height = 20.dp) { authorName ->
+            SkeletonLoading(value = author, width = 80.dp, height = 20.dp) { author ->
                 Text(
-                    authorName,
+                    author.name,
                     style = MaterialTheme.typography.titleMedium
                 )
             }
 
-            SkeletonLoading(value = distance, width = 170.dp, height = 16.dp) { distance ->
+            SkeletonLoading(value = distance(), width = 170.dp, height = 16.dp) { distance ->
                 // Use derivedStateOf to recompose only when the UI would be changed
                 // This avoids useless recompositions when publicationDate and/or distance slightly
                 // change, but not enough to change the UI since we quantize them.
@@ -119,7 +122,12 @@ private fun ChallengeCardTitle(
         MenuButton {
             MenuItem(
                 title = "Follow",
-                onClick = onFollow,
+                enabled = author != null,
+                onClick = {
+                    if (author != null) {
+                        onFollow(author)
+                    }
+                },
                 icon = { Icon(Icons.Default.PersonAdd, contentDescription = "Follow") }
             )
 
@@ -205,7 +213,8 @@ private fun ChallengeCardActions(
     onLike: (Boolean) -> Unit,
     onOpenMap: () -> Unit,
     onHunt: () -> Unit,
-    onClaim: () -> Unit
+    onClaim: () -> Unit,
+    isBusy: () -> Boolean
 ) {
     Row(
         Modifier.padding(ChallengeCardContentPadding),
@@ -223,38 +232,43 @@ private fun ChallengeCardActions(
         HuntClaimButton(
             state = huntState,
             onHunt = onHunt,
-            onClaim = onClaim
+            onClaim = onClaim,
+            isBusy = isBusy
         )
     }
 }
 
 @Composable
 fun ChallengeCard(
+    challenge: Challenge,
     huntState: ChallengeHuntState,
+    author: User?,
+    userLocation: () -> Location?,
     onImageClick: () -> Unit,
     isLiked: Boolean,
     onLike: (Boolean) -> Unit,
     onOpenMap: () -> Unit,
-    onFollow: () -> Unit,
+    onFollow: (User) -> Unit,
     onHunt: () -> Unit,
     onLeaveHunt: () -> Unit,
-    onClaim: () -> Unit
+    onClaim: () -> Unit,
+    isBusy: () -> Boolean
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F3F4)),
         modifier = Modifier.fillMaxWidth()
     ) {
         ChallengeCardTitle(
-            author = "User name",
-            distance = 0.3,
-            publicationDate = LocalDateTime.now(),
+            author = author,
+            distance = { userLocation()?.distanceTo(challenge.location) },
+            publicationDate = challenge.publishedDate,
             onFollow = onFollow,
             canLeaveHunt = huntState == ChallengeHuntState.HUNTED,
             onLeaveHunt = onLeaveHunt
         )
 
         ChallengeCardImage(
-            url = "https://picsum.photos/seed/259/250",
+            url = challenge.photoUrl,
             onClick = onImageClick,
             onDoubleTap = { onLike(true) }
         )
@@ -265,7 +279,8 @@ fun ChallengeCard(
             onLike = onLike,
             onOpenMap = onOpenMap,
             onHunt = onHunt,
-            onClaim = onClaim
+            onClaim = onClaim,
+            isBusy = isBusy
         )
     }
 }
