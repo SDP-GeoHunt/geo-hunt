@@ -88,19 +88,6 @@ class ActiveHuntsRepository(
     }
 
     /**
-     * Returns the list of hunters of the given challenge.
-     */
-    override fun getHunters(challenge: Challenge): Flow<List<String>> {
-        return hunters
-            .child(challenge.id)
-            .snapshots
-            .map {
-                it.toList()
-            }
-            .flowOn(ioDispatcher)
-    }
-
-    /**
      * Check whether or not the currently authenticated user hunt a specific challenges
      */
     override fun isHunting(challenge: Challenge) : Flow<Boolean> {

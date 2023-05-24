@@ -12,10 +12,6 @@ open class MockActiveHuntRepository : ActiveHuntsRepositoryInterface {
     override suspend fun leaveHunt(challenge: Challenge) {
     }
 
-    override fun getHunters(challenge: Challenge): Flow<List<String>> {
-        return flowOf()
-    }
-
     override fun getActiveHunts(): Flow<List<String>> {
         return flowOf(listOf())
     }

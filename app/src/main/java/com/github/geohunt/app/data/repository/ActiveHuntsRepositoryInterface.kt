@@ -28,11 +28,6 @@ interface ActiveHuntsRepositoryInterface {
     fun getActiveHunts(): Flow<List<String>>
 
     /**
-     * Returns the list of active hunters of the given challenge.
-     */
-    fun getHunters(challenge: Challenge): Flow<List<String>>
-
-    /**
      * Check whether or not the currently authenticated user hunt a specific challenges
      */
     fun isHunting(challenge: Challenge) : Flow<Boolean>
