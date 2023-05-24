@@ -98,7 +98,7 @@ fun GoogleMapDisplay(
                 uiSettings = uiSettings,
             ) {
                 val coordinateCenter = cameraPositionState.position.target
-                val zoom = cameraPositionState.position.zoom
+                val zoom = cameraPositionState.position.zoom.coerceAtLeast(9f)
                 val latitude = coordinateCenter.latitude
                 val longitude = coordinateCenter.longitude
 
