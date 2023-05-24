@@ -17,12 +17,11 @@ import kotlinx.coroutines.withContext
  * Contains methods related to the retrieval and bookmarking of active hunts.
  */
 class ActiveHuntsRepository(
-    private val authRepository: AuthRepository,
+    private val authRepository: AuthRepositoryInterface,
     database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ActiveHuntsRepositoryInterface {
     private val activeHunts = database.getReference("activeHunts")
-    private val hunters = database.getReference("hunters")
 
     /**
      * Updates the hunt state of the currently authenticated user on the given challenge.
@@ -40,12 +39,6 @@ class ActiveHuntsRepository(
             activeHunts
                 .child(currentUser.id)
                 .child(challenge.id)
-                .setValue(value)
-                .await()
-
-            hunters
-                .child(challenge.id)
-                .child(currentUser.id)
                 .setValue(value)
                 .await()
         }

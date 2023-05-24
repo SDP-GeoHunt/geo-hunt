@@ -5,8 +5,6 @@ import com.github.geohunt.app.data.network.NetworkMonitor
 import com.github.geohunt.app.utils.assertFinishes
 import com.github.geohunt.app.utils.assertTimesOut
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -40,12 +38,10 @@ class NetworkMonitorTest {
 
     @Before
     fun setup() {
-        FirebaseEmulator.init()
-
         // Note that mocking the database is too hard
         // Because Kotlin's extension getters are impossible to mock
         // and in particular Query.snapshots (used by the monitor) is not mockable
-        database = Firebase.database
+        database = FirebaseEmulator.getEmulatedFirebase()
         monitor = NetworkMonitor(database, ioDispatcher = UnconfinedTestDispatcher())
     }
 
