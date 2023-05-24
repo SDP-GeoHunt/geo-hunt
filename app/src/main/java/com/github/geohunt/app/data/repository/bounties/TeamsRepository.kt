@@ -8,10 +8,12 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.snapshots
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -81,9 +83,11 @@ class TeamsRepository(
             val teamId = newTeamReference.key!!
 
             // set the leader
-            newTeamReference.child("name").setValue(name)
-            newTeamReference.child("score").setValue(0)
-            newTeamReference.child("teamLeader").setValue(teamLeaderUid)
+            newTeamReference.updateChildren(mapOf(
+                "name" to name,
+                "score" to 0,
+                "teamLeader" to teamLeaderUid
+            ))
 
             joinTeam(teamId, teamLeaderUid)
 
