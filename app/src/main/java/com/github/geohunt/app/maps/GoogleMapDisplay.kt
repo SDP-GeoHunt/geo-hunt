@@ -30,13 +30,11 @@ import kotlin.math.pow
  * @param modifier the modifier
  * @param cameraPosition the camera position
  * @param viewModel the view model used to access challenges from the database
- * @param content the content
  */
 @Composable
 fun GoogleMapDisplay(
     modifier: Modifier = Modifier,
     viewModel: MapsViewModel = viewModel(factory = MapsViewModel.Factory),
-    content: @Composable () -> Unit = {},
     setCameraPosition: CameraPosition? = null,
 ) {
     val uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
@@ -76,70 +74,71 @@ fun GoogleMapDisplay(
         )
     } else {
 
-    if (curLoc.value == null) {
-        CircleLoadingAnimation(
-            modifier = Modifier
-                .fillMaxSize()
-        )
-    }
-    else {
-        loc.value = curLoc.value
-
-        var cameraPosition =
-            CameraPosition(LatLng(loc.value!!.latitude, loc.value!!.longitude), 12f, 0f, 0f)
-
-        if (setCameraPosition != null)
-            cameraPosition = setCameraPosition
-
-        val cameraPositionState = rememberCameraPositionState { position = cameraPosition }
-
-        if (mapVisible) {
-
-            GoogleMap(
-                modifier = modifier,
-                cameraPositionState = cameraPositionState,
-                properties = mapProperties,
-                uiSettings = uiSettings,
-            ) {
-
-
-                val coordinateCenter = cameraPositionState.position.target
-                val zoom = cameraPositionState.position.zoom.coerceAtLeast(12f)
-                val latitude = coordinateCenter.latitude
-                val longitude = coordinateCenter.longitude
-
-                val radius = 38000 / 2.0.pow((zoom - 3).toDouble()) * cos(latitude * PI / 180)
-                val location = Location(latitude, longitude)
-                val neighboringSectors = location.getNeighboringSectors(radius)
-
-                val markers = remember { mutableStateListOf<Marker>() }
-                viewModel.updateFetchableChallenges(neighboringSectors)
-                val challenges = viewModel.challenges.collectAsStateWithLifecycle()
-                challenges.value?.forEach {
-                    val marker = Marker(
-                        id = it.id,
-                        image = it.photoUrl,
-                        coordinates = LatLng(it.location.latitude, it.location.longitude),
-                        expiryDate = it.expirationDate ?: LocalDateTime.of(2024, Month.MAY, 1, 19, 0),
-                    )
-                    markers.add(marker)
-                }
-
-                DisplayMarkers(
-                    markers = markers,
-                    showChallengeView = showChallengeView,
-                    challengeId = cid,
-                )
-
-                content()
-                }
-
-            ScaleBar(
+        if (curLoc.value == null) {
+            CircleLoadingAnimation(
                 modifier = Modifier
-                    .padding(top = 5.dp, end = 15.dp),
-                cameraPositionState = cameraPositionState
+                    .fillMaxSize()
             )
-        }
+        } else {
+            loc.value = curLoc.value
+
+            var cameraPosition =
+                CameraPosition(LatLng(loc.value!!.latitude, loc.value!!.longitude), 12f, 0f, 0f)
+
+            if (setCameraPosition != null)
+                cameraPosition = setCameraPosition
+
+            val cameraPositionState = rememberCameraPositionState { position = cameraPosition }
+
+            if (mapVisible) {
+
+                GoogleMap(
+                    modifier = modifier,
+                    cameraPositionState = cameraPositionState,
+                    properties = mapProperties,
+                    uiSettings = uiSettings,
+                ) {
+                    val coordinateCenter = cameraPositionState.position.target
+                    val zoom = cameraPositionState.position.zoom.coerceAtLeast(12f)
+                    val latitude = coordinateCenter.latitude
+                    val longitude = coordinateCenter.longitude
+
+                    val radius = 38000 / 2.0.pow((zoom - 3).toDouble()) * cos(latitude * PI / 180)
+                    val location = Location(latitude, longitude)
+                    val neighboringSectors = location.getNeighboringSectors(radius)
+
+                    val markers = remember { mutableStateListOf<Marker>() }
+                    viewModel.updateFetchableChallenges(neighboringSectors)
+                    val challenges = viewModel.challenges.collectAsStateWithLifecycle()
+                    challenges.value?.forEach {
+                        val marker = Marker(
+                            id = it.id,
+                            image = it.photoUrl,
+                            coordinates = LatLng(it.location.latitude, it.location.longitude),
+                            expiryDate = it.expirationDate ?: LocalDateTime.of(
+                                2024,
+                                Month.MAY,
+                                1,
+                                19,
+                                0
+                            ),
+                        )
+                        markers.add(marker)
+                    }
+
+                    DisplayMarkers(
+                        markers = markers,
+                        showChallengeView = showChallengeView,
+                        challengeId = cid,
+                    )
+                }
+
+                ScaleBar(
+                    modifier = Modifier
+                        .padding(top = 5.dp, end = 15.dp),
+                    cameraPositionState = cameraPositionState
+                )
+            }
         }
     }
 }
