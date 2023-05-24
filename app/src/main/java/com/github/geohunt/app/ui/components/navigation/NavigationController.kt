@@ -85,7 +85,8 @@ enum class HiddenRoute(override val route: String): Route {
     CreateBounty("create-bounty"),
     BountyClaimChallenge("bounty-claim-challenge"),
     ChallengeView("challenge-view"),
-    BountyLeaderboard("bounty/leaderboard")
+    BountyLeaderboard("bounty/leaderboard"),
+    TeamChat("bounty/chat"),
 }
 
 @Composable
@@ -272,10 +273,17 @@ fun NavigationController(
             TeamProgressScreen(
                 onBack = { navController.popBackStack() },
                 onLeaderboard = { navController.navigate("bounty/leaderboard/$bid") },
-                onChat = { /* TODO */ },
+                onChat = { navController.navigate("bounty/chat/$bid") },
                 onClaim = { navController.navigate("${HiddenRoute.BountyClaimChallenge.route}/$bid/${it.id}") },
                 bountyId = bid
             )
+        }
+
+        composable("${HiddenRoute.TeamChat.route}/{bountyId}",
+            arguments = listOf(navArgument("bountyId") {type = NavType.StringType})
+        ) {
+            val bid = it.arguments?.getString("bountyId")!!
+            ChatScreen(onBack = { navController.popBackStack() }, bountyId = bid)
         }
 
         composable(
