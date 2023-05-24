@@ -1,15 +1,8 @@
 package com.github.geohunt.app.maps
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.maps.marker.DisplayMarkers
@@ -17,14 +10,11 @@ import com.github.geohunt.app.maps.marker.Marker
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.sensor.RequireFineLocationPermissions
 import com.github.geohunt.app.ui.components.CircleLoadingAnimation
+import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.screens.maps.MapsViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapType
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.*
 import java.time.LocalDateTime
 import java.time.Month
 import kotlin.math.PI
@@ -69,18 +59,32 @@ fun GoogleMapDisplay(
 
     viewModel.startLocationUpdate()
 
+    val showChallengeView = remember { mutableStateOf(false) }
+    val challengeId = remember { mutableStateOf("") }
+
+    if (showChallengeView.value) {
+        val fnClaimHuntCallback: (String) -> Unit = {}
+
+        ChallengeView(
+            //TODO Update the cid
+            cid = "3cc359ec" + challengeId.value,
+            fnViewImageCallback = fnClaimHuntCallback,
+            fnClaimHuntCallback = fnClaimHuntCallback,
+            fnGoBackBtn = { showChallengeView.value = false }
+        )
+    } else {
+
     if (curLoc.value == null) {
         CircleLoadingAnimation(
             modifier = Modifier
                 .fillMaxSize()
-                .testTag("loading-animation")
         )
     }
     else {
-
         loc.value = curLoc.value
 
-        var cameraPosition = CameraPosition(LatLng(loc.value!!.latitude, loc.value!!.longitude), 12f, 0f, 0f)
+        var cameraPosition =
+            CameraPosition(LatLng(loc.value!!.latitude, loc.value!!.longitude), 12f, 0f, 0f)
 
         if (setCameraPosition != null)
             cameraPosition = setCameraPosition
@@ -108,25 +112,24 @@ fun GoogleMapDisplay(
                 val challenges = viewModel.challenges.collectAsStateWithLifecycle()
                 challenges.value?.forEach {
                     val marker = Marker(
-                        title = it.id,
+                        id = it.id,
                         image = it.photoUrl,
                         coordinates = LatLng(it.location.latitude, it.location.longitude),
-                        expiryDate = it.expirationDate ?: LocalDateTime.of(
-                            2024,
-                            Month.MAY,
-                            1,
-                            19,
-                            0
-                        ),
+                        expiryDate = it.expirationDate ?: LocalDateTime.of(2024, Month.MAY, 1, 19, 0),
                     )
                     markers.add(marker)
                 }
 
-                DisplayMarkers(markers = markers)
+                DisplayMarkers(
+                    markers = markers,
+                    showChallengeView = showChallengeView,
+                    challengeId = challengeId,
+                )
 
                 content()
             }
         }
+    }
     }
 }
 

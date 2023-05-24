@@ -2,7 +2,6 @@ package com.github.geohunt.app.maps.marker
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -34,19 +33,28 @@ import java.time.temporal.ChronoUnit
  * @param markers The list of markers to display
  */
 @Composable
-fun DisplayMarkers(markers: List<Marker>) {
+fun DisplayMarkers(
+    markers: List<Marker>,
+    showChallengeView: MutableState<Boolean>,
+    challengeId: MutableState<String>,
+) {
     markers.forEach { challenge ->
-        MarkerInfoWindow (
-            state = rememberMarkerState(position = challenge.coordinates),
-            title = challenge.title,
-            snippet = challenge.expiryDate.toString(),
-            tag = challenge.title,
-        ) {
-            val imageLoaded = remember { mutableStateOf(false) }
-            MarkerInfoWindowContent(challenge, imageLoaded)
+            MarkerInfoWindow(
+                state = rememberMarkerState(position = challenge.coordinates),
+                title = challenge.id,
+                snippet = challenge.expiryDate.toString(),
+                onInfoWindowClick = {
+                    challengeId.value = challenge.id
+                    showChallengeView.value = true
+                },
+                tag = challenge.id,
+            ) {
+                val imageLoaded = remember { mutableStateOf(false) }
+                MarkerInfoWindowContent(challenge, imageLoaded)
+            }
         }
     }
-}
+
 
 /**
  * The content of the info window that is displayed when a marker is clicked
@@ -59,7 +67,6 @@ fun MarkerInfoWindowContent(
     imageLoaded: MutableState<Boolean> = remember { mutableStateOf(false) }
 ){
    // val imageLoaded = remember { mutableStateOf(false) }
-
     Box(
         modifier = Modifier
             .background(
@@ -97,9 +104,6 @@ fun MarkerInfoWindowContent(
                         modifier = Modifier
                             .size(160.dp)
                             .align(Alignment.CenterHorizontally)
-                            .clickable {
-                                //TODO Go to the challenge page
-                            }
                             .testTag("Marker image"),
                         contentDescription = if (imageLoaded.value) "Marker Image" else "Loading",
                     )
@@ -112,8 +116,7 @@ fun MarkerInfoWindowContent(
                     contentDescription = "Marker Image",
                     modifier = Modifier
                         .size(90.dp)
-                        .padding(top = 16.dp)
-                        .clickable { /*TODO Go to the challenge page*/ },
+                        .padding(top = 16.dp),
                     contentScale = ContentScale.Crop
                 )
             }

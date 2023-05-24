@@ -58,14 +58,14 @@ class GoogleMapDisplayTest {
     fun initializeMockChallengeDatabase() {
         for (i in 1..2) {
             mockTestChallengeDatabase.add(Marker(
-                title = "Event $i",
+                id = "Event $i",
                 image = "",
                 coordinates = LatLng(46.51958 + i * 0.01, 6.56398 + i * 0.01),
                 expiryDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
             )
         }
         mockTestChallengeDatabase.add(Marker(
-            title = "Event 3",
+            id = "Event 3",
             image = "https://picsum.photos/300/300",
             coordinates = LatLng(46.5195, 6.5634),
             expiryDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
