@@ -242,9 +242,7 @@ fun ChallengeCard(
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F3F4)),
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         ChallengeCardTitle(
             author = "User name",
