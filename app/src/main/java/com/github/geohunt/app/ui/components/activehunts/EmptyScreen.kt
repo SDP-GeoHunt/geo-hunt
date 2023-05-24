@@ -14,9 +14,11 @@ import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.ui.theme.geoHuntRed
 
 /**
- * The screen to show when they are no challenges to display
- * Simply displays a text saying no challenges have been selected yet
- * and a button redirecting to the screen to select new challenges
+ * The screen to show when there is nothing to display
+ * Contains a main Text and a button
+ * @param text The text that will be displayed in the screen
+ * @param buttonText The text that will be displayed in the button
+ * @param emptyScreenCallback The callback assigned to the button (will typically redirect the user)
  */
 @Composable
 fun EmptyScreen(text: String, buttonText: String, emptyScreenCallback: () -> Unit) {

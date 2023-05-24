@@ -21,6 +21,16 @@ import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Challenge
 import java.time.LocalDateTime
 
+/**
+ * The preview of a bounty
+ * Contains the basic information about a bounty
+ * Which are :
+ *  The image of one of the challenges contained in the bounty
+ *  Information about the date of the bounty (starts in/expires in)
+ *  The name of the bounty
+ * @param bounty The bounty we take the information from
+ * @param firstChallenge The challenge that will be displayed to represent the bounty
+ */
 @Composable
 fun BountyPreview(bounty: Bounty, firstChallenge: Challenge) {
     Column(modifier = Modifier.fillMaxSize()) {

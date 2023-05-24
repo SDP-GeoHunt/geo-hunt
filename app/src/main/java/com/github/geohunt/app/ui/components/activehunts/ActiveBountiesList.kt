@@ -18,6 +18,12 @@ import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Challenge
 
+/**
+ * Represents a List of bounties, bounties are displayed in a LazyRow and user can scroll through them
+ * @param bounties The bounties to display
+ * @param openExploreTab the callback that should be called by the button on the empty screen (No bounties)
+ * @param openBountyView the callback that should be called when the user clicks on a bounty
+ */
 @Composable
 fun ActiveBountiesList(
         bounties: List<Pair<Bounty, Challenge>>,

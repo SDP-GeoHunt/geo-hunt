@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param challenges The challenges to display.
  * @param openExploreTab The function called to open the explore view in the navigation.
+ * @param openChallengeView The callback used to open the challenge view of a challenge
+ * @param getAuthorName The callback the UI uses to determine the name of the user that created the bounty
  */
 @Composable
 fun ActiveHuntsList(
