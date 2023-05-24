@@ -23,12 +23,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Location
+import com.google.android.gms.maps.GoogleMapOptions
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.rememberMarkerState
+import com.google.maps.android.compose.*
 
 @Composable
 private fun LocationDialog(
@@ -43,7 +41,7 @@ private fun LocationDialog(
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(5.dp, 10.dp),
+                .padding(2.dp, 2.dp),
             elevation = 2.dp
         ) {
             Column(
@@ -52,7 +50,8 @@ private fun LocationDialog(
                 Text(
                     text = stringResource(R.string.pick_location_popup_title),
                     fontSize = 20.sp,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
                         .padding(0.dp, 3.dp)
                 )
 
@@ -65,6 +64,7 @@ private fun LocationDialog(
                         .testTag("gg-map-component")
                         .padding(2.dp, 5.dp)
                         .weight(1.0f),
+                    properties = remember { MapProperties(isMyLocationEnabled = true) },
                     cameraPositionState = CameraPositionState(position = CameraPosition(
                         //TODO: Get last known location as default location
                         (location ?: Location(46.51924489262315, 6.568330260793486)).run { LatLng(latitude, longitude) },
@@ -101,7 +101,9 @@ fun LocationPicker(location: Location?, setLocation: (Location) -> Unit) {
         onValueChange = {},
         readOnly = true,
         enabled = false,
-        modifier = Modifier.testTag("location-picker-field").clickable { showLocationDialog = true })
+        modifier = Modifier
+            .testTag("location-picker-field")
+            .clickable { showLocationDialog = true })
 
     if (showLocationDialog) {
         LocationDialog(location = location, setLocation = setLocation) {

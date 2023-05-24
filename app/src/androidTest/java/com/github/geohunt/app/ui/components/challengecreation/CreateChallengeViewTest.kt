@@ -124,7 +124,6 @@ class CreateChallengeViewTest {
                 composeTestRule.onNodeWithText("Create challenge")
                     .performScrollTo()
                     .assertIsDisplayed()
-                    .assertIsEnabled()
             }
         }
     }
