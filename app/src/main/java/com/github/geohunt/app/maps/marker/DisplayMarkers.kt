@@ -40,23 +40,23 @@ fun DisplayMarkers(
     challengeId: MutableState<String>,
 ) {
     markers.forEach { challenge ->
-            val location = Location(
-                challenge.coordinates.latitude,
-                challenge.coordinates.longitude)
+        val location = Location(
+            challenge.coordinates.latitude,
+            challenge.coordinates.longitude)
 
-            MarkerInfoWindow(
-                state = rememberMarkerState(position = challenge.coordinates),
-                title = challenge.id,
-                snippet = challenge.expirationDate.toString(),
-                onInfoWindowClick = {
-                    challengeId.value = location.getCoarseHash() + challenge.id
-                    showChallengeView.value = true
-                },
-            ) {
-                MarkerInfoWindowContent(challenge)
-            }
+        MarkerInfoWindow(
+            state = rememberMarkerState(position = challenge.coordinates),
+            title = challenge.id,
+            snippet = challenge.expirationDate.toString(),
+            onInfoWindowClick = {
+                challengeId.value = location.getCoarseHash() + challenge.id
+                showChallengeView.value = true
+                                },
+        ) {
+            MarkerInfoWindowContent(challenge)
         }
     }
+}
 
 
 /**
@@ -69,7 +69,6 @@ fun MarkerInfoWindowContent(
     challenge: Marker,
     imageLoaded: MutableState<Boolean> = remember { mutableStateOf(false) }
 ){
-
     Box(
         modifier = Modifier
             .background(
@@ -116,8 +115,8 @@ fun MarkerInfoWindowContent(
                     painter = painterResource(id = R.drawable.radar_icon),
                     contentDescription = "Marker Image",
                     modifier = Modifier
-                        .size(90.dp)
-                        .padding(top = 16.dp)
+                        .size(160.dp)
+                        .align(Alignment.CenterHorizontally)
                         .testTag("Marker image"),
                     contentScale = ContentScale.Crop
                 )
@@ -130,7 +129,7 @@ fun MarkerInfoWindowContent(
                 text = getExpiryString(challenge.expirationDate),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                    .padding(start = 25.dp, end = 25.dp)
                     .testTag("Marker expiry date")
                     .fillMaxWidth(),
                 style = MaterialTheme.typography.headlineSmall,
