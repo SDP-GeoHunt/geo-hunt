@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -120,7 +120,7 @@ private fun ChallengeCardTitle(
             MenuItem(
                 title = "Follow",
                 onClick = onFollow,
-                icon = { Icon(Icons.Default.Star, contentDescription = "Follow") }
+                icon = { Icon(Icons.Default.PersonAdd, contentDescription = "Follow") }
             )
 
             if (canLeaveHunt) {
