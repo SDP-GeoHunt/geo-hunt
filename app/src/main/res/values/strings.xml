@@ -5,7 +5,7 @@
 
     <!-- All string for formatting message like "published just now" -->
     <string name="just_now">just now</string>
-    <string name="published_format">published %s</string>
+    <string name="published_format">%s</string>
     <string name="claimed_format">claimed %s</string>
 
     <string name="navigation.home">Home</string>
@@ -143,6 +143,7 @@
     <string name="renaming_bounty_placeholder"><![CDATA[<Name of Bounty>]]></string>
     <string name="pick_location_popup_title">Pick a location</string>
     <string name="location_picker_placeholder"><![CDATA[<Select>]]></string>
+    <string name="claimed">Claimed</string>
 
     <plurals name="teams_count">
         <item quantity="zero">no teams</item>

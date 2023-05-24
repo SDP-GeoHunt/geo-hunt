@@ -14,21 +14,17 @@ import com.github.geohunt.app.ui.theme.geoHuntRed
  * state.
  *
  * @param isLiked Whether the button should indicate a "liked" state.
- * @param onLike Callback used whenever the user clicks the unliked icon.
- * @param onUnlike Callback used whenever the user clicks the liked icon.
+ * @param onLikeChanged Callback used whenever the user clicks the icon.
  */
 @Composable
 fun LikeButton(
     isLiked: Boolean,
-    onLike: () -> Unit,
-    onUnlike: () -> Unit
+    onLikeChanged: (Boolean) -> Unit
 ) {
     IconToggleButton(
         checked = isLiked,
         colors = IconButtonDefaults.iconToggleButtonColors(checkedContentColor = geoHuntRed),
-        onCheckedChange = {
-            if (it) onLike() else onUnlike()
-        }
+        onCheckedChange = onLikeChanged
     ) {
         if (isLiked) {
             Icon(
