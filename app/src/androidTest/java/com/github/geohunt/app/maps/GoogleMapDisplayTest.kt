@@ -52,7 +52,7 @@ class GoogleMapDisplayTest {
     val mockRepositoryChallenge = Challenge(
         id = "Event 3",
         authorId = "test",
-        photoUrl = "https://picsum.photos/300/300",
+        photoUrl = "",
         location = Location(46.5195, 6.5634),
         publishedDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12),
         difficulty = Challenge.Difficulty.EASY,
@@ -73,7 +73,7 @@ class GoogleMapDisplayTest {
         }
 
         override fun getChallengePhoto(challenge: Challenge): String {
-            return "https://picsum.photos/300/300"
+            return ""
         }
 
         override fun getPosts(userId: String): Flow<List<Challenge>> {
@@ -113,14 +113,14 @@ class GoogleMapDisplayTest {
                 id = "Event $i",
                 image = "",
                 coordinates = LatLng(46.51958 + i * 0.01, 6.56398 + i * 0.01),
-                expiryDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
+                expirationDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
             )
         }
         mockTestChallengeDatabase.add(Marker(
             id = "Event 3",
-            image = "https://picsum.photos/300/300",
+            image = "test-url",
             coordinates = LatLng(46.5195, 6.5634),
-            expiryDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
+            expirationDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
         )
     }
 
@@ -129,7 +129,7 @@ class GoogleMapDisplayTest {
         composeTestRule.setContent {
             GoogleMapDisplay(
                 Modifier.testTag("Maps"),
-                setCameraPosition = CameraPosition(epflCoordinates, 10f, 0f, 0f),
+                cameraPosition = CameraPosition(epflCoordinates, 10f, 0f, 0f),
                 viewModel = mockViewModel(),
             )
         }

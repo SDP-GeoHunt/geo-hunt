@@ -35,7 +35,7 @@ import kotlin.math.pow
 fun GoogleMapDisplay(
     modifier: Modifier = Modifier,
     viewModel: MapsViewModel = viewModel(factory = MapsViewModel.Factory),
-    setCameraPosition: CameraPosition? = null,
+    cameraPosition: CameraPosition? = null,
 ) {
     val uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
     val mapProperties by remember { mutableStateOf(MapProperties(
@@ -82,13 +82,13 @@ fun GoogleMapDisplay(
         } else {
             loc.value = curLoc.value
 
-            var cameraPosition =
+            var currentCameraPosition =
                 CameraPosition(LatLng(loc.value!!.latitude, loc.value!!.longitude), 12f, 0f, 0f)
 
-            if (setCameraPosition != null)
-                cameraPosition = setCameraPosition
+            if (cameraPosition != null)
+                currentCameraPosition = cameraPosition
 
-            val cameraPositionState = rememberCameraPositionState { position = cameraPosition }
+            val cameraPositionState = rememberCameraPositionState { position = currentCameraPosition }
 
             if (mapVisible) {
 
@@ -115,7 +115,7 @@ fun GoogleMapDisplay(
                             id = it.id,
                             image = it.photoUrl,
                             coordinates = LatLng(it.location.latitude, it.location.longitude),
-                            expiryDate = it.expirationDate ?: LocalDateTime.of(2024, Month.MAY, 1, 19, 0),
+                            expirationDate = it.expirationDate ?: LocalDateTime.of(2024, Month.MAY, 1, 19, 0),
                         )
                         markers.add(marker)
                     }

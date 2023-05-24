@@ -47,7 +47,7 @@ fun DisplayMarkers(
             MarkerInfoWindow(
                 state = rememberMarkerState(position = challenge.coordinates),
                 title = challenge.id,
-                snippet = challenge.expiryDate.toString(),
+                snippet = challenge.expirationDate.toString(),
                 onInfoWindowClick = {
                     challengeId.value = location.getCoarseHash() + challenge.id
                     showChallengeView.value = true
@@ -89,7 +89,7 @@ fun MarkerInfoWindowContent(
                         .fillMaxWidth()
                         .testTag("Marker image")
                 ) {
-                    val imagePainter = ImageRequest.Builder(LocalContext.current)
+                    val imageRequest = ImageRequest.Builder(LocalContext.current)
                             .data(data = challenge.image)
                             .apply(block = fun ImageRequest.Builder.() {
                                 crossfade(true)
@@ -103,15 +103,13 @@ fun MarkerInfoWindowContent(
                             }).build()
 
                     AsyncImage(
-                        model = imagePainter,
+                        model = imageRequest,
                         modifier = Modifier
                             .size(160.dp)
                             .align(Alignment.CenterHorizontally)
                             .testTag("Marker image"),
                         contentDescription = if (imageLoaded.value) "Marker Image" else "Loading",
                     )
-
-
                 }
             } else {
                 Image(
@@ -129,7 +127,7 @@ fun MarkerInfoWindowContent(
 
             //The bottom text containing the expiry date of the challenge
             Text(
-                text = getExpiryString(challenge.expiryDate),
+                text = getExpiryString(challenge.expirationDate),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 10.dp, start = 25.dp, end = 25.dp)
