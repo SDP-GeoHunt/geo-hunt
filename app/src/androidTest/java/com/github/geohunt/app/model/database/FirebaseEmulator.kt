@@ -8,7 +8,11 @@ import com.google.firebase.storage.FirebaseStorage
 object FirebaseEmulator {
     fun getEmulatedFirebase(): FirebaseDatabase {
         val instance = Firebase.database
-        instance.useEmulator("10.0.2.2", 9000)
+        try {
+            instance.useEmulator("10.0.2.2", 9000)
+        } catch (_: IllegalStateException) {
+
+        }
         return instance
     }
 

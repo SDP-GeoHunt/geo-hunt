@@ -57,8 +57,6 @@ fun ActiveHuntsScreen(
     ) {
         ActiveHuntsTitle()
 
-        Spacer(modifier = Modifier.size(10.dp))
-
         val challenges = viewModel.activeHunts.collectAsStateWithLifecycle()
         val bounties = viewModel.activeBounties.collectAsStateWithLifecycle()
 
@@ -73,6 +71,8 @@ fun ActiveHuntsScreen(
                 )
             }
         }
+
+        Spacer(modifier = Modifier.size(10.dp))
 
         if(currentTab == ActiveHuntsTabs.Challenges) {
             ActiveChallenges(challenges.value, openExploreTab, openChallengeView, viewModel::getAuthorName)

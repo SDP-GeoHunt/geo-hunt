@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AdsClick
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
@@ -34,11 +35,11 @@ import java.time.LocalDateTime
 @Composable
 fun BountyPreview(bounty: Bounty, firstChallenge: Challenge) {
     Column(modifier = Modifier.fillMaxSize()) {
-        ChallengeImage(firstChallenge, modifier = Modifier.weight(0.90F))
+        ChallengeImage(firstChallenge, modifier = Modifier.weight(0.85F))
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        BountyDescription(bounty, modifier = Modifier.weight(0.10F))
+        BountyDescription(bounty, modifier = Modifier.weight(0.15F))
     }
 }
 
@@ -53,8 +54,8 @@ fun BountyDescription(bounty: Bounty, modifier: Modifier) {
 
 @Composable
 fun BountyDate(startingDate: LocalDateTime, expirationDate: LocalDateTime) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        androidx.compose.material.Icon(Icons.Rounded.CalendarMonth, contentDescription = "calendar_icon")
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Icon(Icons.Rounded.CalendarMonth, contentDescription = "calendar_icon")
 
         Spacer(modifier = Modifier.size(10.dp))
 
@@ -67,7 +68,7 @@ fun BountyDate(startingDate: LocalDateTime, expirationDate: LocalDateTime) {
 
 @Composable
 fun BountyName(name: String) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Icon(Icons.Rounded.AdsClick, contentDescription = "bounty_icon")
 
         Spacer(modifier = Modifier.size(10.dp))

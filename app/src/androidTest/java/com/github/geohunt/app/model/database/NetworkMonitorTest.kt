@@ -1,6 +1,7 @@
 package com.github.geohunt.app.model.database
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.data.network.NetworkMonitor
 import com.github.geohunt.app.utils.assertFinishes
 import com.github.geohunt.app.utils.assertTimesOut
@@ -13,10 +14,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(AndroidJUnit4::class)
 class NetworkMonitorTest {
     @get:Rule
     val composeTestRule = createComposeRule()

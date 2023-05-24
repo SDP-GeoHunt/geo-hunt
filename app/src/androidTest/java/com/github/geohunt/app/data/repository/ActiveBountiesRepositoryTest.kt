@@ -1,5 +1,6 @@
 package com.github.geohunt.app.data.repository
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.geohunt.app.data.repository.bounties.ActiveBountiesRepository
 import com.github.geohunt.app.mocks.MockAuthRepository
 import com.github.geohunt.app.mocks.MockBounty
@@ -15,8 +16,10 @@ import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@RunWith(AndroidJUnit4::class)
 class ActiveBountiesRepositoryTest {
     private lateinit var database: FirebaseDatabase
     private val auth = MockAuthRepository()
