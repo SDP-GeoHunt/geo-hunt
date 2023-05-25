@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.Card
@@ -32,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils
@@ -40,7 +40,6 @@ import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.buttons.ChallengeHuntState
 import com.github.geohunt.app.ui.components.buttons.HuntClaimButton
-import com.github.geohunt.app.ui.components.buttons.LikeButton
 import com.github.geohunt.app.ui.components.buttons.MenuButton
 import com.github.geohunt.app.ui.components.buttons.MenuItem
 import com.github.geohunt.app.ui.components.buttons.OpenMapButton
@@ -191,7 +190,7 @@ private fun ChallengeCardImage(
 
         if (animationStarted) {
             Icon(
-                Icons.Filled.LocalFireDepartment,
+                painterResource(R.drawable.target_arrow),
                 tint = geoHuntRed,
                 modifier = Modifier
                     .size(animatedSize)
@@ -209,8 +208,6 @@ private fun ChallengeCardImage(
 @Composable
 private fun ChallengeCardActions(
     huntState: ChallengeHuntState,
-    isLiked: Boolean,
-    onLike: (Boolean) -> Unit,
     onOpenMap: () -> Unit,
     onHunt: () -> Unit,
     onClaim: () -> Unit,
@@ -220,11 +217,6 @@ private fun ChallengeCardActions(
         Modifier.padding(ChallengeCardContentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        LikeButton(
-            isLiked = isLiked,
-            onLikeChanged = onLike
-        )
-
         OpenMapButton(onClick = onOpenMap)
 
         Spacer(Modifier.weight(1.0f))
@@ -245,8 +237,6 @@ fun ChallengeCard(
     author: User?,
     userLocation: () -> Location?,
     onImageClick: () -> Unit,
-    isLiked: Boolean,
-    onLike: (Boolean) -> Unit,
     onOpenMap: () -> Unit,
     onFollow: (User) -> Unit,
     onHunt: () -> Unit,
@@ -270,13 +260,11 @@ fun ChallengeCard(
         ChallengeCardImage(
             url = challenge.photoUrl,
             onClick = onImageClick,
-            onDoubleTap = { onLike(true) }
+            onDoubleTap = { if (huntState == ChallengeHuntState.NOT_HUNTED) onHunt() }
         )
 
         ChallengeCardActions(
             huntState = huntState,
-            isLiked = isLiked,
-            onLike = onLike,
             onOpenMap = onOpenMap,
             onHunt = onHunt,
             onClaim = onClaim,

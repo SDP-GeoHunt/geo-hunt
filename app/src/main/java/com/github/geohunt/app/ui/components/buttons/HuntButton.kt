@@ -64,6 +64,7 @@ fun ClaimButton(
 ) {
     Button(
         onClick = onClick,
+        enabled = enabled,
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         colors = ButtonDefaults.buttonColors(
             containerColor = geoHuntRed
