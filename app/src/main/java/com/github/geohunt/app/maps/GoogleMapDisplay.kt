@@ -36,7 +36,8 @@ fun GoogleMapDisplay(
     modifier: Modifier = Modifier,
     viewModel: MapsViewModel = viewModel(factory = MapsViewModel.Factory),
     cameraPosition: CameraPosition? = null,
-) {
+    onFailure: (Throwable) -> Unit = {},
+    ) {
     val uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
     val mapProperties by remember { mutableStateOf(MapProperties(
         mapType = MapType.NORMAL,
@@ -56,9 +57,8 @@ fun GoogleMapDisplay(
     }
 
     RequireFineLocationPermissions {
+        viewModel.startLocationUpdate(onFailure)
     }
-
-    viewModel.startLocationUpdate()
 
     val showChallengeView = remember { mutableStateOf(false) }
     val cid = remember { mutableStateOf("") }

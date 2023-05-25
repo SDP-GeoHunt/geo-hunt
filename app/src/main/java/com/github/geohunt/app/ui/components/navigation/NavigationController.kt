@@ -107,6 +107,11 @@ fun NavigationController(
         composable(VisibleRoute.Explore.route) {
             GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
+                onFailure = {
+                    Toast.makeText(context, "Something went wrong, failed to obtain location permission", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Failure encountered: $it")
+                    navController.popBackStack()
+                }
             )
         }
         composable(HiddenRoute.CreateChallenge.route) {

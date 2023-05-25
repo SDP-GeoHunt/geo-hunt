@@ -11,6 +11,7 @@ import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.LocationRepositoryInterface
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.ui.components.utils.viewmodels.exceptionHandler
 import com.github.geohunt.app.utility.aggregateFlows
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,9 +39,8 @@ class MapsViewModel(
             }
         }
     }
-
-    fun startLocationUpdate() {
-        viewModelScope.launch {
+    fun startLocationUpdate(onFailure: (Throwable) -> Unit = {}) {
+        viewModelScope.launch(exceptionHandler(onFailure)) {
             locationRepository.getLocations(viewModelScope).collect {
                 _currentLocation.value = it
             }
@@ -51,9 +51,6 @@ class MapsViewModel(
         _currentLocation.value = null
     }
 
-    init {
-        startLocationUpdate()
-    }
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
