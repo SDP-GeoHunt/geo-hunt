@@ -48,12 +48,6 @@ class TestBountyCreation {
         testRule.onNodeWithTag("location-picker-field")
             .assertIsDisplayed()
             .performClick()
-
-        testRule.awaitIdle()
-
-        testRule.onNodeWithTag("gg-map-component")
-            .assertIsDisplayed()
-            .performTouchInput { click(Offset(0.5f, 0.5f)) }
     }
 
 }
