@@ -10,7 +10,7 @@ interface ProfileVisibilityRepositoryInterface {
      *
      * @param user The user
      */
-    suspend fun getProfileVisibility(user: User): Flow<ProfileVisibility> = getProfileVisibility(user)
+    suspend fun getProfileVisibility(user: User): Flow<ProfileVisibility> = getProfileVisibility(user.id)
 
     /**
      * Returns the visibility of the profile of the given user
@@ -25,7 +25,7 @@ interface ProfileVisibilityRepositoryInterface {
      * @param user The user
      * @param visibility The new profile's visibility
      */
-    suspend fun setProfileVisibility(user: User, visibility: ProfileVisibility): Unit = setProfileVisibility(user, visibility)
+    suspend fun setProfileVisibility(user: User, visibility: ProfileVisibility): Unit = setProfileVisibility(user.id, visibility)
 
     /**
      * Sets the visibility of the profile of the given user
