@@ -76,7 +76,9 @@ internal fun BelowImageButton(
             }
 
             if (doesHunt.value) {
-                IconButton(onClick = { leaveHunt() }) {
+                IconButton(
+                    modifier = Modifier.size(28.dp),
+                    onClick = { leaveHunt() }) {
                     Icon(
                         Icons.Rounded.Cancel,
                         contentDescription = "Leave hunt"
@@ -86,49 +88,3 @@ internal fun BelowImageButton(
         }
     }
 }
-
-//@Composable
-//internal fun LikeButton(challenge: Challenge, database: Database, user: User, fontSize: TextUnit, iconSize: Dp) {
-//    val hasUserLikedChallenge: LazyRef<Boolean> = database.doesUserLike(user.uid, challenge.cid)
-//    val numberOfLikes = remember { challenge.likes.size }
-//
-//    FetchComponent(
-//        lazyRef = { hasUserLikedChallenge },
-//    ) { defaultLiked ->
-//        var isLiked by remember {
-//            mutableStateOf(defaultLiked)
-//        }
-//        val coroutineScope = rememberCoroutineScope()
-//
-//        IconButton(
-//            onClick = {
-//                if (isLiked) {
-//                    coroutineScope.launch {
-//                        database.removeUserLike(
-//                            user.uid,
-//                            challenge.cid
-//                        )
-//                    }
-//                    isLiked = false
-//
-//                } else {
-//                    coroutineScope.launch {
-//                        database.insertUserLike(
-//                            user.uid,
-//                            challenge.cid
-//                        )
-//                    }
-//                    isLiked = true
-//                }
-//            }
-//        ) {
-//            LabelledIcon(
-//                text = numberOfLikes.toSuffixedString(),
-//                painter = painterResource(if (isLiked) R.drawable.thumb_up_filled else R.drawable.thumb_up_outline),
-//                contentDescription = "Likes",
-//                fontSize = fontSize,
-//                iconSize = iconSize,
-//            )
-//        }
-//    }
-//}
