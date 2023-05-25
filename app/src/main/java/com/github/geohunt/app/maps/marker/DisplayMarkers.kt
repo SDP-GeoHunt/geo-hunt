@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -15,32 +16,49 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import coil.size.Scale
 import com.github.geohunt.app.R
+import com.github.geohunt.app.model.Location
 import com.google.maps.android.compose.MarkerInfoWindow
 import com.google.maps.android.compose.rememberMarkerState
-
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 /**
  * Displays provided markers on the map
+ * under the conditions that they are not expired
  *
  * @param markers The list of markers to display
  */
 @Composable
-fun DisplayMarkers(markers: List<Marker>) {
+fun DisplayMarkers(
+    markers: List<Marker>,
+    showChallengeView: MutableState<Boolean>,
+    challengeId: MutableState<String>,
+) {
     markers.forEach { challenge ->
-        MarkerInfoWindow (
-            state = rememberMarkerState(position = challenge.coordinates),
-            title = challenge.title,
-            snippet = challenge.expiryDate.toString(),
-            tag = challenge.title,
-        ) {
-            MarkerInfoWindowContent(challenge)
+        val location = Location(
+            challenge.coordinates.latitude,
+            challenge.coordinates.longitude)
+
+        // Do not display expired challenges
+        if (challenge.expirationDate.isAfter(LocalDateTime.now())) {
+            MarkerInfoWindow(
+                state = rememberMarkerState(position = challenge.coordinates),
+                title = challenge.id,
+                snippet = challenge.expirationDate.toString(),
+                onInfoWindowClick = {
+                    challengeId.value = location.getCoarseHash() + challenge.id
+                    showChallengeView.value = true
+                },
+            ) {
+                MarkerInfoWindowContent(challenge)
+            }
         }
     }
 }
+
 
 /**
  * The content of the info window that is displayed when a marker is clicked
@@ -61,6 +79,8 @@ fun MarkerInfoWindowContent(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
             //The image displayed at the top of the info window
             if (challenge.image != "") {
                 Column(
@@ -68,51 +88,39 @@ fun MarkerInfoWindowContent(
                         .fillMaxWidth()
                         .testTag("Marker image")
                 ) {
-                    Image(
-                        painter = rememberAsyncImagePainter(
-                            ImageRequest.Builder(LocalContext.current).data(data = challenge.image)
-                                .apply(block = fun ImageRequest.Builder.() {
-                                    crossfade(true)
-                                    allowHardware(false)
-                                    scale(Scale.FILL)
-                                }).build()
-                        ),
-                        contentDescription = "Marker Image",
-                        contentScale = ContentScale.Fit,
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(challenge.image)
+                            .crossfade(true)
+                            .allowHardware(false)
+                            .build(),
                         modifier = Modifier
-                            .size(70.dp)
+                            .size(160.dp)
                             .align(Alignment.CenterHorizontally)
+                            .testTag("Marker image"),
+                        contentDescription = "Marker Image"
                     )
-            }
+                }
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.radar_icon),
                     contentDescription = "Marker Image",
                     modifier = Modifier
-                        .size(90.dp)
-                     .padding(top = 16.dp),
+                        .size(160.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .testTag("Marker image"),
                     contentScale = ContentScale.Crop
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            //The middle text containing the title of the challenge
-            Text(
-                text = challenge.title,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("Marker title"),
-                style = MaterialTheme.typography.displayMedium,
-            )
-
             //The bottom text containing the expiry date of the challenge
             Text(
-                text = challenge.expiryDate.toString(),
+                text = getExpiryString(challenge.expirationDate),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                    .padding(start = 25.dp, end = 25.dp)
                     .testTag("Marker expiry date")
                     .fillMaxWidth(),
                 style = MaterialTheme.typography.headlineSmall,
@@ -121,4 +129,39 @@ fun MarkerInfoWindowContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+}
+
+/**
+ * Returns a string that represents the time until the challenge expires
+ *
+ * @param expiryDate The date that the challenge expires
+ *
+ * @return A string that represents the time until the challenge expires
+ */
+fun getExpiryString(
+    expiryDate: LocalDateTime,
+    currentDate: LocalDateTime = LocalDateTime.now()
+): String {
+    val diffInMinutes = ChronoUnit.MINUTES.between(currentDate, expiryDate)
+    if (diffInMinutes < 60) {
+        return "Expires in $diffInMinutes minute(s)"
+    }
+
+    val diffInHours = ChronoUnit.HOURS.between(currentDate, expiryDate)
+    if (diffInHours < 24) {
+        return "Expires in $diffInHours hour(s)"
+    }
+
+    val diffInDays = ChronoUnit.DAYS.between(currentDate, expiryDate)
+    if (diffInDays < 30) {
+        return "Expires in $diffInDays day(s)"
+    }
+
+    val diffInMonths = ChronoUnit.MONTHS.between(currentDate, expiryDate)
+    if (diffInMonths < 12) {
+        return "Expires in $diffInMonths month(s)"
+    }
+
+    val diffInYears = ChronoUnit.YEARS.between(currentDate, expiryDate)
+    return "Expires in $diffInYears year(s)"
 }

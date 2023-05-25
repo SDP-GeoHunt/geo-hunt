@@ -187,7 +187,7 @@ class ProfilePageTest {
     fun clickingOnSettingsBtnShowsDrawer() {
         val vm = createViewModel()
         testRule.setContent {
-            ProfilePage(viewModel = vm) { }
+            ProfilePage(viewModel = vm, openSettings = {})
         }
         testRule.onNodeWithTag("settings-drawer").assertIsNotDisplayed()
         testRule.onNodeWithTag("profile-settings-btn").performClick()

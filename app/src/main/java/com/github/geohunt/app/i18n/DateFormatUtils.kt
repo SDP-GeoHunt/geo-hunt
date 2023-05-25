@@ -80,6 +80,26 @@ object DateFormatUtils {
         return stringResource(id = formattingStringId, (raw ?: "???"))
     }
 
+    @Composable
+    fun getInTimeRangeString(
+            rangeStart: LocalDateTime,
+            rangeEnd: LocalDateTime,
+            beforeStringId: Int,
+            whileStringId: Int,
+            afterStringId: Int
+    ) : String {
+        val now = LocalDateTime.now()
+        return if(now < rangeStart) {
+            doTimeString(duration = Duration.between(now, rangeStart), formattingStringId = beforeStringId, direction = Direction.NEXT)
+        }
+        else if(now < rangeEnd) {
+            doTimeString(duration = Duration.between(now, rangeEnd), formattingStringId = whileStringId, direction = Direction.NEXT)
+        }
+        else {
+            doTimeString(duration = Duration.between(rangeEnd, now), formattingStringId = afterStringId, direction = Direction.LAST)
+        }
+    }
+
     /**
      * Returns a human-readable string representation of the remaining time until a given date and
      * the current local date time, e.g., "in 2 days", "1 hour"

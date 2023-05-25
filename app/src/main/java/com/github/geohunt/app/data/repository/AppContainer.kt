@@ -3,7 +3,9 @@ package com.github.geohunt.app.data.repository
 import android.app.Application
 import android.content.Context
 import androidx.datastore.dataStore
+import com.github.geohunt.app.data.repository.bounties.ActiveBountiesRepository
 import com.github.geohunt.app.data.repository.bounties.BountiesRepository
+import com.github.geohunt.app.data.repository.bounties.MessagesRepository
 import com.github.geohunt.app.data.settings.AppSettingsSerializer
 import com.github.geohunt.app.domain.GetChallengeHuntStateUseCase
 import com.github.geohunt.app.domain.GetUserFeedUseCase
@@ -32,7 +34,9 @@ class AppContainer private constructor(dbInstance: FirebaseDatabase, storageInst
     val activeHunts = ActiveHuntsRepository(auth, dbInstance)
     val claims = ClaimRepository(auth, image, dbInstance, score, activeHunts)
     val follow = FollowRepository(auth, dbInstance)
+
     val bounty = BountiesRepository(user, auth, image, dbInstance)
+    val activeBounties = ActiveBountiesRepository(dbInstance, auth)
 
     val feedUseCase = GetUserFeedUseCase(auth, challenges, follow)
     val huntStateUseCase = GetChallengeHuntStateUseCase(claims, activeHunts)

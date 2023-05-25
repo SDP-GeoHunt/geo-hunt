@@ -7,8 +7,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.ChallengeRepository
+import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
+import com.github.geohunt.app.data.repository.LocationRepositoryInterface
 import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.Location
+import com.github.geohunt.app.ui.components.utils.viewmodels.exceptionHandler
 import com.github.geohunt.app.utility.aggregateFlows
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,10 +19,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MapsViewModel(
-    private val challengeRepository: ChallengeRepository,
+    private val challengeRepository: ChallengeRepositoryInterface,
+    private val locationRepository: LocationRepositoryInterface
 ) : ViewModel() {
     private val _challenges: MutableStateFlow<List<Challenge>?> = MutableStateFlow(null)
     val challenges: StateFlow<List<Challenge>?> = _challenges.asStateFlow()
+
+    private val _currentLocation: MutableStateFlow<Location?> = MutableStateFlow(null)
+    val currentLocation: StateFlow<Location?> = _currentLocation.asStateFlow()
 
     fun updateFetchableChallenges(sectorHashes: List<String>) {
         viewModelScope.launch {
@@ -32,6 +39,17 @@ class MapsViewModel(
             }
         }
     }
+    fun startLocationUpdate(onFailure: (Throwable) -> Unit = {}) {
+        viewModelScope.launch(exceptionHandler(onFailure)) {
+            locationRepository.getLocations(viewModelScope).collect {
+                _currentLocation.value = it
+            }
+        }
+    }
+
+    fun reset() {
+        _currentLocation.value = null
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -40,7 +58,8 @@ class MapsViewModel(
                 val container = AppContainer.getInstance(application)
 
                 MapsViewModel(
-                    container.challenges
+                    container.challenges,
+                    container.location
                 )
             }
         }

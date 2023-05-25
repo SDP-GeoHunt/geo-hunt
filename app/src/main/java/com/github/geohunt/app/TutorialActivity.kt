@@ -21,6 +21,10 @@ import kotlin.math.roundToInt
  * The activity that handles display of the tutorial
  */
 class TutorialActivity : ComponentActivity()  {
+    private fun goToLogin(activity: ComponentActivity) {
+        activity.replaceActivity(Intent(activity, LoginActivity::class.java))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,14 +46,14 @@ class TutorialActivity : ComponentActivity()  {
 
                     // If the screen is too small, skip displaying the welcome screen and tutorial
                     if (screenHeightPx < 800 || screenWidthPx < 480) {
-                        activity.replaceActivity(Intent(activity, LoginActivity::class.java))
+                        goToLogin(activity)
                     }
 
                     if (shouldShowTutorial.value) {
-                        Tutorial(activity)
+                        Tutorial { goToLogin(activity) }
                     }
                     else {
-                        WelcomeScreen(shouldShowTutorial)
+                        WelcomeScreen { shouldShowTutorial.value = true }
                     }
                 }
             }

@@ -37,6 +37,7 @@ import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
+import com.github.geohunt.app.ui.screens.bounty.ChatScreen
 import com.github.geohunt.app.ui.screens.bounty_team_select.BountyTeamSelectPage
 import com.github.geohunt.app.ui.screens.home.HomeScreen
 import com.github.geohunt.app.ui.screens.teamleaderboard.TeamLeaderboard
@@ -47,8 +48,6 @@ import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsPage
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsViewModel
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -66,7 +65,7 @@ sealed interface Screen {
 
 /**
  * Represents a top-level screen.
- * 
+ *
  * Such screens are primary destinations of the application, and are represented with their
  * [icon] and [label] in the [GeoHuntNavigationBar].
  *
@@ -117,7 +116,8 @@ enum class SecondaryScreen(override val route: String): Screen {
     CreateBounty("create-bounty"),
     BountyClaimChallenge("bounty-claim-challenge"),
     ChallengeView("challenge-view"),
-    BountyLeaderboard("bounty/leaderboard")
+    BountyLeaderboard("bounty/leaderboard"),
+    TeamChat("bounty/team-progress/chat"),
 }
 
 @Composable
@@ -149,11 +149,13 @@ fun NavigationController(
             }
         }
         composable(PrimaryScreen.Explore.route) {
-            val epflCoordinates = LatLng(46.519585, 6.5684919)
-            val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
             GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
-                cameraPosition = epflCameraPosition
+                onFailure = {
+                    Toast.makeText(context, "Something went wrong, failed to obtain location permission", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Failure encountered: $it")
+                    navController.popBackStack()
+                }
             )
         }
         composable(SecondaryScreen.CreateChallenge.route) {
@@ -190,7 +192,9 @@ fun NavigationController(
 
         composable(PrimaryScreen.ActiveHunts.route) {
             ActiveHuntsScreen(
-                openExploreTab = { navController.navigate(PrimaryScreen.Explore.route) }
+                openExploreTab = { navController.navigate(PrimaryScreen.Home.route) },
+                openChallengeView = { navController.navigate("${SecondaryScreen.ChallengeView.route}/${it.id}") },
+                openBountyView = { navController.navigate("${SecondaryScreen.BountyTeamProgress.route}/${it.bid}") }
             )
         }
 
@@ -200,7 +204,8 @@ fun NavigationController(
                 openLeaderboard = { navController.navigate(SecondaryScreen.Leaderboard.route) },
                 openProfileEdit = { navController.navigate(SecondaryScreen.EditProfile.route) },
                 openSettings = { navController.navigate(SecondaryScreen.Settings.route) },
-                onLogout = { logout() }
+                onLogout = { logout() },
+                openChallengeView = { navController.navigate("${SecondaryScreen.ChallengeView.route}/${it.id}") }
             )
         }
 
@@ -237,7 +242,7 @@ fun NavigationController(
 
         // Open the view for a certain challenge
         composable(
-            "challenge-view/{challengeId}",
+            SecondaryScreen.ChallengeView.route + "/{challengeId}",
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
         ) { backStackEntry ->
             val cid = backStackEntry.arguments?.getString("challengeId")!!
@@ -259,9 +264,9 @@ fun NavigationController(
             ClaimChallenge(
                 cid = cid,
                 onFailure = onFailure,
-                onClaimSubmitted = {
+                onSuccess = {
                     navController.popBackStack()
-                    navController.navigate("challenge-view/$cid")
+                    navController.navigate(SecondaryScreen.ChallengeView.route + "/$cid")
                 }
             )
         }
@@ -311,13 +316,20 @@ fun NavigationController(
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
-            TeamProgressScreen(
+            RequireFineLocationPermissions { TeamProgressScreen(
                 onBack = { navController.popBackStack() },
                 onLeaderboard = { navController.navigate("bounty/leaderboard/$bid") },
-                onChat = { /* TODO */ },
+                onChat = { navController.navigate("bounty/team-progress/chat/$bid") },
                 onClaim = { navController.navigate("${SecondaryScreen.BountyClaimChallenge.route}/$bid/${it.id}") },
                 bountyId = bid
-            )
+            ) }
+        }
+
+        composable("${SecondaryScreen.TeamChat.route}/{bountyId}",
+            arguments = listOf(navArgument("bountyId") {type = NavType.StringType})
+        ) {
+            val bid = it.arguments?.getString("bountyId")!!
+            ChatScreen(onBack = { navController.popBackStack() }, bountyId = bid)
         }
 
         composable(
@@ -347,7 +359,7 @@ fun NavigationController(
                     Log.e("GeoHunt", "Fail to create challenge: $it")
                     navController.popBackStack()
                 },
-                onClaimSubmitted = {
+                onSuccess = {
                     navController.popBackStack()
                     navController.navigate("${SecondaryScreen.ChallengeView.route}/$cid")
                 }

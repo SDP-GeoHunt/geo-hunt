@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
+import com.github.geohunt.app.mocks.MockActiveBountiesRepository
 import com.github.geohunt.app.mocks.MockBountiesRepositories
 import com.github.geohunt.app.mocks.MockChallengeRepository
 import com.github.geohunt.app.mocks.MockTeamRepository
@@ -49,7 +50,8 @@ class BountyTeamSelectPageTest {
             teamsRepository = MockTeamRepository(listOf(
                 Team("1", "caca", leaderUid = "1", membersUid = listOf("1", "2"), score = 100)
             )),
-            userRepository = MockUserRepository()
+            userRepository = MockUserRepository(),
+            activeBountiesRepository = MockActiveBountiesRepository()
         )
     }
 

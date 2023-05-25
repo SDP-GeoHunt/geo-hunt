@@ -1,5 +1,6 @@
 package com.github.geohunt.app.data.repository.bounties
 
+import android.graphics.Bitmap
 import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.local.LocalPicture
 import com.github.geohunt.app.model.Challenge

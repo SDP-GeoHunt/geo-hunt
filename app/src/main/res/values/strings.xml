@@ -52,21 +52,28 @@
 
     <string name="range_date">Date</string>
 
-    // Strings defined for the tutorial
+    <!-- Strings defined for the tutorial -->
     <string name="title_activity_tutorial">TutorialActivity</string>
+    <string name="welcome_screen_detail">The fun, interactive, engaging and challenging treasure hunt game!</string>
     <string name="tutorial_first_screen_title"> Create your own challenges!</string>
     <string name="tutorial_first_screen_description">Create your own challenges and share them with the community!</string>
     <string name="tutorial_second_screen_title">Explore the map!</string>
     <string name="tutorial_second_screen_description">Explore the map and find challenges near you!</string>
     <string name="tutorial_third_screen_title">Complete challenges!</string>
     <string name="tutorial_third_screen_description">Complete challenges and earn points!</string>
+    <string name="tutorial_fourth_screen_title">Compete as a team!</string>
+    <string name="tutorial_fourth_screen_description">Join a team and complete bounties together!</string>
+    <string name="tutorial_get_started">Get started</string>
+    <string name="tutorial_skip">Skip</string>
+    <string name="go_left">Go left</string>
+    <string name="go_right">Go right</string>
 
     <string name="challenge_create_agree_community_link"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
     <string name="claim_create_agree_community_link"><![CDATA[By claiming a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
     <string name="join_hunt">Hunt</string>
     <string name="less_button">less…</string>
     <string name="more_button">more…</string>
-    <string name="claim_challenge_button">Submit Claim</string>
+    <string name="claim_challenge_button">Submit claim</string>
     <string name="create_challenge_button">Create challenge</string>
 
     <string name="follow">Follow</string>
@@ -79,6 +86,14 @@
 
     <string name="error_fetching_page">An error occurred when fetching the profile page.</string>
     <string name="private_profile_page">You do not have access to this user\'s profile page.</string>
+    <string name="agree_community_html"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
+
+    <!-- active hunts -->
+    <string name="active_hunts_empty_challenge">"No challenges yet…\nGo pick some challenges to begin your hunt!"</string>
+    <string name="active_hunts_empty_challenge_button">"Search nearby challenges"</string>
+    <string name="active_hunts_empty_bounties">"No bounties yet…\nGo pick some bounties to begin your hunt!"</string>
+    <string name="active_hunts_empty_bounties_button">"Search nearby bounties"</string>
+    <string name="active_hunts_expires_never">Expires never !</string>
 
     <!-- settings -->
     <string name="app_settings">App settings</string>
@@ -107,15 +122,16 @@
     <string name="private_word">Private</string>
     <string name="private_desc">Your profile will be visible only by you.</string>
 
-
     <string name="statistics_title">Statistics</string>
     <string name="statistics_empty_screen_text">You haven\'t claimed enough challenges yet</string>
     
     <string name="new_challenge_notification_title">New Challenge!</string>
     <string name="new_challenge_notification_message">A new challenge just got posted, check it out!</string>
+    <string name="team_chat_title">Team chat</string>
+    <string name="message_send_button">Send</string>
 
     <!-- Bounty -->
-    <string name="claim_bounty_challenge_button">Submit Claim</string>
+    <string name="claim_bounty_challenge_button">Submit claim</string>
     <string name="photo_of_the_claim_taken">Photo just taken of the claim</string>
 
     <!-- home feed/bounty selector -->
@@ -124,8 +140,13 @@
     <string name="bounties">Bounties</string>
     <string name="join">Join</string>
     <string name="no_bounties">No available bounties at the moment.</string>
+    <string name="starts_in">Starts %1$s</string>
     <string name="ends">Ends %1$s</string>
-    <string name="expired_since">Expired since %1$s</string>
+    <string name="expired_since">Expired %1$s</string>
+
+    <string name="starts_in_bang">Starts %1$s !</string>
+    <string name="ends_in_bang">Ends %1$s !</string>
+    <string name="expired_since_bang">Expired %1$s !</string>
 
     <string name="team_name">Team name</string>
     <string name="enter_team_name">Enter the new team\'s name</string>

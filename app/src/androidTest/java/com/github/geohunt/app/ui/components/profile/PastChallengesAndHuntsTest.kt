@@ -18,7 +18,7 @@ class PastChallengesAndHuntsTest {
     @Test
     fun clickingOnPastHuntsShowsPastHuntsComponent() {
         testRule.setContent {
-            PastChallengeAndHunts(listOf(), listOf())
+            PastChallengeAndHunts(listOf(), listOf(), {})
         }
         testRule.onNodeWithTag("tab-${ProfileTabs.PastHunts.ordinal}").performClick()
         testRule.onNodeWithTag("past-hunts").assertExists().assertIsDisplayed()
@@ -27,7 +27,7 @@ class PastChallengesAndHuntsTest {
     @Test
     fun clickingOnPastChallengesShowsPastChallengesComponent() {
         testRule.setContent {
-            PastChallengeAndHunts(listOf(), listOf())
+            PastChallengeAndHunts(listOf(), listOf(), {})
         }
         testRule.onNodeWithTag("tab-${ProfileTabs.PastChallenges.ordinal}").performClick()
         testRule.onNodeWithTag("past-challenges").assertExists().assertIsDisplayed()
@@ -36,7 +36,7 @@ class PastChallengesAndHuntsTest {
     @Test
     fun showsEmptyMessageWhenNoPastHunts() {
         testRule.setContent {
-            PastChallengeAndHunts(listOf(MockChallenge()), listOf())
+            PastChallengeAndHunts(listOf(MockChallenge()), listOf(), {})
         }
         testRule.onNodeWithTag("tab-${ProfileTabs.PastHunts.ordinal}").performClick()
         testRule.onNodeWithText("No past hunts", substring = true).assertIsDisplayed()
@@ -45,7 +45,7 @@ class PastChallengesAndHuntsTest {
     @Test
     fun showsEmptyMessageWhenNoPastChallenges() {
         testRule.setContent {
-            PastChallengeAndHunts(listOf(), listOf())
+            PastChallengeAndHunts(listOf(), listOf(), {})
         }
         testRule.onNodeWithTag("tab-${ProfileTabs.PastChallenges.ordinal}").performClick()
         testRule.onNodeWithText("No challenges", substring = true).assertIsDisplayed()
@@ -54,7 +54,8 @@ class PastChallengesAndHuntsTest {
     @Test
     fun doesNotShowEmptyMessageWhenNoPastHunts() {
         testRule.setContent {
-            PastChallengeAndHunts(hunts = listOf(MockChallenge()), challenges = listOf())
+            PastChallengeAndHunts(hunts = listOf(MockChallenge()), challenges = listOf(),
+                openChallengeView = {})
         }
         testRule.onNodeWithTag("tab-${ProfileTabs.PastHunts.ordinal}").performClick()
         testRule.onNodeWithText("No past hunts", substring = true).assertDoesNotExist()
@@ -63,7 +64,7 @@ class PastChallengesAndHuntsTest {
     @Test
     fun doesNotShowEmptyMessageWhenNoPastChallenges() {
         testRule.setContent {
-            PastChallengeAndHunts(challenges = listOf(MockChallenge()), hunts = listOf())
+            PastChallengeAndHunts(challenges = listOf(MockChallenge()), hunts = listOf(), {})
         }
         testRule.onNodeWithTag("tab-${ProfileTabs.PastChallenges.ordinal}").performClick()
         testRule.onNodeWithText("No challenges", substring = true).assertDoesNotExist()

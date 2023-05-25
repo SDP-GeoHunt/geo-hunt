@@ -1,8 +1,9 @@
 package com.github.geohunt.app.ui
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.launchActivity
 import androidx.test.espresso.intent.Intents
@@ -68,7 +69,7 @@ class LoginActivityTest {
         LoginViewModel.injectRepos(MockAuthRepository(null), MockUserRepository())
         Intents.init()
         launchActivity<LoginActivity>()
-        composeTestRule.onNodeWithText("GeoHunt").assertExists("Title of app does not appear on log in")
+        composeTestRule.onNodeWithTag("logo").assertIsDisplayed()
         Intents.release()
     }
 

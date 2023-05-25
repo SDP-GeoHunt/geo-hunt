@@ -22,7 +22,7 @@ class BountiesRepositoryTest {
     private lateinit var storage: FirebaseStorage
     private lateinit var repo: BountiesRepository
 
-    val mockLocation = Location(33.047236, 86.971963)
+    private val mockLocation = Location(33.047236, 86.971963)
 
     @Before
     fun setup() {

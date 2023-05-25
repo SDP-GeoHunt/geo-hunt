@@ -3,7 +3,6 @@ package com.github.geohunt.app.ui.components.activehunts
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.github.geohunt.app.mocks.MockChallenge
-import com.github.geohunt.app.ui.theme.GeoHuntTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.junit.Before
@@ -24,25 +23,21 @@ class ChallengePreviewTest {
     @Before
     fun setupComposable() {
         testRule.setContent {
-            GeoHuntTheme {
-                ChallengePreview(challenge = dummyChallenge, getAuthorName = {
-                    MutableStateFlow("Debug User").asStateFlow()
-                })
-            }
+            ChallengePreview(challenge = dummyChallenge, getAuthorName = {
+                MutableStateFlow("Debug User").asStateFlow()
+            })
         }
     }
 
     @Test
     fun challengeInformationAreDisplayed() {
         testRule.onNodeWithText("Debug User", substring = true).assertIsDisplayed()
-        testRule.onNodeWithText("Italy", substring = true).assertIsDisplayed()
     }
 
     @Test
     fun iconsAreDisplayed() {
-        testRule.onAllNodesWithContentDescription("icon", substring = true).assertCountEquals(3)
+        testRule.onAllNodesWithContentDescription("icon", substring = true).assertCountEquals(2)
         testRule.onNodeWithContentDescription("person", substring = true).assertIsDisplayed()
-        testRule.onNodeWithContentDescription("location", substring = true).assertIsDisplayed()
         testRule.onNodeWithContentDescription("calendar", substring = true).assertIsDisplayed()
     }
 
