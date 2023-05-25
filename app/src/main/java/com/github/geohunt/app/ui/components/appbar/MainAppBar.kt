@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.appbar
 
+import androidx.compose.foundation.Image
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,6 +11,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role.Companion.Image
+import com.github.geohunt.app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +36,8 @@ fun MainAppBar(
 
 @Composable
 fun GeoHuntTitle() {
-    // TODO Replace with Marwan's composable
-    Text("GeoHunt")
+    Image(
+        painterResource(R.drawable.logo),
+        contentDescription = "GeoHunt"
+    )
 }
