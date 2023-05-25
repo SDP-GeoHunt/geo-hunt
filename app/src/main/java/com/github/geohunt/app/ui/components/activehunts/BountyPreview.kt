@@ -62,7 +62,7 @@ fun BountyDate(startingDate: LocalDateTime, expirationDate: LocalDateTime) {
 
         Text(getInTimeRangeString(startingDate, expirationDate,
                 R.string.starts_in,
-                R.string.ends_in,
+                R.string.ends,
                 R.string.expired_since),
         fontWeight = FontWeight.SemiBold)
     }
