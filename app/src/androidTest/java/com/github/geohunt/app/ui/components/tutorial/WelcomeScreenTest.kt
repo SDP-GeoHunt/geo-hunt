@@ -1,12 +1,11 @@
 package com.github.geohunt.app.ui.components.tutorial
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
@@ -14,6 +13,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 
 @RunWith(AndroidJUnit4::class)
 class WelcomeScreenTest {
@@ -40,10 +41,10 @@ class WelcomeScreenTest {
 
     @Test
     fun opensWelcomeScreenWhenLoggedInForTheFirstTime() {
+        val cf = CompletableFuture<Void?>()
         composeTestRule
             .setContent {
-                val shouldShowTutorial = remember { mutableStateOf(false) }
-                WelcomeScreen(shouldShowTutorial = shouldShowTutorial)
+                WelcomeScreen { cf.complete(null) }
             }
 
         composeTestRule
@@ -55,8 +56,11 @@ class WelcomeScreenTest {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithText("GET STARTED")
+            .onNodeWithText("Get started")
             .assertIsDisplayed()
             .assertHasClickAction()
+            .performClick()
+
+        cf.get(2, TimeUnit.SECONDS)
     }
 }
