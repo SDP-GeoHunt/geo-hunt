@@ -168,6 +168,9 @@
     <string name="claimed">Claimed</string>
     <string name="leave_the_hunt">Leave the hunt</string>
     <string name="expires">Expires %1$s</string>
+    <string name="empty_feed_title">This place is a bit empty.</string>
+    <string name="empty_feed_subtitle">You can check for nearby challenges on the map !</string>
+    <string name="open_the_map">Open the map</string>
 
     <plurals name="teams_count">
         <item quantity="zero">no teams</item>

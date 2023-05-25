@@ -16,9 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.ui.components.appbar.HomeScreenFeed
@@ -48,19 +50,19 @@ fun ChallengeFeed(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                "This place is a bit empty.",
+                stringResource(R.string.empty_feed_title),
                 style = MaterialTheme.typography.titleMedium
             )
 
             Text(
-                "You can check for nearby challenges on the map !",
+                stringResource(R.string.empty_feed_subtitle),
                 style = MaterialTheme.typography.labelMedium
             )
 
             Spacer(Modifier.height(12.dp))
 
             Button(onClick = onOpenExplore, modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text("Open the map")
+                Text(stringResource(R.string.open_the_map))
             }
         }
 
