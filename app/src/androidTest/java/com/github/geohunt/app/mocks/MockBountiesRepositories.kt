@@ -3,6 +3,7 @@ package com.github.geohunt.app.mocks
 import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.BountyClaimRepositoryInterface
+import com.github.geohunt.app.data.repository.bounties.MessagesRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Location
@@ -21,6 +22,10 @@ open class MockBountiesRepositories : BountiesRepositoryInterface {
     }
 
     override fun getTeamRepository(bountyId: String): TeamsRepositoryInterface {
+        TODO("Not yet implemented")
+    }
+
+    override fun getMessageRepository(bountyId: String): MessagesRepositoryInterface {
         TODO("Not yet implemented")
     }
 

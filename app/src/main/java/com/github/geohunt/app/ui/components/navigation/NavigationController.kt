@@ -34,6 +34,7 @@ import com.github.geohunt.app.ui.components.profile.ProfilePage
 import com.github.geohunt.app.ui.components.profile.ProfilePageViewModel
 import com.github.geohunt.app.ui.components.profile.edit.ProfileEditPage
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
+import com.github.geohunt.app.ui.screens.bounty.ChatScreen
 import com.github.geohunt.app.ui.screens.bounty_team_select.BountyTeamSelectPage
 import com.github.geohunt.app.ui.screens.home.HomeScreen
 import com.github.geohunt.app.ui.screens.teamleaderboard.TeamLeaderboard
@@ -85,7 +86,8 @@ enum class HiddenRoute(override val route: String): Route {
     CreateBounty("create-bounty"),
     BountyClaimChallenge("bounty-claim-challenge"),
     ChallengeView("challenge-view"),
-    BountyLeaderboard("bounty/leaderboard")
+    BountyLeaderboard("bounty/leaderboard"),
+    TeamChat("bounty/team-progress/chat"),
 }
 
 @Composable
@@ -272,10 +274,17 @@ fun NavigationController(
             TeamProgressScreen(
                 onBack = { navController.popBackStack() },
                 onLeaderboard = { navController.navigate("bounty/leaderboard/$bid") },
-                onChat = { /* TODO */ },
+                onChat = { navController.navigate("bounty/team-progress/chat/$bid") },
                 onClaim = { navController.navigate("${HiddenRoute.BountyClaimChallenge.route}/$bid/${it.id}") },
                 bountyId = bid
             )
+        }
+
+        composable("${HiddenRoute.TeamChat.route}/{bountyId}",
+            arguments = listOf(navArgument("bountyId") {type = NavType.StringType})
+        ) {
+            val bid = it.arguments?.getString("bountyId")!!
+            ChatScreen(onBack = { navController.popBackStack() }, bountyId = bid)
         }
 
         composable(

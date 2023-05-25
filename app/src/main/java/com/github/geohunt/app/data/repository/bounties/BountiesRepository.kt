@@ -4,8 +4,11 @@ import com.github.geohunt.app.data.exceptions.BountyNotFoundException
 import com.github.geohunt.app.data.network.firebase.models.FirebaseBountyMetadata
 import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.model.Bounty
+import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Location
 import com.github.geohunt.app.model.User
+import com.github.geohunt.app.model.points.GaussianPointCalculator
+import com.github.geohunt.app.model.points.PointCalculator
 import com.github.geohunt.app.utility.DataPool
 import com.github.geohunt.app.utility.DateUtils
 import com.google.firebase.database.DatabaseReference
@@ -29,6 +32,14 @@ class BountiesRepository(
 
     private val teamsRepositories = DataPool<String, TeamsRepository> { bid ->
         TeamsRepository(
+            bountiesTeam.child(bid),
+            userRepository,
+            ioDispatcher = ioDispatcher
+        )
+    }
+
+    private val messagesRepository = DataPool<String, MessagesRepository> { bid ->
+        MessagesRepository(
             bountiesTeam.child(bid),
             userRepository,
             ioDispatcher = ioDispatcher
@@ -106,6 +117,8 @@ class BountiesRepository(
     }
 
     override fun getTeamRepository(bountyId: String) : TeamsRepositoryInterface = teamsRepositories.get(bountyId)
+
+    override fun getMessageRepository(bountyId: String): MessagesRepositoryInterface = messagesRepository.get(bountyId)
 
     override fun getChallengeRepository(bountyId: String): ChallengeRepositoryInterface = challengesRepositories.get(bountyId)
 

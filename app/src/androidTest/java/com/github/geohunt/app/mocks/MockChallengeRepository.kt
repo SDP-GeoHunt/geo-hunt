@@ -48,4 +48,5 @@ open class MockChallengeRepository(private val mockedChallenge: Challenge = Mock
     override suspend fun getChallenges(): List<Challenge> {
         return listOf(mockedChallenge)
     }
+
 }

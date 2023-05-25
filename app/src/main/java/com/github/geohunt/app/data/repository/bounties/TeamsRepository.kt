@@ -1,11 +1,14 @@
 package com.github.geohunt.app.data.repository.bounties
 
 import com.github.geohunt.app.data.exceptions.TeamNotFoundException
+import com.github.geohunt.app.data.repository.AuthRepository
+import com.github.geohunt.app.data.repository.AuthRepositoryInterface
 import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.utility.toMap
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.snapshots
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -70,6 +73,7 @@ class TeamsRepository(
                 .map { it -> it.children.map { snapshotToTeam(it) } }
                 .flowOn(ioDispatcher)
     }
+
 
     override suspend fun createTeam(name: String): Team {
         return createTeam(name, userRepository.getCurrentUser().id)

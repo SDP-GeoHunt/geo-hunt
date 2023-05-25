@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.datastore.dataStore
 import com.github.geohunt.app.data.repository.bounties.BountiesRepository
+import com.github.geohunt.app.data.repository.bounties.MessagesRepository
 import com.github.geohunt.app.data.settings.AppSettingsSerializer
 import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.sensor.SharedLocationManager
