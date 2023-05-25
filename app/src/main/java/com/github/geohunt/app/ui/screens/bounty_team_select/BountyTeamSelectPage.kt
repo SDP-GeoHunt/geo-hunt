@@ -26,11 +26,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -49,6 +45,7 @@ fun BountyTeamSelectPage(
     bountyId: String,
     onBack: () -> Any,
     onSelectedTeam: (Team) -> Any,
+    openAdminPage: () -> Unit = {},
     viewModel: BountyTeamSelectViewModel = viewModel(factory = BountyTeamSelectViewModel.getFactory(bountyId))
 ) {
     val bountyName by viewModel.bountyName.collectAsState()
@@ -58,6 +55,10 @@ fun BountyTeamSelectPage(
     val isBusy by viewModel.isBusy.collectAsState()
     val currentTeam by viewModel.currentTeam.collectAsState()
     val canDeleteTeams by viewModel.canDeleteTeams.collectAsState()
+
+    LaunchedEffect(viewModel, bountyId) {
+        viewModel.checkNotAdmin(openAdminPage)
+    }
 
     Column {
         TopBarWithBackButton(onBack = { onBack() }, title = stringResource(

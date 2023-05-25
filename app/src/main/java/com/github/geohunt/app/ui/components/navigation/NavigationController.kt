@@ -269,6 +269,8 @@ fun NavigationController(
             val bid = it.arguments?.getString("bountyId")!!
             BountyTeamSelectPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {
                 navController.navigate("${HiddenRoute.BountyTeamProgress.route}/$bid")
+            }, openAdminPage = {
+                navController.navigate("bounty-admin-page/$bid")
             })
         }
 
@@ -282,6 +284,9 @@ fun NavigationController(
                 onLeaderboard = { navController.navigate("bounty/leaderboard/$bid") },
                 onChat = { navController.navigate("bounty/team-progress/chat/$bid") },
                 onClaim = { navController.navigate("${HiddenRoute.BountyClaimChallenge.route}/$bid/${it.id}") },
+                openAdminPage = {
+                    navController.navigate("bounty-admin-page/$bid")
+                },
                 bountyId = bid
             ) }
         }
