@@ -25,12 +25,11 @@ fun BackButton(
     onClick: () -> Unit,
     tint: Color = Color.Unspecified
 ) {
-    IconButton(onClick = onClick) {
+    IconButton(onClick = onClick, modifier = Modifier.testTag("backButton")) {
         Icon(
             Icons.Rounded.ArrowBack,
             contentDescription = stringResource(id = R.string.navigation_back),
-            tint = tint,
-            modifier = Modifier.testTag("backButton")
+            tint = tint
         )
     }
 }
