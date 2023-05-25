@@ -7,23 +7,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils
 import com.github.geohunt.app.model.Challenge
-import com.github.geohunt.app.ui.theme.geoHuntRed
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
 
@@ -70,8 +68,10 @@ fun ChallengeAuthor(authorName: String) {
 
 @Composable
 fun ChallengeExpirationDate(expirationDate: LocalDateTime?) {
-    val expires = if (expirationDate != null) "Expires in " else "Expires "
-    val expirationDateFmt = DateFormatUtils.formatRemainingTime(expirationDate).lowercase()
+    val expirationDateFmt = if (expirationDate != null)
+        DateFormatUtils.getRemainingTimeString(expirationDate, R.string.ends_in_bang, R.string.expired_since_bang)
+        else stringResource(id = R.string.challenge_settings_date_never)
+
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Icon(Icons.Rounded.CalendarMonth,
@@ -79,17 +79,6 @@ fun ChallengeExpirationDate(expirationDate: LocalDateTime?) {
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        Text(buildAnnotatedString {
-            withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                append(expires)
-
-                withStyle(style = SpanStyle(color = geoHuntRed)) {
-                    append(expirationDateFmt)
-                }
-
-                append(" !")
-            }
-
-        })
+        Text(expirationDateFmt, fontWeight = FontWeight.SemiBold)
     }
 }

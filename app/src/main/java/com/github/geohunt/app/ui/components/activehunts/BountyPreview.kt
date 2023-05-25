@@ -15,6 +15,7 @@ import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils.getInTimeRangeString
@@ -62,7 +63,8 @@ fun BountyDate(startingDate: LocalDateTime, expirationDate: LocalDateTime) {
         Text(getInTimeRangeString(startingDate, expirationDate,
                 R.string.starts_in,
                 R.string.ends_in,
-                R.string.expired_since))
+                R.string.expired_since),
+        fontWeight = FontWeight.SemiBold)
     }
 }
 

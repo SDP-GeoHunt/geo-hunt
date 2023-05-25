@@ -86,6 +86,7 @@
     <string name="active_hunts_empty_challenge_button">"Search nearby challenges"</string>
     <string name="active_hunts_empty_bounties">"No bounties yet…\nGo pick some bounties to begin your hunt!"</string>
     <string name="active_hunts_empty_bounties_button">"Search nearby bounties"</string>
+    <string name="active_hunts_expires_never">Expires never !</string>
 
     <!-- settings -->
     <string name="app_settings">App settings</string>
@@ -133,6 +134,10 @@
     <string name="starts_in">Starts %1$s</string>
     <string name="ends_in">Ends %1$s</string>
     <string name="expired_since">Expired %1$s</string>
+
+    <string name="starts_in_bang">Starts %1$s !</string>
+    <string name="ends_in_bang">Ends %1$s !</string>
+    <string name="expired_since_bang">Expired %1$s !</string>
 
     <string name="team_name">Team name</string>
     <string name="enter_team_name">Enter the new team\'s name</string>
