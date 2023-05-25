@@ -28,7 +28,9 @@ class HomeBountyCardTest {
                 challengesFlows = flowOf(null),
                 nbMembersFlow = flowOf(null),
                 isInside = false,
-                onClick = {})
+                onClick = {},
+                onUserClick = {}
+            )
         }
 
         c.onNodeWithTag("challenges-#").assertTextEquals("…")
@@ -44,7 +46,9 @@ class HomeBountyCardTest {
                 challengesFlows = flowOf(listOf(MockChallenge(), MockChallenge(), MockChallenge())), // three challenges
                 nbMembersFlow = flowOf(null),
                 isInside = false,
-                onClick = {})
+                onClick = {},
+                onUserClick = {}
+            )
         }
 
         c.onNodeWithTag("challenges-#").assertTextEquals("3")
@@ -60,7 +64,9 @@ class HomeBountyCardTest {
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(null),
                 nbMembersFlow = flowOf(null),
-                onClick = {})
+                onClick = {},
+                onUserClick = {}
+            )
         }
 
         c.onNodeWithTag("members-#").assertTextEquals("…")
@@ -76,7 +82,9 @@ class HomeBountyCardTest {
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(null), // three challenges
                 nbMembersFlow = flowOf(421),
-                onClick = {})
+                onClick = {},
+                onUserClick = {}
+            )
         }
 
         c.onNodeWithTag("members-#").assertTextEquals("421")
@@ -93,7 +101,9 @@ class HomeBountyCardTest {
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(null), // three challenges
                 nbMembersFlow = flowOf(421),
-                onClick = { cf.complete(null) })
+                onClick = { cf.complete(null) },
+                onUserClick = {}
+            )
         }
         c.onNodeWithTag("join-btn").performClick()
         cf.get(2, TimeUnit.SECONDS)
@@ -109,7 +119,9 @@ class HomeBountyCardTest {
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(null), // three challenges
                 nbMembersFlow = flowOf(421),
-                onClick = { })
+                onClick = { },
+                onUserClick = {}
+            )
         }
         c.onNodeWithText("Bounty name").assertIsDisplayed()
     }
@@ -124,7 +136,9 @@ class HomeBountyCardTest {
                 expiresIn = LocalDateTime.MAX,
                 challengesFlows = flowOf(null), // three challenges
                 nbMembersFlow = flowOf(421),
-                onClick = { })
+                onClick = { },
+                onUserClick = {}
+            )
         }
         c.onNodeWithText("See").assertIsDisplayed()
     }
