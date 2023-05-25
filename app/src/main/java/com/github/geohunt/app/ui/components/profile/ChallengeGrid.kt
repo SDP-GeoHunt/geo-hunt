@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.profile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,16 +18,16 @@ import com.github.geohunt.app.model.Challenge
  * Shows a grid of challenges
  */
 @Composable
-fun ChallengeGrid(challenges: List<Challenge>) {
+fun ChallengeGrid(challenges: List<Challenge>, openChallengeView: (Challenge) -> Unit) {
     LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 128.dp)) {
         items(challenges) { challenge ->
-            ChallengeItem(challenge = challenge)
+            ChallengeItem(challenge = challenge, openChallengeView)
         }
     }
 }
 
 @Composable
-private fun ChallengeItem(challenge: Challenge) {
+private fun ChallengeItem(challenge: Challenge, openChallengeView: (Challenge) -> Unit) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(challenge.photoUrl)
@@ -36,5 +37,6 @@ private fun ChallengeItem(challenge: Challenge) {
         contentDescription = "Challenge",
         modifier = Modifier
             .padding(8.dp)
+            .clickable { openChallengeView(challenge) }
     )
 }

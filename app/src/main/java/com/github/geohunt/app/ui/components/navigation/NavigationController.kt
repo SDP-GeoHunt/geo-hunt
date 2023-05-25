@@ -163,7 +163,8 @@ fun NavigationController(
                 openLeaderboard = { navController.navigate(HiddenRoute.Leaderboard.route) },
                 openProfileEdit = { navController.navigate(HiddenRoute.EditProfile.route) },
                 openSettings = { navController.navigate(HiddenRoute.Settings.route) },
-                onLogout = { logout() }
+                onLogout = { logout() },
+                openChallengeView = { navController.navigate("${HiddenRoute.ChallengeView.route}/${it.id}") }
             )
         }
 
