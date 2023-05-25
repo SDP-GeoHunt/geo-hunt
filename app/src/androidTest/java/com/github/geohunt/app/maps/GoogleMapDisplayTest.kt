@@ -54,7 +54,7 @@ class GoogleMapDisplayTest {
         authorId = "test",
         photoUrl = "",
         location = Location(46.5195, 6.5634),
-        publishedDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12),
+        publishedDate = LocalDateTime.of(LocalDateTime.now().year + 10, Month.MAY, 1, 19, 39, 12),
         difficulty = Challenge.Difficulty.EASY,
         description = "test",
         expirationDate = null
@@ -113,14 +113,14 @@ class GoogleMapDisplayTest {
                 id = "Event $i",
                 image = "",
                 coordinates = LatLng(46.51958 + i * 0.01, 6.56398 + i * 0.01),
-                expirationDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
+                expirationDate = LocalDateTime.of(LocalDateTime.now().year + 10, Month.MAY, 1, 19, 39, 12))
             )
         }
         mockTestChallengeDatabase.add(Marker(
             id = "Event 3",
             image = "test-url",
             coordinates = LatLng(46.5195, 6.5634),
-            expirationDate = LocalDateTime.of(2024, Month.MAY, 1, 19, 39, 12))
+            expirationDate = LocalDateTime.of(LocalDateTime.now().year + 10, Month.MAY, 1, 19, 39, 12))
         )
     }
 

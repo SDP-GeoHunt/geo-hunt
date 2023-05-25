@@ -27,6 +27,7 @@ import java.time.temporal.ChronoUnit
 
 /**
  * Displays provided markers on the map
+ * under the conditions that they are not expired
  *
  * @param markers The list of markers to display
  */
@@ -41,16 +42,19 @@ fun DisplayMarkers(
             challenge.coordinates.latitude,
             challenge.coordinates.longitude)
 
-        MarkerInfoWindow(
-            state = rememberMarkerState(position = challenge.coordinates),
-            title = challenge.id,
-            snippet = challenge.expirationDate.toString(),
-            onInfoWindowClick = {
-                challengeId.value = location.getCoarseHash() + challenge.id
-                showChallengeView.value = true
-                                },
-        ) {
-            MarkerInfoWindowContent(challenge)
+        // Do not display expired challenges
+        if (challenge.expirationDate.isAfter(LocalDateTime.now())) {
+            MarkerInfoWindow(
+                state = rememberMarkerState(position = challenge.coordinates),
+                title = challenge.id,
+                snippet = challenge.expirationDate.toString(),
+                onInfoWindowClick = {
+                    challengeId.value = location.getCoarseHash() + challenge.id
+                    showChallengeView.value = true
+                },
+            ) {
+                MarkerInfoWindowContent(challenge)
+            }
         }
     }
 }
