@@ -46,8 +46,6 @@ import com.github.geohunt.app.ui.settings.app_settings.AppSettingsPage
 import com.github.geohunt.app.ui.settings.app_settings.AppSettingsViewModel
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsPage
 import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsViewModel
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -112,11 +110,13 @@ fun NavigationController(
             }
         }
         composable(VisibleRoute.Explore.route) {
-            val epflCoordinates = LatLng(46.519585, 6.5684919)
-            val epflCameraPosition = CameraPosition(epflCoordinates, 15f, 0f, 0f)
             GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
-                cameraPosition = epflCameraPosition
+                onFailure = {
+                    Toast.makeText(context, "Something went wrong, failed to obtain location permission", Toast.LENGTH_LONG).show()
+                    Log.e("GeoHunt", "Failure encountered: $it")
+                    navController.popBackStack()
+                }
             )
         }
         composable(HiddenRoute.CreateChallenge.route) {
