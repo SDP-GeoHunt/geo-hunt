@@ -1,5 +1,6 @@
 package com.github.geohunt.app.ui.components.challenge
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -16,7 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.toSuffixedString
+import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.Challenge.Difficulty.*
 import com.github.geohunt.app.ui.components.LabelledIcon
+import com.github.geohunt.app.ui.theme.difficultyEasy
+import com.github.geohunt.app.ui.theme.difficultyHard
+import com.github.geohunt.app.ui.theme.difficultyMedium
 
 @Composable
 internal fun BelowImageButton(
@@ -28,8 +34,8 @@ internal fun BelowImageButton(
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(15.dp, 5.dp)
+                .fillMaxWidth()
+                .padding(15.dp, 5.dp)
     ) {
         val fontSize = 18.sp
         val iconSize = 22.dp
@@ -41,8 +47,8 @@ internal fun BelowImageButton(
             iconSize = iconSize)
 
         Spacer(modifier = Modifier
-            .width(18.dp)
-            .weight(0.2f))
+                .width(18.dp)
+                .weight(0.2f))
 
         LabelledIcon(
             text = "+" + state.claims.sumOf { it.awardedPoints }.toSuffixedString(),
@@ -51,6 +57,12 @@ internal fun BelowImageButton(
             contentDescription = "Scores", fontSize = fontSize, iconSize = iconSize
         )
 
+        Spacer(modifier = Modifier
+                .width(22.dp)
+                .weight(0.2f))
+        
+        DifficultyCircle(difficulty = state.challenge.difficulty)
+        
         Spacer(modifier = Modifier.weight(1f))
 
         if (!state.isSelf)
@@ -59,8 +71,8 @@ internal fun BelowImageButton(
 
             Button(
                 modifier = Modifier
-                    .height(28.dp)
-                    .align(Alignment.CenterVertically),
+                        .height(28.dp)
+                        .align(Alignment.CenterVertically),
                 contentPadding = PaddingValues(10.dp, 2.dp),
                 shape = RoundedCornerShape(12.dp),
                 enabled = !state.alreadyClaimed,
@@ -87,6 +99,18 @@ internal fun BelowImageButton(
     }
 }
 
+@Composable
+fun DifficultyCircle(difficulty: Challenge.Difficulty) {
+    Canvas(modifier = Modifier.size(15.dp), onDraw = { drawCircle(difficultyToColor(difficulty)) })
+}
+
+fun difficultyToColor(difficulty: Challenge.Difficulty): Color {
+    return when(difficulty) {
+        EASY -> difficultyEasy
+        MEDIUM -> difficultyMedium
+        HARD -> difficultyHard
+    }
+}
 //@Composable
 //internal fun LikeButton(challenge: Challenge, database: Database, user: User, fontSize: TextUnit, iconSize: Dp) {
 //    val hasUserLikedChallenge: LazyRef<Boolean> = database.doesUserLike(user.uid, challenge.cid)
