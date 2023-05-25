@@ -30,6 +30,7 @@ import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import java.time.LocalDate
+import kotlin.reflect.KFunction2
 
 @Composable
 fun CreateNewBounty(
@@ -65,8 +66,7 @@ fun CreateNewBounty(
                 expirationDate = expirationDate.value,
                 location = location.value,
                 name = name.value,
-                setStartingDate = viewModel::withStartingDate,
-                setExpirationDate = viewModel::withExpirationDate,
+                setDateRange = viewModel::withDateRanding,
                 setLocation = viewModel::withLocation,
                 setName = viewModel::withName
             )
@@ -74,7 +74,7 @@ fun CreateNewBounty(
             Spacer(Modifier.height(15.dp))
 
             HtmlText(
-                text = stringResource(id = R.string.challenge_create_agree_community_link),
+                text = stringResource(id = R.string.agree_community_html),
                 modifier = Modifier.padding(25.dp, 0.dp),
                 linkClicked = { url ->
                     uriHandler.openUri(url)
@@ -103,8 +103,7 @@ private fun BountySetting(
     expirationDate: LocalDate?,
     location: Location?,
     name: String,
-    setStartingDate: (LocalDate) -> Unit,
-    setExpirationDate: (LocalDate) -> Unit,
+    setDateRange: (LocalDate, LocalDate) -> Unit,
     setLocation: (Location) -> Unit,
     setName: (String) -> Unit,
 ) {
@@ -117,8 +116,7 @@ private fun BountySetting(
 
         CalendarDialog(state = state,
             selection = CalendarSelection.Period { first, second ->
-                setStartingDate(first)
-                setExpirationDate(second)
+                setDateRange(first, second)
             })
 
         SettingLine(text = stringResource(R.string.name)) {

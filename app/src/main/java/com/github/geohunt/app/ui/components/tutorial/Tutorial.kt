@@ -2,30 +2,24 @@
 
 package com.github.geohunt.app.ui.components.tutorial
 
-import android.content.Intent
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
-import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -34,21 +28,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.geohunt.app.LoginActivity
 import kotlinx.coroutines.launch
-import com.github.geohunt.app.utility.replaceActivity
-import kotlinx.coroutines.CoroutineScope
+import com.github.geohunt.app.R
+import com.google.accompanist.pager.HorizontalPagerIndicator
 
 /**
  * The main function for the tutorial that displays the
  * tutorial slides and the buttons for navigating through
  *
- * @param activity The activity that the tutorial is being displayed in
+ * @param onExit The callback that will be called when the tutorial is finished.
  */
 @Composable
-fun Tutorial(activity: ComponentActivity) {
+fun Tutorial(onExit: () -> Unit) {
     val items = TutorialSlides.getData()
-    val scope = rememberCoroutineScope()
     val pageState = rememberPagerState()
 
     Column(
@@ -56,11 +48,7 @@ fun Tutorial(activity: ComponentActivity) {
             .fillMaxSize()
             .testTag("Tutorial screen layout")
     ) {
-        TopButtons(
-            activity = activity,
-            pageState = pageState,
-            scope = scope
-        )
+        TopButtons { onExit() }
 
         HorizontalPager(
             pageCount = items.size,
@@ -75,69 +63,38 @@ fun Tutorial(activity: ComponentActivity) {
         )
 
         BottomButtons(
-            activity = activity,
-            pageState = pageState,
-            scope = scope,
-            slidesCount = items.size,
-            index = pageState.currentPage,
-            onButtonClick = {
-                if (pageState.currentPage + 1 < items.size) scope.launch {
-                    pageState.scrollToPage(pageState.currentPage + 1)
-                }
-            }
+            pagerState = pageState,
+            pageCount = items.size,
+            onExit = { onExit() }
         )
     }
 }
 
 /**
- * Displays the buttons for moving to the next slide
- * and skipping the tutorial at the top of the screen
+ * Displays the skip button
  *
- * @param activity The activity that the tutorial is being displayed in
- * @param pageState The state of the pager that the tutorial is using
- * @param scope The coroutine scope that the tutorial is running in
+ * @param onSkip When the skip button is clicked
  */
 @Composable
 fun TopButtons(
-    activity: ComponentActivity,
-    pageState: PagerState,
-    scope: CoroutineScope,
+    onSkip: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp)
     ) {
-        // Button to go to the previous tutorial slide
-        if (pageState.currentPage != 0) {
-            Button(
-                onClick = {
-                    if (pageState.currentPage > 0) scope.launch {
-                        pageState.scrollToPage(pageState.currentPage - 1)
-                    }
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .testTag("Go back button"),
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.KeyboardArrowLeft,
-                    contentDescription = "Go back button"
-                )
-            }
-        }
-
         // Button to skip the tutorial and go to the login screen
         TextButton(
             onClick = {
-                activity.replaceActivity(i = Intent(activity, LoginActivity::class.java))
+                onSkip()
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .testTag("Skip button"),
         ) {
             Text(
-                text = "Skip",
+                text = stringResource(id = R.string.tutorial_skip),
                 color = MaterialTheme.colors.onBackground,
                 fontSize = 16.sp,
             )
@@ -149,43 +106,52 @@ fun TopButtons(
  * Displays the button for moving to the next tutorial slide
  * at the bottom of the tutorial screen
  *
- * @param activity The current activity
- * @param pageState The state of the pager
- * @param scope The coroutine scope
- * @param slidesCount The size of the tutorial slides
- * @param index The index of the current tutorial slide
- * @param onButtonClick The function to call when the button is clicked
+ * @param pagerState The state of the pager
+ * @param pageCount The size of the tutorial slides
+ * @param onExit Called when arrived at the end page
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomButtons(
-    activity: ComponentActivity,
-    pageState: PagerState,
-    scope: CoroutineScope,
-    slidesCount: Int,
-    index: Int,
-    onButtonClick: () -> Unit = {}
+    pagerState: PagerState,
+    pageCount: Int,
+    onExit: () -> Unit
 ) {
-    Box(
+    val coroutineScope = rememberCoroutineScope()
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        FloatingActionButton(
+        val canGoLeft = pagerState.currentPage >= 1
+        IconButton(
             onClick = {
-                if (pageState.currentPage + 1 < slidesCount)
-                    scope.launch { pageState.scrollToPage(pageState.currentPage + 1) }
-                else activity.replaceActivity(Intent(activity, LoginActivity::class.java))
+                coroutineScope.launch { pagerState.scrollToPage(pagerState.currentPage - 1) }
             },
-            containerColor = Color.Black,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .clip(RoundedCornerShape(15.dp, 15.dp, 15.dp, 15.dp))
-                .testTag("Go forward button"),
+            enabled = canGoLeft,
+            modifier = Modifier.testTag("Go back button")
         ) {
-            Icon(Icons.Outlined.KeyboardArrowRight,
-                tint = Color.White,
-                contentDescription = "Go forward button",
-            )
+            Icon(Icons.Default.KeyboardArrowLeft, contentDescription = stringResource(id = R.string.go_left))
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        HorizontalPagerIndicator(pagerState, pageCount)
+
+        Spacer(Modifier.weight(1f))
+
+        IconButton(
+            modifier = Modifier.testTag("Go forward button"),
+            onClick = {
+                if (pagerState.currentPage >= pageCount - 1)
+                    onExit()
+                else
+                    coroutineScope.launch { pagerState.scrollToPage(pagerState.currentPage + 1) }
+            }
+        ) {
+            Icon(Icons.Default.KeyboardArrowRight, contentDescription = stringResource(id = R.string.go_right))
         }
     }
 }
