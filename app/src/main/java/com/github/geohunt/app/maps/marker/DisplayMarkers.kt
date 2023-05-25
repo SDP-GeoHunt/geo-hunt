@@ -8,8 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -20,7 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import coil.size.Scale
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Location
 import com.google.maps.android.compose.MarkerInfoWindow
@@ -66,8 +63,7 @@ fun DisplayMarkers(
  */
 @Composable
 fun MarkerInfoWindowContent(
-    challenge: Marker,
-    imageLoaded: MutableState<Boolean> = remember { mutableStateOf(false) }
+    challenge: Marker
 ){
     Box(
         modifier = Modifier
@@ -88,26 +84,17 @@ fun MarkerInfoWindowContent(
                         .fillMaxWidth()
                         .testTag("Marker image")
                 ) {
-                    val imageRequest = ImageRequest.Builder(LocalContext.current)
-                            .data(data = challenge.image)
-                            .apply(block = fun ImageRequest.Builder.() {
-                                crossfade(true)
-                                allowHardware(false)
-                                scale(Scale.FILL)
-                                listener(
-                                    onSuccess = { _, _ ->
-                                        imageLoaded.value = true
-                                    }
-                                )
-                            }).build()
-
                     AsyncImage(
-                        model = imageRequest,
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(challenge.image)
+                            .crossfade(true)
+                            .allowHardware(false)
+                            .build(),
                         modifier = Modifier
                             .size(160.dp)
                             .align(Alignment.CenterHorizontally)
                             .testTag("Marker image"),
-                        contentDescription = if (imageLoaded.value) "Marker Image" else "Loading",
+                        contentDescription = "Marker Image"
                     )
                 }
             } else {
