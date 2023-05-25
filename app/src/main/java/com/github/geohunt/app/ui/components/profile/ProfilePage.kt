@@ -40,6 +40,7 @@ fun ProfilePage(
     openLeaderboard: OptionalCallback = null,
     onLogout: OptionalCallback = null,
     openSettings: OptionalCallback = null,
+    openChallengeView: (Challenge) -> Unit = { },
 ) {
     val drawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
@@ -122,7 +123,8 @@ fun ProfilePage(
                             } else null,
                             if (viewModel.canFollow) {
                                 doesFollow.value
-                            } else null
+                            } else null,
+                                openChallengeView
                         ) {
                             if (viewModel.canFollow) {
                                 viewModel.toggleFollow()
@@ -169,7 +171,8 @@ fun ProfilePageContent(
     score: Long?,
     onSettingsClick: (() -> Any)?,
     isFollowed: Boolean? = null,
-    toggleFollow: (() -> Any)? = null,
+    openChallengeView: (Challenge) -> Unit = { },
+    toggleFollow: (() -> Any)? = null
 ) {
     Column {
         Row {
@@ -216,7 +219,7 @@ fun ProfilePageContent(
             }
         }
 
-        PastChallengeAndHunts(challenges, hunts)
+        PastChallengeAndHunts(challenges, hunts, openChallengeView)
     }
 }
 

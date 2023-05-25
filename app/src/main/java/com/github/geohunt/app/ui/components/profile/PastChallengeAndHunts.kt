@@ -13,18 +13,21 @@ import androidx.compose.ui.text.style.TextAlign
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
 
-typealias ComposableFun = @Composable (List<Challenge>?) -> Unit
+typealias ComposableFun = @Composable (List<Challenge>?, (Challenge) -> Unit) -> Unit
 
 enum class ProfileTabs(val tabName: Int, val tabContent: ComposableFun) {
-    PastChallenges(R.string.challenges, { PastChallengesContent(it) }),
-    PastHunts(R.string.hunts, { PastHuntsContent(it) })
+    PastChallenges(R.string.challenges, { challenges, callback ->
+        PastChallengesContent(challenges = challenges, openChallengeView = callback) }),
+    PastHunts(R.string.hunts, { challenges, callback ->
+        PastHuntsContent(hunts = challenges, openChallengeView = callback)
+    })
 }
 
 /**
  * Shows a tab view of two different tabs, for past challenges and past hunts
  */
 @Composable
-fun PastChallengeAndHunts(challenges: List<Challenge>?, hunts: List<Challenge>?) {
+fun PastChallengeAndHunts(challenges: List<Challenge>?, hunts: List<Challenge>?, openChallengeView: (Challenge) -> Unit = { }) {
     var currentTab by remember { mutableStateOf(ProfileTabs.PastChallenges) }
 
     Column {
@@ -39,7 +42,7 @@ fun PastChallengeAndHunts(challenges: List<Challenge>?, hunts: List<Challenge>?)
             }
         }
 
-        currentTab.tabContent(if (currentTab.ordinal == 0) challenges else hunts)
+        currentTab.tabContent(if (currentTab.ordinal == 0) challenges else hunts, openChallengeView)
     }
 }
 
@@ -47,34 +50,34 @@ fun PastChallengeAndHunts(challenges: List<Challenge>?, hunts: List<Challenge>?)
  * A grid for showing past challenges
  */
 @Composable
-fun PastChallengesContent(challenges: List<Challenge>?) {
+fun PastChallengesContent(challenges: List<Challenge>?, openChallengeView: (Challenge) -> Unit) {
     if (challenges == null)
         CircularProgressIndicator()
     else
-        MakeGrid(testTag = "past-challenges", challenges = challenges, whenEmptyText = stringResource(id = R.string.no_past_challenges))
+        MakeGrid(testTag = "past-challenges", challenges = challenges, whenEmptyText = stringResource(id = R.string.no_past_challenges), openChallengeView)
 }
 
 /**
  * A grid for showing past hunts
  */
 @Composable
-fun PastHuntsContent(hunts: List<Challenge>?) {
+fun PastHuntsContent(hunts: List<Challenge>?, openChallengeView: (Challenge) -> Unit) {
     if (hunts == null)
         CircularProgressIndicator()
     else
-        MakeGrid(testTag = "past-hunts", challenges = hunts, whenEmptyText = stringResource(id = R.string.no_past_hunts))
+        MakeGrid(testTag = "past-hunts", challenges = hunts, whenEmptyText = stringResource(id = R.string.no_past_hunts), openChallengeView)
 }
 
 /**
  * A more general grid used to display challenges
  */
 @Composable
-private fun MakeGrid(testTag: String, challenges: List<Challenge>, whenEmptyText: String) {
+private fun MakeGrid(testTag: String, challenges: List<Challenge>, whenEmptyText: String, openChallengeView: (Challenge) -> Unit) {
     Box(modifier = Modifier.testTag(testTag)) {
         if (challenges.isEmpty()) {
             CenteredText(str = whenEmptyText)
         } else {
-            ChallengeGrid(challenges = challenges)
+            ChallengeGrid(challenges = challenges, openChallengeView)
         }
     }
 }
