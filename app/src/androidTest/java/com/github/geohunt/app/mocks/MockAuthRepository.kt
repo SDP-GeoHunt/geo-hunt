@@ -1,7 +1,7 @@
 package com.github.geohunt.app.mocks
 
-import android.security.keystore.UserNotAuthenticatedException
 import androidx.activity.ComponentActivity
+import com.github.geohunt.app.data.exceptions.auth.UserNotLoggedInException
 import com.github.geohunt.app.data.repository.AuthRepositoryInterface
 import com.github.geohunt.app.model.User
 
@@ -12,7 +12,7 @@ import com.github.geohunt.app.model.User
 class MockAuthRepository(var loggedUser: User? = defaultLoggedUser): AuthRepositoryInterface {
     @Deprecated("If you use this and want the user as described in the RTDB, you should preferuse UserRepository#getCurrentUser()")
     override fun getCurrentUser(): User {
-        return loggedUser ?: throw UserNotAuthenticatedException()
+        return loggedUser ?: throw UserNotLoggedInException()
     }
 
     override fun isLoggedIn(): Boolean {

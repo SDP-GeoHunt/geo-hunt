@@ -108,7 +108,7 @@ class ChallengeViewTest {
             .assertIsDisplayed()
             .assertHasClickAction()
 
-        composeTestRule.onNodeWithText("Join Hunt")
+        composeTestRule.onNodeWithText("Hunt")
             .assertIsDisplayed()
             .assertHasClickAction()
 
