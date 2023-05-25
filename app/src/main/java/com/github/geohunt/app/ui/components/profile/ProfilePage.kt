@@ -124,7 +124,7 @@ fun ProfilePage(
                             if (viewModel.canFollow) {
                                 doesFollow.value
                             } else null,
-                                openChallengeView
+                            openChallengeView
                         ) {
                             if (viewModel.canFollow) {
                                 viewModel.toggleFollow()
