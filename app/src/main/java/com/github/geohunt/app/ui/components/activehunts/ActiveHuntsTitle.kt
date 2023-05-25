@@ -2,7 +2,6 @@ package com.github.geohunt.app.ui.components.activehunts
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -20,11 +19,7 @@ fun ActiveHuntsTitle() {
     Text(
         buildAnnotatedString {
             withStyle(style = SpanStyle(fontSize = 40.sp, fontFamily = Lobster)) {
-                withStyle(style = SpanStyle(color = Color.Black)) {
-                    append("Active")
-                }
-
-                append(" ")
+                append("Active ")
 
                 withStyle(style = SpanStyle(color = geoHuntRed)) {
                     append("hunts")

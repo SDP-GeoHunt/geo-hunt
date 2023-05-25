@@ -83,10 +83,13 @@ class TeamsRepository(
             val teamId = newTeamReference.key!!
 
             // set the leader
+            // Notice that the creation of teams should be atomic due to the UI
+            // using flows that fetch every single change made to the team
+            // reference. As such partially created teams cause NPEs
             newTeamReference.updateChildren(mapOf(
-                "name" to name,
-                "score" to 0,
-                "teamLeader" to teamLeaderUid
+                    "name" to name,
+                    "score" to 0,
+                    "teamLeader" to teamLeaderUid
             ))
 
             joinTeam(teamId, teamLeaderUid)

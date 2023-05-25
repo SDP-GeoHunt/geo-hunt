@@ -2,7 +2,9 @@ package com.github.geohunt.app.ui.components.activehunts
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.github.geohunt.app.mocks.MockBounty
 import com.github.geohunt.app.mocks.MockChallenge
+import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsScreen
 import com.github.geohunt.app.ui.screens.activehunts.ActiveHuntsViewModel
@@ -22,21 +24,29 @@ class ActiveHuntsTest {
     val testRule = createComposeRule()
 
     private var exploreCallbackCalled = false
+    private var exploreChallengeCalled: Challenge? = null
+    private var exploreBountyCalled: Bounty? = null
 
-    private fun setupComposable(challenges: List<Challenge>) {
+    private fun setupComposable(challenges: List<Challenge> = listOf(), bounties: List<Bounty> = listOf()) {
+        val combinedBounties = bounties.map { Pair(it, MockChallenge()) }
         val activeHuntsStateFlow = MutableStateFlow(challenges).asStateFlow()
         val nameStateFlow = MutableStateFlow("John Wick").asStateFlow()
+        val activeBountiesStateFlow = MutableStateFlow(combinedBounties).asStateFlow()
 
         val mockViewModel: ActiveHuntsViewModel = mock {
             on { activeHunts } doReturn activeHuntsStateFlow
             on { getAuthorName(any()) } doReturn nameStateFlow
+            on { activeBounties } doReturn activeBountiesStateFlow
         }
 
         exploreCallbackCalled = false
+        exploreChallengeCalled = null
         testRule.setContent {
             GeoHuntTheme {
                 ActiveHuntsScreen(
                     openExploreTab = { exploreCallbackCalled = true },
+                    openChallengeView = { exploreChallengeCalled = it },
+                    openBountyView = { exploreBountyCalled = it },
                     viewModel = mockViewModel
                 )
             }
@@ -81,5 +91,41 @@ class ActiveHuntsTest {
                 .performClick()
 
         assertThat(exploreCallbackCalled, equalTo(true))
+    }
+
+    @Test
+    fun challengeCallbackIsCalled() {
+        val mockChallenge = MockChallenge()
+        setupComposable(listOf(mockChallenge))
+
+        testRule.onNodeWithTag("challenge-box-${mockChallenge.id}")
+                .assertHasClickAction()
+                .performClick()
+
+        assertThat(exploreChallengeCalled, equalTo(mockChallenge))
+    }
+
+    @Test
+    fun tabRowChangesTab() {
+        setupComposable()
+
+        testRule.onNodeWithText("No challenges yet", substring = true).assertIsDisplayed()
+
+        testRule.onNodeWithText("Bounties", substring = true).assertHasClickAction().performClick()
+        testRule.onNodeWithText("No bounties yet", substring = true).assertIsDisplayed()
+
+        testRule.onNodeWithText("Challenges", substring = true).assertHasClickAction().performClick()
+        testRule.onNodeWithText("No challenges yet", substring = true).assertIsDisplayed()
+    }
+
+    @Test
+    fun bountyCallbackIsCalled() {
+        val mockBounty = MockBounty()
+        setupComposable(bounties = listOf(mockBounty))
+        testRule.onNodeWithText("Bounties", substring = true).assertHasClickAction().performClick()
+
+        testRule.onNodeWithTag("bounty-box-1").assertHasClickAction().performClick()
+
+        assertThat(exploreBountyCalled, equalTo(mockBounty))
     }
 }

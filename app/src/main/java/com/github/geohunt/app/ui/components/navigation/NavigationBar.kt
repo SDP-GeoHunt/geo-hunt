@@ -34,7 +34,7 @@ fun NavigationBar(navController: NavController, onCreatePressed: () -> Unit = {}
                                 saveState = true
                             }
                             launchSingleTop = true
-                            restoreState = true
+                            restoreState = false
                         }
                     }
                 },

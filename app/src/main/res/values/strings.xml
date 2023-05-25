@@ -53,7 +53,7 @@
 
     <string name="range_date">Date</string>
 
-    // Strings defined for the tutorial
+    <!-- Strings defined for the tutorial -->
     <string name="title_activity_tutorial">TutorialActivity</string>
     <string name="welcome_screen_detail">The fun, interactive, engaging and challenging treasure hunt game!</string>
     <string name="tutorial_first_screen_title"> Create your own challenges!</string>
@@ -88,6 +88,13 @@
     <string name="error_fetching_page">An error occurred when fetching the profile page.</string>
     <string name="private_profile_page">You do not have access to this user\'s profile page.</string>
     <string name="agree_community_html"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
+
+    <!-- active hunts -->
+    <string name="active_hunts_empty_challenge">"No challenges yet…\nGo pick some challenges to begin your hunt!"</string>
+    <string name="active_hunts_empty_challenge_button">"Search nearby challenges"</string>
+    <string name="active_hunts_empty_bounties">"No bounties yet…\nGo pick some bounties to begin your hunt!"</string>
+    <string name="active_hunts_empty_bounties_button">"Search nearby bounties"</string>
+    <string name="active_hunts_expires_never">Expires never !</string>
 
     <!-- settings -->
     <string name="app_settings">App settings</string>
@@ -131,8 +138,13 @@
     <string name="bounties">Bounties</string>
     <string name="join">Join</string>
     <string name="no_bounties">No available bounties at the moment.</string>
-    <string name="ends_in">Ends in %1$s</string>
-    <string name="expired_since">Expired since %1$s</string>
+    <string name="starts_in">Starts %1$s</string>
+    <string name="ends_in">Ends %1$s</string>
+    <string name="expired_since">Expired %1$s</string>
+
+    <string name="starts_in_bang">Starts %1$s !</string>
+    <string name="ends_in_bang">Ends %1$s !</string>
+    <string name="expired_since_bang">Expired %1$s !</string>
 
     <string name="team_name">Team name</string>
     <string name="enter_team_name">Enter the new team\'s name</string>
