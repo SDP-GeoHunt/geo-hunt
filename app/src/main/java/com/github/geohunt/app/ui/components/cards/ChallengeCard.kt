@@ -4,9 +4,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.PersonAdd
+import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,9 +28,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
 import com.github.geohunt.app.i18n.DateFormatUtils
@@ -45,12 +44,11 @@ import com.github.geohunt.app.ui.components.buttons.MenuItem
 import com.github.geohunt.app.ui.components.buttons.OpenMapButton
 import com.github.geohunt.app.ui.components.utils.SkeletonLoading
 import com.github.geohunt.app.ui.components.utils.SkeletonLoadingImage
-import com.github.geohunt.app.ui.components.utils.SkeletonLoadingProfilePicture
 import com.github.geohunt.app.ui.theme.geoHuntRed
 import com.github.geohunt.app.utility.quantizeToLong
 import java.time.LocalDateTime
 
-private val ChallengeCardContentPadding = 8.dp
+val ChallengeCardContentPadding = 8.dp
 
 /**
  * Draws the [ChallengeCardTitle] including the author's profile picture, name, and distance to the
@@ -63,33 +61,18 @@ private val ChallengeCardContentPadding = 8.dp
 @Composable
 private fun ChallengeCardTitle(
     author: User?,
+    onUserClick: (User) -> Unit,
     distance: () -> Double?,
     publicationDate: LocalDateTime,
-    onFollow: (User) -> Unit,
+    isFollowing: Boolean,
+    onFollow: (User, Boolean) -> Unit,
     canLeaveHunt: Boolean,
     onLeaveHunt: () -> Unit
 ) {
-    Row(
-        modifier = Modifier.padding(ChallengeCardContentPadding),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        SkeletonLoadingProfilePicture(
-            url = "https://picsum.photos/48/48",
-            size = 48.dp,
-            contentDescription = "Profile picture"
-        )
-
-        Column(
-            Modifier.padding(start = ChallengeCardContentPadding),
-            verticalArrangement = Arrangement.spacedBy(3.dp)
-        ) {
-            SkeletonLoading(value = author, width = 80.dp, height = 20.dp) { author ->
-                Text(
-                    author.name,
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-
+    return GeoHuntCardTitle(
+        author = author,
+        onUserClick = onUserClick,
+        subtitle = {
             SkeletonLoading(value = distance(), width = 170.dp, height = 16.dp) { distance ->
                 // Use derivedStateOf to recompose only when the UI would be changed
                 // This avoids useless recompositions when publicationDate and/or distance slightly
@@ -114,32 +97,37 @@ private fun ChallengeCardTitle(
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
-        }
-
-        Spacer(Modifier.weight(1.0f))
-
-        MenuButton {
-            MenuItem(
-                title = "Follow",
-                enabled = author != null,
-                onClick = {
-                    if (author != null) {
-                        onFollow(author)
-                    }
-                },
-                icon = { Icon(Icons.Default.PersonAdd, contentDescription = "Follow") }
-            )
-
-            if (canLeaveHunt) {
+        },
+        action = {
+            MenuButton {
                 MenuItem(
-                    title = "Leave the hunt",
-                    onClick = onLeaveHunt,
-                    icon = { Icon(Icons.Default.Logout, contentDescription = "Leave") },
-                    red = true
+                    title = if (!isFollowing) stringResource(R.string.follow) else stringResource(R.string.unfollow),
+                    enabled = author != null,
+                    onClick = {
+                        if (author != null) {
+                            onFollow(author, !isFollowing)
+                        }
+                    },
+                    icon = {
+                        Icon(
+                            if (!isFollowing) Icons.Default.PersonAdd else Icons.Default.PersonRemove,
+                            contentDescription = null
+                        )
+                    },
+                    red = isFollowing
                 )
+
+                if (canLeaveHunt) {
+                    MenuItem(
+                        title = stringResource(R.string.leave_the_hunt),
+                        onClick = onLeaveHunt,
+                        icon = { Icon(Icons.Default.Logout, contentDescription = null) },
+                        red = true
+                    )
+                }
             }
         }
-    }
+    )
 }
 
 /**
@@ -148,7 +136,7 @@ private fun ChallengeCardTitle(
  * This Composable reacts to double taps to like.
  */
 @Composable
-private fun ChallengeCardImage(
+fun ChallengeCardImage(
     url: String?,
     onClick: () -> Unit,
     onDoubleTap: () -> Unit
@@ -206,7 +194,7 @@ private fun ChallengeCardImage(
 }
 
 @Composable
-private fun ChallengeCardActions(
+fun ChallengeCardActions(
     huntState: ChallengeHuntState,
     onOpenMap: () -> Unit,
     onHunt: () -> Unit,
@@ -235,23 +223,24 @@ fun ChallengeCard(
     challenge: Challenge,
     huntState: ChallengeHuntState,
     author: User?,
+    onUserClick: (User) -> Unit,
     userLocation: () -> Location?,
     onImageClick: () -> Unit,
     onOpenMap: () -> Unit,
-    onFollow: (User) -> Unit,
+    isFollowing: Boolean,
+    onFollow: (User, Boolean) -> Unit,
     onHunt: () -> Unit,
     onLeaveHunt: () -> Unit,
     onClaim: () -> Unit,
     isBusy: () -> Boolean
 ) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F3F4)),
-        modifier = Modifier.fillMaxWidth()
-    ) {
+    Card(Modifier.fillMaxWidth()) {
         ChallengeCardTitle(
             author = author,
+            onUserClick = onUserClick,
             distance = { userLocation()?.distanceTo(challenge.location) },
             publicationDate = challenge.publishedDate,
+            isFollowing = isFollowing,
             onFollow = onFollow,
             canLeaveHunt = huntState == ChallengeHuntState.HUNTED,
             onLeaveHunt = onLeaveHunt

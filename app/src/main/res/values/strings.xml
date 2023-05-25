@@ -119,11 +119,12 @@
     <string name="photo_of_the_claim_taken">Photo just taken of the claim</string>
 
     <!-- home feed/bounty selector -->
-    <string name="feed">Feed</string>
+    <string name="home">Home</string>
+    <string name="discover">Discover</string>
     <string name="bounties">Bounties</string>
     <string name="join">Join</string>
     <string name="no_bounties">No available bounties at the moment.</string>
-    <string name="ends_in">Ends in %1$s</string>
+    <string name="ends">Ends %1$s</string>
     <string name="expired_since">Expired since %1$s</string>
 
     <string name="team_name">Team name</string>
@@ -144,6 +145,8 @@
     <string name="pick_location_popup_title">Pick a location</string>
     <string name="location_picker_placeholder"><![CDATA[<Select>]]></string>
     <string name="claimed">Claimed</string>
+    <string name="leave_the_hunt">Leave the hunt</string>
+    <string name="expires">Expires %1$s</string>
 
     <plurals name="teams_count">
         <item quantity="zero">no teams</item>

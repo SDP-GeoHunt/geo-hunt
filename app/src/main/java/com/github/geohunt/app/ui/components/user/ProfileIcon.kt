@@ -6,12 +6,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -33,7 +33,7 @@ fun ProfileIcon(user: User, modifier: Modifier = Modifier) {
         .clip(CircleShape)
 
 
-    if (user.profilePictureUrl != null) {
+    if (!user.profilePictureUrl.isNullOrEmpty() && user.profilePictureUrl != "null") {
         ProfileIcon(user.profilePictureUrl, user.displayName, modifier = newModifier)
     } else {
         DefaultProfileIcon(modifier = newModifier)
@@ -47,7 +47,8 @@ fun DefaultProfileIcon(modifier: Modifier) {
         contentDescription = "No profile picture",
         modifier = modifier
             .padding(16.dp)
-            .background(MaterialTheme.colors.surface),
+            .clip(CircleShape)
+            .background(Color.Gray)
     )
 }
 

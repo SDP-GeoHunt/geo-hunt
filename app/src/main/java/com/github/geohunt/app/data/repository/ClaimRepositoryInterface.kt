@@ -7,6 +7,7 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.model.User
 import com.github.geohunt.app.model.Location
+import kotlinx.coroutines.flow.Flow
 
 interface ClaimRepositoryInterface {
     /**

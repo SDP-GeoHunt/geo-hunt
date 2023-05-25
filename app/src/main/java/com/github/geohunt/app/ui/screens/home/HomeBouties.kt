@@ -1,83 +1,89 @@
 package com.github.geohunt.app.ui.screens.home
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Bounty
-import com.github.geohunt.app.ui.components.navigation.SecondaryScreen
+import com.github.geohunt.app.model.User
 import kotlinx.coroutines.flow.map
 
 @SuppressLint("FlowOperatorInvokedInComposition")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeBounties(vm: HomeViewModel, navigate: (String) -> Unit) {
-    val isRefreshing = vm.areBountiesRefreshing.collectAsState()
-    val bounties by vm.bountyList.collectAsState()
+fun BountiesFeed(
+    onUserClick: (User) -> Unit,
+    showTeamProgress: (Bounty) -> Unit,
+    showTeamChooser: (Bounty) -> Unit,
+    viewModel: BountyFeedViewModel = viewModel(factory = BountyFeedViewModel.Factory)
+) {
+    val isRefreshing = viewModel.areBountiesRefreshing.collectAsStateWithLifecycle()
+    val bounties by viewModel.bountyList.collectAsStateWithLifecycle()
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing.value,
-        onRefresh = { vm.refreshBounties() })
-    val isInsideBounties by vm.isAlreadyInsideBounties.collectAsState()
+        onRefresh = { viewModel.refreshBounties() })
+    val isInsideBounties by viewModel.isAlreadyInsideBounties.collectAsStateWithLifecycle()
 
-    BoxWithConstraints {
-        Box(
-            modifier = Modifier
-                .pullRefresh(pullRefreshState)
-                .verticalScroll(rememberScrollState())
-        ) {
-            val fm = Modifier
-                .width(this@BoxWithConstraints.maxWidth)
-                .height(this@BoxWithConstraints.maxHeight)
-
-            Box(modifier = fm) {
-                when (bounties) {
-                    null -> { }
-                    listOf<Bounty>() -> {
-                        Text(
-                            stringResource(id = R.string.no_bounties),
-                            textAlign = TextAlign.Center,
-                            modifier = fm.testTag("no-bounties")
-                        )
-                    }
-                    else -> {
-                        LazyColumn {
-                            items(bounties!!) { bounty ->
-                                val isInside = isInsideBounties.map { it.bid }.contains(bounty.bid)
-                                HomeBountyCard(
-                                    vm.bountyAuthors.map { it[bounty.bid] },
-                                    bounty.name,
-                                    bounty.expirationDate,
-                                    vm.bountyChallenges.map { it[bounty.bid] },
-                                    vm.nbParticipating.map { it[bounty.bid] },
-                                    isInside
-                                ) {
-                                    if (isInside) navigate("${SecondaryScreen.BountyTeamProgress.route}/${bounty.bid}")
-                                    else navigate("${SecondaryScreen.BountyTeamChooser.route}/${bounty.bid}")
-                                }
-                            }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState)
+    ) {
+        when {
+            bounties == null -> CircularProgressIndicator(Modifier.align(Alignment.Center))
+            bounties!!.isEmpty() -> {
+                Text(
+                    stringResource(id = R.string.no_bounties),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .testTag("no-bounties")
+                )
+            }
+            else -> {
+                LazyColumn {
+                    items(bounties!!) { bounty ->
+                        val isInside = isInsideBounties.map { it.bid }.contains(bounty.bid)
+                        HomeBountyCard(
+                            viewModel.bountyAuthors.map { it[bounty.bid] },
+                            onUserClick = onUserClick,
+                            bounty.name,
+                            bounty.expirationDate,
+                            viewModel.bountyChallenges.map { it[bounty.bid] },
+                            viewModel.nbParticipating.map { it[bounty.bid] },
+                            isInside
+                        ) {
+                            if (isInside) showTeamProgress(bounty)
+                            else showTeamChooser(bounty)
                         }
                     }
                 }
-
-                PullRefreshIndicator(
-                    refreshing = isRefreshing.value,
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter).testTag("loading-bounties")
-                )
             }
         }
-    }
 
+        PullRefreshIndicator(
+            refreshing = isRefreshing.value,
+            state = pullRefreshState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .testTag("loading-bounties")
+        )
+    }
 }

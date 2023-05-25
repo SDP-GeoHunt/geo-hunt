@@ -27,7 +27,7 @@ import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.ui.components.bounties.viewmodel.AdminBountyViewModel
-import com.github.geohunt.app.ui.screens.home.HorizontalDivider
+import com.github.geohunt.app.ui.components.HorizontalDivider
 import java.time.LocalDateTime
 
 @Composable

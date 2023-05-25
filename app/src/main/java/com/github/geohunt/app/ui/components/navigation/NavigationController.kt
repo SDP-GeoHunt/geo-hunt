@@ -24,6 +24,7 @@ import androidx.navigation.navArgument
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.maps.GoogleMapDisplay
+import com.github.geohunt.app.sensor.RequireFineLocationPermissions
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.bounties.AdminBountyPage
 import com.github.geohunt.app.ui.components.bounties.BountyClaimChallenge
@@ -135,7 +136,17 @@ fun NavigationController(
 
     NavHost(navController, startDestination = PrimaryScreen.Home.route, modifier = modifier) {
         composable(PrimaryScreen.Home.route) {
-            HomeScreen(navigate = { navController.navigate(it) })
+            RequireFineLocationPermissions {
+                HomeScreen(
+                    onUserClick = { navController.navigate("${PrimaryScreen.Profile.route}/${it.id}") },
+                    onOpenMap = { /* TODO Open with challenge-centered map */ navController.navigate(PrimaryScreen.Explore.route) },
+                    onOpenChallenge = { navController.navigate("challenge-view/${it.id}") },
+                    onClaim = { navController.navigate("claim-challenge/${it.id}") },
+                    onOpenExplore = { navController.navigate(PrimaryScreen.Explore.route) },
+                    showTeamProgress = { navController.navigate("${SecondaryScreen.BountyTeamProgress.route}/${it.bid}") },
+                    showTeamChooser = { navController.navigate("${SecondaryScreen.BountyTeamChooser.route}/${it.bid}") }
+                )
+            }
         }
         composable(PrimaryScreen.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)

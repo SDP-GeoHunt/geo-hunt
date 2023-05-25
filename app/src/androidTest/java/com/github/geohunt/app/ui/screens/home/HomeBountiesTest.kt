@@ -5,11 +5,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
-import com.github.geohunt.app.domain.GetUserFeedUseCase
 import com.github.geohunt.app.mocks.MockAuthRepository
 import com.github.geohunt.app.mocks.MockBountiesRepositories
-import com.github.geohunt.app.mocks.MockChallengeRepository
-import com.github.geohunt.app.mocks.MockFollowRepository
 import com.github.geohunt.app.mocks.MockUserRepository
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Location
@@ -23,26 +20,22 @@ class HomeBountiesTest {
 
     @get:Rule val c = createComposeRule()
 
-    private fun createViewModel(bounties: List<Bounty>? = listOf()): HomeViewModel {
-        return object: HomeViewModel(
+    private fun createViewModel(bounties: List<Bounty>? = listOf()): BountyFeedViewModel {
+        return object: BountyFeedViewModel(
             MockAuthRepository(),
             MockUserRepository(),
-            GetUserFeedUseCase(MockAuthRepository(), MockChallengeRepository(), MockFollowRepository()),
-            MockChallengeRepository(),
             MockBountiesRepositories()
         ) {
             override val bountyList = MutableStateFlow(bounties).asStateFlow()
 
-            override fun fetchChallengeFeed() { }
-
-            override fun refreshBounties() { }
+            override suspend fun fetchBounties() {}
         }
     }
 
     @Test
     fun showsLoadingBounties() {
         c.setContent {
-            HomeBounties(vm = createViewModel(bounties = null), navigate = {})
+            BountiesFeed(viewModel = createViewModel(bounties = null), showTeamChooser = {}, showTeamProgress = {})
         }
         c.onNodeWithTag("loading-bounties").assertIsDisplayed()
     }
@@ -50,7 +43,7 @@ class HomeBountiesTest {
     @Test
     fun showsEmptyBountiesMessageIfNoBounties() {
         c.setContent {
-            HomeBounties(vm = createViewModel(bounties = listOf()), navigate = {})
+            BountiesFeed(viewModel = createViewModel(bounties = listOf()), showTeamChooser = {}, showTeamProgress = {})
         }
         c.onNodeWithTag("no-bounties").assertIsDisplayed()
     }
@@ -58,14 +51,16 @@ class HomeBountiesTest {
     @Test
     fun showsAllBounties() {
         c.setContent {
-            HomeBounties(vm =
+            BountiesFeed(viewModel =
                 createViewModel(
                     listOf(
                         Bounty("1", "1", "1", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0)),
                         Bounty("1", "1", "1", LocalDateTime.MIN, LocalDateTime.MAX, Location(0.0, 0.0))
                     )
-                )
-            ) {}
+                ),
+                showTeamChooser = {},
+                showTeamProgress = {}
+            )
         }
         c.onAllNodesWithTag("bounty-card").assertCountEquals(2)
     }

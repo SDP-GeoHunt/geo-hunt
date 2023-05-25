@@ -26,7 +26,7 @@ import coil.request.ImageRequest
 import com.github.geohunt.app.R
 import com.github.geohunt.app.ui.components.buttons.BackButton
 import com.github.geohunt.app.ui.components.utils.AwaitNullable
-import com.github.geohunt.app.ui.screens.home.HorizontalDivider
+import com.github.geohunt.app.ui.components.HorizontalDivider
 
 /**
  * @brief Composable function that displays a specific challenge including details

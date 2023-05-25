@@ -2,22 +2,28 @@ package com.github.geohunt.app.ui.screens.bounty_team_select
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.ui.components.utils.SkeletonLoadingImage
 
 /**
  * This function creates a slider and returns the tuple (nb_elements, pager_state)
@@ -26,41 +32,21 @@ import com.github.geohunt.app.model.Challenge
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun challengesImageSlider(challenges: List<Challenge>?, modifier: Modifier = Modifier): Pair<Int, PagerState>? {
-    if (challenges == null) return null
-    if (challenges.isEmpty()) return null
+    if (challenges.isNullOrEmpty()) return null
 
-    // The aspect ratio is given by the first
-    val firstImagePainter = rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(challenges[0].photoUrl)
-            .size(Size.ORIGINAL)
-            .build()
-    )
     val pagerState = rememberPagerState()
 
-    Column(modifier) {
+    BoxWithConstraints(modifier
+        .clip(CardDefaults.shape)
+        .requiredHeight(250.dp)
+    ) {
         HorizontalPager(pageCount = challenges.size, state = pagerState) {
-            val dimensionModifier = (firstImagePainter.state as? AsyncImagePainter.State.Success)
-                ?.painter?.intrinsicSize?.let { size ->
-                    Modifier
-                        .aspectRatio(size.width / size.height)
-                } ?: Modifier
-
-
-            if (it == 0) {
-                Image(
-                    painter = firstImagePainter,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else
-                AsyncImage(
-                    challenges[it].photoUrl,
-                    contentDescription = null,
-                    modifier = dimensionModifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+            SkeletonLoadingImage(
+                url = challenges[it].photoUrl,
+                width = maxWidth,
+                height = 250.dp,
+                contentDescription = "Challenge $it image"
+            )
         }
     }
 
