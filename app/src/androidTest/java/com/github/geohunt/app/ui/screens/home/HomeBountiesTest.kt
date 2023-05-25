@@ -35,7 +35,7 @@ class HomeBountiesTest {
     @Test
     fun showsLoadingBounties() {
         c.setContent {
-            BountiesFeed(viewModel = createViewModel(bounties = null), showTeamChooser = {}, showTeamProgress = {})
+            BountiesFeed(viewModel = createViewModel(bounties = null), showTeamChooser = {}, showTeamProgress = {}, onUserClick = {})
         }
         c.onNodeWithTag("loading-bounties").assertIsDisplayed()
     }
@@ -43,7 +43,8 @@ class HomeBountiesTest {
     @Test
     fun showsEmptyBountiesMessageIfNoBounties() {
         c.setContent {
-            BountiesFeed(viewModel = createViewModel(bounties = listOf()), showTeamChooser = {}, showTeamProgress = {})
+            BountiesFeed(viewModel = createViewModel(bounties = listOf()), showTeamChooser = {}, showTeamProgress = {},
+            onUserClick = {})
         }
         c.onNodeWithTag("no-bounties").assertIsDisplayed()
     }
@@ -59,7 +60,8 @@ class HomeBountiesTest {
                     )
                 ),
                 showTeamChooser = {},
-                showTeamProgress = {}
+                showTeamProgress = {},
+                onUserClick = {}
             )
         }
         c.onAllNodesWithTag("bounty-card").assertCountEquals(2)
