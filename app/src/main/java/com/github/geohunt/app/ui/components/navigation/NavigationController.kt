@@ -22,6 +22,7 @@ import androidx.navigation.navArgument
 import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.AppContainer
 import com.github.geohunt.app.maps.GoogleMapDisplay
+import com.github.geohunt.app.sensor.RequireFineLocationPermissions
 import com.github.geohunt.app.ui.components.ZoomableImageView
 import com.github.geohunt.app.ui.components.bounties.AdminBountyPage
 import com.github.geohunt.app.ui.components.bounties.BountyClaimChallenge
@@ -104,7 +105,9 @@ fun NavigationController(
 
     NavHost(navController, startDestination = VisibleRoute.Home.route, modifier = modifier) {
         composable(VisibleRoute.Home.route) {
-            HomeScreen(navigate = { navController.navigate(it) })
+            RequireFineLocationPermissions {
+                HomeScreen(navigate = { navController.navigate(it) })
+            }
         }
         composable(VisibleRoute.Explore.route) {
             val epflCoordinates = LatLng(46.519585, 6.5684919)
@@ -271,13 +274,13 @@ fun NavigationController(
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
-            TeamProgressScreen(
+            RequireFineLocationPermissions { TeamProgressScreen(
                 onBack = { navController.popBackStack() },
                 onLeaderboard = { navController.navigate("bounty/leaderboard/$bid") },
                 onChat = { /* TODO */ },
                 onClaim = { navController.navigate("${HiddenRoute.BountyClaimChallenge.route}/$bid/${it.id}") },
                 bountyId = bid
-            )
+            ) }
         }
 
         composable(
