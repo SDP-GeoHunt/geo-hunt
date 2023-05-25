@@ -8,10 +8,10 @@ import com.github.geohunt.app.model.User
 import com.github.geohunt.app.model.Location
 import java.time.LocalDateTime
 
-open class MockClaimRepository : ClaimRepositoryInterface {
+open class MockClaimRepository(val listClaim : List<Claim> = listOf()) : ClaimRepositoryInterface {
 
     override suspend fun getClaimId(uid: String): List<String> {
-        return emptyList()
+        return listClaim.map { it.id }
     }
 
     override suspend fun doesClaim(challenge: Challenge): Boolean {
@@ -23,11 +23,11 @@ open class MockClaimRepository : ClaimRepositoryInterface {
     }
 
     override suspend fun getClaims(uid: String): List<Claim> {
-        return emptyList()
+        return listClaim
     }
 
     override suspend fun getChallengeClaims(challenge: Challenge): List<Claim> {
-        return emptyList()
+        return listClaim.filter { it.parentChallengeId == challenge.id }
     }
 
     override suspend fun claimChallenge(

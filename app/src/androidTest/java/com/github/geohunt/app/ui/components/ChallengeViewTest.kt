@@ -1,16 +1,12 @@
 package com.github.geohunt.app.ui.components
 
 import android.app.Application
-import android.content.Context
-import android.graphics.Bitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.geohunt.app.R
 import com.github.geohunt.app.data.repository.*
 import com.github.geohunt.app.mocks.*
+import com.github.geohunt.app.model.Claim
 import com.github.geohunt.app.ui.components.challenge.ChallengeView
 import com.github.geohunt.app.ui.components.challenge.ChallengeViewModel
 import org.hamcrest.MatcherAssert.assertThat
@@ -19,6 +15,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.LocalDateTime
 
 @RunWith(AndroidJUnit4::class)
 class ChallengeViewTest {
@@ -67,7 +64,20 @@ class ChallengeViewTest {
                     "Verily, this vichyssoise of verbiage veers most verbose, so let me simply add that it’s" +
                     " my very good honour to meet you and you may call me V.",
         )
-        val vm = createViewModel(MockChallengeRepository(challenge))
+        val vm = createViewModel(
+            MockChallengeRepository(challenge),
+            MockClaimRepository(
+                listOf(
+                    Claim("13",
+                        "2",
+                        "1",
+                        "http://10.0.2.2:9199/geohunt-1.appspot.com/images/challenges-images.png",
+                        LocalDateTime.now(),
+                        1000,
+                    100)
+                )
+            )
+        )
 
         composeTestRule.setContent {
             ChallengeView(
