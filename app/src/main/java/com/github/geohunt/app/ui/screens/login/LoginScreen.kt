@@ -28,7 +28,7 @@ fun LoginScreen(onSignInClick: () -> Unit) {
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = stringResource(id = R.string.app_name),
-            modifier = Modifier.fillMaxSize(.7f)
+            modifier = Modifier.fillMaxSize(.7f).testTag("logo")
         )
 
         Spacer(modifier = Modifier.height(20.dp))
