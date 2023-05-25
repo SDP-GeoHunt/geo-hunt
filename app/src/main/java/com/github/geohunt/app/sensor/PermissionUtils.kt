@@ -41,7 +41,9 @@ fun RequireCameraPermission(withPermission: @Composable () -> Unit) {
             val textToShow = stringResource(R.string.require_camera_permission)
             val buttonText = stringResource(R.string.require_camera_permission_button)
 
-            ShowPermissionRequestPage(locationPermissionsState, textToShow, buttonText)
+            ShowPermissionRequestPage(locationPermissionsState::launchMultiplePermissionRequest,
+                textToShow,
+                buttonText)
         },
         withPermission
     )
@@ -60,16 +62,17 @@ fun RequireFineLocationPermissions(withPermission: @Composable () -> Unit) {
             val textToShow = stringResource(R.string.require_location_permission)
             val buttonText = stringResource(R.string.require_location_permission_button)
 
-            ShowPermissionRequestPage(locationPermissionsState, textToShow, buttonText)
+            ShowPermissionRequestPage(locationPermissionsState::launchMultiplePermissionRequest,
+                textToShow,
+                buttonText)
 
         }, withPermission
     )
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun ShowPermissionRequestPage(
-    locationPermissionsState: MultiplePermissionsState,
+fun ShowPermissionRequestPage(
+    launchPermissionRequest: () -> Unit,
     textToShow: String,
     buttonText: String
 ) {
@@ -85,12 +88,12 @@ private fun ShowPermissionRequestPage(
         ) {
             LaunchedEffect(Unit) {
                 Log.i("GeoHunt", "Launching permission request")
-                locationPermissionsState.launchMultiplePermissionRequest()
+                launchPermissionRequest()
             }
 
             Text(text = textToShow)
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { locationPermissionsState.launchMultiplePermissionRequest() }) {
+            Button(onClick = { launchPermissionRequest() }) {
                 Text(buttonText)
             }
         }

@@ -3,6 +3,7 @@ package com.github.geohunt.app.ui.screens.bounty_team_select
 import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
 import com.github.geohunt.app.data.repository.UserRepositoryInterface
 import com.github.geohunt.app.data.repository.bounties.TeamsRepositoryInterface
+import com.github.geohunt.app.mocks.MockActiveBountiesRepository
 import com.github.geohunt.app.mocks.MockBountiesRepositories
 import com.github.geohunt.app.mocks.MockChallenge
 import com.github.geohunt.app.mocks.MockChallengeRepository
@@ -39,7 +40,8 @@ class BountyTeamSelectViewModelTest {
             },
             challengeRepository = challengeRepository,
             userRepository = userRepository,
-            teamsRepository = teamsRepository
+            teamsRepository = teamsRepository,
+            activeBountiesRepository = MockActiveBountiesRepository()
         )
     }
 

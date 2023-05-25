@@ -1,120 +1,69 @@
 package com.github.geohunt.app.ui.components.tutorial
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.Text
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.github.geohunt.app.ui.theme.Lobster
-import com.github.geohunt.app.ui.theme.geoHuntRed
+import com.github.geohunt.app.R
 
 /**
  * The welcome displayed when the user opens the application
  * for the first time
  *
- * @param shouldShowTutorial The state of whether the tutorial should be shown
+ * @param showTutorial The callback when the button "Get started" is clicked
  */
 @Composable
-fun WelcomeScreen(shouldShowTutorial: MutableState<Boolean>){
+fun WelcomeScreen(showTutorial: () -> Unit){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.SpaceEvenly,
     ) {
         // The welcome text of the application
-        Text(
-            text = "GeoHunt",
-            textAlign = TextAlign.Center,
+        Image(
+            painter = painterResource(R.drawable.logo),
+            contentDescription = stringResource(id = R.string.app_name),
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 40.dp, start = 10.dp, end = 10.dp)
-                .testTag("Welcome Label"),
-            fontSize = 80.sp,
-            fontStyle = FontStyle.Italic,
-            fontFamily = Lobster,
-            fontWeight = FontWeight.Bold,
-            overflow = TextOverflow.Ellipsis,
-            letterSpacing = 6.15.sp,
-            lineHeight = 70.sp,
-            softWrap = true,
-            color = geoHuntRed,
-            style = MaterialTheme.typography.h1,
+                .fillMaxWidth().fillMaxHeight(.3f)
+                .padding(32.dp)
+                .testTag("Welcome Label")
         )
-    }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+
         // Description of the application
         Text(
-            text = "The fun, interactive, engaging and challenging treasure hunt game!",
+            text = stringResource(id = R.string.welcome_screen_detail),
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(start = 15.dp, end = 15.dp)
-                .fillMaxWidth()
                 .testTag("Welcome Description"),
-            fontSize = 25.sp,
-            overflow = TextOverflow.Ellipsis,
-            letterSpacing = 5.sp,
             softWrap = true,
             style = MaterialTheme.typography.body1,
-            )
-    }
+            fontSize = 18.sp
+        )
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        // Button to start the tutorial
         Button(
-            onClick = { shouldShowTutorial.value = true },
-            contentPadding = PaddingValues(),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(50.dp),
-            modifier = Modifier
-                .padding(bottom = 35.dp)
+            onClick = { showTutorial() },
+            modifier = Modifier.padding(bottom = 35.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .background(
-                        brush = Brush.linearGradient(colors = listOf(Color(0xFF774387), Color(0xFFDC2431))),
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .align(Alignment.Bottom)
-                    .padding(horizontal = 25.dp, vertical = 15.dp),
-
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "GET STARTED",
-                    fontSize = 36.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.button,
-                )
-            }
+            Text(
+                text = stringResource(id = R.string.tutorial_get_started),
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

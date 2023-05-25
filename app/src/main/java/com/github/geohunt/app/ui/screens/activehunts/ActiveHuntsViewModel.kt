@@ -6,11 +6,14 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.github.geohunt.app.data.repository.ActiveHuntsRepository
+import com.github.geohunt.app.data.repository.ActiveHuntsRepositoryInterface
 import com.github.geohunt.app.data.repository.AppContainer
-import com.github.geohunt.app.data.repository.AuthRepository
-import com.github.geohunt.app.data.repository.ChallengeRepository
-import com.github.geohunt.app.data.repository.UserRepository
+import com.github.geohunt.app.data.repository.AuthRepositoryInterface
+import com.github.geohunt.app.data.repository.ChallengeRepositoryInterface
+import com.github.geohunt.app.data.repository.UserRepositoryInterface
+import com.github.geohunt.app.data.repository.bounties.ActiveBountiesRepositoryInterface
+import com.github.geohunt.app.data.repository.bounties.BountiesRepositoryInterface
+import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.ui.AuthViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,14 +23,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 open class ActiveHuntsViewModel(
-    override val authRepository: AuthRepository,
-    val userRepository: UserRepository,
-    val activeHuntsRepository: ActiveHuntsRepository,
-    val challengeRepository: ChallengeRepository
+    override val authRepository: AuthRepositoryInterface,
+    private val userRepository: UserRepositoryInterface,
+    private val activeHuntsRepository: ActiveHuntsRepositoryInterface,
+    private val challengeRepository: ChallengeRepositoryInterface,
+    activeBountiesRepository: ActiveBountiesRepositoryInterface,
+    bountiesRepository: BountiesRepositoryInterface
 ): AuthViewModel(authRepository) {
     // The list of active hunts, where a null value indicates that the data is not fetched yet
     private val _activeHunts: MutableStateFlow<List<Challenge>?> = MutableStateFlow(null)
     open val activeHunts: StateFlow<List<Challenge>?> = _activeHunts.asStateFlow()
+
+    private val _activeBounties: MutableStateFlow<List<Pair<Bounty, Challenge>>?> = MutableStateFlow(null)
+    open val activeBounties: StateFlow<List<Pair<Bounty, Challenge>>?> = _activeBounties.asStateFlow()
 
     // The author names of the challenges.
     private val authorNames: MutableMap<Challenge, MutableStateFlow<String>> = mutableMapOf()
@@ -38,6 +46,18 @@ open class ActiveHuntsViewModel(
                 it.map { id -> challengeRepository.getChallenge(id) }
             }.collect {
                 _activeHunts.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            activeBountiesRepository.getBounties().map {
+                it.map { bid ->
+                    Pair(
+                        bountiesRepository.getBountyById(bid),
+                        bountiesRepository.getChallengeRepository(bid).getChallenges().first()
+                    )}
+            }.collect {
+                _activeBounties.value = it
             }
         }
     }
@@ -68,7 +88,9 @@ open class ActiveHuntsViewModel(
                     container.auth,
                     container.user,
                     container.activeHunts,
-                    container.challenges
+                    container.challenges,
+                    container.activeBounties,
+                    container.bounty
                 )
             }
         }
