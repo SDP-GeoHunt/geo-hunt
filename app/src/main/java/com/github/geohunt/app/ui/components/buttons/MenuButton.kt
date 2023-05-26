@@ -38,7 +38,7 @@ fun MenuItem(
     red: Boolean = false
 ) {
     DropdownMenuItem(
-        text = { Text(title) },
+            text = { Text(title) },
         onClick = onClick,
         leadingIcon = icon,
         enabled = enabled,
