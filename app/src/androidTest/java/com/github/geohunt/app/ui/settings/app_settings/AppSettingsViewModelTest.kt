@@ -29,7 +29,7 @@ class AppSettingsViewModelTest {
         assert(cf.get(2, TimeUnit.SECONDS) == Theme.DARK)
     }
 
-    private fun mockSettingRepository(theme: Theme, onSet: suspend (Theme) -> Any = {}): AppSettingsRepository {
+    private fun mockSettingRepository(theme: Theme, onSet: suspend (Theme) -> Unit = {}): AppSettingsRepository {
         return object: AppSettingsRepository {
             override val themeSetting: AppSetting<Theme>
                 get() = AppSetting(flowOf(), theme) { onSet(it) }

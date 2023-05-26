@@ -84,7 +84,7 @@ class ChallengeViewTest {
                 cid = "163f921c-ML2eCQ52mAQlvCEQZ2n",
                 fnViewImageCallback = { route = "image-view/$it" },
                 fnClaimHuntCallback = { route = "claim/$it" } ,
-                fnGoBackBtn = { route = ".." },
+                onBack = { route = ".." },
                 viewModel = vm)
         }
 
@@ -108,7 +108,7 @@ class ChallengeViewTest {
             .assertIsDisplayed()
             .assertHasClickAction()
 
-        composeTestRule.onNodeWithText("Join Hunt")
+        composeTestRule.onNodeWithText("Hunt")
             .assertIsDisplayed()
             .assertHasClickAction()
 

@@ -2,7 +2,6 @@ package com.github.geohunt.app.ui.components.teamprogress
 
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.Leaderboard
 import androidx.compose.material3.Badge
@@ -19,6 +18,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.geohunt.app.ui.components.buttons.BackButton
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -50,14 +50,7 @@ fun TeamProgressTopAppBar(
     MediumTopAppBar(
         title = { Text(teamName, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         scrollBehavior = scrollBehavior,
-        navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(
-                    Icons.Default.ArrowBack,
-                    contentDescription = "Back button"
-                )
-            }
-        },
+        navigationIcon = { BackButton(onClick = onBack) },
         actions = {
             IconButton(
                 onClick = onLeaderboard,

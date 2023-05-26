@@ -42,7 +42,7 @@ class MainViewModel(
     /**
      * Asks the auth repository to logout
      */
-    fun logout(a: ComponentActivity, then: () -> Any) {
+    fun logout(a: ComponentActivity, then: () -> Unit) {
         viewModelScope.launch {
             authRepository.logOut(a)
             then()

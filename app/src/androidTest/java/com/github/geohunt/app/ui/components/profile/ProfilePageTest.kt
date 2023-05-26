@@ -83,7 +83,7 @@ class ProfilePageTest {
 
     @Test
     fun showsSumOfClaimsAsScore() {
-            val vm = createViewModel(
+        val vm = createViewModel(
             score = object: MockScoreRepository() {
                 override suspend fun getScore(uid: String): Long {
                     return 169L

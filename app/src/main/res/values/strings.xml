@@ -3,10 +3,9 @@
 
     <string name="claim_hunt">Claim</string>
 
-
     <!-- All string for formatting message like "published just now" -->
     <string name="just_now">just now</string>
-    <string name="published_format">published %s</string>
+    <string name="published_format">%s</string>
     <string name="claimed_format">claimed %s</string>
 
     <string name="navigation.home">Home</string>
@@ -71,7 +70,7 @@
 
     <string name="challenge_create_agree_community_link"><![CDATA[By creating a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
     <string name="claim_create_agree_community_link"><![CDATA[By claiming a challenge, you agree to GeoHunt\'s <a href="https://github.com/SDP-GeoHunt/geo-hunt/wiki/Community-Guidelines">Community Guidelines</a>]]></string>
-    <string name="join_hunt">Join Hunt</string>
+    <string name="join_hunt">Hunt</string>
     <string name="less_button">less…</string>
     <string name="more_button">more…</string>
     <string name="claim_challenge_button">Submit claim</string>
@@ -136,12 +135,13 @@
     <string name="photo_of_the_claim_taken">Photo just taken of the claim</string>
 
     <!-- home feed/bounty selector -->
-    <string name="feed">Feed</string>
+    <string name="home">Home</string>
+    <string name="discover">Discover</string>
     <string name="bounties">Bounties</string>
     <string name="join">Join</string>
     <string name="no_bounties">No available bounties at the moment.</string>
     <string name="starts_in">Starts %1$s</string>
-    <string name="ends_in">Ends %1$s</string>
+    <string name="ends">Ends %1$s</string>
     <string name="expired_since">Expired %1$s</string>
 
     <string name="starts_in_bang">Starts %1$s !</string>
@@ -165,6 +165,12 @@
     <string name="renaming_bounty_placeholder"><![CDATA[<Name of Bounty>]]></string>
     <string name="pick_location_popup_title">Pick a location</string>
     <string name="location_picker_placeholder"><![CDATA[<Select>]]></string>
+    <string name="claimed">Claimed</string>
+    <string name="leave_the_hunt">Leave the hunt</string>
+    <string name="expires">Expires %1$s</string>
+    <string name="empty_feed_title">This place is a bit empty.</string>
+    <string name="empty_feed_subtitle">You can check for nearby challenges on the map !</string>
+    <string name="open_the_map">Open the map</string>
 
     <plurals name="teams_count">
         <item quantity="zero">no teams</item>

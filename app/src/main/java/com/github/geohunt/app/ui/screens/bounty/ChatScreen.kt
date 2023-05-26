@@ -1,34 +1,32 @@
 package com.github.geohunt.app.ui.screens.bounty
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.*
-import androidx.compose.material.Card
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Message
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
+import com.github.geohunt.app.ui.components.appbar.TopAppBarWithBackButton
 import kotlinx.coroutines.flow.StateFlow
-import com.github.geohunt.app.R
-import androidx.compose.material.MaterialTheme
-import androidx.compose.ui.platform.testTag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +39,7 @@ fun ChatScreen(
 
     val messageState = viewModel.messages.collectAsStateWithLifecycle()
 
-    Scaffold(topBar = { TopBarWithBackButton(onBack = onBack, title = stringResource(id = R.string.team_chat_title)) },
+    Scaffold(topBar = { TopAppBarWithBackButton(onBack = onBack, title = stringResource(id = R.string.team_chat_title)) },
     bottomBar = { MessageInput(sendMessage = viewModel::sendMessage) }) {
         padding ->
         Column(

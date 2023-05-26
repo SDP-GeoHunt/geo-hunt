@@ -9,14 +9,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.alorma.compose.settings.ui.SettingsGroup
 import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
+import com.github.geohunt.app.ui.components.appbar.TopAppBarWithBackButton
 
 @Composable
-fun PrivacySettingsPage(onBack: () -> Any, viewModel: PrivacySettingsViewModel) {
+fun PrivacySettingsPage(onBack: () -> Unit, viewModel: PrivacySettingsViewModel) {
     Scaffold(
         topBar = {
-            TopBarWithBackButton(
-                onBack = { onBack() },
+            TopAppBarWithBackButton(
+                onBack = onBack,
                 title = stringResource(id = R.string.privacy_settings)
             )
         }

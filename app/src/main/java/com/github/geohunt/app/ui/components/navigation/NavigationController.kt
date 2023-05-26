@@ -4,15 +4,17 @@ import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.Add
-import androidx.compose.material.icons.sharp.Home
-import androidx.compose.material.icons.sharp.Person
-import androidx.compose.material.icons.sharp.Search
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -49,31 +51,60 @@ import com.github.geohunt.app.ui.settings.privacy_settings.PrivacySettingsViewMo
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-typealias ComposableFun = @Composable () -> Unit
-
-interface Route {
+/**
+ * Represents an app screen that is reachable in the navigation graph using a provided route.
+ */
+sealed interface Screen {
+    /**
+     * Returns the route that is used to navigate to this screen in the navigation graph.
+     *
+     * This route must be unique to avoid navigation conflicts.
+     */
     val route: String
 }
 
-enum class VisibleRoute(
-    override val route: String,
-    val icon: ComposableFun
-): Route {
+/**
+ * Represents a top-level screen.
+ *
+ * Such screens are primary destinations of the application, and are represented with their
+ * [icon] and [label] in the [GeoHuntNavigationBar].
+ *
+ * @param label A textual label shown below the selected [NavigationBarItem].
+ * @param icon The icon of the screen in the [GeoHuntNavigationBar].
+ */
+enum class PrimaryScreen(
+    val label: String?,
+    val icon: @Composable () -> Unit
+): Screen {
+    Home(
+        label = "Home",
+        icon = { Icon(Icons.Default.Home, contentDescription = "Home icon") }
+    ),
+    Explore(
+        label = "Explore",
+        icon = { Icon(Icons.Outlined.Explore, contentDescription = "Explore icon") }
+    ),
+    Create(
+        label = null, // Won't be shown since it opens in full screen
+        icon = { Icon(Icons.Default.Add, contentDescription = "Create icon") }
+    ),
+    ActiveHunts(
+        label = "Hunts",
+        icon = { Icon(painterResource(id = R.drawable.target_arrow), "Hunts icon") }
+    ),
+    Profile(
+        label = "Profile",
+        icon = { Icon(Icons.Default.Person, contentDescription = "Profile icon") }
+    );
 
-    Home("home", { Icon(Icons.Sharp.Home, null) }),
-    Explore("explore", { Icon(Icons.Sharp.Search, null) }),
-    Create("create", { Icon(Icons.Sharp.Add, null) }),
-    ActiveHunts("active-hunts", {
-        Icon(
-            androidx.compose.ui.res.painterResource(
-                id = R.drawable.target_arrow
-            ), null
-        )
-    }),
-    Profile("profile", { Icon(Icons.Sharp.Person, null) })
+    override val route: String
+        get() = this.name.lowercase()
 }
 
-enum class HiddenRoute(override val route: String): Route {
+/**
+ * Represents a secondary screen that is not present in the bottom [GeoHuntNavigationBar].
+ */
+enum class SecondaryScreen(override val route: String): Screen {
     BountyTeamChooser("bounty/team-select"),
     BountyTeamProgress("bounty/team-progress"),
     EditProfile("settings/profile"),
@@ -93,7 +124,7 @@ enum class HiddenRoute(override val route: String): Route {
 fun NavigationController(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    logout: () -> Any
+    logout: () -> Unit
 ) {
     val context = LocalContext.current
     val container: AppContainer = AppContainer.getInstance(LocalContext.current.applicationContext as Application)
@@ -103,13 +134,21 @@ fun NavigationController(
         navController.popBackStack()
     }
 
-    NavHost(navController, startDestination = VisibleRoute.Home.route, modifier = modifier) {
-        composable(VisibleRoute.Home.route) {
+    NavHost(navController, startDestination = PrimaryScreen.Home.route, modifier = modifier) {
+        composable(PrimaryScreen.Home.route) {
             RequireFineLocationPermissions {
-                HomeScreen(navigate = { navController.navigate(it) })
+                HomeScreen(
+                    onUserClick = { navController.navigate("${PrimaryScreen.Profile.route}/${it.id}") },
+                    onOpenMap = { /* TODO Open with challenge-centered map */ navController.navigate(PrimaryScreen.Explore.route) },
+                    onOpenChallenge = { navController.navigate("challenge-view/${it.id}") },
+                    onClaim = { navController.navigate("claim-challenge/${it.id}") },
+                    onOpenExplore = { navController.navigate(PrimaryScreen.Explore.route) },
+                    showTeamProgress = { navController.navigate("${SecondaryScreen.BountyTeamProgress.route}/${it.bid}") },
+                    showTeamChooser = { navController.navigate("${SecondaryScreen.BountyTeamChooser.route}/${it.bid}") }
+                )
             }
         }
-        composable(VisibleRoute.Explore.route) {
+        composable(PrimaryScreen.Explore.route) {
             GoogleMapDisplay(
                 modifier = Modifier.fillMaxSize(),
                 onFailure = {
@@ -119,7 +158,7 @@ fun NavigationController(
                 }
             )
         }
-        composable(HiddenRoute.CreateChallenge.route) {
+        composable(SecondaryScreen.CreateChallenge.route) {
             CreateNewChallenge(
                 onFailure = onFailure,
                 onSuccess = {
@@ -129,7 +168,7 @@ fun NavigationController(
             )
         }
 
-        composable(HiddenRoute.CreateBounty.route) {
+        composable(SecondaryScreen.CreateBounty.route) {
             CreateNewBounty(
                 onFailure = onFailure,
                 onSuccess = { bounty ->
@@ -151,30 +190,30 @@ fun NavigationController(
             )
         }
 
-        composable(VisibleRoute.ActiveHunts.route) {
+        composable(PrimaryScreen.ActiveHunts.route) {
             ActiveHuntsScreen(
-                openExploreTab = { navController.navigate(VisibleRoute.Home.route) },
-                openChallengeView = { navController.navigate("${HiddenRoute.ChallengeView.route}/${it.id}") },
-                openBountyView = { navController.navigate("${HiddenRoute.BountyTeamProgress.route}/${it.bid}") }
+                openExploreTab = { navController.navigate(PrimaryScreen.Home.route) },
+                openChallengeView = { navController.navigate("${SecondaryScreen.ChallengeView.route}/${it.id}") },
+                openBountyView = { navController.navigate("${SecondaryScreen.BountyTeamProgress.route}/${it.bid}") }
             )
         }
 
         // Profile
-        composable(VisibleRoute.Profile.route) {
+        composable(PrimaryScreen.Profile.route) {
             ProfilePage(
-                openLeaderboard = { navController.navigate(HiddenRoute.Leaderboard.route) },
-                openProfileEdit = { navController.navigate(HiddenRoute.EditProfile.route) },
-                openSettings = { navController.navigate(HiddenRoute.Settings.route) },
+                openLeaderboard = { navController.navigate(SecondaryScreen.Leaderboard.route) },
+                openProfileEdit = { navController.navigate(SecondaryScreen.EditProfile.route) },
+                openSettings = { navController.navigate(SecondaryScreen.Settings.route) },
                 onLogout = { logout() },
-                openChallengeView = { navController.navigate("${HiddenRoute.ChallengeView.route}/${it.id}") }
+                openChallengeView = { navController.navigate("${SecondaryScreen.ChallengeView.route}/${it.id}") }
             )
         }
 
-        composable(HiddenRoute.Leaderboard.route) {
+        composable(SecondaryScreen.Leaderboard.route) {
             UserLeaderboard()
         }
 
-        composable("${VisibleRoute.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
+        composable("${PrimaryScreen.Profile.route}/{userId}", arguments = listOf(navArgument("userId") { type = NavType.StringType })) {
             it.arguments?.getString("userId")?.let {
                 userId -> ProfilePage(
                     ProfilePageViewModel(
@@ -184,7 +223,7 @@ fun NavigationController(
             }
         }
 
-        composable(HiddenRoute.EditProfile.route) {
+        composable(SecondaryScreen.EditProfile.route) {
             ProfileEditPage(
                 onBackButton = { navController.popBackStack() }
             )
@@ -203,7 +242,7 @@ fun NavigationController(
 
         // Open the view for a certain challenge
         composable(
-            HiddenRoute.ChallengeView.route + "/{challengeId}",
+            SecondaryScreen.ChallengeView.route + "/{challengeId}",
             arguments = listOf(navArgument("challengeId") { type = NavType.StringType })
         ) { backStackEntry ->
             val cid = backStackEntry.arguments?.getString("challengeId")!!
@@ -212,7 +251,7 @@ fun NavigationController(
                 cid = cid,
                 fnViewImageCallback = { navController.navigate("image-view/${URLEncoder.encode(it, StandardCharsets.UTF_8.toString())}") },
                 fnClaimHuntCallback = { cid -> navController.navigate("claim-challenge/$cid") },
-                fnGoBackBtn = { navController.popBackStack() }
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -227,7 +266,7 @@ fun NavigationController(
                 onFailure = onFailure,
                 onSuccess = {
                     navController.popBackStack()
-                    navController.navigate(HiddenRoute.ChallengeView.route + "/$cid")
+                    navController.navigate(SecondaryScreen.ChallengeView.route + "/$cid")
                 }
             )
         }
@@ -244,16 +283,16 @@ fun NavigationController(
         }
 
         // Settings
-        composable(HiddenRoute.Settings.route) {
+        composable(SecondaryScreen.Settings.route) {
             SettingsPage({ navController.popBackStack() }) { navController.navigate(it.route)}
         }
 
-        composable(HiddenRoute.AppSettings.route) {
+        composable(SecondaryScreen.AppSettings.route) {
             val viewModel = AppSettingsViewModel(container.appSettingsRepository)
             AppSettingsPage(onBack = { navController.popBackStack() }, viewModel)
         }
 
-        composable(HiddenRoute.PrivacySettings.route) {
+        composable(SecondaryScreen.PrivacySettings.route) {
             val viewModel = PrivacySettingsViewModel(
                 userRepository = container.user,
                 profileVisibilityRepository = container.profileVisibilities
@@ -263,17 +302,17 @@ fun NavigationController(
 
         // Bounties
         composable(
-            "${HiddenRoute.BountyTeamChooser.route}/{bountyId}",
+            "${SecondaryScreen.BountyTeamChooser.route}/{bountyId}",
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
             BountyTeamSelectPage(bid, onBack = { navController.popBackStack() }, onSelectedTeam = {
-                navController.navigate("${HiddenRoute.BountyTeamProgress.route}/$bid")
+                navController.navigate("${SecondaryScreen.BountyTeamProgress.route}/$bid")
             })
         }
 
         composable(
-            "${HiddenRoute.BountyTeamProgress.route}/{bountyId}",
+            "${SecondaryScreen.BountyTeamProgress.route}/{bountyId}",
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
@@ -281,12 +320,12 @@ fun NavigationController(
                 onBack = { navController.popBackStack() },
                 onLeaderboard = { navController.navigate("bounty/leaderboard/$bid") },
                 onChat = { navController.navigate("bounty/team-progress/chat/$bid") },
-                onClaim = { navController.navigate("${HiddenRoute.BountyClaimChallenge.route}/$bid/${it.id}") },
+                onClaim = { navController.navigate("${SecondaryScreen.BountyClaimChallenge.route}/$bid/${it.id}") },
                 bountyId = bid
             ) }
         }
 
-        composable("${HiddenRoute.TeamChat.route}/{bountyId}",
+        composable("${SecondaryScreen.TeamChat.route}/{bountyId}",
             arguments = listOf(navArgument("bountyId") {type = NavType.StringType})
         ) {
             val bid = it.arguments?.getString("bountyId")!!
@@ -294,7 +333,7 @@ fun NavigationController(
         }
 
         composable(
-            "${HiddenRoute.BountyLeaderboard.route}/{bountyId}",
+            "${SecondaryScreen.BountyLeaderboard.route}/{bountyId}",
             arguments = listOf(navArgument("bountyId") { type = NavType.StringType })
         ) {
             val bid = it.arguments?.getString("bountyId")!!
@@ -304,7 +343,7 @@ fun NavigationController(
         // Bounties
         // Open a claim for a given bounty's challenge
         composable(
-            "${HiddenRoute.BountyClaimChallenge.route}/{bountyId}/{challengeId}",
+            "${SecondaryScreen.BountyClaimChallenge.route}/{bountyId}/{challengeId}",
             arguments = listOf(
                 navArgument("bountyId") { type = NavType.StringType },
                 navArgument("challengeId") { type = NavType.StringType })
@@ -322,7 +361,7 @@ fun NavigationController(
                 },
                 onSuccess = {
                     navController.popBackStack()
-                    navController.navigate("${HiddenRoute.ChallengeView.route}/$cid")
+                    navController.navigate("${SecondaryScreen.ChallengeView.route}/$cid")
                 }
             )
         }

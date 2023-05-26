@@ -70,7 +70,7 @@ fun GoogleMapDisplay(
             cid = cid.value,
             fnViewImageCallback = fnClaimHuntCallback,
             fnClaimHuntCallback = fnClaimHuntCallback,
-            fnGoBackBtn = { showChallengeView.value = false }
+            onBack = { showChallengeView.value = false }
         )
     } else {
 

@@ -92,7 +92,7 @@ class ChallengeRepository(
             .snapshots
             .map {
                 it.children.mapNotNull { challenge ->
-                    challenge.getValue(FirebaseChallenge::class.java)?.asExternalModel(challenge.key!!)
+                    challenge.getValue(FirebaseChallenge::class.java)?.asExternalModel(sector + challenge.key!!)
                 }
             }
             .flowOn(ioDispatcher)

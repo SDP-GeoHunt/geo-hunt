@@ -11,7 +11,7 @@ import androidx.compose.ui.res.stringResource
 import com.github.geohunt.app.R
 
 @Composable
-fun DisplayNameChanger(value: String, onChange: (String) -> Any) {
+fun DisplayNameChanger(value: String, onChange: (String) -> Unit) {
 
     Row {
        TextField(

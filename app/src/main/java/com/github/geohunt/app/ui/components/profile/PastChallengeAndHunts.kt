@@ -3,8 +3,16 @@ package com.github.geohunt.app.ui.components.profile
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -13,36 +21,35 @@ import androidx.compose.ui.text.style.TextAlign
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Challenge
 
-typealias ComposableFun = @Composable (List<Challenge>?, (Challenge) -> Unit) -> Unit
-
-enum class ProfileTabs(val tabName: Int, val tabContent: ComposableFun) {
-    PastChallenges(R.string.challenges, { challenges, callback ->
-        PastChallengesContent(challenges = challenges, openChallengeView = callback) }),
-    PastHunts(R.string.hunts, { challenges, callback ->
-        PastHuntsContent(hunts = challenges, openChallengeView = callback)
-    })
+enum class ProfileTabs(val title: Int) {
+    PastChallenges(R.string.challenges),
+    PastHunts(R.string.hunts)
 }
 
 /**
  * Shows a tab view of two different tabs, for past challenges and past hunts
  */
 @Composable
-fun PastChallengeAndHunts(challenges: List<Challenge>?, hunts: List<Challenge>?, openChallengeView: (Challenge) -> Unit = { }) {
+fun PastChallengeAndHunts(challenges: List<Challenge>?, hunts: List<Challenge>?, openChallengeView: (Challenge) -> Unit) {
     var currentTab by remember { mutableStateOf(ProfileTabs.PastChallenges) }
 
     Column {
+        // TODO Using GeoHuntTabs breaks ProfilePageTests
         TabRow(selectedTabIndex = currentTab.ordinal, backgroundColor = MaterialTheme.colors.background) {
             ProfileTabs.values().forEach {
                 Tab(
                     selected = it.ordinal == currentTab.ordinal,
-                    text = { Text(stringResource(id = it.tabName)) },
+                    text = { Text(stringResource(id = it.title)) },
                     onClick = { currentTab = it },
-                    modifier = Modifier.testTag("tabbtn-${it.ordinal}")
+                    modifier = Modifier.testTag("tab-${it.ordinal}")
                 )
             }
         }
 
-        currentTab.tabContent(if (currentTab.ordinal == 0) challenges else hunts, openChallengeView)
+        when (currentTab) {
+            ProfileTabs.PastChallenges -> PastChallengesContent(challenges, openChallengeView)
+            ProfileTabs.PastHunts -> PastHuntsContent(hunts, openChallengeView)
+        }
     }
 }
 

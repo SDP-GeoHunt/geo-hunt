@@ -1,46 +1,52 @@
 package com.github.geohunt.app.ui.screens.home
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.components.utils.ShowException
+import com.github.geohunt.app.model.Bounty
+import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.model.User
+import com.github.geohunt.app.ui.components.appbar.FeedSelectionDrawer
+import com.github.geohunt.app.ui.components.appbar.HomeScreenFeed
+import com.github.geohunt.app.ui.components.appbar.MainAppBar
 
-internal enum class HomeScreens(val title: @Composable () -> String) {
-    Feed({ stringResource(id = R.string.feed) }),
-    Bounties({ stringResource(id = R.string.bounties) })
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
-    navigate: (String) -> Any
+    onUserClick: (User) -> Unit,
+    onOpenMap: (Challenge) -> Unit,
+    onOpenChallenge: (Challenge) -> Unit,
+    onClaim: (Challenge) -> Unit,
+    onOpenExplore: () -> Unit,
+    showTeamProgress: (Bounty) -> Unit,
+    showTeamChooser: (Bounty) -> Unit
 ) {
-    var currentScreen by remember { mutableStateOf(HomeScreens.Feed) }
-    val didFail by viewModel.initFailException.collectAsState()
+    FeedSelectionDrawer { feed, openDrawer ->
+        Scaffold(
+            topBar = { MainAppBar(title = feed.title(), openDrawer) }
+        ) { padding ->
+            Box(Modifier.padding(padding)) {
+                when(feed) {
+                    HomeScreenFeed.Home,
+                    HomeScreenFeed.Discover -> ChallengeFeed(
+                        chosenFeed = feed,
+                        onUserClick = onUserClick,
+                        onOpenMap = onOpenMap,
+                        onOpenChallenge = onOpenChallenge,
+                        onClaim = onClaim,
+                        onOpenExplore = onOpenExplore
+                    )
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        if (didFail != null) {
-            ShowException(e = didFail!!)
-        } else {
-            Surface(elevation = 8.dp) {
-                HomeScreenSelector(currentScreen = currentScreen, onChange = { currentScreen = it })
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            when(currentScreen) {
-                HomeScreens.Feed -> HomeFeed(viewModel = viewModel)
-                HomeScreens.Bounties -> HomeBounties(vm = viewModel, navigate)
+                    HomeScreenFeed.Bounties -> BountiesFeed(
+                        onUserClick = onUserClick,
+                        showTeamProgress = showTeamProgress,
+                        showTeamChooser = showTeamChooser
+                    )
+                }
             }
         }
     }
 }
-

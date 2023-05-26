@@ -40,15 +40,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Team
 import com.github.geohunt.app.model.User
-import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
+import com.github.geohunt.app.ui.components.appbar.TopAppBarWithBackButton
 import com.github.geohunt.app.ui.components.user.ProfileIcon
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BountyTeamSelectPage(
     bountyId: String,
-    onBack: () -> Any,
-    onSelectedTeam: (Team) -> Any,
+    onBack: () -> Unit,
+    onSelectedTeam: (Team) -> Unit,
     viewModel: BountyTeamSelectViewModel = viewModel(factory = BountyTeamSelectViewModel.getFactory(bountyId))
 ) {
     val bountyName by viewModel.bountyName.collectAsState()
@@ -60,14 +60,21 @@ fun BountyTeamSelectPage(
     val canDeleteTeams by viewModel.canDeleteTeams.collectAsState()
 
     Column {
-        TopBarWithBackButton(onBack = { onBack() }, title = stringResource(
-            id = R.string.select_team_for_bounty,
-            bountyName ?: "…"
-        ), {
-            IconButton(onClick = { onSelectedTeam(currentTeam!!) }, enabled = currentTeam != null, modifier = Modifier.testTag("check-btn")) {
+        TopAppBarWithBackButton(
+            onBack = onBack,
+            title = stringResource(
+                id = R.string.select_team_for_bounty,
+                bountyName ?: "…"
+            )
+        ) {
+            IconButton(
+                onClick = { onSelectedTeam(currentTeam!!) },
+                enabled = currentTeam != null,
+                modifier = Modifier.testTag("check-btn")
+            ) {
                 Icon(Icons.Default.Check, contentDescription = null)
             }
-        })
+        }
 
         Box {
             challengesImageSlider(
@@ -140,12 +147,12 @@ fun TeamCreator(createTeam: (String) -> Unit, disabled: Boolean) {
 fun TeamsSelector(
     teams: List<Team>?,
     users: Map<String, List<User>>,
-    join: (Team) -> Any,
-    leaveTeam: () -> Any,
+    join: (Team) -> Unit,
+    leaveTeam: () -> Unit,
     disabled: Boolean,
     currentTeam: Team?,
     canDeleteTeams: List<String>,
-    onDeleteTeam: (Team) -> Any,
+    onDeleteTeam: (Team) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (teams == null) return
@@ -185,11 +192,11 @@ fun TeamsSelector(
 fun TeamSelector(
     name: String,
     users: List<User>? = listOf(),
-    onAction: () -> Any = {},
+    onAction: () -> Unit = {},
     disabled: Boolean = false,
     isUserInside: Boolean = false,
     canDelete: Boolean = false,
-    onDelete: () -> Any = {}
+    onDelete: () -> Unit = {}
 ) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {

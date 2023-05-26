@@ -23,14 +23,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.geohunt.app.R
 import com.github.geohunt.app.model.Bounty
 import com.github.geohunt.app.model.Challenge
+import com.github.geohunt.app.ui.components.GeoHuntTabs
+import com.github.geohunt.app.ui.components.TabData
 import com.github.geohunt.app.ui.components.activehunts.ActiveBountiesList
 import com.github.geohunt.app.ui.components.activehunts.ActiveHuntsList
 import com.github.geohunt.app.ui.components.activehunts.ActiveHuntsTitle
 import kotlinx.coroutines.flow.StateFlow
 
-enum class ActiveHuntsTabs(val tabName: Int) {
-    Challenges(R.string.challenges),
-    Bounties(R.string.bounties)
+enum class ActiveHuntsTabs {
+    Challenges,
+    Bounties
 }
 
 /**
@@ -52,8 +54,8 @@ fun ActiveHuntsScreen(
 ) {
     Column(
         modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp)
+            .fillMaxSize()
+            .padding(10.dp)
     ) {
         ActiveHuntsTitle()
 
@@ -62,23 +64,26 @@ fun ActiveHuntsScreen(
 
         var currentTab by remember { mutableStateOf(ActiveHuntsTabs.Challenges) }
 
-        TabRow(selectedTabIndex = currentTab.ordinal){
-            ActiveHuntsTabs.values().forEach { tab ->
-                Tab(
-                        selected = tab.ordinal == currentTab.ordinal,
-                        text = { Text(stringResource(tab.tabName)) },
-                        onClick = { currentTab = tab }
-                )
-            }
-        }
+        GeoHuntTabs(tabs = listOf(
+            TabData(title = stringResource(id = R.string.challenges), onClick = { currentTab = ActiveHuntsTabs.Challenges }),
+            TabData(title = stringResource(id = R.string.bounties), onClick = { currentTab = ActiveHuntsTabs.Bounties }),
+        ))
 
         Spacer(modifier = Modifier.size(10.dp))
 
-        if(currentTab == ActiveHuntsTabs.Challenges) {
-            ActiveChallenges(challenges.value, openExploreTab, openChallengeView, viewModel::getAuthorName)
-        }
-        else if(currentTab == ActiveHuntsTabs.Bounties) {
-            ActiveBounties(bounties.value, openExploreTab, openBountyView)
+        when (currentTab) {
+            ActiveHuntsTabs.Challenges -> ActiveChallenges(
+                challenges.value,
+                openExploreTab,
+                openChallengeView,
+                viewModel::getAuthorName
+            )
+
+            ActiveHuntsTabs.Bounties -> ActiveBounties(
+                bounties.value,
+                openExploreTab,
+                openBountyView
+            )
         }
     }
 }

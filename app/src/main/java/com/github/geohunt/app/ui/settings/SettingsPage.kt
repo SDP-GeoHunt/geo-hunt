@@ -15,17 +15,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.geohunt.app.R
-import com.github.geohunt.app.ui.components.navigation.TopBarWithBackButton
+import com.github.geohunt.app.ui.components.appbar.TopAppBarWithBackButton
 import com.alorma.compose.settings.ui.SettingsMenuLink
-import com.github.geohunt.app.ui.components.navigation.HiddenRoute
-import com.github.geohunt.app.ui.components.navigation.Route
+import com.github.geohunt.app.ui.components.navigation.SecondaryScreen
+import com.github.geohunt.app.ui.components.navigation.Screen
 
 @Composable
-fun SettingsPage(onBack: () -> Any, navigate: (Route) -> Any) {
+fun SettingsPage(onBack: () -> Unit, navigate: (Screen) -> Unit) {
     Scaffold(
         topBar = {
-            TopBarWithBackButton(
-                onBack = { onBack() },
+            TopAppBarWithBackButton(
+                onBack = onBack,
                 title = stringResource(id = R.string.settings)
             )
         }
@@ -37,10 +37,10 @@ fun SettingsPage(onBack: () -> Any, navigate: (Route) -> Any) {
             Column {
 
                 SettingsMenuLinkQuick(stringResource(id = R.string.app_settings), Icons.Default.Settings)
-                    { navigate(HiddenRoute.AppSettings) }
+                    { navigate(SecondaryScreen.AppSettings) }
 
                 SettingsMenuLinkQuick(stringResource(id = R.string.privacy_settings), Icons.Default.Shield)
-                    { navigate(HiddenRoute.PrivacySettings) }
+                    { navigate(SecondaryScreen.PrivacySettings) }
             }
         }
     }
@@ -48,7 +48,7 @@ fun SettingsPage(onBack: () -> Any, navigate: (Route) -> Any) {
 }
 
 @Composable
-private fun SettingsMenuLinkQuick(title: String, icon: ImageVector, onClick: () -> Any) {
+private fun SettingsMenuLinkQuick(title: String, icon: ImageVector, onClick: () -> Unit) {
     SettingsMenuLink(
         title = { Text(title) },
         icon = { Icon(imageVector = icon, contentDescription = title)}

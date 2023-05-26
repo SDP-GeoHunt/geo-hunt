@@ -22,7 +22,7 @@ import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDateTime
 
-class HomeViewModelTest {
+class BountyFeedViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
@@ -45,7 +45,7 @@ class HomeViewModelTest {
                 return MockTeamRepository(listOf(Team("1", "teamName", listOf("1", "2", "3"), "1", 1000)))
             }
         }
-    ): HomeViewModel {
+    ): BountyFeedViewModel {
         val authRep = MockAuthRepository()
         val userRep = MockUserRepository()
         val chalRep = MockChallengeRepository()
@@ -53,11 +53,9 @@ class HomeViewModelTest {
 
 
         val getUserFeedUseCase = GetUserFeedUseCase(authRep, chalRep, followRep)
-        return HomeViewModel(
+        return BountyFeedViewModel(
             authRep,
             userRep,
-            getUserFeedUseCase,
-            chalRep,
             bountiesRep
         )
     }

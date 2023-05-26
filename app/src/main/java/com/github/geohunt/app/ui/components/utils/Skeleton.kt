@@ -7,7 +7,6 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -16,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -49,7 +49,8 @@ fun Skeleton(modifier: Modifier = Modifier) {
         )
     )
 
-    Box(modifier.background(color).testTag("skeleton"))
+    // Use drawBehind to skip composition and layout phases
+    Box(modifier.drawBehind { drawRect(color) }.testTag("skeleton"))
 }
 
 /**
@@ -119,14 +120,13 @@ fun SkeletonLoadingImage(
             else -> {
                 // Fixing the size here is important to avoid subcomposition
                 // See https://coil-kt.github.io/coil/compose/#subcomposeasyncimage
-                val request = ImageRequest.Builder(LocalContext.current)
-                    .data(url)
-                    .size(
-                        width = with(LocalDensity.current) { width.roundToPx() },
-                        height = with(LocalDensity.current) { height.roundToPx() }
-                    )
-                    .crossfade(true)
-                    .build()
+                val request = LocalDensity.current.run {
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(url)
+                        .size(width = width.roundToPx(), height = height.roundToPx())
+                        .crossfade(true)
+                        .build()
+                }
 
                 // Load the image and use the skeleton as long as the image is loading
                 SubcomposeAsyncImage(
@@ -177,8 +177,8 @@ fun SkeletonLoadingProfilePicture(
         url = url,
         width = size,
         height = size,
-        modifier = modifier.clip(CircleShape),
+        modifier = modifier.clip(CircleShape).testTag("profile"),
         onClick = onClick,
-        contentDescription = contentDescription
+        contentDescription = contentDescription,
     )
 }

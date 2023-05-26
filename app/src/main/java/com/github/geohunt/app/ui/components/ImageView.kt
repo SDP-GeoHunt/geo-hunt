@@ -13,16 +13,17 @@ import androidx.compose.ui.res.colorResource
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.geohunt.app.R
+import com.github.geohunt.app.ui.components.buttons.BackButton
 
 /**
  * A composable function that displays a zoomable image view with an option to go back to the
  * previous screen.
  *
  * @param url The url of the image to be displayed.
- * @param fnGoBackCallback function called whenever the user presses on the go-back arrow
+ * @param onBack function called whenever the user presses on the go-back arrow
  */
 @Composable
-fun ZoomableImageView(url: String, fnGoBackCallback: () -> Unit) {
+fun ZoomableImageView(url: String, onBack: () -> Unit) {
     Box(modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.md_theme_light_background))) {
@@ -41,6 +42,6 @@ fun ZoomableImageView(url: String, fnGoBackCallback: () -> Unit) {
         }
 
 
-        GoBackBtn(fnGoBackCallback)
+        BackButton(onBack)
     }
 }

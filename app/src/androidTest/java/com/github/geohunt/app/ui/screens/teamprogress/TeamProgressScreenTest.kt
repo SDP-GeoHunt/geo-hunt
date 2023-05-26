@@ -98,7 +98,7 @@ class TeamProgressScreenTest {
         }
         testRule.waitForIdle()
 
-        val backButton = testRule.onNodeWithContentDescription("Back button")
+        val backButton = testRule.onNodeWithTag("backButton")
         backButton.assertExists()
         backButton.assertHasClickAction()
         backButton.performClick()
