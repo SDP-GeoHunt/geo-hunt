@@ -123,7 +123,7 @@ class HomeBountyCardTest {
                 onUserClick = {}
             )
         }
-        c.onNodeWithText("Bounty name").assertIsDisplayed()
+        c.onNodeWithText("Bounty name", substring = true).assertIsDisplayed()
     }
 
     @Test

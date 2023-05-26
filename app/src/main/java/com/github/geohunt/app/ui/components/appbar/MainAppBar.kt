@@ -11,6 +11,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
 import com.github.geohunt.app.R
@@ -26,7 +28,7 @@ fun MainAppBar(
     TopAppBar(
         title = { Text(title) },
         navigationIcon = {
-             IconButton(onClick = openDrawer) {
+             IconButton(onClick = openDrawer, modifier = Modifier.testTag("mainAppBar-nav")) {
                  Icon(Icons.Default.Menu, null)
              }
         },
