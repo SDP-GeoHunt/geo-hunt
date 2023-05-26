@@ -177,8 +177,8 @@ fun SkeletonLoadingProfilePicture(
         url = url,
         width = size,
         height = size,
-        modifier = modifier.clip(CircleShape),
+        modifier = modifier.clip(CircleShape).testTag("profile"),
         onClick = onClick,
-        contentDescription = contentDescription
+        contentDescription = contentDescription,
     )
 }

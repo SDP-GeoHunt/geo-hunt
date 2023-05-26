@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -59,7 +60,7 @@ val ChallengeCardContentPadding = 8.dp
  * @param publicationDate The publication date of the challenge.
  */
 @Composable
-private fun ChallengeCardTitle(
+fun ChallengeCardTitle(
     author: User?,
     onUserClick: (User) -> Unit,
     distance: () -> Double?,
@@ -111,7 +112,8 @@ private fun ChallengeCardTitle(
                     icon = {
                         Icon(
                             if (!isFollowing) Icons.Default.PersonAdd else Icons.Default.PersonRemove,
-                            contentDescription = null
+                            contentDescription = null,
+                            modifier = Modifier.testTag("follow-icon")
                         )
                     },
                     red = isFollowing

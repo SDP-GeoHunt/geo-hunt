@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 
 /**
  * Creates a [DropdownMenuItem] in a [MenuButton]'s dropdown.
@@ -60,8 +61,8 @@ fun MenuButton(content: @Composable ColumnScope.() -> Unit) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
-        IconButton(onClick = { expanded = true }) {
-            Icon(Icons.Default.MoreHoriz, contentDescription = "More actions")
+        IconButton(onClick = { expanded = true }, modifier = Modifier.testTag("menu-button")) {
+            Icon(Icons.Default.MoreHoriz, contentDescription = "More actions", )
         }
 
         DropdownMenu(
