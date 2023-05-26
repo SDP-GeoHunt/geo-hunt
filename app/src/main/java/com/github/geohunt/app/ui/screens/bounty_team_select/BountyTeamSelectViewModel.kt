@@ -29,9 +29,9 @@ import kotlinx.coroutines.launch
  */
 class BountyTeamSelectViewModel(
     private val bountyId: String,
-    bountiesRepository: BountiesRepositoryInterface,
-    challengeRepository: ChallengeRepositoryInterface,
-    userRepository: UserRepositoryInterface,
+    private val bountiesRepository: BountiesRepositoryInterface,
+    private val challengeRepository: ChallengeRepositoryInterface,
+    private val userRepository: UserRepositoryInterface,
     private val activeBountiesRepository: ActiveBountiesRepositoryInterface,
     private val teamsRepository: TeamsRepositoryInterface
 ): ViewModel() {
@@ -74,6 +74,17 @@ class BountyTeamSelectViewModel(
             activeBountiesRepository.leaveBounty(bountyId)
 
             _isBusy.value = false
+        }
+    }
+
+    fun checkNotAdmin(callbackIfAdmin: () -> Unit) {
+        viewModelScope.launch {
+            val selfId = userRepository.getCurrentUser().id
+            val adminId = bountiesRepository.getBountyById(bountyId)
+                .adminUid
+            if (selfId == adminId) {
+                callbackIfAdmin()
+            }
         }
     }
 

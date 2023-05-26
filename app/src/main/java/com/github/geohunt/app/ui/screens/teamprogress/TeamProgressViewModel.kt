@@ -115,6 +115,17 @@ class TeamProgressViewModel(
         }
     }
 
+    fun checkNotAdmin(callbackIfAdmin: () -> Unit) {
+        viewModelScope.launch {
+            val selfId = userRepository.getCurrentUser().id
+            val adminId = bountiesRepository.getBountyById(bountyId)
+                .adminUid
+            if (selfId == adminId) {
+                callbackIfAdmin()
+            }
+        }
+    }
+
     init {
         viewModelScope.launch {
             fetchTeamStatus()

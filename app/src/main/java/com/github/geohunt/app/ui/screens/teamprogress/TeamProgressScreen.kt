@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,10 +25,14 @@ fun TeamProgressScreen(
     onLeaderboard: () -> Unit,
     onChat: () -> Unit,
     onClaim: (Challenge) -> Unit,
+    openAdminPage: () -> Unit,
     bountyId: String,
     viewModel: TeamProgressViewModel = viewModel(factory = TeamProgressViewModel.getFactory(bountyId))
 ) {
     val teamStatus = viewModel.teamStatus.collectAsStateWithLifecycle()
+    LaunchedEffect(viewModel, bountyId) {
+        viewModel.checkNotAdmin(openAdminPage)
+    }
 
     when(teamStatus.value) {
         TeamStatus.LOADING_TEAM -> EmptyTeamProgressScreen(
