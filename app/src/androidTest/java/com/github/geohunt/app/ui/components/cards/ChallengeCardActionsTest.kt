@@ -30,7 +30,7 @@ class ChallengeCardActionsTest {
             )
         }
 
-        testRule.onNodeWithContentDescription("Open the map").onParent()
+        testRule.onNodeWithContentDescription("Open the map", useUnmergedTree = true).onParent()
             .assertIsDisplayed()
             .performClick()
 
@@ -51,7 +51,7 @@ class ChallengeCardActionsTest {
             )
         }
 
-        testRule.onNodeWithContentDescription("Hunt").onParent()
+        testRule.onNodeWithContentDescription("Hunt", useUnmergedTree = true).onParent()
             .assertIsDisplayed()
             .performClick()
 
@@ -72,7 +72,7 @@ class ChallengeCardActionsTest {
             )
         }
 
-        testRule.onNodeWithContentDescription("Claim").onParent()
+        testRule.onNodeWithContentDescription("Claim", useUnmergedTree = true).onParent()
             .assertIsDisplayed()
             .performClick()
 
@@ -91,7 +91,7 @@ class ChallengeCardActionsTest {
             )
         }
 
-        testRule.onNodeWithContentDescription("Claim").onParent()
+        testRule.onNodeWithContentDescription("Claim", useUnmergedTree = true).onParent()
             .assertIsDisplayed()
             .assertIsNotEnabled()
     }
