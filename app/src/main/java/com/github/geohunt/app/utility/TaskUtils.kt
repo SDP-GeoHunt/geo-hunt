@@ -1,40 +1,7 @@
 package com.github.geohunt.app.utility
 
-import android.app.Activity
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
-import java.util.concurrent.CompletableFuture
-import kotlin.coroutines.cancellation.CancellationException
-
-/**
- * Convert a given [Task] to a [CompletableFuture] that is executed in the context of a certain
- * activity
- *
- * @param activity the activity in which the return CompletableFuture will be executed
- */
-fun <TResult> Task<TResult>.toCompletableFuture(activity: Activity) : CompletableFuture<TResult>
-{
-    return this.toCompletableFuture()
-}
-
-/**
- * Convert a given [Task] to a [CompletableFuture] that is executed in the context of a certain
- * activity
- */
-fun <TResult> Task<TResult>.toCompletableFuture() : CompletableFuture<TResult>
-{
-    val completableFuture = CompletableFuture<TResult>()
-    this.addOnSuccessListener {
-            completableFuture.complete(it)
-        }
-        .addOnFailureListener {
-            completableFuture.completeExceptionally(it)
-        }
-        .addOnCanceledListener {
-            completableFuture.completeExceptionally(CancellationException())
-        }
-    return completableFuture
-}
 
 /**
  * Chains a continuation task to this task, which will be executed if this task completes successfully.

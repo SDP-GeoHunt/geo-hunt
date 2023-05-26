@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
  */
 class UserRepository(
     private val imageRepository: ImageRepository,
-    private val authRepository: AuthRepository,
+    private val authRepository: AuthRepositoryInterface,
     database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): UserRepositoryInterface {
