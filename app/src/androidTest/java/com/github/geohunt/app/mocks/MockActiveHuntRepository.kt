@@ -5,7 +5,7 @@ import com.github.geohunt.app.model.Challenge
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-open class MockActiveHuntRepository : ActiveHuntsRepositoryInterface {
+open class MockActiveHuntRepository(val activeHunts : List<String> = listOf()) : ActiveHuntsRepositoryInterface {
     override suspend fun joinHunt(challenge: Challenge) {
     }
 
@@ -13,10 +13,10 @@ open class MockActiveHuntRepository : ActiveHuntsRepositoryInterface {
     }
 
     override fun getActiveHunts(): Flow<List<String>> {
-        return flowOf(listOf())
+        return flowOf(activeHunts)
     }
 
     override fun isHunting(challenge: Challenge): Flow<Boolean> {
-        return flowOf(false)
+        return flowOf(activeHunts.contains(challenge.id))
     }
 }

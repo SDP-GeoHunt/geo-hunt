@@ -26,11 +26,11 @@ import kotlinx.coroutines.withContext
  * of claim for a particular challenge or a particular user
  */
 class ClaimRepository(
-    private val authRepository: AuthRepository,
+    private val authRepository: AuthRepositoryInterface,
     private val imageRepository: ImageRepository,
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
-    private val scoreRepository: ScoreRepository,
-    private val activeHuntsRepository: ActiveHuntsRepository,
+    private val scoreRepository: ScoreRepositoryInterface,
+    private val activeHuntsRepository: ActiveHuntsRepositoryInterface,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val pointCalculatorMap: Map<Challenge.Difficulty, PointCalculator> = PointCalculator.defaultCalculators,
 ) : ClaimRepositoryInterface {
