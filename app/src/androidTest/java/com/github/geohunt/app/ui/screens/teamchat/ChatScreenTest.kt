@@ -78,7 +78,7 @@ class ChatScreenTest {
             ))
         }
 
-        val backButton = testRule.onNodeWithTag("back-btn")
+        val backButton = testRule.onNodeWithTag("backButton")
         backButton.assertExists()
     }
 
