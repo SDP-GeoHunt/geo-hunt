@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.github.geohunt.app.R
-import com.github.geohunt.app.model.Location
 import com.google.maps.android.compose.MarkerInfoWindow
 import com.google.maps.android.compose.rememberMarkerState
 import java.time.LocalDateTime
@@ -38,10 +37,6 @@ fun DisplayMarkers(
     challengeId: MutableState<String>,
 ) {
     markers.forEach { challenge ->
-        val location = Location(
-            challenge.coordinates.latitude,
-            challenge.coordinates.longitude)
-
         // Do not display expired challenges
         if (challenge.expirationDate.isAfter(LocalDateTime.now())) {
             MarkerInfoWindow(
@@ -49,7 +44,7 @@ fun DisplayMarkers(
                 title = challenge.id,
                 snippet = challenge.expirationDate.toString(),
                 onInfoWindowClick = {
-                    challengeId.value = location.getCoarseHash() + challenge.id
+                    challengeId.value = challenge.id
                     showChallengeView.value = true
                 },
             ) {
