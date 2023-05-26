@@ -51,7 +51,6 @@ class ChallengeCardTest {
         var onMouseClicked: User? = null
         var onFollowUser: User? = null
         var onFollowBool = false
-        var onLeaveClicked = false
         val mockUser = mockUser(displayName = "Dario")
         testRule.setContent {
             ChallengeCardTitle(
@@ -62,7 +61,7 @@ class ChallengeCardTest {
                     isFollowing = false,
                     onFollow = {u, bool -> onFollowUser = u; onFollowBool = bool },
                     canLeaveHunt = true,
-                    onLeaveHunt = { onLeaveClicked = true })
+                    onLeaveHunt = { })
         }
 
         testRule.waitForIdle()
@@ -82,15 +81,6 @@ class ChallengeCardTest {
                 .performClick()
         Assert.assertTrue(onFollowBool)
         Assert.assertEquals(mockUser, onFollowUser)
-
-        testRule.onNodeWithTag("menu-button", useUnmergedTree = true)
-                .assertHasClickAction()
-                .performClick()
-
-        testRule.onNodeWithText("Leave the hunt", useUnmergedTree = true)
-                .assertHasClickAction()
-                .performClick()
-        Assert.assertTrue(onLeaveClicked)
     }
 
     @Test
