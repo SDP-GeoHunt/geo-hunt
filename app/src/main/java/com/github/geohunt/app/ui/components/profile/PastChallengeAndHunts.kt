@@ -15,9 +15,9 @@ import com.github.geohunt.app.model.Challenge
 import com.github.geohunt.app.ui.components.GeoHuntTabs
 import com.github.geohunt.app.ui.components.TabData
 
-enum class ProfileTabs {
-    PastChallenges,
-    PastHunts
+enum class ProfileTabs(val title: Int) {
+    PastChallenges(R.string.challenges),
+    PastHunts(R.string.hunts)
 }
 
 /**
@@ -28,10 +28,17 @@ fun PastChallengeAndHunts(challenges: List<Challenge>?, hunts: List<Challenge>?,
     var currentTab by remember { mutableStateOf(ProfileTabs.PastChallenges) }
 
     Column {
-        GeoHuntTabs(tabs = listOf(
-            TabData(title = stringResource(id = R.string.challenges), onClick = { currentTab = ProfileTabs.PastChallenges }),
-            TabData(title = stringResource(id = R.string.hunts), onClick = { currentTab = ProfileTabs.PastHunts }),
-        ))
+        // TODO Using GeoHuntTabs breaks ProfilePageTests
+        TabRow(selectedTabIndex = currentTab.ordinal, backgroundColor = MaterialTheme.colors.background) {
+            ProfileTabs.values().forEach {
+                Tab(
+                    selected = it.ordinal == currentTab.ordinal,
+                    text = { Text(stringResource(id = it.title)) },
+                    onClick = { currentTab = it },
+                    modifier = Modifier.testTag("tabbtn-${it.ordinal}")
+                )
+            }
+        }
 
         when (currentTab) {
             ProfileTabs.PastChallenges -> PastChallengesContent(challenges, openChallengeView)

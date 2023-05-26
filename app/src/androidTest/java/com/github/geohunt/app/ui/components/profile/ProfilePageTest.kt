@@ -81,9 +81,6 @@ class ProfilePageTest {
         testRule.waitUntilDoesNotExist(hasTestTag("progress"), 10_000L)
     }
 
-    /**
-     * Test fails because of GeoHuntTabs's custom tab indicator somehow
-     * Needs more investigation but might be a bug in Compose's library
     @Test
     fun showsSumOfClaimsAsScore() {
         val vm = createViewModel(
@@ -100,7 +97,6 @@ class ProfilePageTest {
 
         testRule.onNodeWithText("169").assertExists()
     }
-    */
 
     @Test
     fun showsDisplayName() {
