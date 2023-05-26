@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
  * of followers of users.
  */
 class FollowRepository(
-    private val authRepository: AuthRepository,
+    private val authRepository: AuthRepositoryInterface,
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): FollowRepositoryInterface {

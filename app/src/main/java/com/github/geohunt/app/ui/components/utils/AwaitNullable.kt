@@ -1,9 +1,9 @@
 package com.github.geohunt.app.ui.components.utils
 
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
+import com.github.geohunt.app.ui.components.CircleLoadingAnimation
 
 @Composable
 fun <T> AwaitNullable(
@@ -15,7 +15,7 @@ fun <T> AwaitNullable(
         callback(state.value!!)
     }
     else {
-        CircularProgressIndicator(
+        CircleLoadingAnimation(
             modifier = modifier
         )
     }

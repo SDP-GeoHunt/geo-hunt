@@ -27,7 +27,9 @@ fun EmptyScreen(text: String, buttonText: String, emptyScreenCallback: () -> Uni
             text = text,
             textAlign = TextAlign.Center
         )
+
         Spacer(modifier = Modifier.size(10.dp))
+
         Button(
             onClick = emptyScreenCallback,
             colors = ButtonDefaults.buttonColors(containerColor = geoHuntRed)
