@@ -59,6 +59,9 @@ class Feed(
             get() = _isBusy.asStateFlow()
     }
 
+    private val _challenges: MutableStateFlow<List<Challenge>?> = MutableStateFlow(null)
+    val challenges: StateFlow<List<Challenge>?> = _challenges.asStateFlow()
+
     init {
         coroutineScope.launch {
             challengeFlow.collect {
@@ -67,8 +70,6 @@ class Feed(
         }
     }
 
-    private val _challenges: MutableStateFlow<List<Challenge>?> = MutableStateFlow(null)
-    val challenges: StateFlow<List<Challenge>?> = _challenges.asStateFlow()
 
     private val challengeCache: MutableMap<Challenge, ChallengeData> = mutableMapOf()
 
