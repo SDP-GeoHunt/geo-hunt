@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -38,7 +39,7 @@ fun challengesImageSlider(challenges: List<Challenge>?, modifier: Modifier = Mod
 
     BoxWithConstraints(modifier
         .clip(CardDefaults.shape)
-        .requiredHeight(250.dp)
+        .height(250.dp)
     ) {
         HorizontalPager(pageCount = challenges.size, state = pagerState) {
             SkeletonLoadingImage(
