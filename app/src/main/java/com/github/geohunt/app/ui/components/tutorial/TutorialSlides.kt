@@ -34,8 +34,8 @@ class TutorialSlides(
                 ),
                 TutorialSlides(
                     R.drawable.play_as_team,
-                    R.string.tutorial_third_screen_title,
-                    R.string.tutorial_third_screen_description
+                    R.string.tutorial_fourth_screen_title,
+                    R.string.tutorial_fourth_screen_description
                 )
             )
         }
