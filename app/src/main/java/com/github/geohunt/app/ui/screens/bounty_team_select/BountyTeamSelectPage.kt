@@ -2,12 +2,10 @@ package com.github.geohunt.app.ui.screens.bounty_team_select
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -59,39 +57,36 @@ fun BountyTeamSelectPage(
     val currentTeam by viewModel.currentTeam.collectAsState()
     val canDeleteTeams by viewModel.canDeleteTeams.collectAsState()
 
-    Column {
-        TopAppBarWithBackButton(
-            onBack = onBack,
-            title = stringResource(
-                id = R.string.select_team_for_bounty,
-                bountyName ?: "…"
-            )
-        ) {
-            IconButton(
-                onClick = { onSelectedTeam(currentTeam!!) },
-                enabled = currentTeam != null,
-                modifier = Modifier.testTag("check-btn")
-            ) {
-                Icon(Icons.Default.Check, contentDescription = null)
-            }
-        }
-
-        Box {
-            challengesImageSlider(
-                challenges, modifier = Modifier
-                    .fillMaxWidth()
-                    .height(128.dp)
-            )
-        }
-
-        Scaffold(
-            bottomBar = {
-                TeamCreator(
-                    createTeam = { viewModel.createOwnTeam(it) },
-                    disabled = isBusy || currentTeam != null
+    Scaffold(
+        topBar = {
+            TopAppBarWithBackButton(
+                onBack = onBack,
+                title = stringResource(
+                    id = R.string.select_team_for_bounty,
+                    bountyName ?: "…"
                 )
+            ) {
+                IconButton(
+                    onClick = { onSelectedTeam(currentTeam!!) },
+                    enabled = currentTeam != null,
+                    modifier = Modifier.testTag("check-btn")
+                ) {
+                    Icon(Icons.Default.Check, contentDescription = null)
+                }
             }
-        ) {
+        },
+        bottomBar = {
+            TeamCreator(
+                createTeam = { viewModel.createOwnTeam(it) },
+                disabled = isBusy || currentTeam != null
+            )
+        }
+    ) {
+        Column(Modifier.padding(it)) {
+            challengesImageSlider(
+                challenges, modifier = Modifier.fillMaxWidth()
+            )
+
             TeamsSelector(
                 teams = teams,
                 users = users,
