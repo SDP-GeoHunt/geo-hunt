@@ -14,7 +14,7 @@
     <string name="navigation.active_hunts">Active hunts</string>
     <string name="navigation.profile">Profile</string>
     <string name="title_main_activity">GeoHunt</string>
-    <string name="title_activity_login">Login</string>
+    <string name="title_activity_login">GeoHunt</string>
     <string name="date_range_formatting">from %1$s to %2$s</string>
     <string name="start_in_formatter">Starts %s</string>
     <string name="end_in_formatter">Ends %s</string>
