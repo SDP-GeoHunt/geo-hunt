@@ -1,4 +1,4 @@
-<h1 align="center"> GeoHunt - Android Java Project</h1>
+<h1 align="center"> GeoHunt - Android App Project <small>in Kotlin with Jetpack Compose</small></h1>
 
 <div align="center">
     <a href="https://cirrus-ci.com/github/SDP-GeoHunt/geo-hunt"><img src="https://api.cirrus-ci.com/github/SDP-GeoHunt/geo-hunt.svg" /></a>
@@ -6,7 +6,7 @@
     <a href="https://codeclimate.com/github/SDP-GeoHunt/geo-hunt/test_coverage"><img src="https://api.codeclimate.com/v1/badges/76d4967c5d3d48e7022f/test_coverage" /></a>
 </div>
 
-The GeoHunt project is an Android game developed in Java that encourages users to explore new locations
+The GeoHunt project is an Android game developed in Kotlin that encourages users to explore new locations
 by taking pictures of their surroundings and challenging other users to find and reach the location
 where the picture was taken. Users can register and create their account, take pictures and upload them
 to the game's server, view a list of their active challenges, and view the leaderboard to see who has the
@@ -17,10 +17,19 @@ innovative way to explore the world around us while having fun with other player
 
 ## How to Play
 
+### Solo gameplay
+
 1. Users take a picture of their current location and upload it to the game's server.
-2. The game assigns the uploaded picture to another user, who must find and go to the location where the picture was taken.
+2. Other users must find and go to the location where the picture was taken and claim the challenge.
 3. The closer the user gets to the actual location, the higher the points they earn.
 4. Users can view the game's leaderboard to see who has the most points.
+
+### Team gameplay
+
+Bounties are a collection of challenges that players can solve in a team. Very similar to the solo
+gameplay except that everything is done as a team.
+
+For every bounty, an administrator is responsible for creating challenges.
 
 ## Features
 
@@ -28,11 +37,12 @@ innovative way to explore the world around us while having fun with other player
 * Users can take pictures and upload them to the game's server
 * Users can view a list of their active challenges.
 * Users can view the leaderboard to see who has the most points.
-* Users can report inappropriate content.
+* Users can play in a team in bounties.
+* Users can see a map of all the challenges in their current area.
 
 ## Contributing Guidelines
 
-Thank you for considering contributing to our private repository! To ensure the confidentiality
+Thank you for considering contributing to our project repository! To ensure the confidentiality
 and security of our codebase, we have some guidelines for contributing that we ask you to follow:
 
 1. Make sure your code follows the project's code style and best practices.
@@ -43,7 +53,7 @@ and security of our codebase, we have some guidelines for contributing that we a
 
 ## Code Style and Best Practices
 
-* Use Java coding standards and best practices. See the [Google Style Guide](https://google.github.io/styleguide/javaguide.html) for further information.
+* Use Kotlin coding standards and best practices. See the [Kotlin coding convention](https://kotlinlang.org/docs/coding-conventions.html) for further general information.
 * Follow the project's code style guide and best practices.
 * Keep your code clean, concise, and easy to read.
 * Use meaningful variable names and comments to explain your code.
@@ -52,3 +62,12 @@ and security of our codebase, we have some guidelines for contributing that we a
 * Avoid using third-party libraries unless necessary.
 * Keep code modular and follow separation of concerns.
 
+# Team
+
+This app has been done by the following members:
+* Alban
+* Guillaume
+* Marwan
+* Dario
+* Kishlay
+* Nicolas Tomasz
