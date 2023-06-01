@@ -361,7 +361,7 @@ fun NavigationController(
                 },
                 onSuccess = {
                     navController.popBackStack()
-                    navController.navigate("${SecondaryScreen.ChallengeView.route}/$cid")
+                    //navController.navigate("${SecondaryScreen.ChallengeView.route}/$cid")
                 }
             )
         }
