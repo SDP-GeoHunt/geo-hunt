@@ -32,7 +32,7 @@ import com.github.geohunt.app.ui.components.teamprogress.ConfirmClaimAlert
 import com.github.geohunt.app.ui.components.utils.SkeletonLoading
 import com.github.geohunt.app.ui.components.utils.SkeletonLoadingImage
 import com.github.geohunt.app.ui.theme.geoHuntRed
-import com.github.geohunt.app.utility.quantize
+import com.github.geohunt.app.utility.quantizeToString
 
 @Composable
 fun BountyChallengeCard(
@@ -85,8 +85,7 @@ fun BountyChallengeCard(
             ) {
                 val distance = when (currentLocation) {
                     null -> stringResource(id = R.string.unknown_distance)
-                    else -> currentLocation.distanceTo(it.location).quantize(0.1)
-                        .toString() + " km"
+                    else -> currentLocation.distanceTo(it.location).quantizeToString(0.1) + " km"
                 }
 
                 Text(distance, style = MaterialTheme.typography.labelMedium)
