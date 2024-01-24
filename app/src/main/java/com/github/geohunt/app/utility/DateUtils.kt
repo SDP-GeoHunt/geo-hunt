@@ -25,6 +25,10 @@ object DateUtils {
         if (iso8601 == "") {
             return Instant.MIN
         }
+        // Return a dummy value if invalid
+        if(iso8601 == "null") {
+            return Instant.MIN
+        }
         return Instant.from(formatter.parse(iso8601))
     }
 
